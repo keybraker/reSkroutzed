@@ -1,1 +1,0 @@
-# skroutz-sponsored-remover
