@@ -1,8 +1,5 @@
 # Skroutz sponsored flagger
 
-![Alt Text](../pages_assets/skroutz_flagger_disabled.png)
-![Alt Text](../pages_assets/skroutz_flagger_enabled.png)
-
 ## Why
 
 The reason behind this extension, is to make right deliberately wrong by Skroutz.
@@ -23,3 +20,15 @@ Contributions are always welcome! If you have any suggestions or improvements, f
 ## License
 
 This extension is licensed under the MIT license. See the LICENSE file for more details.
+
+## Presentation
+
+### Desktop
+
+![Alt Text](../pages_assets/desktop_skroutz_flagger_disabled.png)
+![Alt Text](../pages_assets/desktop_skroutz_flagger_enabled.png)
+
+### Mobile
+
+![Alt Text](../pages_assets/mobile_skroutz_flagger_disabled.png)
+![Alt Text](../pages_assets/mobile_skroutz_flagger_enabled.png)
