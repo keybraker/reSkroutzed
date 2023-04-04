@@ -2,7 +2,7 @@
 
 ## Why
 
-The reason behind this extension, is to make right deliberately wrong by Skroutz.
+The reason behind this extension, is to make right, a deliberately wrong by Skroutz.
 Skroutz has decided to use a dark pattern in order to mislead consumers, in the pursuit of profits.
 
 ## How it Works
