@@ -23,9 +23,8 @@ const observer = new MutationObserver(blockSponsoredContent);
 observer.observe(document.body, { childList: true, subtree: true });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log(`request received: `, chrome.runtime.id);
-
   if (request.action === "getCount") {
+    counter = counter / 3;
     sendResponse({ count: counter });
   }
   return true;

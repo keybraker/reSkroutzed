@@ -1,9 +1,15 @@
-console.log("popup");
-
-chrome.runtime.sendMessage({ action: "getCount" }, function (response) {
-  console.log("Message received in background.js:", response);
-  if (response && response.count) {
-    const countElement = document.getElementById("count");
-    countElement.textContent = response.count;
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  if (tabs && tabs.length) {
+    chrome.tabs.sendMessage(tabs[0].id, { action: "getCount" }, (response) => {
+      const countDisplay = document.getElementById("countDisplay");
+      if (response && response.count) {
+        countDisplay.textContent = response.count;
+      } else {
+        countDisplay.textContent = 0;
+      }
+    });
+  } else {
+    const countDisplay = document.getElementById("countDisplay");
+    countDisplay.textContent = 'No active tab';
   }
 });
