@@ -1,20 +1,21 @@
 let counter = 0;
 
 function blockSponsoredContent() {
-  const liElements = document.querySelectorAll("li");
+  const liElements = document.querySelectorAll(
+    "li:not(.flagged-sponsored-product)"
+  );
+
+  if (!liElements || liElements.length === 0) {
+    return;
+  }
+
   liElements.forEach((liElement) => {
     const labelElement = liElement.querySelector(".label-text");
     if (labelElement && labelElement.textContent === "Sponsored") {
       counter++;
 
-      liElement.style.border = "1px solid red";
-      liElement.style.boxShadow = "0px 0px 5px 0px red";
-
-      labelElement.style.border = "1px solid red";
-      labelElement.style.borderRadius = "5px";
-      labelElement.style.padding = "1px 4px";
-      labelElement.style.fontWeight = "bold";
-      labelElement.style.color = "red";
+      liElement.classList.add("flagged-sponsored-product");
+      labelElement.classList.add("flagged-sponsored-product-label");
     }
   });
 }
