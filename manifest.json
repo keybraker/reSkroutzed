@@ -10,6 +10,7 @@
             "matches": [
                 "https://www.skroutz.gr/*"
             ],
+            "css": ["style.css"],
             "js": [
                 "background.js"
             ],
