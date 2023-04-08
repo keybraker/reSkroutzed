@@ -6,11 +6,8 @@ function removeSponsoredContent(visible) {
   }
 
   liElements.forEach((liElement) => {
-    const labelElement = liElement.querySelector(".label-text");
-    if (labelElement && labelElement.textContent === "Sponsored") {
-      visible
-        ? liElement.classList.remove("display-none-sponsored-product")
-        : liElement.classList.add("display-none-sponsored-product");
-    }
+    visible
+      ? liElement.classList.remove("display-none-sponsored-product")
+      : liElement.classList.add("display-none-sponsored-product");
   });
 }

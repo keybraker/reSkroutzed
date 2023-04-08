@@ -13,10 +13,12 @@ function flagSponsoredContent() {
       sponsoredCount++;
 
       liElement.classList.add("flagged-sponsored-product");
+      labelElement.classList.add("flagged-sponsored-product-label");
+      labelElement.innerHTML = language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";
+
       visible
         ? liElement.classList.remove("display-none-sponsored-product")
         : liElement.classList.add("display-none-sponsored-product");
-      labelElement.classList.add("flagged-sponsored-product-label");
     }
   });
 }

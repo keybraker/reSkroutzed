@@ -1,0 +1,47 @@
+.popup-body {
+  width: 256px;
+}
+
+.content-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-span,
+.right-span {
+  display: flex;
+  align-items: center;
+}
+
+.left-span {
+  float: left;
+}
+
+.right-span {
+  float: right;
+}
+
+.circle {
+  font-weight: bold;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  padding: 2px;
+  background: #fff;
+  border: 3px solid #000;
+  color: #000;
+  text-align: center;
+  color: rgb(255, 0, 0);
+  font: 12px Arial, sans-serif;
+  position: relative;
+  display: inline-block;
+}
+
+.circle::before {
+  content: attr(data-count);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

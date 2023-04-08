@@ -1,26 +1,31 @@
-.popup-body {
-  width: 256px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.flagged-promo-product {
+  border: 1px solid rgb(255, 81, 0);
+  box-shadow: 0px 0px 5px 0px rgb(255, 81, 0);
+  opacity: 0.75;
 }
 
 .flagged-sponsored-product {
   border: 1px solid rgb(255, 0, 0);
   box-shadow: 0px 0px 5px 0px rgb(255, 0, 0);
+  opacity: 0.75;
 }
 
 .display-none-sponsored-product {
   display: none !important;
 }
 
+.flagged-promoted-product-label {
+  font-weight: bold !important;
+  color: red !important;
+}
+
 .flagged-sponsored-product-label {
   border: 1px solid rgb(255, 0, 0);
   border-radius: 5px;
   padding: 1px 4px;
+  background-color: #ffdbdf;
   font-weight: bold !important;
   color: red !important;
-  display: none;
 }
 
 .sponsored-indicator-background-hidden {
@@ -48,37 +53,7 @@
   gap: 4px;
 }
 
-
 .sponsored-indicator:hover {
   background-color: #FFCDD2;
   /* light red */
-}
-
-.left-span,
-.right-span {
-  display: inline-block;
-  display: flex;
-  align-items: center;
-}
-
-.left-span {
-  float: left;
-}
-
-.right-span {
-  float: right;
-}
-
-.circle {
-  font-weight: bold;
-  border-radius: 50%;
-  width: 14px;
-  height: 14px;
-  padding: 2px;
-  background: #fff;
-  border: 3px solid #000;
-  color: #000;
-  text-align: center;
-  color: rgb(255, 0, 0);
-  font: 12px Arial, sans-serif;
 }

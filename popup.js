@@ -1,15 +1,15 @@
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  const sponsoredCount = document.getElementById("sponsoredCount");
+  const promoCount = document.getElementById("promoCount");
   if (tabs && tabs.length) {
     chrome.tabs.sendMessage(tabs[0].id, { action: "getCount" }, (response) => {
-      const countDisplay = document.getElementById("countDisplay");
-      if (response && response.count) {
-        countDisplay.textContent = response.count;
-      } else {
-        countDisplay.textContent = 0;
-      }
+      sponsoredCount.textContent =
+        response && response.sponsoredCount ? response.sponsoredCount : 0;
+      promoCount.textContent =
+        response && response.promoCount ? response.promoCount : 0;
     });
   } else {
-    const countDisplay = document.getElementById("countDisplay");
-    countDisplay.textContent = "No active tab";
+    sponsoredCount.textContent = "0";
+    promoCount.textContent = "0";
   }
 });
