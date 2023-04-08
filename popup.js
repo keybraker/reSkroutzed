@@ -10,6 +10,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     });
   } else {
     const countDisplay = document.getElementById("countDisplay");
-    countDisplay.textContent = 'No active tab';
+    countDisplay.textContent = "No active tab";
   }
 });

@@ -3,16 +3,20 @@
     "description": "Flags sponsored products on Skroutz.gr",
     "version": "1.1",
     "manifest_version": 3,
-    "permissions": [
-    ],
+    "permissions": [],
     "content_scripts": [
         {
             "matches": [
                 "https://www.skroutz.gr/*"
             ],
-            "css": ["style.css"],
+            "css": [
+                "style.css"
+            ],
             "js": [
-                "background.js"
+                "background.js",
+                "manipulators/addBlockedIndication.js",
+                "manipulators/flagSponsoredContent.js",
+                "manipulators/removeSponsoredContent.js"
             ],
             "run_at": "document_end"
         }
