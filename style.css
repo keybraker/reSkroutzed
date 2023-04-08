@@ -28,16 +28,6 @@
   color: red !important;
 }
 
-.sponsored-indicator-background-hidden {
-  background: none;
-  !important
-}
-
-.sponsored-indicator-background-visible {
-  background: fixed;
-  !important background-color: #FFCDD2;
-}
-
 .sponsored-indicator {
   border: 1px solid rgb(255, 0, 0);
   border-radius: 5px;
@@ -55,5 +45,12 @@
 
 .sponsored-indicator:hover {
   background-color: #FFCDD2;
-  /* light red */
+}
+
+.sponsored-indicator-background-hidden {
+  background-color: #FFCDD2;
+}
+
+.sponsored-indicator-background-visible {
+  background: transparent;
 }

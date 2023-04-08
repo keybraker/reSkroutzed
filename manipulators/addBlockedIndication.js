@@ -11,7 +11,7 @@ function updateDisplayText(toggleSponsoredButton, visible) {
     toggleSponsoredButton.classList.remove(
       "sponsored-indicator-background-hidden"
     );
-    toggleSponsoredButton.classList.remove(
+    toggleSponsoredButton.classList.add(
       "sponsored-indicator-background-visible"
     );
   } else {
