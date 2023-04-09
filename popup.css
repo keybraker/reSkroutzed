@@ -1,11 +1,26 @@
 .popup-body {
-  width: 200px;
+  width: 180px;
+}
+
+.content {
+  margin: 0;
 }
 
 .content-flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid grey;
+}
+
+.content-flex:first-child {
+  padding-top: 0;
+}
+
+.content-flex:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .right-span.circle {
@@ -17,11 +32,10 @@
   border: 3px solid #000;
   text-align: center;
   color: rgb(255, 0, 0);
+  font: bold 12px Arial, sans-serif;
 }
 
 .left-span > p,
 .right-span > p {
-  font: 12px Arial, sans-serif;
-  font-weight: bold;
   margin: 0 auto;
 }

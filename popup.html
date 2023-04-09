@@ -6,25 +6,18 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body class="popup-body">
-    <div class="content-flex">
-      <div class="left-span">
-        <span>Sponsored <b>flagged</b>:</span>
+    <dl class="content">
+      <div class="content-flex">
+        <dt class="left-span">Promo <strong>flagged</strong> :</dt>
+        <dd class="right-span circle" id="promoCount">loading count...</dd>
       </div>
-      <div class="right-span circle">
-        <p id="sponsoredCount">loading count...</p>
-      </div>
-    </div>
 
-    <hr />
-
-    <div class="content-flex">
-      <div class="left-span">
-        <span>Promo <b>flagged</b>:</span>
+      <div class="content-flex">
+        <dt class="left-span">Sponsored <strong>flagged</strong>:</dt>
+        <dd class="right-span circle" id="sponsoredCount">loading count...</dd>
       </div>
-      <div class="right-span circle">
-        <p id="promoCount">loading count...</p>
-      </div>
-    </div>
+    </dl>
   </body>
+
   <script src="popup.js"></script>
 </html>
