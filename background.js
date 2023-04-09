@@ -9,14 +9,13 @@ window.onload = function () {
   flagSponsoredContent();
   flagPromotedContent(visible);
   removeSponsoredContent(visible);
+  addBlockedIndication();
 
-  const observer1 = new MutationObserver(flagPromoVideo);
-  observer1.observe(document.body, { childList: true, subtree: true });
-
-  const observer2 = new MutationObserver(flagSponsoredContent);
-  observer2.observe(document.body, { childList: true, subtree: true });
-
-  addBlockedIndication(sponsoredCount);
+  const observer = new MutationObserver(() => {
+    flagSponsoredContent();
+    flagPromoVideo();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 };
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

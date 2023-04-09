@@ -1,4 +1,12 @@
 function flagPromoVideo() {
+  const liElementsFlagged = document.querySelectorAll(
+    "li.flagged-promo-product"
+  );
+
+  if (liElementsFlagged.length === 0) {
+    promoCount = 0;
+  }
+
   const liElements = document.querySelectorAll(
     "li:not(.flagged-promo-product)"
   );

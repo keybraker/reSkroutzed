@@ -5,9 +5,6 @@ const eye_slashed =
 
 function updateDisplayText(toggleSponsoredButton, visible) {
   if (visible) {
-    toggleSponsoredButton.innerHTML = `${eye_open} ${
-      language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα"
-    }: ${sponsoredCount}`;
     toggleSponsoredButton.classList.remove(
       "sponsored-indicator-background-hidden"
     );
@@ -15,9 +12,6 @@ function updateDisplayText(toggleSponsoredButton, visible) {
       "sponsored-indicator-background-visible"
     );
   } else {
-    toggleSponsoredButton.innerHTML = `${eye_slashed} ${
-      language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα"
-    }: ${sponsoredCount}`;
     toggleSponsoredButton.classList.remove(
       "sponsored-indicator-background-visible"
     );
@@ -25,11 +19,16 @@ function updateDisplayText(toggleSponsoredButton, visible) {
       "sponsored-indicator-background-hidden"
     );
   }
+
+  toggleSponsoredButton.innerHTML = `${visible ? eye_open : eye_slashed} ${
+    language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα"
+  }: ${sponsoredCount}`;
 }
 
 function createSponsoredIndicatorButton() {
   const toggleSponsoredButton = document.createElement("button");
   toggleSponsoredButton.classList.add("sponsored-indicator");
+  toggleSponsoredButton.setAttribute("id", "sponsored-flagger-button");
 
   updateDisplayText(toggleSponsoredButton, visible);
 
@@ -43,22 +42,24 @@ function createSponsoredIndicatorButton() {
   return toggleSponsoredButton;
 }
 
-function addBlockedIndication(sponsoredCount) {
-  const buttons = document.querySelectorAll("button");
+function addBlockedIndication() {
+  console.log("addBlockedIndication");
+  const sponsoredButton = document.getElementById("sponsored-flagger-button");
 
-  if (!buttons || buttons.length === 0) {
+  if (sponsoredButton) {
+    updateDisplayText(sponsoredButton, visible);
     return;
   }
 
-  for (let i = 0; i < buttons.length; i++) {
-    const button = buttons[i];
-    if (
-      button.getAttribute("title") === "Φίλτρα" ||
-      button.getAttribute("title") === "Filters"
-    ) {
-      const toggleSponsoredButton = createSponsoredIndicatorButton();
-      button.parentNode.insertBefore(toggleSponsoredButton, button.nextSibling);
-      break;
-    }
+  const orderOptionsDiv = document.getElementById("order-options");
+
+  if (!orderOptionsDiv) {
+    return;
   }
+
+  const toggleSponsoredButton = createSponsoredIndicatorButton();
+  orderOptionsDiv.parentNode.insertBefore(
+    toggleSponsoredButton,
+    orderOptionsDiv.previousSibling
+  );
 }
