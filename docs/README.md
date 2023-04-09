@@ -11,7 +11,16 @@ Once you install the extension, it will automatically detect and highlight all s
 
 ## Installation
 
-To install the extension, simply download the source code from this repository and load it as an unpacked extension in Google Chrome. Once the extension is installed, it will automatically start highlighting all sponsored products on Skroutz.gr.
+Download it from the Chrome Extension store, by clicking [here](https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl)
+
+To install the extension via github, simply download the source code from this repository and load it as an unpacked extension in any Chromium powered browser..
+
+### Showcase
+
+|                                             |                                             |
+| :-----------------------------------------: | :-----------------------------------------: |
+| ![Alt Text](../pages_assets/showcase_1.png) | ![Alt Text](../pages_assets/showcase_2.png) |
+| ![Alt Text](../pages_assets/showcase_3.png) | ![Alt Text](../pages_assets/showcase_4.png) |
 
 ## Contributing
 
@@ -20,15 +29,3 @@ Contributions are always welcome! If you have any suggestions or improvements, f
 ## License
 
 This extension is licensed under the MIT license. See the LICENSE file for more details.
-
-## Presentation
-
-### Desktop
-
-![Alt Text](../pages_assets/desktop_skroutz_flagger_disabled.png)
-![Alt Text](../pages_assets/desktop_skroutz_flagger_enabled.png)
-
-### Mobile
-
-![Alt Text](../pages_assets/mobile_skroutz_flagger_disabled.png)
-![Alt Text](../pages_assets/mobile_skroutz_flagger_enabled.png)
