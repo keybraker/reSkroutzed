@@ -23,19 +23,22 @@
   padding-bottom: 0;
 }
 
-.right-span.circle {
+dd.right-span.circle {
   border-radius: 50%;
   width: 14px;
   height: 14px;
   padding: 2px;
   background: #fff;
   border: 3px solid #000;
-  text-align: center;
-  color: rgb(255, 0, 0);
-  font: bold 12px Arial, sans-serif;
 }
 
-.left-span > p,
-.right-span > p {
-  margin: 0 auto;
+dt.left-span,
+dd.right-span {
+  text-align: center;
+  font: 12px Arial, sans-serif;
+}
+
+dd.right-span {
+  color: rgb(255, 0, 0);
+  font-weight: bold;
 }
