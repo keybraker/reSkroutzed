@@ -17,6 +17,7 @@
                 "background.js",
                 "manipulators/addBlockedIndication.js",
                 "manipulators/flagSponsoredContent.js",
+                "manipulators/flagSponsoredShelf.js",
                 "manipulators/flagPromotedContent.js",
                 "manipulators/flagPromoVideo.js",
                 "manipulators/removeSponsoredContent.js",

@@ -1,13 +1,36 @@
 function removeSponsoredContent(visible) {
-  const liElements = document.querySelectorAll("li.sponsored-flagged-product");
+  removeSponsoredProduct(visible);
+  removeSponsoredShelf(visible);
+}
 
-  if (!liElements || liElements.length === 0) {
+function removeSponsoredProduct(visible) {
+  const liElementsFlagged = document.querySelectorAll(
+    "li.sponsored-flagged-product"
+  );
+
+  if (!liElementsFlagged || liElementsFlagged.length === 0) {
     return;
   }
 
-  liElements.forEach((liElement) => {
+  liElementsFlagged.forEach((liElementFlagged) => {
     visible
-      ? liElement.classList.remove("display-none")
-      : liElement.classList.add("display-none");
+      ? liElementFlagged.classList.remove("display-none")
+      : liElementFlagged.classList.add("display-none");
+  });
+}
+
+function removeSponsoredShelf(visible) {
+  const divElementsFlagged = document.querySelectorAll(
+    "div.sponsored-flagged-shelf"
+  );
+
+  if (!divElementsFlagged || divElementsFlagged.length === 0) {
+    return;
+  }
+
+  divElementsFlagged.forEach((divElementFlagged) => {
+    visible
+      ? divElementFlagged.classList.remove("display-none")
+      : divElementFlagged.classList.add("display-none");
   });
 }

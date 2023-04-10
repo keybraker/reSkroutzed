@@ -7,6 +7,8 @@ function flagPromoVideo() {
     promoCount = 0;
   }
 
+  //
+
   const liElements = document.querySelectorAll(
     "li:not(.promoted-flagged-product)"
   );

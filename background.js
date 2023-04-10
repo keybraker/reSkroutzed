@@ -1,12 +1,14 @@
 let visible = localStorage.getItem("sponsoredVisibility") === "true";
 let language = "EN";
 let sponsoredCount = 0;
+let sponsoredShelfCount = 0;
 let promoCount = 0;
 
 window.onload = function () {
   retrieveLanguage();
   flagPromoVideo();
   flagSponsoredContent();
+  flagSponsoredShelf();
   flagPromotedContent(visible);
   removeSponsoredContent(visible);
   addBlockedIndication();
@@ -20,6 +22,6 @@ window.onload = function () {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getCount") {
-    sendResponse({ sponsoredCount, promoCount });
+    sendResponse({ sponsoredCount, sponsoredShelfCount, promoCount });
   }
 });

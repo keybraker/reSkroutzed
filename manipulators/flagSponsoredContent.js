@@ -7,6 +7,8 @@ function flagSponsoredContent() {
     sponsoredCount = 0;
   }
 
+  //
+
   const liElements = document.querySelectorAll(
     "li:not(.sponsored-flagged-product)"
   );
