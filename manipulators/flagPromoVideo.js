@@ -1,16 +1,16 @@
 function flagPromoVideo() {
   const liElementsFlagged = document.querySelectorAll(
-    "li.promoted-flagged-product"
+    "li.flagged-video"
   );
 
-  if (liElementsFlagged.length === 0) {
+  if (liElementsFlagged && liElementsFlagged.length === 0) {
     promoCount = 0;
   }
 
   //
 
   const liElements = document.querySelectorAll(
-    "li:not(.promoted-flagged-product)"
+    "li:not(.flagged-video)"
   );
 
   if (!liElements || liElements.length === 0) {
@@ -21,7 +21,7 @@ function flagPromoVideo() {
     if (liElement.classList.contains("promo-video-card")) {
       promoCount++;
 
-      liElement.classList.add("promoted-flagged-product");
+      liElement.classList.add("flagged-video");
 
       visible
         ? liElement.classList.remove("display-none-promo-product")

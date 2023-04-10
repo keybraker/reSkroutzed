@@ -1,16 +1,16 @@
 function flagSponsoredContent() {
   const liElementsFlagged = document.querySelectorAll(
-    "li.sponsored-flagged-product"
+    "li.flagged-product"
   );
 
-  if (liElementsFlagged.length === 0) {
+  if (liElementsFlagged && liElementsFlagged.length === 0) {
     sponsoredCount = 0;
   }
 
   //
 
   const liElements = document.querySelectorAll(
-    "li:not(.sponsored-flagged-product)"
+    "li:not(.flagged-product)"
   );
 
   if (!liElements || liElements.length === 0) {
@@ -24,11 +24,11 @@ function flagSponsoredContent() {
 
       const shopCountElement = liElement.querySelector(".shop-count");
       if (shopCountElement) {
-        shopCountElement.classList.add("sponsored-flagged-store");
+        shopCountElement.classList.add("flagged-product-store");
       }
 
-      liElement.classList.add("sponsored-flagged-product");
-      labelElement.classList.add("sponsored-flagged-product-label");
+      liElement.classList.add("flagged-product");
+      labelElement.classList.add("flagged-product-label");
 
       labelElement.innerHTML =
         language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";

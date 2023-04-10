@@ -15,7 +15,7 @@ function flagPromotedContent(visible) {
   }
 
   divElements.forEach((divElement) => {
-    divElement.classList.add("sponsored-flagged-product");
+    divElement.classList.add("flagged-product");
 
     const promotedBox = divElement.querySelector(".prices-shops-title");
 

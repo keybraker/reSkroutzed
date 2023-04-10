@@ -1,40 +1,42 @@
 {
-    "name": "Skroutz Sponsored Flagger",
-    "description": "Flags sponsored products on Skroutz.gr",
-    "version": "1.3",
-    "manifest_version": 3,
-    "permissions": [],
-    "content_scripts": [
-        {
-            "matches": [
-                "https://www.skroutz.gr/*"
-            ],
-            "css": [
-                "style.css",
-                "popup.css"
-            ],
-            "js": [
-                "background.js",
-                "manipulators/addBlockedIndication.js",
-                "manipulators/flagSponsoredContent.js",
-                "manipulators/flagSponsoredShelf.js",
-                "manipulators/flagPromotedContent.js",
-                "manipulators/flagPromoVideo.js",
-                "manipulators/removeSponsoredContent.js",
-                "manipulators/retrieveLanguage.js"
-            ],
-            "run_at": "document_end"
-        }
-    ],
-    "action": {
-        "default_popup": "popup.html",
-        "default_icon": {
-            "48": "/assets/icons/48.png",
-            "128": "/assets/icons/128.png"
-        }
-    },
-    "icons": {
-        "48": "/assets/icons/48.png",
-        "128": "/assets/icons/128.png"
+  "name": "Skroutz Sponsored Flagger",
+  "description": "Flags sponsored products on Skroutz.gr",
+  "version": "1.3",
+  "manifest_version": 3,
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": ["https://www.skroutz.gr/*"],
+      "css": [
+        "css/flaggerToogle.css",
+        "css/popup.css",
+        "css/productFlags.css",
+        "css/shelfFlags.css",
+        "css/style.css",
+        "css/videoFlags.css"
+      ],
+      "js": [
+        "background.js",
+        "manipulators/addBlockedIndication.js",
+        "manipulators/flagPromotedContent.js",
+        "manipulators/flagPromoVideo.js",
+        "manipulators/flagSponsoredContent.js",
+        "manipulators/flagSponsoredShelf.js",
+        "manipulators/removeSponsoredContent.js",
+        "manipulators/retrieveLanguage.js"
+      ],
+      "run_at": "document_end"
     }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "/assets/icons/48.png",
+      "128": "/assets/icons/128.png"
+    }
+  },
+  "icons": {
+    "48": "/assets/icons/48.png",
+    "128": "/assets/icons/128.png"
+  }
 }

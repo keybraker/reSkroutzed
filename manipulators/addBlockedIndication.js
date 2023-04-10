@@ -6,11 +6,11 @@ const eyeSlashed =
 function updateDisplayText(toggleSponsoredButton, visible) {
   if (visible) {
     toggleSponsoredButton.classList.remove(
-      "sponsored-indicator-background-hidden"
+      "flagger-toggle-active"
     );
   } else {
     toggleSponsoredButton.classList.add(
-      "sponsored-indicator-background-hidden"
+      "flagger-toggle-active"
     );
   }
 
@@ -22,7 +22,7 @@ function updateDisplayText(toggleSponsoredButton, visible) {
 function createSponsoredIndicatorButton() {
   const toggleSponsoredButton = document.createElement("button");
 
-  toggleSponsoredButton.classList.add("sponsored-indicator");
+  toggleSponsoredButton.classList.add("flagger-toggle");
   toggleSponsoredButton.setAttribute("id", "sponsored-flagger-button");
 
   updateDisplayText(toggleSponsoredButton, visible);

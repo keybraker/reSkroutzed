@@ -5,7 +5,7 @@ function removeSponsoredContent(visible) {
 
 function removeSponsoredProduct(visible) {
   const liElementsFlagged = document.querySelectorAll(
-    "li.sponsored-flagged-product"
+    "li.flagged-product"
   );
 
   if (!liElementsFlagged || liElementsFlagged.length === 0) {
@@ -21,7 +21,7 @@ function removeSponsoredProduct(visible) {
 
 function removeSponsoredShelf(visible) {
   const divElementsFlagged = document.querySelectorAll(
-    "div.sponsored-flagged-shelf"
+    "div.flagged-shelf"
   );
 
   if (!divElementsFlagged || divElementsFlagged.length === 0) {
