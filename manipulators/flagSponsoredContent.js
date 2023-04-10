@@ -20,8 +20,14 @@ function flagSponsoredContent() {
     if (labelElement && labelElement.textContent === "Sponsored") {
       sponsoredCount++;
 
+      const shopCountElement = liElement.querySelector(".shop-count");
+      if (shopCountElement) {
+        shopCountElement.classList.add("sponsored-flagged-store");
+      }
+
       liElement.classList.add("sponsored-flagged-product");
       labelElement.classList.add("sponsored-flagged-product-label");
+
       labelElement.innerHTML =
         language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";
 

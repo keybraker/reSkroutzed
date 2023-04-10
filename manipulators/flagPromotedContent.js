@@ -22,7 +22,6 @@ function flagPromotedContent(visible) {
     if (promotedBox) {
       promotedBox.innerHTML =
         language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
-      promotedBox.classList.add("promoted-flagged-product-label");
     }
   });
 }
