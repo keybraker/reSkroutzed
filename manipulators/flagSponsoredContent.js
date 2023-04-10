@@ -1,7 +1,6 @@
 function flagSponsoredContent() {
-  console.log("inside flagSponsoredContent");
   const liElementsFlagged = document.querySelectorAll(
-    "li.flagged-sponsored-product"
+    "li.sponsored-flagged-product"
   );
 
   if (liElementsFlagged.length === 0) {
@@ -9,7 +8,7 @@ function flagSponsoredContent() {
   }
 
   const liElements = document.querySelectorAll(
-    "li:not(.flagged-sponsored-product)"
+    "li:not(.sponsored-flagged-product)"
   );
 
   if (!liElements || liElements.length === 0) {
@@ -21,14 +20,14 @@ function flagSponsoredContent() {
     if (labelElement && labelElement.textContent === "Sponsored") {
       sponsoredCount++;
 
-      liElement.classList.add("flagged-sponsored-product");
-      labelElement.classList.add("flagged-sponsored-product-label");
+      liElement.classList.add("sponsored-flagged-product");
+      labelElement.classList.add("sponsored-flagged-product-label");
       labelElement.innerHTML =
         language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";
 
       visible
-        ? liElement.classList.remove("display-none-sponsored-product")
-        : liElement.classList.add("display-none-sponsored-product");
+        ? liElement.classList.remove("display-none")
+        : liElement.classList.add("display-none");
     }
   });
 }

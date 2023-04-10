@@ -1,6 +1,6 @@
 function flagPromoVideo() {
   const liElementsFlagged = document.querySelectorAll(
-    "li.flagged-promo-product"
+    "li.promoted-flagged-product"
   );
 
   if (liElementsFlagged.length === 0) {
@@ -8,7 +8,7 @@ function flagPromoVideo() {
   }
 
   const liElements = document.querySelectorAll(
-    "li:not(.flagged-promo-product)"
+    "li:not(.promoted-flagged-product)"
   );
 
   if (!liElements || liElements.length === 0) {
@@ -19,7 +19,7 @@ function flagPromoVideo() {
     if (liElement.classList.contains("promo-video-card")) {
       promoCount++;
 
-      liElement.classList.add("flagged-promo-product");
+      liElement.classList.add("promoted-flagged-product");
 
       visible
         ? liElement.classList.remove("display-none-promo-product")

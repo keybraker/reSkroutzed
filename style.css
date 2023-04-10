@@ -1,25 +1,21 @@
-.flagged-promo-product {
+.promoted-flagged-product {
   border: 1px solid rgb(255, 81, 0);
   box-shadow: 0px 0px 5px 0px rgb(255, 81, 0);
   opacity: 0.75;
 }
 
-.flagged-sponsored-product {
+.promoted-flagged-product-label {
+  font-weight: bold !important;
+  color: red !important;
+}
+
+.sponsored-flagged-product {
   border: 1px solid rgb(255, 0, 0);
   box-shadow: 0px 0px 5px 0px rgb(255, 0, 0);
   opacity: 0.75;
 }
 
-.display-none-sponsored-product {
-  display: none !important;
-}
-
-.flagged-promoted-product-label {
-  font-weight: bold !important;
-  color: red !important;
-}
-
-.flagged-sponsored-product-label {
+.sponsored-flagged-product-label {
   border: 1px solid rgb(255, 0, 0);
   border-radius: 5px;
   padding: 1px 4px;
@@ -41,16 +37,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  background: transparent;
 }
 
-.sponsored-indicator:hover {
-  background-color: #FFCDD2;
-}
-
+.sponsored-indicator:hover,
 .sponsored-indicator-background-hidden {
   background-color: #FFCDD2;
 }
 
-.sponsored-indicator-background-visible {
-  background: transparent;
+.display-none {
+  display: none !important;
 }

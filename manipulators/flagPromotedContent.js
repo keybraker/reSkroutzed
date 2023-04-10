@@ -8,21 +8,21 @@ function flagPromotedContent(visible) {
   if (!visible) {
     divElements.forEach((divElement) => {
       visible
-        ? divElement.classList.remove("display-none-sponsored-product")
-        : divElement.classList.add("display-none-sponsored-product");
+        ? divElement.classList.remove("display-none")
+        : divElement.classList.add("display-none");
     });
     return;
   }
 
   divElements.forEach((divElement) => {
-    divElement.classList.add("flagged-sponsored-product");
+    divElement.classList.add("sponsored-flagged-product");
 
     const promotedBox = divElement.querySelector(".prices-shops-title");
 
     if (promotedBox) {
       promotedBox.innerHTML =
         language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
-      promotedBox.classList.add("flagged-promoted-product-label");
+      promotedBox.classList.add("promoted-flagged-product-label");
     }
   });
 }
