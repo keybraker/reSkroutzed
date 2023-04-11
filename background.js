@@ -6,16 +6,16 @@ let promoCount = 0;
 
 window.onload = function () {
   retrieveLanguage();
-  flagPromoVideo();
-  flagSponsoredContent();
-  flagSponsoredShelf();
-  flagPromotedContent(visible);
+  videoFlagger();
+  productFlagger();
+  shelfFlagger();
+  separatePromoListFlagger(visible);
   removeSponsoredContent(visible);
   addBlockedIndication();
 
   const observer = new MutationObserver(() => {
-    flagSponsoredContent();
-    flagPromoVideo();
+    productFlagger();
+    videoFlagger();
   });
   observer.observe(document.body, { childList: true, subtree: true });
 };

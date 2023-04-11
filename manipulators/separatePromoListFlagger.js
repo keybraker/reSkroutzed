@@ -1,4 +1,4 @@
-function flagPromotedContent(visible) {
+function separatePromoListFlagger(visible) {
   const divElements = document.querySelectorAll("div.selected-product-cards");
 
   if (!divElements || divElements.length === 0) {

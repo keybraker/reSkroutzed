@@ -18,10 +18,10 @@
       "js": [
         "background.js",
         "manipulators/addBlockedIndication.js",
-        "manipulators/flagPromotedContent.js",
-        "manipulators/flagPromoVideo.js",
-        "manipulators/flagSponsoredContent.js",
-        "manipulators/flagSponsoredShelf.js",
+        "manipulators/separatePromoListFlagger.js",
+        "manipulators/videoFlagger.js",
+        "manipulators/productFlagger.js",
+        "manipulators/shelfFlagger.js",
         "manipulators/removeSponsoredContent.js",
         "manipulators/retrieveLanguage.js"
       ],

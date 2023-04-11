@@ -1,4 +1,4 @@
-function flagPromoVideo() {
+function videoFlagger() {
   const liElementsFlagged = document.querySelectorAll(
     "li.flagged-video"
   );
