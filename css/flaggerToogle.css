@@ -1,4 +1,4 @@
-.flagger-toggle {
+.flagger-toggle-list {
   border: 1px solid rgb(255, 0, 0);
   border-radius: 5px;
   border-color: rgb(255, 0, 0);
@@ -6,10 +6,26 @@
   background: transparent;
   color: rgb(255, 0, 0);
   margin: 8px 8px 16px 0px;
-  padding: 0px 23px 0px;
+  padding: 12px 23px 12px;
   display: flex;
   align-items: center;
   gap: 4px;
+  height: 100%;
+}
+
+.flagger-toggle-product {
+  border: 1px solid rgb(255, 0, 0);
+  border-radius: 5px;
+  border-color: rgb(255, 0, 0);
+  box-shadow: inset 0px 0px 1px 0px rgb(255, 0, 0);
+  background: transparent;
+  color: rgb(255, 0, 0);
+  margin: 0px 0px 0px 8px;
+  padding: 11px 23px 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
 }
 
 .flagger-toggle:hover,

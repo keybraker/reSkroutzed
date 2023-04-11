@@ -5,13 +5,9 @@ const eyeSlashed =
 
 function updateDisplayText(toggleSponsoredButton, visible) {
   if (visible) {
-    toggleSponsoredButton.classList.remove(
-      "flagger-toggle-active"
-    );
+    toggleSponsoredButton.classList.remove("flagger-toggle-active");
   } else {
-    toggleSponsoredButton.classList.add(
-      "flagger-toggle-active"
-    );
+    toggleSponsoredButton.classList.add("flagger-toggle-active");
   }
 
   toggleSponsoredButton.innerHTML = `${visible ? eyeOpen : eyeSlashed} ${
@@ -19,10 +15,12 @@ function updateDisplayText(toggleSponsoredButton, visible) {
   }: ${sponsoredCount}`;
 }
 
-function createSponsoredIndicatorButton() {
+function createSponsoredIndicatorButton(isProduct = true) {
   const toggleSponsoredButton = document.createElement("button");
 
-  toggleSponsoredButton.classList.add("flagger-toggle");
+  toggleSponsoredButton.classList.add(
+    isProduct ? "flagger-toggle-product" : "flagger-toggle-list"
+  );
   toggleSponsoredButton.setAttribute("id", "sponsored-flagger-button");
 
   updateDisplayText(toggleSponsoredButton, visible);
@@ -38,6 +36,15 @@ function createSponsoredIndicatorButton() {
 }
 
 function addBlockedIndication() {
+  const filtersButton = document.querySelector("#filters-section-link");
+
+  if (filtersButton) {
+    filtersButton.parentNode.insertBefore(
+      createSponsoredIndicatorButton(),
+      filtersButton.nextSibling
+    );
+  }
+
   const sponsoredButton = document.getElementById("sponsored-flagger-button");
 
   if (sponsoredButton) {
@@ -51,9 +58,8 @@ function addBlockedIndication() {
     return;
   }
 
-  const toggleSponsoredButton = createSponsoredIndicatorButton();
   orderOptionsDiv.parentNode.insertBefore(
-    toggleSponsoredButton,
+    createSponsoredIndicatorButton(false),
     orderOptionsDiv.previousSibling
   );
 }

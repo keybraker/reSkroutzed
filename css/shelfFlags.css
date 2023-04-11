@@ -8,6 +8,13 @@
   opacity: 0.75;
 }
 
+.flagged-list-title {
+  margin-left: 80px;
+  padding: 8px;
+  font-weight: bold !important;
+  color: red !important;
+}
+
 .flagged-shelf-label {
   border-radius: 5px;
   padding: 8px;

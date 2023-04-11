@@ -6,7 +6,7 @@ let promoCount = 0;
 
 window.onload = function () {
   retrieveLanguage();
-  videoFlagger();
+  // videoFlagger();
   productFlagger();
   shelfFlagger();
   separatePromoListFlagger(visible);
@@ -15,7 +15,7 @@ window.onload = function () {
 
   const observer = new MutationObserver(() => {
     productFlagger();
-    videoFlagger();
+    // videoFlagger();
   });
   observer.observe(document.body, { childList: true, subtree: true });
 };
