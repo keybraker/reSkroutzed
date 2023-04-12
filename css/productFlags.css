@@ -11,8 +11,9 @@
 }
 
 .flagged-product-label {
+  /* border: 1px solid rgb(255, 0, 0); */
   border-radius: 5px;
-  padding: 8px;
+  padding: 2px 6px 2px;
   width: 100%;
   background-color: #ffdbdf;
   font-weight: bold !important;

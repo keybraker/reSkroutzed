@@ -6,7 +6,7 @@ let sponsoredShelfCount = 0;
 let promoCount = 0;
 
 window.onload = function () {
-  retrieveVisibility();
+  retrieveVisibility(visible);
   retrieveLanguage();
   videoFlagger();
   productFlagger();
