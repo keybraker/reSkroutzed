@@ -31,6 +31,11 @@ function flagProductElement(element) {
       language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";
   }
 
+  const imgElement = element.querySelector("a.image");
+  if (imgElement) {
+    imgElement.classList.add("flagged-product-image");
+  }
+
   // const shopCountElement = element.querySelector(".shop-count");
   // if (shopCountElement) {
   //   shopCountElement.classList.add("flagged-product-store");

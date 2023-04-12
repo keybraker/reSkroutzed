@@ -29,8 +29,14 @@ function shelfFlagger() {
         ? h4parentElement.classList.remove("display-none")
         : h4parentElement.classList.add("display-none");
 
-      const sponsoredItems = h4parentElement.children[2].children[0].children;
-      Array.from(sponsoredItems).forEach((sponsoredItem) => flagProductElement(sponsoredItem));
+      const sponsoredItems =
+        h4parentElement?.children[2]?.children[0]?.children;
+
+      if (sponsoredItems) {
+        Array.from(sponsoredItems).forEach((sponsoredItem) =>
+          flagProductElement(sponsoredItem)
+        );
+      }
     }
   });
 }

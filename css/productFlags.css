@@ -4,6 +4,12 @@
   opacity: 0.75;
 }
 
+.flagged-product-image {
+  border-radius: 5px;
+  box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0);
+  opacity: 0.75;
+}
+
 .flagged-product-label {
   border-radius: 5px;
   padding: 8px;
