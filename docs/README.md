@@ -1,26 +1,21 @@
 # Skroutz sponsored flagger
 
-## Why
+Skroutz Sponsored Flagger is a browser extension that detects and highlights sponsored products on [skroutz.gr](https://skroutz.gr). It is available for download on the [Chrome Extension store](https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl) and can be installed on any Chromium-powered browser.
 
-The reason behind this extension, is to make right, a deliberately wrong by Skroutz.
-Skroutz has decided to use a dark pattern in order to mislead consumers, in the pursuit of profits.
+## Why use Skroutz sponsored flagger?
 
-## How it Works
-
-Once you install the extension, it will automatically detect and highlight all sponsored products in bright red color. This makes it easy for you to identify which products are sponsored and which ones are not. This way, you can make an informed decision about your purchases without being misled by Skroutz's dark pattern.
+Skroutz has been accused of using dark patterns to mislead consumers into purchasing sponsored products. The purpose this extension is to make it easier for consumers to identify which products are sponsored and which ones are not, so that they can make informed purchasing decisions. It also gives the consumer the ability to hide the ads if they so wish so.
 
 ## Installation
 
-Download it from the Chrome Extension store, by clicking [here](https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl)
-
-To install the extension via github, simply download the source code from this repository and load it as an unpacked extension in any Chromium powered browser..
+To install the extension via github, simply download the source code from this repository as a zip and load it as an unpacked extension in any Chromium powered browser.
 
 ### Showcase
 
-|                                             |                                             |
-| :-----------------------------------------: | :-----------------------------------------: |
-| ![Alt Text](../pages_assets/showcase_1.png) | ![Alt Text](../pages_assets/showcase_2.png) |
-| ![Alt Text](../pages_assets/showcase_3.png) | ![Alt Text](../pages_assets/showcase_4.png) |
+|                                                        |                                                 |
+| :----------------------------------------------------- | :---------------------------------------------- |
+| ![Alt Text](../pages_assets/showcase_listings.png)     | ![Alt Text](../pages_assets/showcase_shelf.png) |
+| ![Alt Text](../pages_assets/showcase_product_list.png) | ![Alt Text](../pages_assets/showcase_popup.png) |
 
 ## Contributing
 
@@ -28,4 +23,4 @@ Contributions are always welcome! If you have any suggestions or improvements, f
 
 ## License
 
-This extension is licensed under the MIT license. See the LICENSE file for more details.
+This extension is licensed under the GNU general public license. See the LICENSE file for more details.
