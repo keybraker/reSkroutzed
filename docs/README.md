@@ -4,7 +4,7 @@ Skroutz Sponsored Flagger is a browser extension that detects and highlights spo
 
 ## Why use Skroutz sponsored flagger?
 
-Skroutz has been accused of using dark patterns to mislead consumers into purchasing sponsored products. The purpose this extension is to make it easier for consumers to identify which products are sponsored and which ones are not, so that they can make informed purchasing decisions. It also gives the consumer the ability to hide the ads if they so wish so.
+Skroutz has been using dark patterns to mislead consumers into purchasing sponsored products (ads). The purpose of this extension is to make it easier for consumers to identify which products are sponsored and which ones are not, so that they can make informed purchasing decisions. It also gives the consumer the ability to hide the sponsored products if they so wish.
 
 ## Installation
 
