@@ -21,9 +21,10 @@
         "manipulators/separatePromoListFlagger.js",
         "manipulators/videoFlagger.js",
         "manipulators/productFlagger.js",
-        "manipulators/shelfFlagger.js",
         "manipulators/removeSponsoredContent.js",
-        "manipulators/retrieveLanguage.js"
+        "manipulators/retrieveLanguage.js",
+        "manipulators/retrieveVisibility.js",
+        "manipulators/shelfFlagger.js"
       ],
       "run_at": "document_end"
     }

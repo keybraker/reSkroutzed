@@ -1,4 +1,4 @@
 .flagged-video {
-  box-shadow: inset 0px 0px 5px 2px rgb(148, 0, 0);
+  /* box-shadow: inset 0px 0px 5px 2px rgb(148, 0, 0); */
   opacity: 0.85;
 }
