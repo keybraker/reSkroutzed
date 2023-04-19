@@ -39,22 +39,18 @@ function createSponsoredIndicatorButton(isProduct = true) {
   return toggleSponsoredButton;
 }
 
-function addBlockedIndication() {
-  const filtersButton = document.querySelector("li.sku-offers");
+function filtersButtonAddition(existingBlockIndicationButton) {
+  const liOfferElements = document.querySelector("li.sku-offers");
 
-  if (filtersButton) {
-    filtersButton.parentNode.insertBefore(
-      createSponsoredIndicatorButton(true),
-      filtersButton.previousSibling
+  if (liOfferElements) {
+    liOfferElements.parentNode.insertBefore(
+      existingBlockIndicationButton ?? createSponsoredIndicatorButton(true),
+      liOfferElements.previousSibling
     );
   }
+}
 
-  const sponsoredButton = document.getElementById("sponsored-flagger-button");
-
-  if (sponsoredButton) {
-    updateDisplayText(sponsoredButton, visible, false);
-  }
-
+function orderOptionButtonAddition(existingBlockIndicationButton) {
   const orderOptionsDiv = document.getElementById("order-options");
 
   if (!orderOptionsDiv) {
@@ -62,7 +58,21 @@ function addBlockedIndication() {
   }
 
   orderOptionsDiv.parentNode.insertBefore(
-    createSponsoredIndicatorButton(false),
+    existingBlockIndicationButton ?? createSponsoredIndicatorButton(false),
     orderOptionsDiv.previousElementSibling
   );
+}
+
+function addBlockedIndication() {
+  const existingBlockIndicationButton = document.getElementById(
+    "sponsored-flagger-button"
+  );
+
+  if (existingBlockIndicationButton) {
+    updateDisplayText(existingBlockIndicationButton, visible, false);
+    return;
+  }
+
+  filtersButtonAddition(existingBlockIndicationButton);
+  orderOptionButtonAddition(existingBlockIndicationButton);
 }
