@@ -2,9 +2,11 @@
   width: 220px;
 }
 
+/* margin: 0 breaks Firefox compatibility by left-aligning the entire Skroutz website! */
 .content {
-  margin: 0;
+  margin: auto;
 }
+*/
 
 .content-flex {
   display: flex;
