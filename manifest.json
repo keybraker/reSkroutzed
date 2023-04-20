@@ -17,6 +17,7 @@
       ],
       "js": [
         "background.js",
+        "manipulators/buyThroughSkroutzIndicator.js",
         "manipulators/addBlockedIndication.js",
         "manipulators/separatePromoListFlagger.js",
         "manipulators/videoFlagger.js",
