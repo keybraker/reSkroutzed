@@ -9,7 +9,6 @@
       "matches": ["https://www.skroutz.gr/*"],
       "css": [
         "css/flaggerToogle.css",
-        "css/popup.css",
         "css/productFlags.css",
         "css/shelfFlags.css",
         "css/style.css",
