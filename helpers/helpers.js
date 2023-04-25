@@ -1,6 +1,6 @@
 function toggleVisibility(element) {
   visible
-    ? element.classList.remove("display-none")
+    ? element.classList.toggle("display-none")
     : element.classList.add("display-none");
 }
 

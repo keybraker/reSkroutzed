@@ -81,7 +81,6 @@ function flagParentList(element) {
   const parentDiv = element.parentDiv;
   if (parentDiv) {
     parentDiv.classList.add("flagged-bought-together");
-
     toggleVisibility(parentDiv);
   }
 }

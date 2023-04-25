@@ -7,7 +7,7 @@
   let promoCount = 0;
 
   function init() {
-    retrieveVisibility(visible);
+    retrieveVisibility();
     retrieveLanguage();
 
     flagContent();
@@ -25,7 +25,7 @@
   }
 
   function flagAdditionalContent() {
-    toggleSponsoredContentVisibility(visible);
+    toggleSponsoredContentVisibility();
     buyThroughSkroutzIndicator();
   }
 

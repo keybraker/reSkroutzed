@@ -37,7 +37,6 @@ function flagProductListItem(listItem) {
   flagImageElement(listItem);
 
   listItem.classList.add("flagged-product");
-
   toggleVisibility(listItem);
 }
 
