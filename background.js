@@ -17,14 +17,14 @@
   }
 
   function flagContent() {
-    videoFlagger();
     productFlagger();
+    separatePromoListFlagger();
     shelfFlagger();
+    videoFlagger();
     frequentlyBoughtTogetherFlagger();
   }
 
   function flagAdditionalContent() {
-    separatePromoListFlagger(visible);
     toggleSponsoredContentVisibility(visible);
     buyThroughSkroutzIndicator();
   }
