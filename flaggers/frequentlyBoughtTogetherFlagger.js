@@ -7,7 +7,7 @@ function frequentlyBoughtTogetherFlagger() {
     // sponsoredCount = 0;
   }
 
-  const topSponsoredSpanTexts = Array.from(topSpanTexts)
+  Array.from(topSpanTexts)
     .filter((span) => {
       return span && span.textContent === "Sponsored";
     })
@@ -69,14 +69,12 @@ function processSpanElements(spanElements, listElement) {
 
 function flagSponsoredSpan(spanElement) {
   spanElement.classList.add("flagged-bought-together-label");
-  spanElement.innerHTML =
-    language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";
+  updateSponsoredText(spanElement, false);
 }
 
 function flagSponsoredSpanMulti(spanElement) {
   spanElement.classList.add("flagged-bought-together-label");
-  spanElement.innerHTML =
-    language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
+  updateSponsoredText(spanElement, false);
 }
 
 function flagParentList(element) {
@@ -84,8 +82,6 @@ function flagParentList(element) {
   if (parentDiv) {
     parentDiv.classList.add("flagged-bought-together");
 
-    visible
-      ? parentDiv.classList.remove("display-none")
-      : parentDiv.classList.add("display-none");
+    toggleVisibility(parentDiv);
   }
 }

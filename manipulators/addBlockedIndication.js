@@ -7,6 +7,7 @@ function updateDisplayText(toggleSponsoredButton, visible, isProduct = true) {
   const activeClass = isProduct
     ? "flagger-toggle-product-active"
     : "flagger-toggle-active";
+
   visible
     ? toggleSponsoredButton.classList.remove(activeClass)
     : toggleSponsoredButton.classList.add(activeClass);

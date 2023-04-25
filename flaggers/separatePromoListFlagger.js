@@ -24,10 +24,6 @@ function processSelectedProductCards(selectedProductCards) {
 
 function flagPromotedBox(promotedBox) {
   promotedBox.classList.add("flagged-list-title");
-  promotedBox.innerHTML =
-    language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
-
-  visible
-    ? promotedBox.classList.remove("display-none")
-    : promotedBox.classList.add("display-none");
+  updateSponsoredText(promotedBox, true);
+  toggleVisibility(promotedBox);
 }

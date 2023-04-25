@@ -5,7 +5,8 @@ function toggleSponsoredContentVisibility(visible) {
 }
 
 function toggleSponsoredProductsVisibility(visible) {
-  const flaggedProductListItems = document.querySelectorAll("li.flagged-product");
+  const flaggedProductListItems =
+    document.querySelectorAll("li.flagged-product");
 
   if (!flaggedProductListItems || flaggedProductListItems.length === 0) {
     return;
@@ -15,7 +16,8 @@ function toggleSponsoredProductsVisibility(visible) {
 }
 
 function toggleSponsoredShelfVisibility(visible) {
-  const flaggedShelfDivElements = document.querySelectorAll("div.flagged-shelf");
+  const flaggedShelfDivElements =
+    document.querySelectorAll("div.flagged-shelf");
 
   if (!flaggedShelfDivElements || flaggedShelfDivElements.length === 0) {
     return;
@@ -25,7 +27,9 @@ function toggleSponsoredShelfVisibility(visible) {
 }
 
 function toggleSponsoredListVisibility(visible) {
-  const selectedProductCards = document.querySelectorAll("div.selected-product-cards");
+  const selectedProductCards = document.querySelectorAll(
+    "div.selected-product-cards"
+  );
 
   if (!selectedProductCards || selectedProductCards.length === 0) {
     return;
@@ -35,10 +39,5 @@ function toggleSponsoredListVisibility(visible) {
 }
 
 function updateVisibilityForElements(elements, visible) {
-  elements.forEach((element) => {
-    visible
-      ? element.classList.remove("display-none")
-      : element.classList.add("display-none");
-  });
+  elements.forEach((element) => toggleVisibility(element));
 }
-

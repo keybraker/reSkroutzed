@@ -24,6 +24,7 @@
         "flaggers/separatePromoListFlagger.js",
         "flaggers/videoFlagger.js",
         "flaggers/shelfFlagger.js",
+        "helpers/helpers.js",
         "manipulators/buyThroughSkroutzIndicator.js",
         "manipulators/addBlockedIndication.js",
         "manipulators/toggleSponsoredContentVisibility.js",
