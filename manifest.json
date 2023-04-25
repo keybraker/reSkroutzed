@@ -6,25 +6,29 @@
   "permissions": [],
   "content_scripts": [
     {
-      "matches": ["https://www.skroutz.gr/*"],
+      "matches": [
+        "https://www.skroutz.gr/*"
+      ],
       "css": [
         "css/flaggerToogle.css",
         "css/productFlags.css",
         "css/shelfFlags.css",
         "css/style.css",
-        "css/videoFlags.css"
+        "css/videoFlags.css",
+        "css/frequentlyBoughtTogetherFlags.css"
       ],
       "js": [
         "background.js",
+        "retrievers/retrieveLanguage.js",
+        "retrievers/retrieveVisibility.js",
         "manipulators/buyThroughSkroutzIndicator.js",
         "manipulators/addBlockedIndication.js",
         "manipulators/separatePromoListFlagger.js",
         "manipulators/videoFlagger.js",
         "manipulators/productFlagger.js",
-        "manipulators/removeSponsoredContent.js",
-        "manipulators/retrieveLanguage.js",
-        "manipulators/retrieveVisibility.js",
-        "manipulators/shelfFlagger.js"
+        "manipulators/toggleSponsoredContentVisibility.js",
+        "manipulators/shelfFlagger.js",
+        "manipulators/frequentlyBoughtTogetherFlagger.js"
       ],
       "run_at": "document_end"
     }

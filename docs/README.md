@@ -14,8 +14,8 @@ To install the extension via github, simply download the source code from this r
 
 |                                                        |                                                 |
 | :----------------------------------------------------- | :---------------------------------------------- |
-| ![Alt Text](../pages_assets/showcase_listings.png)     | ![Alt Text](../pages_assets/showcase_shelf.png) |
-| ![Alt Text](../pages_assets/showcase_product_list.png) | ![Alt Text](../pages_assets/showcase_popup.png) |
+| ![Alt Text](../assets/pages_assets/showcase_listings.png)     | ![Alt Text](../assets/pages_assets/showcase_shelf.png) |
+| ![Alt Text](../assets/pages_assets/showcase_product_list.png) | ![Alt Text](../assets/pages_assets/showcase_popup.png) |
 
 ## Contributing
 
