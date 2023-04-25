@@ -1,49 +1,61 @@
 function productFlagger() {
-  const liElementsFlagged = document.querySelectorAll("li.flagged-product");
+  const flaggedProductListItems =
+    document.querySelectorAll("li.flagged-product");
 
-  if (liElementsFlagged && liElementsFlagged.length === 0) {
-    sponsoredCount = 0;
-  }
+  updateSponsoredCount(flaggedProductListItems);
 
-  //
+  const nonFlaggedProductListItems = document.querySelectorAll(
+    "li:not(.flagged-product)"
+  );
 
-  const liElements = document.querySelectorAll("li:not(.flagged-product)");
+  if (nonFlaggedProductListItems.length === 0) return;
 
-  if (!liElements || liElements.length === 0) {
-    return;
-  }
-
-  Array.from(liElements)
-    .filter((liElement) => {
-      const labelElement = liElement.querySelector(".label-text");
-      return labelElement && labelElement.textContent === "Sponsored";
-    })
-    .forEach((liElement) => flagProductElement(liElement));
+  flagSponsoredListItems(nonFlaggedProductListItems);
 }
 
-function flagProductElement(element) {
+function updateSponsoredCount(flaggedProductListItems) {
+  if (flaggedProductListItems && flaggedProductListItems.length === 0) {
+    sponsoredCount = 0;
+  }
+}
+
+function flagSponsoredListItems(listItems) {
+  Array.from(listItems)
+    .filter(hasSponsoredLabelText)
+    .forEach(flagProductListItem);
+}
+
+function hasSponsoredLabelText(listItem) {
+  const labelTextElement = listItem.querySelector(".label-text");
+  return labelTextElement && labelTextElement.textContent === "Sponsored";
+}
+
+function flagProductListItem(listItem) {
   sponsoredCount++;
 
-  const labelElement = element.querySelector(".label-text");
-  if (labelElement && labelElement.textContent === "Sponsored") {
-    labelElement.classList.add("flagged-product-label");
-    labelElement.innerHTML =
-      language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";
-  }
-
-  const imgElement = element.querySelector("a.image");
-  if (imgElement) {
-    imgElement.classList.add("flagged-product-image");
-  }
-
-  // const shopCountElement = element.querySelector(".shop-count");
-  // if (shopCountElement) {
-  //   shopCountElement.classList.add("flagged-product-store");
-  // }
-
-  element.classList.add("flagged-product");
+  flagLabelElement(listItem);
+  flagImageElement(listItem);
+  listItem.classList.add("flagged-product");
 
   visible
-    ? element.classList.remove("display-none")
-    : element.classList.add("display-none");
+    ? listItem.classList.remove("display-none")
+    : listItem.classList.add("display-none");
+}
+
+function flagLabelElement(listItem) {
+  const labelTextElement = listItem.querySelector(".label-text");
+
+  if (labelTextElement && labelTextElement.textContent === "Sponsored") {
+    labelTextElement.classList.add("flagged-product-label");
+    labelTextElement.innerHTML =
+      language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";
+  }
+}
+
+function flagImageElement(listItem) {
+  const imageLinkElement = listItem.querySelector("a.image");
+
+  if (imageLinkElement) {
+    imageLinkElement.classList.add("flagged-product-image");
+  }
 }

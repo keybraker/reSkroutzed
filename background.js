@@ -11,8 +11,9 @@
     retrieveLanguage();
 
     flagContent();
+    flagAdditionalContent();
+
     addBlockedIndication();
-    buyThroughSkroutzIndicator();
   }
 
   function flagContent() {
@@ -20,17 +21,16 @@
     productFlagger();
     shelfFlagger();
     frequentlyBoughtTogetherFlagger();
+  }
+
+  function flagAdditionalContent() {
     separatePromoListFlagger(visible);
-    removeSponsoredContent(visible);
+    toggleSponsoredContentVisibility(visible);
+    buyThroughSkroutzIndicator();
   }
 
   function observeMutations() {
-    const observer1 = new MutationObserver(() => {
-      productFlagger();
-      shelfFlagger();
-      frequentlyBoughtTogetherFlagger();
-      videoFlagger();
-    });
+    const observer1 = new MutationObserver(() => flagContent);
 
     const observer2 = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {

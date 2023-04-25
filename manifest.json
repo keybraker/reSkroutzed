@@ -27,7 +27,7 @@
         "manipulators/separatePromoListFlagger.js",
         "manipulators/videoFlagger.js",
         "manipulators/productFlagger.js",
-        "manipulators/removeSponsoredContent.js",
+        "manipulators/toggleSponsoredContentVisibility.js",
         "manipulators/shelfFlagger.js",
         "manipulators/frequentlyBoughtTogetherFlagger.js"
       ],

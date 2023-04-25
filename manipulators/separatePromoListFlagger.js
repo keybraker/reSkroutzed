@@ -1,28 +1,39 @@
 function separatePromoListFlagger(visible) {
-  const divElements = document.querySelectorAll("div.selected-product-cards");
+  const selectedProductCards = document.querySelectorAll("div.selected-product-cards");
 
-  if (!divElements || divElements.length === 0) {
+  if (!selectedProductCards || selectedProductCards.length === 0) {
     return;
   }
 
   if (!visible) {
-    divElements.forEach((divElement) => {
-      visible
-        ? divElement.classList.remove("display-none")
-        : divElement.classList.add("display-none");
-    });
+    toggleDisplayForSelectedProductCards(selectedProductCards, visible);
     return;
   }
 
-  divElements.forEach((divElement) => {
-    // divElement.classList.add("flagged-product");
+  processSelectedProductCards(selectedProductCards);
+}
 
-    const promotedBox = divElement.querySelector(".prices-shops-title");
+function toggleDisplayForSelectedProductCards(selectedProductCards, visible) {
+  selectedProductCards.forEach((card) => {
+    visible
+      ? card.classList.remove("display-none")
+      : card.classList.add("display-none");
+  });
+}
+
+function processSelectedProductCards(selectedProductCards) {
+  selectedProductCards.forEach((card) => {
+    const promotedBox = card.querySelector(".prices-shops-title");
 
     if (promotedBox) {
-      promotedBox.classList.add("flagged-list-title");
-      promotedBox.innerHTML =
-        language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
+      flagPromotedBox(promotedBox);
     }
   });
 }
+
+function flagPromotedBox(promotedBox) {
+  promotedBox.classList.add("flagged-list-title");
+  promotedBox.innerHTML =
+    language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
+}
+
