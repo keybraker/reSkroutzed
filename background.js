@@ -30,9 +30,7 @@
   }
 
   function observeMutations() {
-    const observer1 = new MutationObserver(() => {
-      flagContent();
-    });
+    const observer1 = new MutationObserver(() => flagContent());
 
     const observer2 = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {
