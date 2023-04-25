@@ -7,6 +7,7 @@ function buyThroughSkroutzIndicator(visible) {
 
   divElements.forEach((divElement) => {
     const priceIndication = document.createElement("div");
+
     priceIndication.innerHTML =
       language == "EN"
         ? "( might not be the lowest price )"

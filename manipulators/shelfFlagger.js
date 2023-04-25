@@ -22,20 +22,22 @@ function shelfFlagger() {
       h4Element.innerHTML =
         language == "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
 
-      const h4parentElement = h4Element.parentElement;
-      h4parentElement.classList.add("flagged-shelf");
+      const h4ParentElement = h4Element.parentElement;
+      if (h4ParentElement) {
+        h4ParentElement.classList.add("flagged-shelf");
 
-      visible
-        ? h4parentElement.classList.remove("display-none")
-        : h4parentElement.classList.add("display-none");
+        visible
+          ? h4ParentElement.classList.remove("display-none")
+          : h4ParentElement.classList.add("display-none");
 
-      const sponsoredItems =
-        h4parentElement?.children[2]?.children[0]?.children;
+        const sponsoredItems =
+          h4ParentElement?.children[2]?.children[0]?.children;
 
-      if (sponsoredItems) {
-        Array.from(sponsoredItems).forEach((sponsoredItem) =>
-          flagProductElement(sponsoredItem)
-        );
+        if (sponsoredItems) {
+          Array.from(sponsoredItems).forEach((sponsoredItem) =>
+            flagProductElement(sponsoredItem)
+          );
+        }
       }
     }
   });

@@ -2,6 +2,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   const sponsoredCount = document.getElementById("sponsoredCount");
   const sponsoredShelfCount = document.getElementById("sponsoredShelfCount");
   const promoCount = document.getElementById("promoCount");
+
   if (tabs && tabs.length) {
     chrome.tabs.sendMessage(tabs[0].id, { action: "getCount" }, (response) => {
       sponsoredCount.textContent =

@@ -1,41 +1,54 @@
-let visible = true;
-let language = "EN";
+(function () {
+  let visible = true;
+  let language = "EN";
 
-let sponsoredCount = 0;
-let sponsoredShelfCount = 0;
-let promoCount = 0;
+  let sponsoredCount = 0;
+  let sponsoredShelfCount = 0;
+  let promoCount = 0;
 
-window.onload = function () {
-  retrieveVisibility(visible);
-  retrieveLanguage();
-  videoFlagger();
-  productFlagger();
-  shelfFlagger();
-  separatePromoListFlagger(visible);
-  removeSponsoredContent(visible);
-  addBlockedIndication();
-  buyThroughSkroutzIndicator();
+  function init() {
+    retrieveVisibility(visible);
+    retrieveLanguage();
 
-  const observer1 = new MutationObserver(() => {
+    flagContent();
+    addBlockedIndication();
+    buyThroughSkroutzIndicator();
+  }
+
+  function flagContent() {
+    videoFlagger();
     productFlagger();
     shelfFlagger();
-    videoFlagger();
-  });
+    frequentlyBoughtTogetherFlagger();
+    separatePromoListFlagger(visible);
+    removeSponsoredContent(visible);
+  }
 
-  const observer2 = new MutationObserver((mutationsList) => {
-    for (const mutation of mutationsList) {
-      if (mutation.type === "attributes" && mutation.attributeName === "id") {
-        // productFlagger();
-        // shelfFlagger();
-        // videoFlagger();
-        addBlockedIndication();
+  function observeMutations() {
+    const observer1 = new MutationObserver(() => {
+      productFlagger();
+      shelfFlagger();
+      frequentlyBoughtTogetherFlagger();
+      videoFlagger();
+    });
+
+    const observer2 = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === "attributes" && mutation.attributeName === "id") {
+          addBlockedIndication();
+        }
       }
-    }
-  });
+    });
 
-  observer1.observe(document.body, { childList: true, subtree: true });
-  observer2.observe(document.body, { attributes: true });
-};
+    observer1.observe(document.body, { childList: true, subtree: true });
+    observer2.observe(document.body, { attributes: true });
+  }
+
+  window.onload = function () {
+    init();
+    observeMutations();
+  };
+})();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getCount") {
