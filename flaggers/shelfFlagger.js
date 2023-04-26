@@ -2,8 +2,7 @@ function updateShelfCountAndVisibility(h4Element) {
   sponsoredShelfCount++;
 
   h4Element.classList.add("flagged-shelf-label");
-  h4Element.innerHTML =
-    language === "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
+  updateSponsoredText(h4Element, true);
 
   const h4ParentElement = h4Element.parentElement;
   if (h4ParentElement) {

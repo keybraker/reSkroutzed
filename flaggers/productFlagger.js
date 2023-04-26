@@ -35,11 +35,9 @@ function flagProductListItem(listItem) {
 
   flagLabelElement(listItem);
   flagImageElement(listItem);
-  listItem.classList.add("flagged-product");
 
-  visible
-    ? listItem.classList.remove("display-none")
-    : listItem.classList.add("display-none");
+  listItem.classList.add("flagged-product");
+  toggleVisibility(listItem);
 }
 
 function flagLabelElement(listItem) {
@@ -47,8 +45,7 @@ function flagLabelElement(listItem) {
 
   if (labelTextElement && labelTextElement.textContent === "Sponsored") {
     labelTextElement.classList.add("flagged-product-label");
-    labelTextElement.innerHTML =
-      language == "EN" ? "Sponsored store" : "Προωθούμενo κατάστημα";
+    updateSponsoredText(labelTextElement, false);
   }
 }
 

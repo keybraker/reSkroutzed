@@ -10,7 +10,7 @@
         "https://www.skroutz.gr/*"
       ],
       "css": [
-        "css/flaggerToogle.css",
+        "css/flaggerToggle.css",
         "css/productFlags.css",
         "css/shelfFlags.css",
         "css/style.css",
@@ -19,16 +19,17 @@
       ],
       "js": [
         "background.js",
-        "retrievers/retrieveLanguage.js",
-        "retrievers/retrieveVisibility.js",
+        "flaggers/frequentlyBoughtTogetherFlagger.js",
+        "flaggers/productFlagger.js",
+        "flaggers/separatePromoListFlagger.js",
+        "flaggers/videoFlagger.js",
+        "flaggers/shelfFlagger.js",
+        "helpers/helpers.js",
         "manipulators/buyThroughSkroutzIndicator.js",
         "manipulators/addBlockedIndication.js",
-        "manipulators/separatePromoListFlagger.js",
-        "manipulators/videoFlagger.js",
-        "manipulators/productFlagger.js",
         "manipulators/toggleSponsoredContentVisibility.js",
-        "manipulators/shelfFlagger.js",
-        "manipulators/frequentlyBoughtTogetherFlagger.js"
+        "retrievers/retrieveLanguage.js",
+        "retrievers/retrieveVisibility.js"
       ],
       "run_at": "document_end"
     }

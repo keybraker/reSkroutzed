@@ -7,7 +7,7 @@
   let promoCount = 0;
 
   function init() {
-    retrieveVisibility(visible);
+    retrieveVisibility();
     retrieveLanguage();
 
     flagContent();
@@ -17,20 +17,20 @@
   }
 
   function flagContent() {
-    videoFlagger();
     productFlagger();
+    separatePromoListFlagger();
     shelfFlagger();
+    videoFlagger();
     frequentlyBoughtTogetherFlagger();
   }
 
   function flagAdditionalContent() {
-    separatePromoListFlagger(visible);
-    toggleSponsoredContentVisibility(visible);
+    toggleSponsoredContentVisibility();
     buyThroughSkroutzIndicator();
   }
 
   function observeMutations() {
-    const observer1 = new MutationObserver(() => flagContent);
+    const observer1 = new MutationObserver(() => flagContent());
 
     const observer2 = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {

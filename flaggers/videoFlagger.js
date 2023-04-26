@@ -4,10 +4,9 @@ function updatePromoCountAndVisibility(liElement) {
 
     liElement.classList.add("flagged-video");
 
-    const displayClass = "display-none-promo-product";
     visible
-      ? liElement.classList.remove(displayClass)
-      : liElement.classList.add(displayClass);
+      ? liElement.classList.remove("display-none-promo-product")
+      : liElement.classList.add("display-none-promo-product");
   }
 }
 
