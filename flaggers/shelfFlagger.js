@@ -21,14 +21,6 @@ function updateShelfCountAndVisibility(h4Element) {
   }
 }
 
-function flagSponsoredShelves(h4Elements) {
-  const sponsoredShelves = [...h4Elements].filter((h4Element) => {
-    return h4Element && h4Element.textContent === "Sponsored";
-  });
-
-  sponsoredShelves.forEach(updateShelfCountAndVisibility);
-}
-
 function shelfFlagger() {
   const h4ElementsFlagged = document.querySelectorAll("h4.flagged-shelf");
 
@@ -43,5 +35,5 @@ function shelfFlagger() {
     return;
   }
 
-  flagSponsoredShelves(h4Elements);
+  [...h4Elements].filter(isSponsored).forEach(updateShelfCountAndVisibility);
 }

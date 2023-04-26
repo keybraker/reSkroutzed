@@ -7,24 +7,10 @@ function frequentlyBoughtTogetherFlagger() {
     // sponsoredCount = 0;
   }
 
-  [...topSpanTexts]
-    .filter((span) => {
-      return span && span.textContent === "Sponsored";
-    })
-    .forEach((span) => {
-      flagSponsoredSpanMulti(span);
-      flagParentList(span);
-    });
-
-  //
-
-  const flaggedListElements = document.querySelectorAll(
-    "ul.flagged-bought-together"
-  );
-
-  if (flaggedListElements.length === 0) {
-    // sponsoredCount = 0;
-  }
+  [...topSpanTexts].filter(isSponsored).forEach((span) => {
+    flagSponsoredSpanMulti(span);
+    flagParentList(span);
+  });
 
   const nonFlaggedListElements = document.querySelectorAll(
     "ul:not(.flagged-bought-together)"
@@ -50,19 +36,15 @@ function processListElements(listElements) {
 }
 
 function processSpanElements(spanElements, listElement) {
-  [...spanElements].forEach((spanElement) => {
-    if (spanElement && spanElement.textContent === "Sponsored") {
-      // sponsoredCount++;
+  [...spanElements].filter(isSponsored).forEach((spanElement) => {
+    flagSponsoredSpan(spanElement);
+    flagParentList(listElement);
 
-      flagSponsoredSpan(spanElement);
-      flagParentList(listElement);
-
-      const sponsoredItems = listElement?.children[2]?.children[0]?.children;
-      if (sponsoredItems) {
-        [...sponsoredItems].forEach((sponsoredItem) =>
-          flagProductListItem(sponsoredItem)
-        );
-      }
+    const sponsoredItems = listElement?.children[2]?.children[0]?.children;
+    if (sponsoredItems) {
+      [...sponsoredItems].forEach((sponsoredItem) =>
+        flagProductListItem(sponsoredItem)
+      );
     }
   });
 }

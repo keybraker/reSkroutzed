@@ -20,14 +20,12 @@ function updateSponsoredCount(flaggedProductListItems) {
 }
 
 function flagSponsoredListItems(listItems) {
-  [...listItems]
-    .filter(hasSponsoredLabelText)
-    .forEach(flagProductListItem);
+  [...listItems].filter(hasSponsoredLabelText).forEach(flagProductListItem);
 }
 
 function hasSponsoredLabelText(listItem) {
   const labelTextElement = listItem.querySelector(".label-text");
-  return labelTextElement && labelTextElement.textContent === "Sponsored";
+  return isSponsored(labelTextElement);
 }
 
 function flagProductListItem(listItem) {
@@ -43,7 +41,7 @@ function flagProductListItem(listItem) {
 function flagLabelElement(listItem) {
   const labelTextElement = listItem.querySelector(".label-text");
 
-  if (labelTextElement && labelTextElement.textContent === "Sponsored") {
+  if (isSponsored(labelTextElement)) {
     labelTextElement.classList.add("flagged-product-label");
     updateSponsoredText(labelTextElement, false);
   }

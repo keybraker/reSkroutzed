@@ -21,6 +21,7 @@ function isSponsored(element) {
     element?.textContent === "Selected shop" ||
     element?.textContent === "Επιλεγμένα καταστήματα" ||
     element?.textContent === "Eπιλεγμένα καταστήματα" ||
-    element?.textContent === "Selected shops"
+    element?.textContent === "Selected shops" ||
+    element?.textContent === "Sponsored"
   );
 }
