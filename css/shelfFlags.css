@@ -1,7 +1,7 @@
 .flagged-shelf {
   border-radius: 5px;
   padding: 8px 23px 8px;
-  background-color: #ffdbdf;
+  background-color: #ffffff;
   font-weight: bold !important;
   color: red !important;
   /* box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0); */
@@ -16,3 +16,10 @@
   font-weight: bold !important;
   color: red !important;
 }
+
+/*
+.sku-pick-shelf ul::before.sku-pick-shelf ul::after {
+  background-color: #ffdbdf;
+  background: linear-gradient(to left, #ffdbdf 0%, #ffdbdf.33%, rgba(255,255,255,0) 100%);
+}
+*/
