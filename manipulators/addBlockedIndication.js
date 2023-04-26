@@ -61,7 +61,7 @@ function addButtonToOrderOptions(existingButton) {
     insertElement(
       orderOptionsDiv.parentNode,
       existingButton ?? createSponsoredIndicatorButton(false),
-      orderOptionsDiv.previousElementSibling
+      orderOptionsDiv.nextSibling
     );
   }
 }
