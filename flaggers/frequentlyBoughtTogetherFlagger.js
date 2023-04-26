@@ -7,13 +7,14 @@ function frequentlyBoughtTogetherFlagger() {
     const sponsoredSpan = div.querySelector("span.sp-tag");
 
     if (sponsoredSpan && sponsoredSpan.textContent === "Sponsored") {
-      flagSponsoredSpanMulti(sponsoredSpan);
+      sponsoredCount++;
+      flagSponsoredSpan(sponsoredSpan);
       div.classList.add("flagged-bought-together");
     }
   });
 }
 
-function flagSponsoredSpanMulti(spanElement) {
+function flagSponsoredSpan(spanElement) {
   spanElement.classList.add("flagged-bought-together-label");
-  updateSponsoredText(spanElement, true);
+  updateSponsoredText(spanElement, false);
 }
