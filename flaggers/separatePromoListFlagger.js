@@ -1,25 +1,9 @@
 function separatePromoListFlagger() {
-  const selectedProductCards = document.querySelectorAll(
-    "div.selected-product-cards"
+  const promotedBoxes = document.querySelectorAll(
+    "h2:not(.flagged-list-title)"
   );
 
-  processSelectedProductCards(selectedProductCards);
-}
-
-function processSelectedProductCards(selectedProductCards) {
-  selectedProductCards.forEach((card) => {
-    const promotedBox = card.querySelector("h2:not(.flagged-list-title)");
-
-    if (
-      promotedBox?.textContent &&
-      (promotedBox.textContent === "Επιλεγμένο κατάστημα" ||
-        promotedBox.textContent === "Selected shop" ||
-        promotedBox.textContent === "Επιλεγμένα καταστήματα" ||
-        promotedBox.textContent === "Selected shops")
-    ) {
-      flagPromotedBox(promotedBox);
-    }
-  });
+  [...promotedBoxes].filter(isSponsored).forEach(flagPromotedBox);
 }
 
 function flagPromotedBox(promotedBox) {

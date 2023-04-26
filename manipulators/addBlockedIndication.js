@@ -13,7 +13,9 @@ function updateDisplayText(toggleSponsoredButton, isProduct = true) {
     language === "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
   const icon = visible ? icons.eyeOpen : icons.eyeSlashed;
 
-  toggleSponsoredButton.classList.toggle(activeClass);
+  visible
+    ? toggleSponsoredButton.classList.remove(activeClass)
+    : toggleSponsoredButton.classList.add(activeClass);
   toggleSponsoredButton.innerHTML = `${icon} ${text}: ${sponsoredCount}`;
 }
 
