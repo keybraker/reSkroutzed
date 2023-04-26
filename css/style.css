@@ -1,3 +1,14 @@
 .display-none {
   display: none !important;
 }
+
+.inline-flex {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.font-bold {
+  font-weight: 600;
+}
