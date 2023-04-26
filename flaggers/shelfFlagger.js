@@ -16,13 +16,13 @@ function updateShelfCountAndVisibility(h4Element) {
     const sponsoredItems = h4ParentElement?.children[2]?.children[0]?.children;
 
     if (sponsoredItems) {
-      Array.from(sponsoredItems).forEach(flagProductListItem);
+      [...sponsoredItems].forEach(flagProductListItem);
     }
   }
 }
 
 function flagSponsoredShelves(h4Elements) {
-  const sponsoredShelves = Array.from(h4Elements).filter((h4Element) => {
+  const sponsoredShelves = [...h4Elements].filter((h4Element) => {
     return h4Element && h4Element.textContent === "Sponsored";
   });
 

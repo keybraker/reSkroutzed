@@ -3,11 +3,11 @@ function frequentlyBoughtTogetherFlagger() {
     "span:not(.flagged-bought-together)"
   );
 
-  if (topSpanTexts && topSpanTexts.length === 0) {
+  if (topSpanTexts.length === 0) {
     // sponsoredCount = 0;
   }
 
-  Array.from(topSpanTexts)
+  [...topSpanTexts]
     .filter((span) => {
       return span && span.textContent === "Sponsored";
     })
@@ -22,7 +22,7 @@ function frequentlyBoughtTogetherFlagger() {
     "ul.flagged-bought-together"
   );
 
-  if (flaggedListElements && flaggedListElements.length === 0) {
+  if (flaggedListElements.length === 0) {
     // sponsoredCount = 0;
   }
 
@@ -38,7 +38,7 @@ function frequentlyBoughtTogetherFlagger() {
 }
 
 function processListElements(listElements) {
-  Array.from(listElements).forEach((listElement) => {
+  [...listElements].forEach((listElement) => {
     const nonFlaggedSpanElements = listElement.querySelectorAll(
       "span:not(.flagged-bought-together)"
     );
@@ -50,7 +50,7 @@ function processListElements(listElements) {
 }
 
 function processSpanElements(spanElements, listElement) {
-  Array.from(spanElements).forEach((spanElement) => {
+  [...spanElements].forEach((spanElement) => {
     if (spanElement && spanElement.textContent === "Sponsored") {
       // sponsoredCount++;
 
@@ -59,7 +59,7 @@ function processSpanElements(spanElements, listElement) {
 
       const sponsoredItems = listElement?.children[2]?.children[0]?.children;
       if (sponsoredItems) {
-        Array.from(sponsoredItems).forEach((sponsoredItem) =>
+        [...sponsoredItems].forEach((sponsoredItem) =>
           flagProductListItem(sponsoredItem)
         );
       }

@@ -8,19 +8,19 @@ function productFlagger() {
     "li:not(.flagged-product)"
   );
 
-  if (nonFlaggedProductListItems.length === 0) return;
+  if (nonFlaggedProductListItems?.length === 0) return;
 
   flagSponsoredListItems(nonFlaggedProductListItems);
 }
 
 function updateSponsoredCount(flaggedProductListItems) {
-  if (flaggedProductListItems && flaggedProductListItems.length === 0) {
+  if (flaggedProductListItems?.length === 0) {
     sponsoredCount = 0;
   }
 }
 
 function flagSponsoredListItems(listItems) {
-  Array.from(listItems)
+  [...listItems]
     .filter(hasSponsoredLabelText)
     .forEach(flagProductListItem);
 }

@@ -1,6 +1,6 @@
 function toggleVisibility(element) {
   visible
-    ? element.classList.toggle("display-none")
+    ? element.classList.remove("display-none")
     : element.classList.add("display-none");
 }
 
@@ -12,4 +12,15 @@ function updateSponsoredText(element, isPlural = false) {
     : language == "EN"
     ? "Sponsored store"
     : "Προωθούμενo κατάστημα";
+}
+
+function isSponsored(element) {
+  return (
+    element?.textContent === "Επιλεγμένο κατάστημα" ||
+    element?.textContent === "Eπιλεγμένο κατάστημα" ||
+    element?.textContent === "Selected shop" ||
+    element?.textContent === "Επιλεγμένα καταστήματα" ||
+    element?.textContent === "Eπιλεγμένα καταστήματα" ||
+    element?.textContent === "Selected shops"
+  );
 }
