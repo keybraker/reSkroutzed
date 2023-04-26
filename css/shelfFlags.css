@@ -16,10 +16,3 @@
   font-weight: bold !important;
   color: red !important;
 }
-
-/*
-.sku-pick-shelf ul::before.sku-pick-shelf ul::after {
-  background-color: #ffdbdf;
-  background: linear-gradient(to left, #ffdbdf 0%, #ffdbdf.33%, rgba(255,255,255,0) 100%);
-}
-*/
