@@ -10,6 +10,7 @@
         "https://www.skroutz.gr/*"
       ],
       "css": [
+        "css/buyThroughSkroutz.css",
         "css/flaggerToggle.css",
         "css/productFlags.css",
         "css/shelfFlags.css",
