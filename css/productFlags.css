@@ -1,13 +1,13 @@
 .flagged-product {
   border-radius: 5px;
   box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0);
-  opacity: 0.90;
+  /* opacity: 0.90; */
 }
 
 .flagged-product-image {
   border-radius: 5px;
   box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0);
-  opacity: 0.90;
+  /* opacity: 0.90; */
 }
 
 .flagged-product-label {
