@@ -1,6 +1,6 @@
-function updatePromoCountAndVisibility(liElement) {
+function updateVideoCountAndVisibility(liElement) {
   if (liElement.classList.contains("promo-video-card")) {
-    promoCount++;
+    videoCount++;
 
     liElement.classList.add("flagged-video");
 
@@ -12,14 +12,8 @@ function updatePromoCountAndVisibility(liElement) {
 
 function videoFlagger() {
   const liElementsFlagged = document.querySelectorAll("li.flagged-video");
-
-  promoCount = liElementsFlagged && liElementsFlagged.length ? liElementsFlagged.length : 0;
+  videoCount = liElementsFlagged?.length ?? 0;
 
   const liElements = document.querySelectorAll("li:not(.flagged-video)");
-
-  if (!liElements || liElements.length === 0) {
-    return;
-  }
-
-  liElements.forEach(updatePromoCountAndVisibility);
+  liElements.forEach(updateVideoCountAndVisibility);
 }

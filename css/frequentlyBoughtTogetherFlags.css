@@ -5,7 +5,7 @@
   font-weight: bold !important;
   color: red !important;
   /* box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0); */
-  opacity: 0.90 !important;
+  /* opacity: 0.90 !important; */
 }
 
 .flagged-bought-together-label {

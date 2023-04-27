@@ -1,3 +1,12 @@
+function shelfFlagger(sponsoredShelfCount) {
+  const h4ElementsFlagged = document.querySelectorAll("h4.flagged-shelf");
+  sponsoredShelfCount = h4ElementsFlagged?.length ?? 0;
+
+  const h4Elements = document.querySelectorAll("h4:not(.flagged-shelf)");
+
+  [...h4Elements].filter(isSponsored).forEach(updateShelfCountAndVisibility);
+}
+
 function updateShelfCountAndVisibility(h4Element) {
   sponsoredShelfCount++;
 
@@ -19,21 +28,4 @@ function updateShelfCountAndVisibility(h4Element) {
       [...sponsoredItems].forEach(flagProductListItem);
     }
   }
-}
-
-function shelfFlagger() {
-  const h4ElementsFlagged = document.querySelectorAll("h4.flagged-shelf");
-
-  sponsoredShelfCount =
-    h4ElementsFlagged && h4ElementsFlagged.length
-      ? h4ElementsFlagged.length
-      : 0;
-
-  const h4Elements = document.querySelectorAll("h4:not(.flagged-shelf)");
-
-  if (!h4Elements || h4Elements.length === 0) {
-    return;
-  }
-
-  [...h4Elements].filter(isSponsored).forEach(updateShelfCountAndVisibility);
 }

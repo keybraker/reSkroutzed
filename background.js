@@ -1,11 +1,11 @@
+let visible = true;
+let language = "EN";
+
+let sponsoredCount = 0;
+let sponsoredShelfCount = 0;
+let videoCount = 0;
+
 (function () {
-  let visible = true;
-  let language = "EN";
-
-  let sponsoredCount = 0;
-  let sponsoredShelfCount = 0;
-  let promoCount = 0;
-
   function init() {
     retrieveVisibility();
     retrieveLanguage();
@@ -17,10 +17,10 @@
   }
 
   function flagContent() {
+    shelfFlagger(sponsoredShelfCount);
+    videoFlagger();
     productFlagger();
     separatePromoListFlagger();
-    shelfFlagger();
-    videoFlagger();
     frequentlyBoughtTogetherFlagger();
   }
 
@@ -52,6 +52,6 @@
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getCount") {
-    sendResponse({ sponsoredCount, sponsoredShelfCount, promoCount });
+    sendResponse({ sponsoredCount, sponsoredShelfCount, videoCount });
   }
 });
