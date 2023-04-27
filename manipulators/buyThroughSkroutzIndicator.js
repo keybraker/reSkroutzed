@@ -1,6 +1,5 @@
 function createPriceIndicationElement() {
   const priceIndication = document.createElement("div");
-  priceIndication.classList.add("price-warning")
   const text =
     language === "EN"
       ? "( might not be the lowest price )"
