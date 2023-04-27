@@ -1,23 +1,22 @@
-function updateCounts(sponsored = 0, sponsoredShelf = 0, video = 0) {
-  document.getElementById("sponsoredCount").textContent = sponsored;
-  document.getElementById("sponsoredShelfCount").textContent = sponsoredShelf;
-  document.getElementById("videoCount").textContent = video;
+function updateCounts(sponsored, sponsoredShelf, video) {
+  document.getElementById("sponsoredCount").textContent = sponsored || 0;
+  document.getElementById("sponsoredShelfCount").textContent =
+    sponsoredShelf || 0;
+  document.getElementById("videoCount").textContent = video || 0;
 }
 
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  if (tabs?.length) {
-    chrome.tabs.sendMessage(tabs[0].id, { action: "getCount" }, (response) => {
-      if (response) {
-        updateCounts(
-          response.sponsoredCount,
-          response.sponsoredShelfCount,
-          response.videoCount
-        );
-      } else {
-        updateCounts();
-      }
-    });
-  } else {
+  if (!tabs || tabs.length === 0) {
     updateCounts();
+
+    return;
   }
+
+  chrome.tabs.sendMessage(
+    tabs[0].id,
+    { action: "getCount" },
+    ({ sponsoredCount, sponsoredShelfCount, videoCount } = {}) => {
+      updateCounts(sponsoredCount, sponsoredShelfCount, videoCount);
+    }
+  );
 });
