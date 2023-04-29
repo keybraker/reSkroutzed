@@ -15,6 +15,6 @@ function frequentlyBoughtTogetherFlagger() {
 }
 
 function flagSponsoredSpan(spanElement) {
-  spanElement.classList.add("flagged-bought-together-label");
+  spanElement.classList.add("warning-label");
   updateSponsoredText(spanElement, false);
 }

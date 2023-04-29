@@ -1,61 +1,19 @@
 .labeled-item,
-.selected-product-cards {
+.selected-product-cards,
+.fbt-content {
+  padding: 10px;
   border-radius: 5px !important;
   box-shadow: 0px 0px 5px 2px rgb(255, 0, 0) !important;
-  /* opacity: 0.90 !important; */
 }
 
 .flagged-product-image {
   border-radius: 5px !important;
   box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0) !important;
-  /* opacity: 0.90 !important; */
-}
-
-.label-text {
-  /* border: 1px solid rgb(255, 0, 0) !important; */
-  border-radius: 5px !important;
-  padding: 2px 6px 2px !important;
-  width: 100% !important;
-  background-color: #ffdbdf !important;
-  font-weight: bold !important;
-  color: red !important;
 }
 
 .flagged-product-store {
   border-radius: 5px !important;
   padding: 1px 4px !important;
+  color: red !important;
   font-weight: bold !important;
-  color: red !important;
-}
-
-.flagged-list-title {
-  color: red !important;
-}
-
-.flagged-product .add-to-cart-inner {
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-.flagged-product .add-to-cart-inner::before,
-.flagged-product .add-to-cart-inner::after {
-  content: "" !important;
-  position: absolute !important;
-  z-index: -1 !important;
-}
-
-.flagged-product .add-to-cart-inner::before {
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  height: 100% !important;
-  /* box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0) !important; */
-}
-
-.flagged-product .add-to-cart-inner::after {
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: 100% !important;
-  /* box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0) !important; */
 }

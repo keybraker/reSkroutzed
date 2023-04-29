@@ -9,15 +9,12 @@ function buyThroughSkroutzIndicator() {
 
 function insertPriceIndication(articleElement) {
   const priceIndication = createPriceIndicationElement();
-  articleElement.insertBefore(
-    priceIndication,
-    articleElement.children[1]
-  );
+  articleElement.insertBefore(priceIndication, articleElement.children[1]);
 }
 
 function createPriceIndicationElement() {
   const priceIndication = document.createElement("div");
-  priceIndication.classList.add("inline-flex");
+  priceIndication.classList.add("inline-flex", "info-label");
 
   const icon = document.createElement("div");
   const text = document.createElement("div");

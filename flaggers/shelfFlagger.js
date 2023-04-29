@@ -10,7 +10,7 @@ function shelfFlagger(sponsoredShelfCount) {
 function updateShelfCountAndVisibility(h4Element) {
   sponsoredShelfCount++;
 
-  h4Element.classList.add("flagged-shelf-label");
+  h4Element.classList.add("warning-label");
   updateSponsoredText(h4Element, true);
 
   const h4ParentElement = h4Element.parentElement;

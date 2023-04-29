@@ -16,3 +16,28 @@
 .main-content {
   margin-right: 4px !important;
 }
+
+.warning-label,
+.flagged-list-title,
+.label-text {
+  border-radius: 5px !important;
+  padding: 2px 6px 2px !important;
+  /* width: 100% !important; */
+  background-color: #ffdbdf !important;
+  font-weight: bold !important;
+  color: red !important;
+}
+
+.info-label {
+  border-radius: 5px !important;
+  padding: 8px !important;
+  /* width: 100% !important; */
+  background-color: #fff5db !important;
+  font-weight: bold !important;
+  color: rgb(246, 135, 0) !important;
+}
+
+.warning-label svg,
+.info-label svg {
+  vertical-align: middle !important;
+}
