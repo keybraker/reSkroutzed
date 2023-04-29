@@ -14,7 +14,6 @@
 .flagger-toggle-active {
   background-color: #ffcdd2 !important;
   color: rgb(255, 0, 0) !important;
-  /* box-shadow: inset 0px 0px 1px 0px rgb(255, 0, 0) !important; */
   border: 1px solid rgb(255, 0, 0) !important;
 }
 
@@ -24,7 +23,7 @@
   background: transparent !important;
   color: #000000 !important;
   margin: 8px 16px 16px 8px !important;
-  padding: 11px 23px !important;
+  padding: 9px 17px !important;
 }
 
 .flagger-toggle-product svg {
@@ -35,6 +34,5 @@
 .flagger-toggle-product-active {
   background-color: #ffcdd2 !important;
   color: rgb(255, 0, 0) !important;
-  /* box-shadow: inset 0px 0px 1px 0px rgb(255, 0, 0) !important; */
   border: 1px solid rgb(255, 0, 0) !important;
 }

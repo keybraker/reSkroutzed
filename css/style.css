@@ -12,3 +12,7 @@
 .font-bold {
   font-weight: 600 !important;
 }
+
+.main-content {
+  margin-right: 4px !important;
+}
