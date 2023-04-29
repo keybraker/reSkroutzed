@@ -1,63 +1,61 @@
-.flagged-product {
-  border-radius: 5px;
-  box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0);
-  /* opacity: 0.90; */
+.labeled-item,
+.selected-product-cards {
+  border-radius: 5px !important;
+  box-shadow: 0px 0px 5px 2px rgb(255, 0, 0) !important;
+  /* opacity: 0.90 !important; */
 }
 
 .flagged-product-image {
-  border-radius: 5px;
-  box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0);
-  /* opacity: 0.90; */
+  border-radius: 5px !important;
+  box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0) !important;
+  /* opacity: 0.90 !important; */
 }
 
-.flagged-product-label {
-  /* border: 1px solid rgb(255, 0, 0); */
-  border-radius: 5px;
-  padding: 2px 6px 2px;
-  width: 100%;
-  background-color: #ffdbdf;
+.label-text {
+  /* border: 1px solid rgb(255, 0, 0) !important; */
+  border-radius: 5px !important;
+  padding: 2px 6px 2px !important;
+  width: 100% !important;
+  background-color: #ffdbdf !important;
   font-weight: bold !important;
   color: red !important;
 }
 
 .flagged-product-store {
-  border-radius: 5px;
-  padding: 1px 4px;
+  border-radius: 5px !important;
+  padding: 1px 4px !important;
   font-weight: bold !important;
   color: red !important;
 }
 
 .flagged-list-title {
-  margin-left: 80px;
-  padding: 8px;
-  font-weight: bold !important;
   color: red !important;
 }
 
 .flagged-product .add-to-cart-inner {
-  position: relative;
-  z-index: 1;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .flagged-product .add-to-cart-inner::before,
 .flagged-product .add-to-cart-inner::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
+  content: "" !important;
+  position: absolute !important;
+  z-index: -1 !important;
 }
 
 .flagged-product .add-to-cart-inner::before {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 100%;
-  /* box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0); */
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: 100% !important;
+  /* box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0) !important; */
 }
 
 .flagged-product .add-to-cart-inner::after {
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  /* box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0); */
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 100% !important;
+  /* box-shadow: inset 0px 0px 5px 2px rgb(255, 0, 0) !important; */
 }

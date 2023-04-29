@@ -50,7 +50,7 @@ function addButtonToFilters(existingButton) {
     insertElement(
       liOfferElements.parentNode,
       existingButton ?? createSponsoredIndicatorButton(true),
-      liOfferElements.previousSibling
+      liOfferElements
     );
   }
 }

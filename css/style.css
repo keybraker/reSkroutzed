@@ -3,12 +3,12 @@
 }
 
 .inline-flex {
-  display: flex;
-  gap: 16px;
-  margin-top: 24px;
-  margin-bottom: 24px;
+  display: flex !important;
+  gap: 16px !important;
+  margin-top: 24px !important;
+  margin-bottom: 24px !important;
 }
 
 .font-bold {
-  font-weight: 600;
+  font-weight: 600 !important;
 }

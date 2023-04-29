@@ -1,35 +1,40 @@
 .flagger-toggle-list {
-  border: 1px solid #bbb; !important;
-  border-radius: 5px;
-  background: transparent;
-  color: #707070;
-  margin: 8px 0px 16px 8px;
-  padding: 11px 23px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  border: 1px solid #bbb !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  color: #707070 !important;
+  margin: 8px 0px 16px 8px !important;
+  padding: 11px 23px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
 }
 
 .flagger-toggle-list:hover,
 .flagger-toggle-active {
-  background-color: #ffcdd2;
-  color: rgb(255, 0, 0);
+  background-color: #ffcdd2 !important;
+  color: rgb(255, 0, 0) !important;
   /* box-shadow: inset 0px 0px 1px 0px rgb(255, 0, 0) !important; */
   border: 1px solid rgb(255, 0, 0) !important;
 }
 
 .flagger-toggle-product {
-  border: 0px solid rgb(255, 0, 0);
-  border-radius: 5px;
-  background: transparent;
-  color: rgb(255, 0, 0);
-  padding: 2px 6px 2px !important;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  border: 1px solid #bbb !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  color: #000000 !important;
+  margin: 8px 16px 16px 8px !important;
+  padding: 11px 23px !important;
+}
+
+.flagger-toggle-product svg {
+  vertical-align: middle !important;
 }
 
 .flagger-toggle-product:hover,
 .flagger-toggle-product-active {
+  background-color: #ffcdd2 !important;
   color: rgb(255, 0, 0) !important;
+  /* box-shadow: inset 0px 0px 1px 0px rgb(255, 0, 0) !important; */
+  border: 1px solid rgb(255, 0, 0) !important;
 }

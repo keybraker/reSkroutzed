@@ -1,8 +1,5 @@
 function productFlagger() {
-  const flaggedProductListItems =
-    document.querySelectorAll("li.flagged-product");
-
-  updateSponsoredCount(flaggedProductListItems);
+  updateSponsoredCount();
 
   const nonFlaggedProductListItems = document.querySelectorAll(
     "li:not(.flagged-product)"
@@ -10,17 +7,18 @@ function productFlagger() {
 
   if (nonFlaggedProductListItems?.length === 0) return;
 
-  flagSponsoredListItems(nonFlaggedProductListItems);
+  [...nonFlaggedProductListItems]
+    .filter(hasSponsoredLabelText)
+    .forEach(flagProductListItem);
 }
 
-function updateSponsoredCount(flaggedProductListItems) {
+function updateSponsoredCount() {
+  const flaggedProductListItems =
+    document.querySelectorAll("li.flagged-product");
+
   if (flaggedProductListItems?.length === 0) {
     sponsoredCount = 0;
   }
-}
-
-function flagSponsoredListItems(listItems) {
-  [...listItems].filter(hasSponsoredLabelText).forEach(flagProductListItem);
 }
 
 function hasSponsoredLabelText(listItem) {
@@ -48,7 +46,9 @@ function flagLabelElement(listItem) {
 }
 
 function flagImageElement(listItem) {
-  const imageLinkElement = listItem.querySelector("a.image");
+  const imageLinkElement = listItem.querySelector(
+    "a.image"
+  );
 
   if (imageLinkElement) {
     imageLinkElement.classList.add("flagged-product-image");
