@@ -34,7 +34,7 @@
     }
   ],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "popup/popup.html",
     "default_icon": {
       "48": "/assets/icons/48.png",
       "128": "/assets/icons/128.png"
