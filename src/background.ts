@@ -1,4 +1,5 @@
 import { Language } from "./enums/Language";
+import { State } from "./enums/State";
 import { frequentlyBoughtTogetherFlagger } from "./flaggers/frequentlyBoughtTogetherFlagger";
 import { productFlagger } from "./flaggers/productFlagger";
 import { separatePromoListFlagger } from "./flaggers/separatePromoListFlagger";
@@ -10,37 +11,36 @@ import { toggleSponsoredContentVisibility } from "./manipulators/toggleSponsored
 import { retrieveLanguage } from "./retrievers/retrieveLanguage";
 import { retrieveVisibility } from "./retrievers/retrieveVisibility";
 
-let visible: boolean = true;
-let language: Language = Language.EN;
-
-let sponsoredCount: number = 0;
-let sponsoredShelfCount: number = 0;
-let videoCount: number = 0;
+const state: State = {
+  visible: true,
+  language: Language.EN,
+  sponsoredCount: 0,
+  sponsoredShelfCount: 0,
+  videoCount: 0,
+};
 
 (function () {
   function init(): void {
-    console.log('before visible :>> ', visible);
-    retrieveVisibility(visible);
-    console.log('after visible :>> ', visible);
-    retrieveLanguage(language);
+    retrieveVisibility(state);
+    retrieveLanguage(state);
 
     flagContent();
     flagAdditionalContent();
 
-    addBlockedIndication(visible, language, sponsoredCount);
+    addBlockedIndication(state);
   }
 
   function flagContent(): void {
-    shelfFlagger(sponsoredShelfCount, visible, language, sponsoredCount);
-    videoFlagger(visible, videoCount);
-    productFlagger(visible, language, sponsoredCount);
-    separatePromoListFlagger(visible, language);
-    frequentlyBoughtTogetherFlagger(language, sponsoredCount);
+    shelfFlagger(state);
+    videoFlagger(state);
+    productFlagger(state);
+    separatePromoListFlagger(state);
+    frequentlyBoughtTogetherFlagger(state);
   }
 
   function flagAdditionalContent(): void {
-    toggleSponsoredContentVisibility(visible);
-    buyThroughSkroutzIndicator(language);
+    toggleSponsoredContentVisibility(state);
+    buyThroughSkroutzIndicator(state);
   }
 
   function observeMutations(): void {
@@ -49,7 +49,7 @@ let videoCount: number = 0;
     const observer2 = new MutationObserver((mutationsList: MutationRecord[]) => {
       for (const mutation of mutationsList) {
         if (mutation.type === "attributes" && mutation.attributeName === "id") {
-          addBlockedIndication(visible, language, sponsoredCount);
+          addBlockedIndication(state);
         }
       }
     });
@@ -66,6 +66,6 @@ let videoCount: number = 0;
 
 chrome.runtime.onMessage.addListener((request: { action: string }, sender: chrome.runtime.MessageSender, sendResponse: (response: { sponsoredCount: number, sponsoredShelfCount: number, videoCount: number }) => void) => {
   if (request.action === "getCount") {
-    sendResponse({ sponsoredCount, sponsoredShelfCount, videoCount });
+    sendResponse({ sponsoredCount: state.sponsoredCount, sponsoredShelfCount: state.sponsoredShelfCount, videoCount: state.videoCount });
   }
 });

@@ -1,18 +1,20 @@
-export function videoFlagger(visible: boolean, videoCount: number): void {
+import { State } from "../enums/State";
+
+export function videoFlagger(state: State): void {
   const liElementsFlagged = document.querySelectorAll("li.flagged-video");
-  videoCount = liElementsFlagged?.length ?? 0;
+  state.videoCount = liElementsFlagged?.length ?? 0;
 
   const liElements = document.querySelectorAll("li:not(.flagged-video)");
-  liElements.forEach(element => updateVideoCountAndVisibility(element, visible, videoCount));
+  liElements.forEach(element => updateVideoCountAndVisibility(element, state));
 }
 
-function updateVideoCountAndVisibility(liElement: Element, visible: boolean, videoCount: number): void {
+function updateVideoCountAndVisibility(liElement: Element, state: State): void {
   if (liElement.classList.contains("promo-video-card")) {
-    videoCount++;
+    state.videoCount++;
 
     liElement.classList.add("flagged-video");
 
-    visible
+    state.visible
       ? liElement.classList.remove("display-none-promo-product")
       : liElement.classList.add("display-none-promo-product");
   }

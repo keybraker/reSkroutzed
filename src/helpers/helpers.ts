@@ -1,17 +1,17 @@
-import { Language } from "../enums/Language";
+import { State } from "../enums/State";
 
-export function toggleVisibility(element: Element, visible: boolean) {
-  visible
+export function toggleVisibility(element: Element, state: State) {
+  state.visible
     ? element.classList.remove("display-none")
     : element.classList.add("display-none");
 }
 
-export function updateSponsoredText(element: Element, isPlural = false, language: Language) {
+export function updateSponsoredText(element: Element, isPlural = false, state: State) {
   element.innerHTML = isPlural
-    ? language === "EN"
+    ? state.language === "EN"
       ? "Sponsored stores"
       : "Προωθούμενα καταστήματα"
-    : language == "EN"
+    : state.language == "EN"
       ? "Sponsored store"
       : "Προωθούμενo κατάστημα";
 }

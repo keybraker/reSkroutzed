@@ -1,13 +1,14 @@
+import { State } from "../enums/State";
 import { toggleVisibility } from "../helpers/helpers";
 
-export function toggleSponsoredContentVisibility(visible: boolean) {
-  toggleVisibilityBySelector("li.flagged-product", visible);
-  toggleVisibilityBySelector("div.flagged-shelf", visible);
-  toggleVisibilityBySelector("div.selected-product-cards", visible);
-  toggleVisibilityBySelector("div.flagged-bought-together", visible);
+export function toggleSponsoredContentVisibility(state: State) {
+  toggleVisibilityBySelector("li.flagged-product", state);
+  toggleVisibilityBySelector("div.flagged-shelf", state);
+  toggleVisibilityBySelector("div.selected-product-cards", state);
+  toggleVisibilityBySelector("div.flagged-bought-together", state);
 }
 
-function toggleVisibilityBySelector(selector: string, visible: boolean) {
+function toggleVisibilityBySelector(selector: string, state: State) {
   const elements = document.querySelectorAll(selector);
-  elements?.forEach(element => toggleVisibility(element, visible));
+  elements?.forEach(element => toggleVisibility(element, state));
 }

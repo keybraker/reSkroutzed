@@ -1,8 +1,9 @@
 import { Language } from "../enums/Language";
+import { State } from "../enums/State";
 import { isSponsored, toggleVisibility, updateSponsoredText } from "../helpers/helpers";
 
-export function productFlagger(visible: boolean, language: Language, sponsoredCount: number): void {
-  updateSponsoredCount(sponsoredCount);
+export function productFlagger(state: State): void {
+  updateSponsoredCount(state);
 
   const nonFlaggedProductListItems = document.querySelectorAll(
     "li:not(.flagged-product)"
@@ -12,15 +13,15 @@ export function productFlagger(visible: boolean, language: Language, sponsoredCo
 
   [...nonFlaggedProductListItems]
     .filter(hasSponsoredLabelText)
-    .forEach(element => flagProductListItem(element, visible, language, sponsoredCount));
+    .forEach(element => flagProductListItem(element, state));
 }
 
-function updateSponsoredCount(sponsoredCount: number): void {
+function updateSponsoredCount(state: State): void {
   const flaggedProductListItems =
     document.querySelectorAll("li.flagged-product");
 
   if (flaggedProductListItems?.length === 0) {
-    sponsoredCount = 0;
+    state.sponsoredCount = 0;
   }
 }
 
@@ -29,17 +30,17 @@ function hasSponsoredLabelText(listItem: Element): boolean {
   return !!labelTextElement && isSponsored(labelTextElement);
 }
 
-export function flagProductListItem(listItem: Element, visible: boolean, language: Language, sponsoredCount: number): void {
-  sponsoredCount++;
+export function flagProductListItem(listItem: Element, state: State): void {
+  state.sponsoredCount++;
 
-  flagLabelElement(listItem, language);
+  flagLabelElement(listItem, state);
   flagImageElement(listItem);
 
   listItem.classList.add("flagged-product");
-  toggleVisibility(listItem, visible);
+  toggleVisibility(listItem, state);
 }
 
-function flagLabelElement(listItem: Element, language: Language): void {
+function flagLabelElement(listItem: Element, state: State): void {
   const labelTextElement = listItem.querySelector(".label-text");
 
   if (!labelTextElement) {
@@ -48,7 +49,7 @@ function flagLabelElement(listItem: Element, language: Language): void {
 
   if (isSponsored(labelTextElement)) {
     labelTextElement.classList.add("flagged-product-label");
-    updateSponsoredText(labelTextElement, false, language);
+    updateSponsoredText(labelTextElement, false, state);
   }
 }
 

@@ -1,7 +1,7 @@
-import { Language } from "../enums/Language";
+import { State } from "../enums/State";
 import { updateSponsoredText } from "../helpers/helpers";
 
-export function frequentlyBoughtTogetherFlagger(language: Language, sponsoredCount: number): void {
+export function frequentlyBoughtTogetherFlagger(state: State): void {
   const divElements = document.querySelectorAll(
     "div.fbt-content:not(.flagged-bought-together)"
   );
@@ -10,14 +10,14 @@ export function frequentlyBoughtTogetherFlagger(language: Language, sponsoredCou
     const sponsoredSpan = div.querySelector("span.sp-tag");
 
     if (sponsoredSpan && sponsoredSpan.textContent === "Sponsored") {
-      sponsoredCount++;
-      flagSponsoredSpan(sponsoredSpan, language);
+      state.sponsoredCount++;
+      flagSponsoredSpan(sponsoredSpan, state);
       div.classList.add("flagged-bought-together");
     }
   });
 }
 
-function flagSponsoredSpan(spanElement: Element, language: Language): void {
+function flagSponsoredSpan(spanElement: Element, state: State): void {
   spanElement.classList.add("warning-label");
-  updateSponsoredText(spanElement, false, language);
+  updateSponsoredText(spanElement, false, state);
 }

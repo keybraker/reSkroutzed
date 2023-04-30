@@ -1,10 +1,12 @@
-export function retrieveVisibility(visible: boolean): void {
+import { State } from "../enums/State";
+
+export function retrieveVisibility(state: State): void {
   const sponsoredVisibility = localStorage.getItem("sponsoredVisibility");
 
   if (sponsoredVisibility !== null) {
-    visible = sponsoredVisibility === "true";
+    state.visible = sponsoredVisibility === "true";
   } else {
-    visible = true;
-    localStorage.setItem("sponsoredVisibility", visible.toString());
+    state.visible = true;
+    localStorage.setItem("sponsoredVisibility", state.visible.toString());
   }
 }
