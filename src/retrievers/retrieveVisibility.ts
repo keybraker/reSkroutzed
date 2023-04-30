@@ -1,4 +1,4 @@
-function retrieveVisibility() {
+export function retrieveVisibility(visible: boolean): void {
   const sponsoredVisibility = localStorage.getItem("sponsoredVisibility");
 
   if (sponsoredVisibility !== null) {
