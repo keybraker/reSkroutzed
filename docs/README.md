@@ -1,6 +1,7 @@
 # Skroutz sponsored flagger
 
-Skroutz Sponsored Flagger is a browser extension that detects and highlights sponsored products on [skroutz.gr](https://skroutz.gr). It is available for download on the [Chrome Extension store](https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl) and can be installed on any Chromium-powered browser or Firefox.
+Skroutz Sponsored Flagger is a browser extension that detects and highlights sponsored products on [skroutz.gr](https://skroutz.gr).
+You can start using it by simply downloading it from the [Chrome Extension Store](https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl) or [Firefox Add-ons Store (pending approval)](https://addons.mozilla.org/en-US/firefox/addon/skroutz-sponsored-flagger).
 
 ## Why use Skroutz sponsored flagger?
 
@@ -8,9 +9,9 @@ Skroutz has been using dark patterns to mislead consumers into purchasing sponso
 The purpose of this extension is to make it easier for consumers to identify which products are sponsored and which ones are not, so they can make informed purchasing decisions.
 It also gives the consumer the ability to hide the sponsored products if they so wish to.
 
-## Installation
+## Manual Installation
 
-To install the extension via Github, simply download the source code from this repository, run command:
+To install the extension via Github, simply download the source code from this repository, and follow the instructions based on the browser you wish to load it on.
 
 ### Load on Chrome
 
@@ -18,7 +19,7 @@ To install the extension via Github, simply download the source code from this r
 npm run build:chrome
 ```
 
-and load the build extension by clicking `Load unpacked` at `chrome://extensions/` and clicking on the `dist` folder.
+and load the build extension by clicking `Load unpacked` at `chrome://extensions/` and clicking on the `build/chrome_build` folder.
 
 ### Load on Firefox
 
@@ -26,7 +27,7 @@ and load the build extension by clicking `Load unpacked` at `chrome://extensions
 npm run build:firefox
 ```
 
-and load the build extension from folder `dist`.
+and load the build extension from `build/firefox_build.zip` file.
 
 ### Showcase
 
