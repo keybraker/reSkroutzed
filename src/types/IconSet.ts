@@ -1,4 +1,11 @@
 type IconSet = {
-    eyeOpenIcon: string;
-    eyeSlashedIcon: string;
+    eyeOpenIcon: Icon;
+    eyeSlashedIcon: Icon;
 };
+
+type Icon = {
+    viewBox: string;
+    path: string;
+};
+
+

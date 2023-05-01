@@ -7,11 +7,10 @@
   padding: 11px 23px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
 }
 
 .flagger-toggle-list:hover,
-.flagger-toggle-active {
+.flagger-toggle-list-active {
   background-color: #ffcdd2 !important;
   color: rgb(255, 0, 0) !important;
   border: 1px solid rgb(255, 0, 0) !important;

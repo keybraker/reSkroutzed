@@ -7,7 +7,7 @@ export function toggleVisibility(element: Element, state: State) {
 }
 
 export function updateSponsoredText(element: Element, isPlural = false, state: State) {
-  element.innerHTML = isPlural
+  element.textContent = isPlural
     ? state.language === "EN"
       ? "Sponsored stores"
       : "Προωθούμενα καταστήματα"
