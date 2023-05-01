@@ -30,8 +30,7 @@
 .info-label {
   border-radius: 5px !important;
   padding: 8px !important;
-  /* width: 100% !important; */
-  background-color: #fff5db !important;
+  background-color: #fef3e8 !important;
   font-weight: bold !important;
   color: #f68b24 !important;
 }
