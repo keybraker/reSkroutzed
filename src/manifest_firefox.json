@@ -17,18 +17,7 @@
         "css/videoFlags.css"
       ],
       "js": [
-        "background.js",
-        "flaggers/frequentlyBoughtTogetherFlagger.js",
-        "flaggers/productFlagger.js",
-        "flaggers/separatePromoListFlagger.js",
-        "flaggers/videoFlagger.js",
-        "flaggers/shelfFlagger.js",
-        "helpers/helpers.js",
-        "manipulators/buyThroughSkroutzIndicator.js",
-        "manipulators/addBlockedIndication.js",
-        "manipulators/toggleSponsoredContentVisibility.js",
-        "retrievers/retrieveLanguage.js",
-        "retrievers/retrieveVisibility.js"
+        "background.js"
       ],
       "run_at": "document_end"
     }

@@ -64,7 +64,9 @@ function updateDisplayText(
   gap.style.marginRight = "6px";
   sponsoredButtonToggle.appendChild(gap);
 
-  sponsoredButtonToggle.insertAdjacentText("beforeend", `${text}: ${state.sponsoredCount}`);
+  const countSpan = document.createElement("span");
+  countSpan.textContent = `${text}: ${state.sponsoredCount}`;
+  sponsoredButtonToggle.appendChild(countSpan);
 }
 
 function createSponsoredIndicatorButton(isProduct: boolean = true, state: State): HTMLButtonElement {
@@ -84,6 +86,8 @@ function createSponsoredIndicatorButton(isProduct: boolean = true, state: State)
     updateDisplayText(sponsoredButtonToggle, isProduct, state);
     toggleSponsoredContentVisibility(state);
   });
+
+  sponsoredButtonToggle.setAttribute("type", "button");
 
   return sponsoredButtonToggle;
 }

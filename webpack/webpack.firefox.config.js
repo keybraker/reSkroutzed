@@ -1,6 +1,6 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const ZipWebpackPlugin = require("zip-webpack-plugin"); // Add this line
+const ZipWebpackPlugin = require("zip-webpack-plugin");
 
 module.exports = {
   mode: "production",
@@ -23,6 +23,7 @@ module.exports = {
     new ZipWebpackPlugin({
       path: path.resolve(__dirname, "../"),
       filename: "firefox_build.zip",
+      cleanStaleWebpackAssets: true,
     }),
   ],
   resolve: {
