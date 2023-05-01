@@ -1,9 +1,9 @@
-# Skroutz sponsored flagger
+# Skroutz Sponsored Flagger
 
 Skroutz Sponsored Flagger is a browser extension that detects and highlights sponsored products on [skroutz.gr](https://skroutz.gr).
 You can start using it by simply downloading it from the [Chrome Extension Store](https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl) or [Firefox Add-ons Store (pending approval)](https://addons.mozilla.org/en-US/firefox/addon/skroutz-sponsored-flagger).
 
-## Why use Skroutz sponsored flagger?
+## Why use Skroutz Sponsored Flagger?
 
 Skroutz has been using dark patterns to mislead consumers into purchasing sponsored products (advertisements).
 The purpose of this extension is to make it easier for consumers to identify which products are sponsored and which ones are not, so they can make informed purchasing decisions.
