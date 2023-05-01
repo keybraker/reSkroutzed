@@ -47,15 +47,14 @@ function updateDisplayText(
   isProduct: boolean = true,
   state: State
 ): void {
-  const activeClass = isProduct
-    ? "flagger-toggle-product-active"
-    : "flagger-toggle-list-active";
+  const activeButtonClass = isProduct ? "flagger-toggle-product-active" : "flagger-toggle-list-active";
+
   const text = sponsoredText(true, state);
   const icon = state.visible ? icons.eyeOpenIcon : icons.eyeSlashedIcon;
 
   state.visible
-    ? sponsoredButtonToggle.classList.remove(activeClass)
-    : sponsoredButtonToggle.classList.add(activeClass);
+    ? sponsoredButtonToggle.classList.remove(activeButtonClass)
+    : sponsoredButtonToggle.classList.add(activeButtonClass);
 
   sponsoredButtonToggle.textContent = "";
   sponsoredButtonToggle.appendChild(createSvgIcon(icon));
@@ -71,9 +70,7 @@ function updateDisplayText(
 
 function createSponsoredIndicatorButton(isProduct: boolean = true, state: State): HTMLButtonElement {
   const sponsoredButtonToggle = document.createElement("button");
-  const buttonClass = isProduct
-    ? "flagger-toggle-product"
-    : "flagger-toggle-list";
+  const buttonClass = isProduct ? "flagger-toggle-product" : "flagger-toggle-list";
 
   sponsoredButtonToggle.classList.add(buttonClass);
   sponsoredButtonToggle.setAttribute("id", "sponsored-flagger-button");

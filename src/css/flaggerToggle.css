@@ -1,41 +1,36 @@
-.flagger-toggle-list {
-  border: 1px solid #bbb !important;
+.flagger-toggle-list,
+.flagger-toggle-product {
+  border: 1px solid #bbbbbb !important;
   border-radius: 5px !important;
   background: transparent !important;
   color: #707070 !important;
+}
+
+.flagger-toggle-list {
   margin: 8px 0px 16px 8px !important;
   padding: 11px 23px !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-.flagger-toggle-list svg {
-  vertical-align: middle !important;
-}
-
-.flagger-toggle-list:hover,
-.flagger-toggle-list-active {
-  background-color: #ffcdd2 !important;
-  color: rgb(255, 0, 0) !important;
-  border: 1px solid rgb(255, 0, 0) !important;
 }
 
 .flagger-toggle-product {
-  border: 1px solid #bbb !important;
-  border-radius: 5px !important;
-  background: transparent !important;
-  color: #000000 !important;
   margin: 8px 16px 16px 0px !important;
   padding: 9px 17px !important;
 }
 
+.flagger-toggle-list {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.flagger-toggle-list svg,
 .flagger-toggle-product svg {
   vertical-align: middle !important;
 }
 
+.flagger-toggle-list:hover,
 .flagger-toggle-product:hover,
-.flagger-toggle-product-active {
+.flagger-toggle-list.flagger-toggle-list-active,
+.flagger-toggle-product.flagger-toggle-product-active {
+  border: 1px solid #ff0000 !important;
   background-color: #ffcdd2 !important;
-  color: rgb(255, 0, 0) !important;
-  border: 1px solid rgb(255, 0, 0) !important;
+  color: #ff0000 !important;
 }
