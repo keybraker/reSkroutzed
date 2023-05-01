@@ -1,0 +1,17 @@
+# misc
+.DS_Store
+*.pem
+
+.idea
+*.log
+appDevConfig
+
+# dependencies
+/node_modules
+
+output
+tsconfig.tsbuildinfo
+
+# production
+/build
+/dist

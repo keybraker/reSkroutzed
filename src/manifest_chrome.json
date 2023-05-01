@@ -1,0 +1,36 @@
+{
+  "name": "Skroutz Sponsored Flagger",
+  "description": "Flags sponsored products on Skroutz.gr",
+  "version": "1.4",
+  "manifest_version": 3,
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.skroutz.gr/*"
+      ],
+      "css": [
+        "css/flaggerToggle.css",
+        "css/productFlags.css",
+        "css/shelfFlags.css",
+        "css/style.css",
+        "css/videoFlags.css"
+      ],
+      "js": [
+        "background.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "48": "/assets/icons/48.png",
+      "128": "/assets/icons/128.png"
+    }
+  },
+  "icons": {
+    "48": "/assets/icons/48.png",
+    "128": "/assets/icons/128.png"
+  }
+}
