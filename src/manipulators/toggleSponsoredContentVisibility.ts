@@ -1,4 +1,4 @@
-import { State } from "../enums/State";
+import { State } from "../types/State";
 import { toggleVisibility } from "../helpers/helpers";
 
 export function toggleSponsoredContentVisibility(state: State) {

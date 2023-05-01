@@ -1,5 +1,5 @@
 import { Language } from "../enums/Language";
-import { State } from "../enums/State";
+import { State } from "../types/State";
 import { isSponsored, toggleVisibility, updateSponsoredText } from "../helpers/helpers";
 
 export function productFlagger(state: State): void {

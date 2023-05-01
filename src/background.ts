@@ -1,5 +1,5 @@
 import { Language } from "./enums/Language";
-import { State } from "./enums/State";
+import { State } from "./types/State";
 import { frequentlyBoughtTogetherFlagger } from "./flaggers/frequentlyBoughtTogetherFlagger";
 import { productFlagger } from "./flaggers/productFlagger";
 import { separatePromoListFlagger } from "./flaggers/separatePromoListFlagger";

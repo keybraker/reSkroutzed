@@ -1,4 +1,4 @@
-import { State } from "../enums/State";
+import { State } from "../types/State";
 
 export function toggleVisibility(element: Element, state: State) {
   state.visible

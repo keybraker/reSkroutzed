@@ -1,4 +1,4 @@
-import { State } from "../enums/State";
+import { State } from "../types/State";
 import { isSponsored, toggleVisibility, updateSponsoredText } from "../helpers/helpers";
 import { flagProductListItem } from "./productFlagger";
 

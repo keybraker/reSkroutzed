@@ -1,4 +1,4 @@
-import { State } from "../enums/State";
+import { State } from "../types/State";
 import { updateSponsoredText } from "../helpers/helpers";
 
 export function frequentlyBoughtTogetherFlagger(state: State): void {

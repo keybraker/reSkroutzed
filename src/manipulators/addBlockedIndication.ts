@@ -1,10 +1,5 @@
-import { State } from "../enums/State";
+import { State } from "../types/State";
 import { toggleSponsoredContentVisibility } from "./toggleSponsoredContentVisibility";
-
-type IconSet = {
-  eyeOpenIcon: string;
-  eyeSlashedIcon: string;
-};
 
 const icons: IconSet = {
   eyeOpenIcon:

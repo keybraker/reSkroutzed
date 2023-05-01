@@ -1,4 +1,4 @@
-import { Language } from "./Language";
+import { Language } from "../enums/Language";
 
 export type State = {
     visible: boolean,

@@ -1,4 +1,4 @@
-import { State } from "../enums/State";
+import { State } from "../types/State";
 
 export function retrieveVisibility(state: State): void {
   const sponsoredVisibility = localStorage.getItem("sponsoredVisibility");

@@ -1,4 +1,4 @@
-import { State } from "../enums/State";
+import { State } from "../types/State";
 
 export function videoFlagger(state: State): void {
   const liElementsFlagged = document.querySelectorAll("li.flagged-video");
