@@ -9,6 +9,10 @@
   align-items: center !important;
 }
 
+.flagger-toggle-list svg {
+  vertical-align: middle !important;
+}
+
 .flagger-toggle-list:hover,
 .flagger-toggle-list-active {
   background-color: #ffcdd2 !important;

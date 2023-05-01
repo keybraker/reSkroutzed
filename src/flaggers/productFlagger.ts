@@ -1,6 +1,6 @@
 import { Language } from "../enums/Language";
 import { State } from "../types/State";
-import { isSponsored, toggleVisibility, updateSponsoredText } from "../helpers/helpers";
+import { isSponsored, toggleVisibility, updateSponsoredTextSingle } from "../helpers/helpers";
 
 export function productFlagger(state: State): void {
   updateSponsoredCount(state);
@@ -51,7 +51,7 @@ function flagLabelElement(listItem: Element, state: State): void {
 
   if (isSponsored(labelTextElement)) {
     labelTextElement.classList.add("flagged-product-label");
-    updateSponsoredText(labelTextElement, false, state);
+    updateSponsoredTextSingle(labelTextElement, state);
   }
 }
 

@@ -6,14 +6,22 @@ export function toggleVisibility(element: Element, state: State) {
     : element.classList.add("display-none");
 }
 
-export function updateSponsoredText(element: Element, isPlural = false, state: State) {
-  element.textContent = isPlural
+export function sponsoredText(isPlural = false, state: State) {
+  return isPlural
     ? state.language === "EN"
       ? "Sponsored stores"
       : "Προωθούμενα καταστήματα"
     : state.language == "EN"
       ? "Sponsored store"
       : "Προωθούμενo κατάστημα";
+}
+
+export function updateSponsoredTextPlural(element: Element, state: State) {
+  element.textContent = sponsoredText(true, state);
+}
+
+export function updateSponsoredTextSingle(element: Element, state: State) {
+  element.textContent = sponsoredText(false, state);
 }
 
 export function isSponsored(element: Element) {

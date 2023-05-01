@@ -1,5 +1,5 @@
 import { State } from "../types/State";
-import { isSponsored, toggleVisibility, updateSponsoredText } from "../helpers/helpers";
+import { isSponsored, toggleVisibility, updateSponsoredTextPlural } from "../helpers/helpers";
 import { flagProductListItem } from "./productFlagger";
 
 export function shelfFlagger(state: State): void {
@@ -23,7 +23,7 @@ function updateShelfCountAndVisibility(h4Element: Element, state: State): void {
   state.sponsoredShelfCount++;
 
   h4Element.classList.add("warning-label");
-  updateSponsoredText(h4Element, true, state);
+  updateSponsoredTextPlural(h4Element, state);
 
   const h4ParentElement = h4Element.parentElement;
 

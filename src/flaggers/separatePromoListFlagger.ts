@@ -1,5 +1,5 @@
 import { State } from "../types/State";
-import { isSponsored, toggleVisibility, updateSponsoredText } from "../helpers/helpers";
+import { isSponsored, toggleVisibility, updateSponsoredTextPlural } from "../helpers/helpers";
 
 export function separatePromoListFlagger(state: State): void {
   const promotedBoxes = document.querySelectorAll(
@@ -11,6 +11,6 @@ export function separatePromoListFlagger(state: State): void {
 
 function flagPromotedBox(promotedBox: Element, state: State): void {
   promotedBox.classList.add("flagged-list-title");
-  updateSponsoredText(promotedBox, true, state);
+  updateSponsoredTextPlural(promotedBox, state);
   toggleVisibility(promotedBox, state);
 }

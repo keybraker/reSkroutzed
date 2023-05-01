@@ -1,3 +1,4 @@
+import { sponsoredText } from "../helpers/helpers";
 import { State } from "../types/State";
 import { toggleSponsoredContentVisibility } from "./toggleSponsoredContentVisibility";
 
@@ -49,8 +50,7 @@ function updateDisplayText(
   const activeClass = isProduct
     ? "flagger-toggle-product-active"
     : "flagger-toggle-list-active";
-  const text =
-    state.language === "EN" ? "Sponsored stores" : "Προωθούμενα καταστήματα";
+  const text = sponsoredText(true, state);
   const icon = state.visible ? icons.eyeOpenIcon : icons.eyeSlashedIcon;
 
   state.visible
@@ -65,7 +65,7 @@ function updateDisplayText(
   sponsoredButtonToggle.appendChild(gap);
 
   const countSpan = document.createElement("span");
-  countSpan.textContent = `${text}: ${state.sponsoredCount}`;
+  countSpan.textContent = `${text} (${state.sponsoredCount})`;
   sponsoredButtonToggle.appendChild(countSpan);
 }
 

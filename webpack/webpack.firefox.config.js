@@ -7,7 +7,7 @@ module.exports = {
   entry: "./src/background.ts",
   output: {
     filename: "background.js",
-    path: path.resolve(__dirname, "../firefox_build"),
+    path: path.resolve(__dirname, "../build/firefox_build"),
   },
   plugins: [
     new CopyWebpackPlugin({
@@ -21,7 +21,7 @@ module.exports = {
       ],
     }),
     new ZipWebpackPlugin({
-      path: path.resolve(__dirname, "../"),
+      path: path.resolve(__dirname, "../build/"),
       filename: "firefox_build.zip",
       cleanStaleWebpackAssets: true,
     }),

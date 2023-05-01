@@ -12,8 +12,5 @@ appDevConfig
 output
 tsconfig.tsbuildinfo
 
-# production
-/chrome_build
-chrome_build.zip
-/firefox_build
-firefox_build.zip
+# build
+/build

@@ -1,5 +1,5 @@
 import { State } from "../types/State";
-import { updateSponsoredText } from "../helpers/helpers";
+import { updateSponsoredTextSingle } from "../helpers/helpers";
 
 export function frequentlyBoughtTogetherFlagger(state: State): void {
   const divElements = document.querySelectorAll(
@@ -19,5 +19,5 @@ export function frequentlyBoughtTogetherFlagger(state: State): void {
 
 function flagSponsoredSpan(spanElement: Element, state: State): void {
   spanElement.classList.add("warning-label");
-  updateSponsoredText(spanElement, false, state);
+  updateSponsoredTextSingle(spanElement, state);
 }
