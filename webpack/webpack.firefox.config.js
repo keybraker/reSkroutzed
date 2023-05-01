@@ -1,12 +1,13 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const ZipWebpackPlugin = require("zip-webpack-plugin"); // Add this line
 
 module.exports = {
   mode: "production",
   entry: "./src/background.ts",
   output: {
     filename: "background.js",
-    path: path.resolve(__dirname, "../dist"),
+    path: path.resolve(__dirname, "../firefox_build"),
   },
   plugins: [
     new CopyWebpackPlugin({
@@ -18,6 +19,10 @@ module.exports = {
         { from: "src/assets/icons/*.png", to: "assets/icons/[name][ext]" },
         { from: "src/css/*.css", to: "css/[name][ext]" },
       ],
+    }),
+    new ZipWebpackPlugin({
+      path: path.resolve(__dirname, "../"),
+      filename: "firefox_build.zip",
     }),
   ],
   resolve: {

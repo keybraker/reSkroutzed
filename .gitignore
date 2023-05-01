@@ -13,6 +13,7 @@ output
 tsconfig.tsbuildinfo
 
 # production
-/build
-/dist
-dist.zip
+/chrome_build
+chrome_build.zip
+/firefox_build
+firefox_build.zip
