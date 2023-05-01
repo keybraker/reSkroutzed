@@ -1,7 +1,6 @@
 .labeled-item,
 .labeled-product,
-.selected-product-cards,
-.fbt-content {
+.selected-product-cards {
   padding: 10px;
   border-radius: 5px !important;
   box-shadow: 0px 0px 5px 2px rgb(255, 0, 0) !important;

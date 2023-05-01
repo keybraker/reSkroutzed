@@ -17,10 +17,12 @@ export function productFlagger(state: State): void {
 }
 
 function updateSponsoredCount(state: State): void {
-  const flaggedProductListItems =
+  const flaggedProductLists =
     document.querySelectorAll("li.flagged-product");
+  const flaggedProductDivs =
+    document.querySelectorAll("div.flagged-bought-together");
 
-  if (flaggedProductListItems?.length === 0) {
+  if (flaggedProductLists?.length === 0 && flaggedProductDivs?.length === 0) {
     state.sponsoredCount = 0;
   }
 }
