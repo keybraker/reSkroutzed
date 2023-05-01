@@ -22,7 +22,7 @@ function updateShelfCount(state: State): void {
 function updateShelfCountAndVisibility(h4Element: Element, state: State): void {
   state.sponsoredShelfCount++;
 
-  h4Element.classList.add("warning-label");
+  h4Element.classList.add("sponsored-label");
   updateSponsoredTextPlural(h4Element, state);
 
   const h4ParentElement = h4Element.parentElement;

@@ -18,6 +18,6 @@ export function frequentlyBoughtTogetherFlagger(state: State): void {
 }
 
 function flagSponsoredSpan(spanElement: Element, state: State): void {
-  spanElement.classList.add("warning-label");
+  spanElement.classList.add("sponsored-label");
   updateSponsoredTextSingle(spanElement, state);
 }

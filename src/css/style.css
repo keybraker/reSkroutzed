@@ -17,7 +17,7 @@
   margin-right: 4px !important;
 }
 
-.warning-label,
+.sponsored-label,
 .flagged-list-title,
 .label-text {
   border-radius: 5px !important;
@@ -36,7 +36,7 @@
   color: #f68b24 !important;
 }
 
-.warning-label svg,
+.sponsored-label svg,
 .info-label svg {
   vertical-align: middle !important;
 }

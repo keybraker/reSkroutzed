@@ -1,6 +1,7 @@
 .labeled-item,
 .labeled-product,
-.selected-product-cards {
+.selected-product-cards,
+.flagged-bought-together {
   padding: 10px;
   border-radius: 5px !important;
   box-shadow: 0px 0px 5px 2px #ff0000 !important;
