@@ -1,6 +1,5 @@
-import { Language } from "../enums/Language";
-import { State } from "../types/State";
 import { isSponsored, toggleVisibility, updateSponsoredTextSingle } from "../helpers/helpers";
+import { State } from "../types/State";
 
 export function productFlagger(state: State): void {
   updateSponsoredCount(state);
@@ -8,8 +7,6 @@ export function productFlagger(state: State): void {
   const nonFlaggedProductListItems = document.querySelectorAll(
     "li:not(.flagged-product)"
   );
-
-  if (nonFlaggedProductListItems?.length === 0) return;
 
   [...nonFlaggedProductListItems]
     .filter(hasSponsoredLabelText)
@@ -45,20 +42,14 @@ export function flagProductListItem(listItem: Element, state: State): void {
 function flagLabelElement(listItem: Element, state: State): void {
   const labelTextElement = listItem.querySelector(".label-text");
 
-  if (!labelTextElement) {
-    return;
-  }
-
-  if (isSponsored(labelTextElement)) {
+  if (labelTextElement && isSponsored(labelTextElement)) {
     labelTextElement.classList.add("flagged-product-label");
     updateSponsoredTextSingle(labelTextElement, state);
   }
 }
 
 function flagImageElement(listItem: Element): void {
-  const imageLinkElement = listItem.querySelector(
-    "a.image"
-  );
+  const imageLinkElement = listItem.querySelector("a.image");
 
   if (imageLinkElement) {
     imageLinkElement.classList.add("flagged-product-image");
