@@ -24,7 +24,7 @@ export function updateSponsoredTextSingle(element: Element, state: State) {
   element.textContent = sponsoredText(false, state);
 }
 
-export function isSponsored(element: Element) {
+export function isSponsored(element: Element | null) {
   return (
     element?.textContent === "Επιλεγμένο κατάστημα" ||
     element?.textContent === "Eπιλεγμένο κατάστημα" ||
