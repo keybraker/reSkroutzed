@@ -25,13 +25,19 @@ export function updateSponsoredTextSingle(element: Element, state: State) {
 }
 
 export function isSponsored(element: Element | null) {
-  return (
-    element?.textContent === "Επιλεγμένο κατάστημα" ||
-    element?.textContent === "Eπιλεγμένο κατάστημα" ||
-    element?.textContent === "Selected shop" ||
-    element?.textContent === "Επιλεγμένα καταστήματα" ||
-    element?.textContent === "Eπιλεγμένα καταστήματα" ||
-    element?.textContent === "Selected shops" ||
-    element?.textContent === "Sponsored"
-  );
+  if (!element || !element?.textContent) {
+    return false;
+  }
+
+  const sponsoredTexts = [
+    "Επιλεγμένο κατάστημα",
+    "Eπιλεγμένο κατάστημα",
+    "Selected shop",
+    "Επιλεγμένα καταστήματα",
+    "Eπιλεγμένα καταστήματα",
+    "Selected shops",
+    "Sponsored",
+  ];
+
+  return sponsoredTexts.includes(element.textContent);
 }

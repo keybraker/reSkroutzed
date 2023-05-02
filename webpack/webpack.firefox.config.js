@@ -1,6 +1,7 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ZipWebpackPlugin = require("zip-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   mode: "production",
@@ -10,6 +11,7 @@ module.exports = {
     path: path.resolve(__dirname, "../build/firefox_build"),
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         { from: "src/popup/popup.js", to: "popup.js" },
