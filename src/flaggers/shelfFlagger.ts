@@ -36,7 +36,7 @@ function updateShelfCountAndVisibility(h4Element: Element, state: State): void {
     const sponsoredItems = h4ParentElement?.children[2]?.children[0]?.children;
 
     if (sponsoredItems) {
-      [...sponsoredItems].forEach(element => flagProductListItem(element, state));
+      [...sponsoredItems]?.forEach(element => flagProductListItem(element, state));
     }
   }
 }

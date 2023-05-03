@@ -3,7 +3,7 @@ import { State } from "../types/State";
 export function buyThroughSkroutzIndicator(state: State): void {
   const elements = document.querySelectorAll("article.offering-card");
 
-  elements.forEach(element => insertPriceIndication(element, state));
+  elements?.forEach(element => insertPriceIndication(element, state));
 }
 
 function insertPriceIndication(element: Element, state: State): void {
@@ -32,8 +32,8 @@ function createPriceIndicationElement(state: State): HTMLDivElement {
 
   text.textContent =
     state.language === "EN"
-      ? "Might not be the lowest price"
-      : "Ενδέχεται να μην είναι η χαμηλότερη τιμή";
+      ? "Might not be the lowest price (SSF)"
+      : "Ενδέχεται να μην είναι η χαμηλότερη τιμή (SSF)";
 
   priceIndication.appendChild(icon);
   priceIndication.appendChild(text);

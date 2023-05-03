@@ -41,3 +41,18 @@ export function isSponsored(element: Element | null) {
 
   return sponsoredTexts.includes(element.textContent);
 }
+
+export function isFlagged(element: Element | null) {
+  if (!element || !element?.textContent) {
+    return false;
+  }
+
+  const sponsoredTexts =
+    ["Sponsored stores",
+      "Προωθούμενα καταστήματα",
+      "Sponsored store",
+      "Προωθούμενo κατάστημα",
+    ];
+
+  return sponsoredTexts.includes(element.textContent);
+}

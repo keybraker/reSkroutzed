@@ -6,7 +6,9 @@ export function separatePromoListFlagger(state: State): void {
     "h2:not(.flagged-list-title)"
   );
 
-  [...promotedBoxes].filter(isSponsored).forEach(element => flagPromotedBox(element, state));
+  [...promotedBoxes]
+    ?.filter(isSponsored)
+    ?.forEach(element => flagPromotedBox(element, state));
 }
 
 function flagPromotedBox(promotedBox: Element, state: State): void {

@@ -1,10 +1,10 @@
 export function retrieveVisibility(): boolean {
-  const sponsoredVisibility = localStorage.getItem("sponsoredVisibility");
+  const ssfSponsoredVisibility = localStorage.getItem("ssf-sponsored-visibility");
 
-  if (sponsoredVisibility !== null) {
-    return sponsoredVisibility === "true";
+  if (ssfSponsoredVisibility !== null) {
+    return ssfSponsoredVisibility === "true";
   } else {
-    localStorage.setItem("sponsoredVisibility", "true");
+    localStorage.setItem("ssf-sponsored-visibility", "true");
     return true;
   }
 }

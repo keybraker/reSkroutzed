@@ -4,7 +4,7 @@ import { isSponsored, updateSponsoredTextSingle } from "../helpers/helpers";
 export function frequentlyBoughtTogetherFlagger(state: State): void {
   const divElements = getDivElements();
 
-  divElements.forEach((div: Element) => {
+  divElements?.forEach((div: Element) => {
     const sponsoredSpan = getSponsoredSpan(div);
 
     if (sponsoredSpan) {

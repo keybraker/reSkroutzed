@@ -45,14 +45,13 @@ const state: State = {
 
   function observeMutations(): void {
     const observer1 = new MutationObserver(() => flagContent());
-
     const observer2 = new MutationObserver((mutationsList: MutationRecord[]) => {
       for (const mutation of mutationsList) {
         if (mutation.type === "attributes" && mutation.attributeName === "id") {
           addBlockedIndication(state);
         }
       }
-    });
+    })
 
     observer1.observe(document.body, { childList: true, subtree: true });
     observer2.observe(document.body, { attributes: true });

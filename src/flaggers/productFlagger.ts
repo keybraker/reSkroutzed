@@ -1,4 +1,4 @@
-import { isSponsored, toggleVisibility, updateSponsoredTextSingle } from "../helpers/helpers";
+import { isFlagged, isSponsored, toggleVisibility, updateSponsoredTextSingle } from "../helpers/helpers";
 import { State } from "../types/State";
 
 export function productFlagger(state: State): void {
@@ -9,8 +9,12 @@ export function productFlagger(state: State): void {
   );
 
   [...nonFlaggedProductListItems]
-    .filter(hasSponsoredLabelText)
-    .forEach(element => flagProductListItem(element, state));
+    ?.filter(hasSponsoredLabelText)
+    ?.forEach(element => flagProductListItem(element, state, true));
+
+  [...nonFlaggedProductListItems]
+    ?.filter(hasFlaggedLabelText)
+    ?.forEach(element => flagProductListItem(element, state, false));
 }
 
 function updateSponsoredCount(state: State): void {
@@ -29,8 +33,15 @@ function hasSponsoredLabelText(listItem: Element): boolean {
   return !!labelTextElement && isSponsored(labelTextElement);
 }
 
-export function flagProductListItem(listItem: Element, state: State): void {
-  state.sponsoredCount++;
+function hasFlaggedLabelText(listItem: Element): boolean {
+  const labelTextElement = listItem.querySelector(".label-text");
+  return !!labelTextElement && isFlagged(labelTextElement);
+}
+
+export function flagProductListItem(listItem: Element, state: State, updateCount = true): void {
+  if (updateCount) {
+    state.sponsoredCount++;
+  }
 
   flagLabelElement(listItem, state);
   flagImageElement(listItem);

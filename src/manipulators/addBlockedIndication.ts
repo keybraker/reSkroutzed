@@ -79,7 +79,7 @@ function createSponsoredIndicatorButton(isProduct: boolean = true, state: State)
 
   sponsoredButtonToggle.addEventListener("click", () => {
     state.visible = !state.visible;
-    localStorage.setItem("sponsoredVisibility", `${state.visible}`);
+    localStorage.setItem("ssf-sponsored-visibility", `${state.visible}`);
     updateDisplayText(sponsoredButtonToggle, isProduct, state);
     toggleSponsoredContentVisibility(state);
   });
