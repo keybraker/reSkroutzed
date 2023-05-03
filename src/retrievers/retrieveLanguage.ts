@@ -1,10 +1,11 @@
 import { Language } from "../enums/Language";
-import { State } from "../types/State";
 
-export function retrieveLanguage(state: State): void {
+export function retrieveLanguage(): Language {
   const languageElement = document.querySelector("a[title='language'], a[title='Γλώσσα']");
 
   if (languageElement && languageElement.textContent) {
-    state.language = languageElement.textContent.trim() as Language;
+    return languageElement.textContent.trim() as Language;
   }
+
+  return Language.EN;
 }

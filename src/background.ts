@@ -21,8 +21,8 @@ const state: State = {
 
 (function () {
   function init(): void {
-    retrieveVisibility(state);
-    retrieveLanguage(state);
+    state.visible = retrieveVisibility();
+    state.language = retrieveLanguage();
 
     flagContent();
     flagAdditionalContent();

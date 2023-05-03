@@ -1,12 +1,10 @@
-import { State } from "../types/State";
-
-export function retrieveVisibility(state: State): void {
+export function retrieveVisibility(): boolean {
   const sponsoredVisibility = localStorage.getItem("sponsoredVisibility");
 
   if (sponsoredVisibility !== null) {
-    state.visible = sponsoredVisibility === "true";
+    return sponsoredVisibility === "true";
   } else {
-    state.visible = true;
-    localStorage.setItem("sponsoredVisibility", state.visible.toString());
+    localStorage.setItem("sponsoredVisibility", "true");
+    return true;
   }
 }
