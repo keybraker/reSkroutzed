@@ -10,5 +10,5 @@ export function toggleSponsoredContentVisibility(state: State) {
 
 function toggleVisibilityBySelector(selector: string, state: State) {
   const elements = document.querySelectorAll(selector);
-  elements?.forEach(element => toggleVisibility(element, state));
+  elements?.forEach((element) => toggleVisibility(element, state));
 }

@@ -1,15 +1,15 @@
 import { Language } from "./enums/Language";
-import { State } from "./types/State";
-import { frequentlyBoughtTogetherFlagger } from "./flaggers/frequentlyBoughtTogetherFlagger";
-import { productFlagger } from "./flaggers/productFlagger";
-import { separatePromoListFlagger } from "./flaggers/separatePromoListFlagger";
-import { shelfFlagger } from "./flaggers/shelfFlagger";
-import { videoFlagger } from "./flaggers/videoFlagger";
+import { FrequentlyBoughtTogetherFlagger } from "./flaggers/frequentlyBoughtTogetherFlagger";
+import { ProductFlagger } from "./flaggers/productFlagger";
+import { SeparatePromoListFlagger } from "./flaggers/separatePromoListFlagger";
+import { ShelfFlagger } from "./flaggers/shelfFlagger";
+import { VideoFlagger } from "./flaggers/videoFlagger";
 import { addBlockedIndication } from "./manipulators/addBlockedIndication";
 import { buyThroughSkroutzIndicator } from "./manipulators/buyThroughSkroutzIndicator";
 import { toggleSponsoredContentVisibility } from "./manipulators/toggleSponsoredContentVisibility";
 import { retrieveLanguage } from "./retrievers/retrieveLanguage";
 import { retrieveVisibility } from "./retrievers/retrieveVisibility";
+import { State } from "./types/State";
 
 const state: State = {
   visible: true,
@@ -18,6 +18,14 @@ const state: State = {
   sponsoredShelfCount: 0,
   videoCount: 0,
 };
+
+const shelfFlagger = new ShelfFlagger(state);
+const videoFlagger = new VideoFlagger(state);
+const productFlagger = new ProductFlagger(state);
+const separatePromoListFlagger = new SeparatePromoListFlagger(state);
+const frequentlyBoughtTogetherFlagger = new FrequentlyBoughtTogetherFlagger(
+  state
+);
 
 (function () {
   function init(): void {
@@ -31,11 +39,11 @@ const state: State = {
   }
 
   function flagContent(): void {
-    shelfFlagger(state);
-    videoFlagger(state);
-    productFlagger(state);
-    separatePromoListFlagger(state);
-    frequentlyBoughtTogetherFlagger(state);
+    shelfFlagger.flag();
+    videoFlagger.flag();
+    productFlagger.flag();
+    separatePromoListFlagger.flag();
+    frequentlyBoughtTogetherFlagger.flag();
   }
 
   function flagAdditionalContent(): void {
@@ -45,13 +53,18 @@ const state: State = {
 
   function observeMutations(): void {
     const observer1 = new MutationObserver(() => flagContent());
-    const observer2 = new MutationObserver((mutationsList: MutationRecord[]) => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === "attributes" && mutation.attributeName === "id") {
-          addBlockedIndication(state);
+    const observer2 = new MutationObserver(
+      (mutationsList: MutationRecord[]) => {
+        for (const mutation of mutationsList) {
+          if (
+            mutation.type === "attributes" &&
+            mutation.attributeName === "id"
+          ) {
+            addBlockedIndication(state);
+          }
         }
       }
-    })
+    );
 
     observer1.observe(document.body, { childList: true, subtree: true });
     observer2.observe(document.body, { attributes: true });
@@ -63,8 +76,22 @@ const state: State = {
   };
 })();
 
-chrome.runtime.onMessage.addListener((request: { action: string }, sender: chrome.runtime.MessageSender, sendResponse: (response: { sponsoredCount: number, sponsoredShelfCount: number, videoCount: number }) => void) => {
-  if (request.action === "getCount") {
-    sendResponse({ sponsoredCount: state.sponsoredCount, sponsoredShelfCount: state.sponsoredShelfCount, videoCount: state.videoCount });
+chrome.runtime.onMessage.addListener(
+  (
+    request: { action: string },
+    sender: chrome.runtime.MessageSender,
+    sendResponse: (response: {
+      sponsoredCount: number;
+      sponsoredShelfCount: number;
+      videoCount: number;
+    }) => void
+  ) => {
+    if (request.action === "getCount") {
+      sendResponse({
+        sponsoredCount: state.sponsoredCount,
+        sponsoredShelfCount: state.sponsoredShelfCount,
+        videoCount: state.videoCount,
+      });
+    }
   }
-});
+);

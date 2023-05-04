@@ -1,68 +1,60 @@
-import { isFlagged, isSponsored, toggleVisibility, updateSponsoredTextSingle } from "../helpers/helpers";
+import {
+  flagProductListItem,
+  isFlagged,
+  isSponsored,
+  toggleVisibility,
+  updateSponsoredTextSingle,
+} from "../helpers/helpers";
 import { State } from "../types/State";
 
-export function productFlagger(state: State): void {
-  updateSponsoredCount(state);
+export class ProductFlagger {
+  private state: State;
 
-  const nonFlaggedProductListItems = document.querySelectorAll(
-    "li:not(.flagged-product)"
-  );
-
-  [...nonFlaggedProductListItems]
-    ?.filter(hasSponsoredLabelText)
-    ?.forEach(element => flagProductListItem(element, state, true));
-
-  [...nonFlaggedProductListItems]
-    ?.filter(hasFlaggedLabelText)
-    ?.forEach(element => flagProductListItem(element, state, false));
-}
-
-function updateSponsoredCount(state: State): void {
-  const flaggedProductLists =
-    document.querySelectorAll("li.flagged-product");
-  const flaggedProductDivs =
-    document.querySelectorAll("div.flagged-bought-together");
-
-  if (flaggedProductLists?.length === 0 && flaggedProductDivs?.length === 0) {
-    state.sponsoredCount = 0;
-  }
-}
-
-function hasSponsoredLabelText(listItem: Element): boolean {
-  const labelTextElement = listItem.querySelector(".label-text");
-  return !!labelTextElement && isSponsored(labelTextElement);
-}
-
-function hasFlaggedLabelText(listItem: Element): boolean {
-  const labelTextElement = listItem.querySelector(".label-text");
-  return !!labelTextElement && isFlagged(labelTextElement);
-}
-
-export function flagProductListItem(listItem: Element, state: State, updateCount = true): void {
-  if (updateCount) {
-    state.sponsoredCount++;
+  constructor(state: State) {
+    this.state = state;
   }
 
-  flagLabelElement(listItem, state);
-  flagImageElement(listItem);
+  public flag(): void {
+    this.updateSponsoredCount();
 
-  listItem.classList.add("flagged-product");
-  toggleVisibility(listItem, state);
-}
+    const nonFlaggedProductListItems = document.querySelectorAll(
+      "li:not(.flagged-product)"
+    );
 
-function flagLabelElement(listItem: Element, state: State): void {
-  const labelTextElement = listItem.querySelector(".label-text");
+    [...nonFlaggedProductListItems]
+      ?.filter(this.hasSponsoredLabelText)
+      ?.forEach((listItem) => {
+        flagProductListItem(listItem, this.state.language);
+        this.state.sponsoredCount++;
+        toggleVisibility(listItem, this.state);
+      });
 
-  if (labelTextElement && isSponsored(labelTextElement)) {
-    labelTextElement.classList.add("flagged-product-label");
-    updateSponsoredTextSingle(labelTextElement, state);
+    [...nonFlaggedProductListItems]
+      ?.filter(this.hasFlaggedLabelText)
+      ?.forEach((listItem) => {
+        flagProductListItem(listItem, this.state.language);
+        toggleVisibility(listItem, this.state);
+      });
   }
-}
 
-function flagImageElement(listItem: Element): void {
-  const imageLinkElement = listItem.querySelector("a.image");
+  private updateSponsoredCount(): void {
+    const flaggedProductLists = document.querySelectorAll("li.flagged-product");
+    const flaggedProductDivs = document.querySelectorAll(
+      "div.flagged-bought-together"
+    );
 
-  if (imageLinkElement) {
-    imageLinkElement.classList.add("flagged-product-image");
+    if (flaggedProductLists?.length === 0 && flaggedProductDivs?.length === 0) {
+      this.state.sponsoredCount = 0;
+    }
+  }
+
+  private hasSponsoredLabelText(listItem: Element): boolean {
+    const labelTextElement = listItem.querySelector(".label-text");
+    return !!labelTextElement && isSponsored(labelTextElement);
+  }
+
+  private hasFlaggedLabelText(listItem: Element): boolean {
+    const labelTextElement = listItem.querySelector(".label-text");
+    return !!labelTextElement && isFlagged(labelTextElement);
   }
 }

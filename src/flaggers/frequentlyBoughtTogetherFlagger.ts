@@ -1,37 +1,45 @@
 import { State } from "../types/State";
 import { isSponsored, updateSponsoredTextSingle } from "../helpers/helpers";
 
-export function frequentlyBoughtTogetherFlagger(state: State): void {
-  const divElements = getDivElements();
+export class FrequentlyBoughtTogetherFlagger {
+  private state: State;
 
-  divElements?.forEach((div: Element) => {
-    const sponsoredSpan = getSponsoredSpan(div);
+  constructor(state: State) {
+    this.state = state;
+  }
 
-    if (sponsoredSpan) {
-      state.sponsoredCount++;
-      flagSponsoredSpan(sponsoredSpan, state);
-      markAsFlagged(div);
-    }
-  });
-}
+  public flag(): void {
+    const divElements = this.getDivElements();
 
-function getDivElements(): Element[] {
-  const divElements = document.querySelectorAll(
-    "div.fbt-content:not(.flagged-bought-together)"
-  );
-  return [...divElements];
-}
+    divElements?.forEach((div: Element) => {
+      const sponsoredSpan = this.getSponsoredSpan(div);
 
-function getSponsoredSpan(div: Element): Element | null {
-  const sponsoredSpan = div.querySelector("span.sp-tag");
-  return isSponsored(sponsoredSpan) ? sponsoredSpan : null;
-}
+      if (sponsoredSpan) {
+        this.state.sponsoredCount++;
+        this.flagSponsoredSpan(sponsoredSpan);
+        this.markAsFlagged(div);
+      }
+    });
+  }
 
-function flagSponsoredSpan(spanElement: Element, state: State): void {
-  spanElement.classList.add("sponsored-label");
-  updateSponsoredTextSingle(spanElement, state);
-}
+  private getDivElements(): Element[] {
+    const divElements = document.querySelectorAll(
+      "div.fbt-content:not(.flagged-bought-together)"
+    );
+    return [...divElements];
+  }
 
-function markAsFlagged(div: Element): void {
-  div.classList.add("flagged-bought-together");
+  private getSponsoredSpan(div: Element): Element | null {
+    const sponsoredSpan = div.querySelector("span.sp-tag");
+    return isSponsored(sponsoredSpan) ? sponsoredSpan : null;
+  }
+
+  private flagSponsoredSpan(spanElement: Element): void {
+    spanElement.classList.add("sponsored-label");
+    updateSponsoredTextSingle(spanElement, this.state.language);
+  }
+
+  private markAsFlagged(div: Element): void {
+    div.classList.add("flagged-bought-together");
+  }
 }

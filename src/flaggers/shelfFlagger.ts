@@ -1,42 +1,58 @@
+import {
+  flagProductListItem,
+  isSponsored,
+  toggleVisibility,
+  updateSponsoredTextPlural,
+} from "../helpers/helpers";
 import { State } from "../types/State";
-import { isSponsored, toggleVisibility, updateSponsoredTextPlural } from "../helpers/helpers";
-import { flagProductListItem } from "./productFlagger";
 
-export function shelfFlagger(state: State): void {
-  updateShelfCount(state);
+export class ShelfFlagger {
+  private state: State;
 
-  const h4Elements = document.querySelectorAll("h4:not(.flagged-shelf)");
-
-  [...h4Elements].filter(isSponsored).forEach(element => updateShelfCountAndVisibility(element, state));
-}
-
-function updateShelfCount(state: State): void {
-  const flaggedShelf =
-    document.querySelectorAll("h4.flagged-shelf");
-
-  if (flaggedShelf?.length === 0) {
-    state.sponsoredShelfCount = 0;
+  constructor(state: State) {
+    this.state = state;
   }
-}
 
-function updateShelfCountAndVisibility(h4Element: Element, state: State): void {
-  state.sponsoredShelfCount++;
+  public flag(): void {
+    this.updateShelfCount();
 
-  h4Element.classList.add("sponsored-label");
-  updateSponsoredTextPlural(h4Element, state);
+    const h4Elements = document.querySelectorAll("h4:not(.flagged-shelf)");
 
-  const h4ParentElement = h4Element.parentElement;
+    [...h4Elements]
+      .filter(isSponsored)
+      .forEach((element) => this.updateShelfCountAndVisibility(element));
+  }
 
-  if (h4ParentElement) {
-    h4Element.classList.add("flagged-shelf");
-    h4ParentElement.classList.add("flagged-shelf");
+  private updateShelfCount(): void {
+    const flaggedShelf = document.querySelectorAll("h4.flagged-shelf");
 
-    toggleVisibility(h4ParentElement, state);
+    if (flaggedShelf?.length === 0) {
+      this.state.sponsoredShelfCount = 0;
+    }
+  }
 
-    const sponsoredItems = h4ParentElement?.children[2]?.children[0]?.children;
+  private updateShelfCountAndVisibility(h4Element: Element): void {
+    this.state.sponsoredShelfCount++;
 
-    if (sponsoredItems) {
-      [...sponsoredItems]?.forEach(element => flagProductListItem(element, state));
+    h4Element.classList.add("sponsored-label");
+    updateSponsoredTextPlural(h4Element, this.state.language);
+
+    const h4ParentElement = h4Element.parentElement;
+
+    if (h4ParentElement) {
+      h4Element.classList.add("flagged-shelf");
+      h4ParentElement.classList.add("flagged-shelf");
+
+      toggleVisibility(h4ParentElement, this.state);
+
+      const sponsoredItems =
+        h4ParentElement?.children[2]?.children[0]?.children;
+
+      if (sponsoredItems) {
+        [...sponsoredItems]?.forEach((element) =>
+          flagProductListItem(element, this.state.language)
+        );
+      }
     }
   }
 }

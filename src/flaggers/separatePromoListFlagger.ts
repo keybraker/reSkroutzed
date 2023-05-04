@@ -1,18 +1,30 @@
 import { State } from "../types/State";
-import { isSponsored, toggleVisibility, updateSponsoredTextPlural } from "../helpers/helpers";
+import {
+  isSponsored,
+  toggleVisibility,
+  updateSponsoredTextPlural,
+} from "../helpers/helpers";
 
-export function separatePromoListFlagger(state: State): void {
-  const promotedBoxes = document.querySelectorAll(
-    "h2:not(.flagged-list-title)"
-  );
+export class SeparatePromoListFlagger {
+  private state: State;
 
-  [...promotedBoxes]
-    ?.filter(isSponsored)
-    ?.forEach(element => flagPromotedBox(element, state));
-}
+  constructor(state: State) {
+    this.state = state;
+  }
 
-function flagPromotedBox(promotedBox: Element, state: State): void {
-  promotedBox.classList.add("flagged-list-title");
-  updateSponsoredTextPlural(promotedBox, state);
-  toggleVisibility(promotedBox, state);
+  public flag(): void {
+    const promotedBoxes = document.querySelectorAll(
+      "h2:not(.flagged-list-title)"
+    );
+
+    [...promotedBoxes]
+      ?.filter(isSponsored)
+      ?.forEach((element) => this.flagPromotedBox(element));
+  }
+
+  private flagPromotedBox(promotedBox: Element): void {
+    promotedBox.classList.add("flagged-list-title");
+    updateSponsoredTextPlural(promotedBox, this.state.language);
+    toggleVisibility(promotedBox, this.state);
+  }
 }

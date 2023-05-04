@@ -1,3 +1,4 @@
+import { Language } from "../enums/Language";
 import { State } from "../types/State";
 
 export function toggleVisibility(element: Element, state: State) {
@@ -6,22 +7,28 @@ export function toggleVisibility(element: Element, state: State) {
     : element.classList.add("display-none");
 }
 
-export function sponsoredText(isPlural = false, state: State) {
+export function sponsoredText(isPlural = false, language: Language) {
   return isPlural
-    ? state.language === "EN"
+    ? language === "EN"
       ? "Sponsored stores"
       : "Προωθούμενα καταστήματα"
-    : state.language == "EN"
-      ? "Sponsored store"
-      : "Προωθούμενo κατάστημα";
+    : language == "EN"
+    ? "Sponsored store"
+    : "Προωθούμενo κατάστημα";
 }
 
-export function updateSponsoredTextPlural(element: Element, state: State) {
-  element.textContent = sponsoredText(true, state);
+export function updateSponsoredTextPlural(
+  element: Element,
+  language: Language
+) {
+  element.textContent = sponsoredText(true, language);
 }
 
-export function updateSponsoredTextSingle(element: Element, state: State) {
-  element.textContent = sponsoredText(false, state);
+export function updateSponsoredTextSingle(
+  element: Element,
+  language: Language
+) {
+  element.textContent = sponsoredText(false, language);
 }
 
 export function isSponsored(element: Element | null) {
@@ -47,12 +54,38 @@ export function isFlagged(element: Element | null) {
     return false;
   }
 
-  const sponsoredTexts =
-    ["Sponsored stores",
-      "Προωθούμενα καταστήματα",
-      "Sponsored store",
-      "Προωθούμενo κατάστημα",
-    ];
+  const sponsoredTexts = [
+    "Sponsored stores",
+    "Προωθούμενα καταστήματα",
+    "Sponsored store",
+    "Προωθούμενo κατάστημα",
+  ];
 
   return sponsoredTexts.includes(element.textContent);
+}
+export function flagProductListItem(
+  listItem: Element,
+  language: Language
+): void {
+  flagLabelElement(listItem, language);
+  flagImageElement(listItem);
+
+  listItem.classList.add("flagged-product");
+}
+
+function flagLabelElement(listItem: Element, language: Language): void {
+  const labelTextElement = listItem.querySelector(".label-text");
+
+  if (labelTextElement && isSponsored(labelTextElement)) {
+    labelTextElement.classList.add("flagged-product-label");
+    updateSponsoredTextSingle(labelTextElement, language);
+  }
+}
+
+function flagImageElement(listItem: Element): void {
+  const imageLinkElement = listItem.querySelector("a.image");
+
+  if (imageLinkElement) {
+    imageLinkElement.classList.add("flagged-product-image");
+  }
 }
