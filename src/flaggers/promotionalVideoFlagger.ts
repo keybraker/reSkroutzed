@@ -1,6 +1,6 @@
 import { State } from "../types/State";
 
-export class VideoFlagger {
+export class PromotionalVideoFlagger {
   private state: State;
 
   constructor(state: State) {

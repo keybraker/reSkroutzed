@@ -5,7 +5,7 @@ import {
   updateSponsoredTextPlural,
 } from "../helpers/helpers";
 
-export class SeparatePromoListFlagger {
+export class SponsoredSeparatePromoListFlagger {
   private state: State;
 
   constructor(state: State) {

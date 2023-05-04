@@ -1,14 +1,14 @@
 import { Language } from "./enums/Language";
-import { FrequentlyBoughtTogetherFlagger } from "./flaggers/frequentlyBoughtTogetherFlagger";
-import { ProductFlagger } from "./flaggers/productFlagger";
-import { SeparatePromoListFlagger } from "./flaggers/separatePromoListFlagger";
-import { ShelfFlagger } from "./flaggers/shelfFlagger";
-import { VideoFlagger } from "./flaggers/videoFlagger";
+import { PromotionalVideoFlagger } from "./flaggers/promotionalVideoFlagger";
+import { SponsoredFrequentlyBoughtTogetherFlagger } from "./flaggers/sponsoredFrequentlyBoughtTogether";
+import { SponsoredProductFlagger } from "./flaggers/sponsoredProductFlagger";
+import { SponsoredSeparatePromoListFlagger } from "./flaggers/sponsoredProductListFlagger";
+import { SponsoredShelfFlagger } from "./flaggers/sponsoredShelfFlagger";
 import { addBlockedIndication } from "./manipulators/addBlockedIndication";
 import { buyThroughSkroutzIndicator } from "./manipulators/buyThroughSkroutzIndicator";
 import { toggleSponsoredContentVisibility } from "./manipulators/toggleSponsoredContentVisibility";
-import { retrieveLanguage } from "./retrievers/retrieveLanguage";
-import { retrieveVisibility } from "./retrievers/retrieveVisibility";
+import { retrieveLanguage } from "./retrievers/languageRetriever";
+import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
 
 const state: State = {
@@ -19,13 +19,14 @@ const state: State = {
   videoCount: 0,
 };
 
-const shelfFlagger = new ShelfFlagger(state);
-const videoFlagger = new VideoFlagger(state);
-const productFlagger = new ProductFlagger(state);
-const separatePromoListFlagger = new SeparatePromoListFlagger(state);
-const frequentlyBoughtTogetherFlagger = new FrequentlyBoughtTogetherFlagger(
+const sponsoredShelfFlagger = new SponsoredShelfFlagger(state);
+const promotionalVideoFlagger = new PromotionalVideoFlagger(state);
+const sponsoredProductFlagger = new SponsoredProductFlagger(state);
+const sponsoredSeparatePromoListFlagger = new SponsoredSeparatePromoListFlagger(
   state
 );
+const sponsoredFrequentlyBoughtTogetherFlagger =
+  new SponsoredFrequentlyBoughtTogetherFlagger(state);
 
 (function () {
   function init(): void {
@@ -39,11 +40,11 @@ const frequentlyBoughtTogetherFlagger = new FrequentlyBoughtTogetherFlagger(
   }
 
   function flagContent(): void {
-    shelfFlagger.flag();
-    videoFlagger.flag();
-    productFlagger.flag();
-    separatePromoListFlagger.flag();
-    frequentlyBoughtTogetherFlagger.flag();
+    sponsoredShelfFlagger.flag();
+    promotionalVideoFlagger.flag();
+    sponsoredProductFlagger.flag();
+    sponsoredSeparatePromoListFlagger.flag();
+    sponsoredFrequentlyBoughtTogetherFlagger.flag();
   }
 
   function flagAdditionalContent(): void {

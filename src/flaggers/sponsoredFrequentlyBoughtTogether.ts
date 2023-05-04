@@ -1,7 +1,7 @@
 import { State } from "../types/State";
 import { isSponsored, updateSponsoredTextSingle } from "../helpers/helpers";
 
-export class FrequentlyBoughtTogetherFlagger {
+export class SponsoredFrequentlyBoughtTogetherFlagger {
   private state: State;
 
   constructor(state: State) {

@@ -6,7 +6,7 @@ import {
 } from "../helpers/helpers";
 import { State } from "../types/State";
 
-export class ShelfFlagger {
+export class SponsoredShelfFlagger {
   private state: State;
 
   constructor(state: State) {
