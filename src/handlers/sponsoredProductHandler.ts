@@ -7,7 +7,7 @@ import {
 } from "../helpers/helpers";
 import { State } from "../types/State";
 
-export class SponsoredProductFlagger {
+export class SponsoredProductHandler {
   private state: State;
 
   constructor(state: State) {

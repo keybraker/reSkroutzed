@@ -1,12 +1,12 @@
 import { Language } from "./enums/Language";
-import { PromotionalVideoFlagger } from "./flaggers/promotionalVideoFlagger";
-import { SponsoredFrequentlyBoughtTogetherFlagger } from "./flaggers/sponsoredFrequentlyBoughtTogether";
-import { SponsoredProductFlagger } from "./flaggers/sponsoredProductFlagger";
-import { SponsoredSeparatePromoListFlagger } from "./flaggers/sponsoredProductListFlagger";
-import { SponsoredShelfFlagger } from "./flaggers/sponsoredShelfFlagger";
-import { addBlockedIndication } from "./manipulators/addBlockedIndication";
-import { buyThroughSkroutzIndicator } from "./manipulators/buyThroughSkroutzIndicator";
-import { toggleSponsoredContentVisibility } from "./manipulators/toggleSponsoredContentVisibility";
+import { PromotionalVideoHandler } from "./handlers/promotionalVideoHandler";
+import { SponsoredFrequentlyBoughtTogetherHandler } from "./handlers/sponsoredFrequentlyBoughtTogetherHandler";
+import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
+import { SponsoredSeparatePromoListHandler } from "./handlers/sponsoredProductListHandler";
+import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
+import { addBlockedIndication } from "./helpers/addBlockedIndication";
+import { buyThroughSkroutzIndicator } from "./helpers/buyThroughSkroutzIndicator";
+import { toggleSponsoredContentVisibility } from "./helpers/toggleSponsoredContentVisibility";
 import { retrieveLanguage } from "./retrievers/languageRetriever";
 import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
@@ -19,14 +19,14 @@ const state: State = {
   videoCount: 0,
 };
 
-const sponsoredShelfFlagger = new SponsoredShelfFlagger(state);
-const promotionalVideoFlagger = new PromotionalVideoFlagger(state);
-const sponsoredProductFlagger = new SponsoredProductFlagger(state);
-const sponsoredSeparatePromoListFlagger = new SponsoredSeparatePromoListFlagger(
+const sponsoredShelfHandler = new SponsoredShelfHandler(state);
+const promotionalVideoHandler = new PromotionalVideoHandler(state);
+const sponsoredProductHandler = new SponsoredProductHandler(state);
+const sponsoredSeparatePromoListHandler = new SponsoredSeparatePromoListHandler(
   state
 );
-const sponsoredFrequentlyBoughtTogetherFlagger =
-  new SponsoredFrequentlyBoughtTogetherFlagger(state);
+const sponsoredFrequentlyBoughtTogetherHandler =
+  new SponsoredFrequentlyBoughtTogetherHandler(state);
 
 (function () {
   function init(): void {
@@ -40,11 +40,11 @@ const sponsoredFrequentlyBoughtTogetherFlagger =
   }
 
   function flagContent(): void {
-    sponsoredShelfFlagger.flag();
-    promotionalVideoFlagger.flag();
-    sponsoredProductFlagger.flag();
-    sponsoredSeparatePromoListFlagger.flag();
-    sponsoredFrequentlyBoughtTogetherFlagger.flag();
+    sponsoredShelfHandler.flag();
+    promotionalVideoHandler.flag();
+    sponsoredProductHandler.flag();
+    sponsoredSeparatePromoListHandler.flag();
+    sponsoredFrequentlyBoughtTogetherHandler.flag();
   }
 
   function flagAdditionalContent(): void {

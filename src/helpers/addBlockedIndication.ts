@@ -1,4 +1,4 @@
-import { sponsoredText } from "../helpers/helpers";
+import { sponsoredText } from "./helpers";
 import { State } from "../types/State";
 import { toggleSponsoredContentVisibility } from "./toggleSponsoredContentVisibility";
 
