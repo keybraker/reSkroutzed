@@ -1,5 +1,5 @@
-import { sponsoredText } from "./helpers";
 import { State } from "../types/State";
+import { sponsoredText } from "./sponsoredUtil";
 import { toggleSponsoredContentVisibility } from "./toggleSponsoredContentVisibility";
 
 const icons = {

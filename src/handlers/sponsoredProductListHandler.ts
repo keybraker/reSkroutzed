@@ -1,9 +1,9 @@
-import { State } from "../types/State";
 import {
   isSponsored,
-  toggleVisibility,
   updateSponsoredTextPlural,
-} from "../helpers/helpers";
+  toggleVisibility,
+} from "../helpers/sponsoredUtil";
+import { State } from "../types/State";
 
 export class SponsoredSeparatePromoListHandler {
   private state: State;

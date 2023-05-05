@@ -1,5 +1,5 @@
 import { State } from "../types/State";
-import { toggleVisibility } from "../helpers/helpers";
+import { toggleVisibility } from "./sponsoredUtil";
 
 export function toggleSponsoredContentVisibility(state: State) {
   toggleVisibilityBySelector("li.flagged-product", state);

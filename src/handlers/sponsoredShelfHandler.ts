@@ -1,9 +1,10 @@
+import { flagProductListItem } from "../helpers/flagUtil";
 import {
-  flagProductListItem,
   isSponsored,
   toggleVisibility,
   updateSponsoredTextPlural,
-} from "../helpers/helpers";
+  updateSponsoredTextSingle,
+} from "../helpers/sponsoredUtil";
 import { State } from "../types/State";
 
 export class SponsoredShelfHandler {
@@ -49,9 +50,10 @@ export class SponsoredShelfHandler {
         h4ParentElement?.children[2]?.children[0]?.children;
 
       if (sponsoredItems) {
-        [...sponsoredItems]?.forEach((element) =>
-          flagProductListItem(element, this.state.language)
-        );
+        [...sponsoredItems]?.forEach((element) => {
+          flagProductListItem(element);
+          updateSponsoredTextSingle(element, this.state.language);
+        });
       }
     }
   }

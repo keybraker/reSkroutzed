@@ -1,5 +1,8 @@
+import {
+  isSponsored,
+  updateSponsoredTextSingle,
+} from "../helpers/sponsoredUtil";
 import { State } from "../types/State";
-import { isSponsored, updateSponsoredTextSingle } from "../helpers/helpers";
 
 export class SponsoredFrequentlyBoughtTogetherHandler {
   private state: State;

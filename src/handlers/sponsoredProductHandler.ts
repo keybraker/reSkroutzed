@@ -1,10 +1,9 @@
+import { flagProductListItem, isFlagged } from "../helpers/flagUtil";
 import {
-  flagProductListItem,
-  isFlagged,
   isSponsored,
   toggleVisibility,
   updateSponsoredTextSingle,
-} from "../helpers/helpers";
+} from "../helpers/sponsoredUtil";
 import { State } from "../types/State";
 
 export class SponsoredProductHandler {
@@ -24,7 +23,8 @@ export class SponsoredProductHandler {
     [...nonFlaggedProductListItems]
       ?.filter(this.hasSponsoredLabelText)
       ?.forEach((listItem) => {
-        flagProductListItem(listItem, this.state.language);
+        flagProductListItem(listItem);
+        updateSponsoredTextSingle(listItem, this.state.language);
         this.state.sponsoredCount++;
         toggleVisibility(listItem, this.state);
       });
@@ -32,7 +32,8 @@ export class SponsoredProductHandler {
     [...nonFlaggedProductListItems]
       ?.filter(this.hasFlaggedLabelText)
       ?.forEach((listItem) => {
-        flagProductListItem(listItem, this.state.language);
+        flagProductListItem(listItem);
+        updateSponsoredTextSingle(listItem, this.state.language);
         toggleVisibility(listItem, this.state);
       });
   }
