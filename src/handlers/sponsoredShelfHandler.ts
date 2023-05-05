@@ -44,6 +44,8 @@ export class SponsoredShelfHandler {
       h4Element.classList.add("flagged-shelf");
       h4ParentElement.classList.add("flagged-shelf");
 
+      updateSponsoredTextSingle(h4Element, this.state.language);
+
       toggleVisibility(h4ParentElement, this.state);
 
       const sponsoredItems =

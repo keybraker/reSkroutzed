@@ -7,7 +7,7 @@ export function toggleVisibility(element: Element, state: State) {
     : element.classList.add("display-none");
 }
 
-export function sponsoredText(isPlural = false, language: Language) {
+export function getSponsoredText(isPlural = false, language: Language) {
   return isPlural
     ? language === "EN"
       ? "Sponsored stores"
@@ -17,14 +17,25 @@ export function sponsoredText(isPlural = false, language: Language) {
     : "Προωθούμενo κατάστημα";
 }
 
+export function flagSponsoredText(element: Element, language: Language) {
+  element.textContent = getSponsoredText(false, language);
+}
+
 export function updateSponsoredTextPlural(
   element: Element,
   language: Language
 ) {
+  if (isSponsored(element)) {
+    element.classList.add("sponsored-label");
+    element.textContent = getSponsoredText(true, language);
+    return;
+  }
+
   const labelTextElement = element.querySelector(".label-text");
 
   if (labelTextElement) {
-    labelTextElement.textContent = sponsoredText(true, language);
+    labelTextElement.classList.add("sponsored-label");
+    labelTextElement.textContent = getSponsoredText(true, language);
   }
 }
 
@@ -32,10 +43,17 @@ export function updateSponsoredTextSingle(
   element: Element,
   language: Language
 ) {
+  if (isSponsored(element)) {
+    element.classList.add("sponsored-label");
+    element.textContent = getSponsoredText(false, language);
+    return;
+  }
+
   const labelTextElement = element.querySelector(".label-text");
 
   if (labelTextElement) {
-    labelTextElement.textContent = sponsoredText(false, language);
+    labelTextElement.classList.add("sponsored-label");
+    labelTextElement.textContent = getSponsoredText(false, language);
   }
 }
 

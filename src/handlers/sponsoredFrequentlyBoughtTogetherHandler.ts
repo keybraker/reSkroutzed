@@ -20,7 +20,7 @@ export class SponsoredFrequentlyBoughtTogetherHandler {
       if (sponsoredSpan) {
         this.state.sponsoredCount++;
         this.flagSponsoredSpan(sponsoredSpan);
-        this.markAsFlagged(div);
+        this.flagSponsoredDiv(div);
       }
     });
   }
@@ -42,7 +42,7 @@ export class SponsoredFrequentlyBoughtTogetherHandler {
     updateSponsoredTextSingle(spanElement, this.state.language);
   }
 
-  private markAsFlagged(div: Element): void {
+  private flagSponsoredDiv(div: Element): void {
     div.classList.add("flagged-bought-together");
   }
 }

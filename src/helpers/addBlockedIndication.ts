@@ -1,5 +1,5 @@
 import { State } from "../types/State";
-import { sponsoredText } from "../utilities/sponsoredUtil";
+import { getSponsoredText } from "../utilities/sponsoredUtil";
 import { toggleSponsoredContentVisibility } from "./toggleSponsoredContentVisibility";
 
 const icons = {
@@ -57,7 +57,7 @@ function updateDisplayText(
     ? "flagger-toggle-product-active"
     : "flagger-toggle-list-active";
 
-  const text = sponsoredText(true, state.language);
+  const text = getSponsoredText(true, state.language);
   const icon = state.visible ? icons.eyeOpenIcon : icons.eyeSlashedIcon;
 
   state.visible
