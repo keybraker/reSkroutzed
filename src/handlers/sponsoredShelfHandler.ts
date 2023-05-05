@@ -1,10 +1,10 @@
-import { flagProductListItem } from "../helpers/flagUtil";
+import { flagProductListItem } from "../utilities/flagUtil";
 import {
   isSponsored,
   toggleVisibility,
   updateSponsoredTextPlural,
   updateSponsoredTextSingle,
-} from "../helpers/sponsoredUtil";
+} from "../utilities/sponsoredUtil";
 import { State } from "../types/State";
 
 export class SponsoredShelfHandler {

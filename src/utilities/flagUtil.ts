@@ -16,16 +16,12 @@ export function isFlagged(element: Element | null) {
 export function flagProductListItem(listItem: Element): void {
   listItem.classList.add("flagged-product");
   flagImageElement(listItem);
-
-  const labelTextElement = listItem.querySelector(".label-text");
-
-  if (labelTextElement) {
-    flagLabelElement(labelTextElement);
-  }
-
+  flagLabelElement(listItem);
 }
 
-function flagLabelElement(labelTextElement: Element): void {
+function flagLabelElement(listItem: Element): void {
+  const labelTextElement = listItem.querySelector(".label-text");
+
   if (labelTextElement) {
     labelTextElement.classList.add("flagged-product-label");
   }

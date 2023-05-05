@@ -2,7 +2,7 @@ import {
   isSponsored,
   updateSponsoredTextPlural,
   toggleVisibility,
-} from "../helpers/sponsoredUtil";
+} from "../utilities/sponsoredUtil";
 import { State } from "../types/State";
 
 export class SponsoredSeparatePromoListHandler {

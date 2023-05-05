@@ -1,7 +1,7 @@
 import {
   isSponsored,
   updateSponsoredTextSingle,
-} from "../helpers/sponsoredUtil";
+} from "../utilities/sponsoredUtil";
 import { State } from "../types/State";
 
 export class SponsoredFrequentlyBoughtTogetherHandler {
