@@ -1,15 +1,15 @@
 import { Language } from "./enums/Language";
+import { PromotionalVideoHandler } from "./handlers/promotionalVideoHandler";
+import { SponsoredFBTHandler } from "./handlers/sponsoredFBTHandler";
+import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
+import { SponsoredProductListHandler } from "./handlers/sponsoredProductListHandler";
+import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
+import { BTSIndicator } from "./decorators/BTSIndicator";
+import { toggleContentVisibility } from "./actions/visibilityAction";
+import { retrieveLanguage } from "./retrievers/languageRetriever";
+import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
-import { frequentlyBoughtTogetherFlagger } from "./flaggers/frequentlyBoughtTogetherFlagger";
-import { productFlagger } from "./flaggers/productFlagger";
-import { separatePromoListFlagger } from "./flaggers/separatePromoListFlagger";
-import { shelfFlagger } from "./flaggers/shelfFlagger";
-import { videoFlagger } from "./flaggers/videoFlagger";
-import { addBlockedIndication } from "./manipulators/addBlockedIndication";
-import { buyThroughSkroutzIndicator } from "./manipulators/buyThroughSkroutzIndicator";
-import { toggleSponsoredContentVisibility } from "./manipulators/toggleSponsoredContentVisibility";
-import { retrieveLanguage } from "./retrievers/retrieveLanguage";
-import { retrieveVisibility } from "./retrievers/retrieveVisibility";
+import { BlockIndicator } from "./decorators/BlockIndicator";
 
 const state: State = {
   visible: true,
@@ -19,6 +19,14 @@ const state: State = {
   videoCount: 0,
 };
 
+const sponsoredShelfHandler = new SponsoredShelfHandler(state);
+const promotionalVideoHandler = new PromotionalVideoHandler(state);
+const sponsoredProductHandler = new SponsoredProductHandler(state);
+const sponsoredProductListHandler = new SponsoredProductListHandler(state);
+const sponsoredFBTHandler = new SponsoredFBTHandler(state);
+
+const blockIndicator = new BlockIndicator(state);
+
 (function () {
   function init(): void {
     state.visible = retrieveVisibility();
@@ -27,31 +35,36 @@ const state: State = {
     flagContent();
     flagAdditionalContent();
 
-    addBlockedIndication(state);
+    blockIndicator.addOrUpdate();
   }
 
   function flagContent(): void {
-    shelfFlagger(state);
-    videoFlagger(state);
-    productFlagger(state);
-    separatePromoListFlagger(state);
-    frequentlyBoughtTogetherFlagger(state);
+    promotionalVideoHandler.flag();
+    sponsoredShelfHandler.flag();
+    sponsoredProductHandler.flag();
+    sponsoredProductListHandler.flag();
+    sponsoredFBTHandler.flag();
   }
 
   function flagAdditionalContent(): void {
-    toggleSponsoredContentVisibility(state);
-    buyThroughSkroutzIndicator(state);
+    toggleContentVisibility(state);
+    BTSIndicator(state);
   }
 
   function observeMutations(): void {
     const observer1 = new MutationObserver(() => flagContent());
-    const observer2 = new MutationObserver((mutationsList: MutationRecord[]) => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === "attributes" && mutation.attributeName === "id") {
-          addBlockedIndication(state);
+    const observer2 = new MutationObserver(
+      (mutationsList: MutationRecord[]) => {
+        for (const mutation of mutationsList) {
+          if (
+            mutation.type === "attributes" &&
+            mutation.attributeName === "id"
+          ) {
+            blockIndicator.addOrUpdate();
+          }
         }
       }
-    })
+    );
 
     observer1.observe(document.body, { childList: true, subtree: true });
     observer2.observe(document.body, { attributes: true });
@@ -63,8 +76,22 @@ const state: State = {
   };
 })();
 
-chrome.runtime.onMessage.addListener((request: { action: string }, sender: chrome.runtime.MessageSender, sendResponse: (response: { sponsoredCount: number, sponsoredShelfCount: number, videoCount: number }) => void) => {
-  if (request.action === "getCount") {
-    sendResponse({ sponsoredCount: state.sponsoredCount, sponsoredShelfCount: state.sponsoredShelfCount, videoCount: state.videoCount });
+chrome.runtime.onMessage.addListener(
+  (
+    request: { action: string },
+    sender: chrome.runtime.MessageSender,
+    sendResponse: (response: {
+      sponsoredCount: number;
+      sponsoredShelfCount: number;
+      videoCount: number;
+    }) => void
+  ) => {
+    if (request.action === "getCount") {
+      sendResponse({
+        sponsoredCount: state.sponsoredCount,
+        sponsoredShelfCount: state.sponsoredShelfCount,
+        videoCount: state.videoCount,
+      });
+    }
   }
-});
+);

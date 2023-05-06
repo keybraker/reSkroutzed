@@ -1,9 +1,10 @@
 import { State } from "../types/State";
 
-export function buyThroughSkroutzIndicator(state: State): void {
+// Buy  Through Skroutz
+export function BTSIndicator(state: State): void {
   const elements = document.querySelectorAll("article.offering-card");
 
-  elements?.forEach(element => insertPriceIndication(element, state));
+  elements?.forEach((element) => insertPriceIndication(element, state));
 }
 
 function insertPriceIndication(element: Element, state: State): void {
@@ -19,13 +20,22 @@ function createPriceIndicationElement(state: State): HTMLDivElement {
   const text = document.createElement("div");
   text.classList.add("font-bold");
 
-  const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const svgElement = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "svg"
+  );
   svgElement.setAttribute("viewBox", "0 96 960 960");
   svgElement.setAttribute("width", "16");
   svgElement.setAttribute("height", "16");
 
-  const pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  pathElement.setAttribute("d", "m40 936 440-760 440 760H40Zm104-60h672L480 296 144 876Zm340.175-57q12.825 0 21.325-8.675 8.5-8.676 8.5-21.5 0-12.825-8.675-21.325-8.676-8.5-21.5-8.5-12.825 0-21.325 8.675-8.5 8.676-8.5 21.5 0 12.825 8.675 21.325 8.676 8.5 21.5 8.5ZM454 708h60V484h-60v224Zm26-122Z");
+  const pathElement = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "path"
+  );
+  pathElement.setAttribute(
+    "d",
+    "m40 936 440-760 440 760H40Zm104-60h672L480 296 144 876Zm340.175-57q12.825 0 21.325-8.675 8.5-8.676 8.5-21.5 0-12.825-8.675-21.325-8.676-8.5-21.5-8.5-12.825 0-21.325 8.675-8.5 8.676-8.5 21.5 0 12.825 8.675 21.325 8.676 8.5 21.5 8.5ZM454 708h60V484h-60v224Zm26-122Z"
+  );
 
   svgElement.appendChild(pathElement);
   icon.appendChild(svgElement);
