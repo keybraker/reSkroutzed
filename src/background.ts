@@ -4,12 +4,12 @@ import { SponsoredFBTHandler } from "./handlers/sponsoredFBTHandler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
 import { SponsoredProductListHandler } from "./handlers/sponsoredProductListHandler";
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
-import { buyThroughSkroutzIndicator } from "./helpers/buyThroughSkroutzIndicator";
+import { BTSIndicator } from "./decorators/BTSIndicator";
 import { toggleContentVisibility } from "./actions/visibilityAction";
 import { retrieveLanguage } from "./retrievers/languageRetriever";
 import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
-import { BlockIndicator } from "./helpers/BlockIndicator";
+import { BlockIndicator } from "./decorators/BlockIndicator";
 
 const state: State = {
   visible: true,
@@ -48,7 +48,7 @@ const blockIndicator = new BlockIndicator(state);
 
   function flagAdditionalContent(): void {
     toggleContentVisibility(state);
-    buyThroughSkroutzIndicator(state);
+    BTSIndicator(state);
   }
 
   function observeMutations(): void {

@@ -1,6 +1,7 @@
 import { State } from "../types/State";
 
-export function buyThroughSkroutzIndicator(state: State): void {
+// Buy  Through Skroutz
+export function BTSIndicator(state: State): void {
   const elements = document.querySelectorAll("article.offering-card");
 
   elements?.forEach((element) => insertPriceIndication(element, state));
