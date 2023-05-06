@@ -4,7 +4,8 @@ import {
 } from "../utilities/sponsoredUtil";
 import { State } from "../types/State";
 
-export class SponsoredFrequentlyBoughtTogetherHandler {
+// FBT: Frequently Bought Together
+export class SponsoredFBTHandler {
   private state: State;
 
   constructor(state: State) {

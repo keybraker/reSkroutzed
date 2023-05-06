@@ -5,7 +5,7 @@ import {
 } from "../utilities/sponsoredUtil";
 import { State } from "../types/State";
 
-export class SponsoredSeparatePromoListHandler {
+export class SponsoredProductListHandler {
   private state: State;
 
   constructor(state: State) {

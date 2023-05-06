@@ -15,7 +15,7 @@ export class SponsoredShelfHandler {
   }
 
   public flag(): void {
-    this.updateShelfCount();
+    this.resetShelfCount();
 
     const h4Elements = document.querySelectorAll("h4:not(.flagged-shelf)");
 
@@ -24,7 +24,7 @@ export class SponsoredShelfHandler {
       .forEach((element) => this.updateShelfCountAndVisibility(element));
   }
 
-  private updateShelfCount(): void {
+  private resetShelfCount(): void {
     const flaggedShelf = document.querySelectorAll("h4.flagged-shelf");
 
     if (flaggedShelf?.length === 0) {
@@ -41,7 +41,6 @@ export class SponsoredShelfHandler {
     const h4ParentElement = h4Element.parentElement;
 
     if (h4ParentElement) {
-      h4Element.classList.add("flagged-shelf");
       h4ParentElement.classList.add("flagged-shelf");
 
       updateSponsoredTextSingle(h4Element, this.state.language);
@@ -53,6 +52,7 @@ export class SponsoredShelfHandler {
 
       if (sponsoredItems) {
         [...sponsoredItems]?.forEach((element) => {
+          this.state.sponsoredCount++;
           flagProductListItem(element);
           updateSponsoredTextSingle(element, this.state.language);
         });

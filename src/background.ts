@@ -1,15 +1,15 @@
 import { Language } from "./enums/Language";
 import { PromotionalVideoHandler } from "./handlers/promotionalVideoHandler";
-import { SponsoredFrequentlyBoughtTogetherHandler } from "./handlers/sponsoredFrequentlyBoughtTogetherHandler";
+import { SponsoredFBTHandler } from "./handlers/sponsoredFBTHandler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
-import { SponsoredSeparatePromoListHandler } from "./handlers/sponsoredProductListHandler";
+import { SponsoredProductListHandler } from "./handlers/sponsoredProductListHandler";
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
-import { addBlockedIndication } from "./helpers/addBlockedIndication";
 import { buyThroughSkroutzIndicator } from "./helpers/buyThroughSkroutzIndicator";
-import { toggleSponsoredContentVisibility } from "./helpers/toggleSponsoredContentVisibility";
+import { toggleContentVisibility } from "./actions/visibilityAction";
 import { retrieveLanguage } from "./retrievers/languageRetriever";
 import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
+import { BlockIndicator } from "./helpers/BlockIndicator";
 
 const state: State = {
   visible: true,
@@ -22,11 +22,10 @@ const state: State = {
 const sponsoredShelfHandler = new SponsoredShelfHandler(state);
 const promotionalVideoHandler = new PromotionalVideoHandler(state);
 const sponsoredProductHandler = new SponsoredProductHandler(state);
-const sponsoredSeparatePromoListHandler = new SponsoredSeparatePromoListHandler(
-  state
-);
-const sponsoredFrequentlyBoughtTogetherHandler =
-  new SponsoredFrequentlyBoughtTogetherHandler(state);
+const sponsoredProductListHandler = new SponsoredProductListHandler(state);
+const sponsoredFBTHandler = new SponsoredFBTHandler(state);
+
+const blockIndicator = new BlockIndicator(state);
 
 (function () {
   function init(): void {
@@ -36,19 +35,19 @@ const sponsoredFrequentlyBoughtTogetherHandler =
     flagContent();
     flagAdditionalContent();
 
-    addBlockedIndication(state);
+    blockIndicator.addOrUpdate();
   }
 
   function flagContent(): void {
-    sponsoredShelfHandler.flag();
     promotionalVideoHandler.flag();
+    sponsoredShelfHandler.flag();
     sponsoredProductHandler.flag();
-    sponsoredSeparatePromoListHandler.flag();
-    sponsoredFrequentlyBoughtTogetherHandler.flag();
+    sponsoredProductListHandler.flag();
+    sponsoredFBTHandler.flag();
   }
 
   function flagAdditionalContent(): void {
-    toggleSponsoredContentVisibility(state);
+    toggleContentVisibility(state);
     buyThroughSkroutzIndicator(state);
   }
 
@@ -61,7 +60,7 @@ const sponsoredFrequentlyBoughtTogetherHandler =
             mutation.type === "attributes" &&
             mutation.attributeName === "id"
           ) {
-            addBlockedIndication(state);
+            blockIndicator.addOrUpdate();
           }
         }
       }
