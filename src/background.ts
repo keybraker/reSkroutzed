@@ -4,12 +4,12 @@ import { SponsoredFBTHandler } from "./handlers/sponsoredFBTHandler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
 import { SponsoredProductListHandler } from "./handlers/sponsoredProductListHandler";
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
-import { BTSIndicator } from "./decorators/BTSIndicator";
 import { toggleContentVisibility } from "./actions/visibilityAction";
 import { retrieveLanguage } from "./retrievers/languageRetriever";
 import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
 import { BlockIndicator } from "./decorators/BlockIndicator";
+import { BTSIndicator } from "./decorators/BTSIndicator";
 
 const state: State = {
   visible: true,
@@ -26,19 +26,20 @@ const sponsoredProductListHandler = new SponsoredProductListHandler(state);
 const sponsoredFBTHandler = new SponsoredFBTHandler(state);
 
 const blockIndicator = new BlockIndicator(state);
+const btsIndicator = new BTSIndicator(state);
 
 (function () {
-  function init(): void {
+  async function initializer() {
     state.visible = retrieveVisibility();
     state.language = retrieveLanguage();
 
     flagContent();
-    flagAdditionalContent();
+    await flagAdditionalContent();
 
     blockIndicator.addOrUpdate();
   }
 
-  function flagContent(): void {
+  function flagContent() {
     promotionalVideoHandler.flag();
     sponsoredShelfHandler.flag();
     sponsoredProductHandler.flag();
@@ -46,12 +47,12 @@ const blockIndicator = new BlockIndicator(state);
     sponsoredFBTHandler.flag();
   }
 
-  function flagAdditionalContent(): void {
+  async function flagAdditionalContent() {
     toggleContentVisibility(state);
-    BTSIndicator(state);
+    await btsIndicator.start();
   }
 
-  function observeMutations(): void {
+  function observeMutations() {
     const observer1 = new MutationObserver(() => flagContent());
     const observer2 = new MutationObserver(
       (mutationsList: MutationRecord[]) => {
@@ -70,8 +71,8 @@ const blockIndicator = new BlockIndicator(state);
     observer2.observe(document.body, { attributes: true });
   }
 
-  window.onload = function () {
-    init();
+  window.onload = async function () {
+    await initializer();
     observeMutations();
   };
 })();
