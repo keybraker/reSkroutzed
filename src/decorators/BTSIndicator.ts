@@ -144,13 +144,13 @@ export class BTSIndicator {
       "inline-flex-row",
       status
     );
-    colFlex.classList.add("inline-flex-row-col");
+    colFlex.classList.add("inline-flex-col");
 
     const icon = document.createElement("div");
     const information = document.createElement("div");
     const disclaimer = document.createElement("div");
     information.classList.add("font-bold");
-    disclaimer.classList.add("align-end");
+    disclaimer.classList.add("align-end", "text-black");
 
     const svgElement = document.createElementNS(
       "http://www.w3.org/2000/svg",

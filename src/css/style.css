@@ -28,6 +28,10 @@
   /* font-style: italic !important; */
 }
 
+text-black {
+  color: black !important;
+}
+
 .main-content {
   margin-right: 4px !important;
 }
