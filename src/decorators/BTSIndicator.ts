@@ -1,10 +1,22 @@
 import { State } from "../types/State";
 
+interface LowestPriceData {
+  formatted: string;
+  unformatted: number;
+}
+
+interface ProductData {
+  [key: string]: {
+    final_price: number;
+    final_price_formatted: string;
+  };
+}
+
 export class BTSIndicator {
   private state: State;
-  private btsPrice: number | null = null;
-  private lowestPriceWithoutTransport: number | null = null;
-  private lowestPriceWithoutTransportFormatted: number | null = null;
+  private btsPrice: number | undefined = undefined;
+  private lowestPrice: number | undefined = undefined;
+  private lowestPriceFormatted: string | undefined = undefined;
 
   constructor(state: State) {
     this.state = state;
@@ -16,8 +28,8 @@ export class BTSIndicator {
     if (offeringCard) {
       this.btsPrice = this.fetchBTSPrice();
       const priceData = await this.fetchMarketData();
-      this.lowestPriceWithoutTransport = priceData?.unformatted;
-      this.lowestPriceWithoutTransportFormatted = priceData?.formatted;
+      this.lowestPrice = priceData?.unformatted;
+      this.lowestPriceFormatted = priceData?.formatted;
 
       this.insertPriceIndication(offeringCard);
     }
@@ -25,25 +37,70 @@ export class BTSIndicator {
 
   private fetchBTSPrice() {
     const priceElement = document.querySelector(".price");
-    return priceElement ? this.priceElementToNumber(priceElement) : null;
+    return priceElement ? this.priceElementToNumber(priceElement) : undefined;
   }
 
   private async fetchMarketData() {
     try {
-      const response = await fetch("product_prices.json");
+      const storeIdElements = document.querySelectorAll(
+        'a.js-product-link[data-type="title"]'
+      );
+      const productIds = Array.from(storeIdElements)
+        .map((el) => {
+          const href = el.getAttribute("href");
+          if (href) {
+            const match = href.match(/show\/(\d+)/);
+            return match ? parseInt(match[1], 10) : null;
+          }
+
+          return null;
+        })
+        .filter((id) => id !== null);
+      const payload = {
+        product_ids: productIds,
+        active_sizes: [],
+      };
+
+      const response = await fetch(
+        "https://www.skroutz.gr/personalization/product_prices.json",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const responseJSON = await response.json();
-      return {
-        formatted: responseJSON.data.price_min,
-        unformatted: responseJSON.data.price_min_unformatted,
-      };
+
+      const lowestPriceData = this.findLowestPrices(responseJSON);
+      return lowestPriceData;
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
       return null;
     }
+  }
+
+  private findLowestPrices(data: ProductData): LowestPriceData {
+    let lowestFinalPrice = Infinity;
+    let lowestFinalPriceFormatted: string = "";
+
+    for (const key in data) {
+      if (data[key].final_price < lowestFinalPrice) {
+        lowestFinalPrice = data[key].final_price;
+        lowestFinalPriceFormatted = data[key].final_price_formatted;
+      }
+    }
+
+    return {
+      formatted: lowestFinalPriceFormatted,
+      unformatted: lowestFinalPrice,
+    };
   }
 
   private priceElementToNumber(element: Element) {
@@ -51,7 +108,7 @@ export class BTSIndicator {
 
     const leftPart = element.querySelector("span.comma");
     if (!leftPart?.previousSibling) {
-      return null;
+      return undefined;
     }
 
     const integerPart = leftPart.previousSibling.textContent;
@@ -59,7 +116,7 @@ export class BTSIndicator {
 
     const rightPart = element.querySelector("span.comma + span");
     if (!rightPart) {
-      return null;
+      return undefined;
     }
 
     const decimalPart = rightPart.textContent;
@@ -78,9 +135,7 @@ export class BTSIndicator {
     const colFlex = document.createElement("div");
 
     const status =
-      this.btsPrice &&
-      this.lowestPriceWithoutTransport &&
-      this.btsPrice <= this.lowestPriceWithoutTransport
+      this.btsPrice && this.lowestPrice && this.btsPrice <= this.lowestPrice
         ? "info-label-positive"
         : "info-label-negative";
 
@@ -95,7 +150,7 @@ export class BTSIndicator {
     const information = document.createElement("div");
     const disclaimer = document.createElement("div");
     information.classList.add("font-bold");
-    disclaimer.classList.add("font-italic");
+    disclaimer.classList.add("align-end");
 
     const svgElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
@@ -121,8 +176,8 @@ export class BTSIndicator {
 
     information.textContent =
       this.state.language === "EN"
-        ? `The lowest price without shipping is ${this.lowestPriceWithoutTransportFormatted}`
-        : `Η χαμηλότερη τιμή χωρίς μεταφορικά είναι ${this.lowestPriceWithoutTransportFormatted}`;
+        ? `The lowest price with shipping apart from "Buy through Skroutz" is ${this.lowestPriceFormatted}`
+        : `Η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz" είναι ${this.lowestPriceFormatted}`;
 
     disclaimer.textContent = "Skroutz Sponsored Flagger";
 

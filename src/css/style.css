@@ -9,20 +9,23 @@
 }
 .inline-flex-row {
   display: flex !important;
+  flex-direction: row !important;
+  gap: 6px !important;
 }
 
-.inline-flex-row-col {
+.inline-flex-col {
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px !important;
+  gap: 8px !important;
 }
 
 .font-bold {
   font-weight: 600 !important;
 }
 
-.font-italic {
-  font-style: italic !important;
+.align-end {
+  text-align: end !important;
+  /* font-style: italic !important; */
 }
 
 .main-content {
