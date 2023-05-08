@@ -2,15 +2,27 @@
   display: none !important;
 }
 
-.inline-flex {
-  display: flex !important;
+.display-papdding {
   gap: 16px !important;
   margin-top: 24px !important;
   margin-bottom: 24px !important;
 }
+.inline-flex-row {
+  display: flex !important;
+}
+
+.inline-flex-row-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
 
 .font-bold {
   font-weight: 600 !important;
+}
+
+.font-italic {
+  font-style: italic !important;
 }
 
 .main-content {
@@ -27,7 +39,15 @@
   color: red !important;
 }
 
-.info-label {
+.info-label-positive {
+  border-radius: 5px !important;
+  padding: 8px !important;
+  background-color: #c6ffc3 !important;
+  font-weight: bold !important;
+  color: #50b64a !important;
+}
+
+.info-label-negative {
   border-radius: 5px !important;
   padding: 8px !important;
   background-color: #fef3e8 !important;
@@ -36,6 +56,7 @@
 }
 
 .sponsored-label svg,
-.info-label svg {
+.info-label-positive svg,
+.info-label-negative svg {
   vertical-align: middle !important;
 }
