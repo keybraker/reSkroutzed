@@ -1,22 +1,23 @@
 import { State } from "../types/State";
 
 interface LowestPriceData {
-  formatted: string;
-  unformatted: number;
+  formatted: { net: string; shipping: string };
+  unformatted: { net: number; shipping: number };
 }
 
 interface ProductData {
   [key: string]: {
-    final_price: number;
-    final_price_formatted: string;
+    net_price: number;
+    net_price_formatted: string;
+    shipping_cost: number;
+    shipping_cost_formatted: string;
   };
 }
 
 export class BTSIndicator {
   private state: State;
   private btsPrice: number | undefined = undefined;
-  private lowestPrice: number | undefined = undefined;
-  private lowestPriceFormatted: string | undefined = undefined;
+  private lowestPriceData: LowestPriceData | undefined = undefined;
 
   constructor(state: State) {
     this.state = state;
@@ -27,11 +28,10 @@ export class BTSIndicator {
 
     if (offeringCard) {
       this.btsPrice = this.fetchBTSPrice();
-      const priceData = await this.fetchMarketData();
-      this.lowestPrice = priceData?.unformatted;
-      this.lowestPriceFormatted = priceData?.formatted;
-
-      this.insertPriceIndication(offeringCard);
+      this.lowestPriceData = await this.fetchMarketData();
+      if (this.lowestPriceData) {
+        this.insertPriceIndication(offeringCard);
+      }
     }
   }
 
@@ -53,7 +53,7 @@ export class BTSIndicator {
             return match ? parseInt(match[1], 10) : null;
           }
 
-          return null;
+          return undefined;
         })
         .filter((id) => id !== null);
       const payload = {
@@ -71,35 +71,52 @@ export class BTSIndicator {
           body: JSON.stringify(payload),
         }
       );
-
+      console.log("response :>> ", response);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const responseJSON = await response.json();
-
-      const lowestPriceData = this.findLowestPrices(responseJSON);
-      return lowestPriceData;
+      console.log("responseJSON :>> ", responseJSON);
+      return this.findLowestPrices(responseJSON);
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
-      return null;
+      return undefined;
     }
   }
 
   private findLowestPrices(data: ProductData): LowestPriceData {
-    let lowestFinalPrice = Infinity;
-    let lowestFinalPriceFormatted: string = "";
+    let lowestTotalPrice = Infinity;
+    let lowestNetPrice: number = 0;
+    let lowestShippingCost: number = 0;
+    let lowestNetPriceFormatted: string = "";
+    let lowestShippingCostFormatted: string = "";
 
     for (const key in data) {
-      if (data[key].final_price < lowestFinalPrice) {
-        lowestFinalPrice = data[key].final_price;
-        lowestFinalPriceFormatted = data[key].final_price_formatted;
+      if (data[key].net_price === null || data[key].shipping_cost === null) {
+        continue;
+      }
+
+      const currentTotalPrice = data[key].net_price + data[key].shipping_cost;
+
+      if (currentTotalPrice < lowestTotalPrice) {
+        lowestTotalPrice = currentTotalPrice;
+        lowestNetPrice = data[key].net_price;
+        lowestShippingCost = data[key].shipping_cost;
+        lowestNetPriceFormatted = data[key].net_price_formatted;
+        lowestShippingCostFormatted = data[key].shipping_cost_formatted;
       }
     }
 
     return {
-      formatted: lowestFinalPriceFormatted,
-      unformatted: lowestFinalPrice,
+      formatted: {
+        net: lowestNetPriceFormatted,
+        shipping: lowestShippingCostFormatted,
+      },
+      unformatted: {
+        net: lowestNetPrice,
+        shipping: lowestShippingCost,
+      },
     };
   }
 
@@ -135,15 +152,15 @@ export class BTSIndicator {
     const colFlex = document.createElement("div");
 
     const status =
-      this.btsPrice && this.lowestPrice && this.btsPrice <= this.lowestPrice
+      this.btsPrice &&
+      this.lowestPriceData &&
+      this.btsPrice <=
+        this.lowestPriceData.unformatted.net +
+          this.lowestPriceData.unformatted.shipping
         ? "info-label-positive"
         : "info-label-negative";
 
-    priceIndication.classList.add(
-      "display-papdding",
-      "inline-flex-row",
-      status
-    );
+    priceIndication.classList.add("display-padding", "inline-flex-row", status);
     colFlex.classList.add("inline-flex-col");
 
     const icon = document.createElement("div");
@@ -160,29 +177,42 @@ export class BTSIndicator {
     svgElement.setAttribute("width", "16");
     svgElement.setAttribute("height", "16");
 
-    const pathElement = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "path"
-    );
-    pathElement.setAttribute(
-      "d",
-      "m40 936 440-760 440 760H40Zm104-60h672L480 296 144 876Zm340.175-57q12.825 0 " +
-        "21.325-8.675 8.5-8.676 8.5-21.5 0-12.825-8.675-21.325-8.676-8.5-21.5-8.5-12.825 " +
-        "0-21.325 8.675-8.5 8.676-8.5 21.5 0 12.825 8.675 21.325 8.676 8.5 21.5 8.5ZM454 708h60V484h-60v224Zm26-122Z"
-    );
+    // const pathElement = document.createElementNS(
+    //   "http://www.w3.org/2000/svg",
+    //   "path"
+    // );
+    // pathElement.setAttribute(
+    //   "d",
+    //   "m40 936 440-760 440 760H40Zm104-60h672L480 296 144 876Zm340.175-57q12.825 0 " +
+    //     "21.325-8.675 8.5-8.676 8.5-21.5 0-12.825-8.675-21.325-8.676-8.5-21.5-8.5-12.825 " +
+    //     "0-21.325 8.675-8.5 8.676-8.5 21.5 0 12.825 8.675 21.325 8.676 8.5 21.5 8.5ZM454 708h60V484h-60v224Zm26-122Z"
+    // );
+    //
+    // svgElement.appendChild(pathElement);
+    // icon.appendChild(svgElement);
 
-    svgElement.appendChild(pathElement);
-    icon.appendChild(svgElement);
+    const img = document.createElement("img");
+    img.src =
+      "https://lh3.googleusercontent.com/BplITTwi7htB-tLaEtbn1RVBwhW1nN3akoNOnTbRKW6da4HU3SxFMYan_UAAQ-RuPHWwFSOBiug4xdINtA7kpbFQoyg=w128-h128-e365-rj-sc0x00ffffff";
+    img.alt = "Skroutz Sponsored Flagger";
+    img.width = 16;
+    img.height = 16;
+
+    icon.appendChild(img);
+
+    const lowestPrice = this.lowestPriceData
+      ? this.lowestPriceData.unformatted.net +
+        this.lowestPriceData.unformatted.shipping
+      : undefined;
+    const formattedLowestPrice = lowestPrice?.toFixed(2);
 
     information.textContent =
       this.state.language === "EN"
-        ? `The lowest price with shipping apart from "Buy through Skroutz" is ${this.lowestPriceFormatted}`
-        : `Η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz" είναι ${this.lowestPriceFormatted}`;
-
-    disclaimer.textContent = "Skroutz Sponsored Flagger";
+        ? `The lowest price with shipping apart from "Buy through Skroutz" is ${formattedLowestPrice}€`
+        : `Η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz" είναι ${formattedLowestPrice}€`;
 
     colFlex.appendChild(information);
-    colFlex.appendChild(disclaimer);
+    // colFlex.appendChild(img);
 
     priceIndication.appendChild(icon);
     priceIndication.appendChild(colFlex);

@@ -2,11 +2,12 @@
   display: none !important;
 }
 
-.display-papdding {
+.display-padding {
   gap: 16px !important;
   margin-top: 24px !important;
   margin-bottom: 24px !important;
 }
+
 .inline-flex-row {
   display: flex !important;
   flex-direction: row !important;
@@ -48,7 +49,8 @@ text-black {
 
 .info-label-positive {
   border-radius: 5px !important;
-  padding: 8px !important;
+  padding: 10px !important;
+  border: 1px solid #50b64a !important;
   background-color: #c6ffc3 !important;
   font-weight: bold !important;
   color: #50b64a !important;
@@ -56,7 +58,8 @@ text-black {
 
 .info-label-negative {
   border-radius: 5px !important;
-  padding: 8px !important;
+  padding: 10px !important;
+  border: 1px solid #ff0000 !important;
   background-color: #fef3e8 !important;
   font-weight: bold !important;
   color: #f68b24 !important;

@@ -32,6 +32,11 @@ const btsIndicator = new BTSIndicator(state);
   async function initializer() {
     state.visible = retrieveVisibility();
     state.language = retrieveLanguage();
+
+    flagContent();
+    await flagAdditionalContent();
+
+    blockIndicator.addOrUpdate();
   }
 
   function flagContent() {
@@ -40,6 +45,11 @@ const btsIndicator = new BTSIndicator(state);
     sponsoredProductHandler.flag();
     sponsoredProductListHandler.flag();
     sponsoredFBTHandler.flag();
+  }
+
+  async function flagAdditionalContent() {
+    toggleContentVisibility(state);
+    await btsIndicator.start();
   }
 
   function observeMutations() {
@@ -63,14 +73,6 @@ const btsIndicator = new BTSIndicator(state);
 
   window.onload = async function () {
     await initializer();
-
-    flagContent();
-
-    toggleContentVisibility(state);
-
-    blockIndicator.addOrUpdate();
-    await btsIndicator.start();
-
     observeMutations();
   };
 })();
