@@ -193,7 +193,7 @@ export class BTSIndicator {
 
     const img = document.createElement("img");
     img.src =
-      "https://lh3.googleusercontent.com/BplITTwi7htB-tLaEtbn1RVBwhW1nN3akoNOnTbRKW6da4HU3SxFMYan_UAAQ-RuPHWwFSOBiug4xdINtA7kpbFQoyg=w128-h128-e365-rj-sc0x00ffffff";
+      "https://raw.githubusercontent.com/keybraker/skroutz-sponsored-flagger/main/src/assets/icons/48.png";
     img.alt = "Skroutz Sponsored Flagger";
     img.width = 16;
     img.height = 16;
