@@ -1,8 +1,8 @@
 import { State } from "../types/State";
 
 interface LowestPriceData {
-  formatted: { net: string; shipping: string };
-  unformatted: { net: number; shipping: number };
+  formatted: string;
+  unformatted: number;
 }
 
 interface ProductData {
@@ -27,9 +27,9 @@ export class BTSIndicator {
     const offeringCard = document.querySelector("article.offering-card");
 
     if (offeringCard) {
-      this.btsPrice = this.fetchBTSPrice();
       this.lowestPriceData = await this.fetchMarketData();
       if (this.lowestPriceData) {
+        this.btsPrice = this.fetchBTSPrice();
         this.insertPriceIndication(offeringCard);
       }
     }
@@ -38,86 +38,6 @@ export class BTSIndicator {
   private fetchBTSPrice() {
     const priceElement = document.querySelector(".price");
     return priceElement ? this.priceElementToNumber(priceElement) : undefined;
-  }
-
-  private async fetchMarketData() {
-    try {
-      const storeIdElements = document.querySelectorAll(
-        'a.js-product-link[data-type="title"]'
-      );
-      const productIds = Array.from(storeIdElements)
-        .map((el) => {
-          const href = el.getAttribute("href");
-          if (href) {
-            const match = href.match(/show\/(\d+)/);
-            return match ? parseInt(match[1], 10) : null;
-          }
-
-          return undefined;
-        })
-        .filter((id) => id !== null);
-      const payload = {
-        product_ids: productIds,
-        active_sizes: [],
-      };
-
-      const response = await fetch(
-        "https://www.skroutz.gr/personalization/product_prices.json",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-      console.log("response :>> ", response);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const responseJSON = await response.json();
-      console.log("responseJSON :>> ", responseJSON);
-      return this.findLowestPrices(responseJSON);
-    } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
-      return undefined;
-    }
-  }
-
-  private findLowestPrices(data: ProductData): LowestPriceData {
-    let lowestTotalPrice = Infinity;
-    let lowestNetPrice: number = 0;
-    let lowestShippingCost: number = 0;
-    let lowestNetPriceFormatted: string = "";
-    let lowestShippingCostFormatted: string = "";
-
-    for (const key in data) {
-      if (data[key].net_price === null || data[key].shipping_cost === null) {
-        continue;
-      }
-
-      const currentTotalPrice = data[key].net_price + data[key].shipping_cost;
-
-      if (currentTotalPrice < lowestTotalPrice) {
-        lowestTotalPrice = currentTotalPrice;
-        lowestNetPrice = data[key].net_price;
-        lowestShippingCost = data[key].shipping_cost;
-        lowestNetPriceFormatted = data[key].net_price_formatted;
-        lowestShippingCostFormatted = data[key].shipping_cost_formatted;
-      }
-    }
-
-    return {
-      formatted: {
-        net: lowestNetPriceFormatted,
-        shipping: lowestShippingCostFormatted,
-      },
-      unformatted: {
-        net: lowestNetPrice,
-        shipping: lowestShippingCost,
-      },
-    };
   }
 
   private priceElementToNumber(element: Element) {
@@ -142,6 +62,58 @@ export class BTSIndicator {
     return parseFloat(priceValue);
   }
 
+  //
+
+  private getProductCode(): string | null {
+    const element = document.querySelector("span.sku-code");
+    if (element) {
+        const text = element.textContent;
+        if (text) {
+            const parts = text.split(": ");
+            return parts[1];
+        }
+    }
+    return null;
+  }
+
+  private async fetchMarketData() {
+    try {
+      const productCode = this.getProductCode();
+      if (!productCode) {
+        throw new Error("Failed to fetch product code");
+      }
+
+      const response = await fetch(
+        `https://www.skroutz.gr/s/${productCode}/filter_products.json`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const responseJSON = await response.json();
+
+      return {
+        formatted: responseJSON.price_min as string,
+        unformatted: this.convertToFloat(responseJSON.price_min) as number,
+      };
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+      return undefined;
+    }
+  }
+
+  private convertToFloat(priceString: string): number {
+    const cleanString = priceString.replace(',', '.').replace(' €', '');
+    const number = parseFloat(cleanString);
+    return isNaN(number) ? 0 : number;
+  }
+
   private insertPriceIndication(element: Element): void {
     const priceIndication = this.createPriceIndicationElement();
     element.insertBefore(priceIndication, element.children[1]);
@@ -154,9 +126,7 @@ export class BTSIndicator {
     const status =
       this.btsPrice &&
       this.lowestPriceData &&
-      this.btsPrice <=
-        this.lowestPriceData.unformatted.net +
-          this.lowestPriceData.unformatted.shipping
+      this.btsPrice <= this.lowestPriceData.unformatted
         ? "info-label-positive"
         : "info-label-negative";
 
@@ -201,15 +171,14 @@ export class BTSIndicator {
     icon.appendChild(img);
 
     const lowestPrice = this.lowestPriceData
-      ? this.lowestPriceData.unformatted.net +
-        this.lowestPriceData.unformatted.shipping
+      ? this.lowestPriceData.unformatted
       : undefined;
     const formattedLowestPrice = lowestPrice?.toFixed(2);
 
     information.textContent =
       this.state.language === "EN"
-        ? `The lowest price with shipping apart from "Buy through Skroutz" is ${formattedLowestPrice}€`
-        : `Η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz" είναι ${formattedLowestPrice}€`;
+        ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
+        : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
 
     colFlex.appendChild(information);
     // colFlex.appendChild(img);
