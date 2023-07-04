@@ -30,7 +30,7 @@
 .flagger-toggle-product:hover,
 .flagger-toggle-list.flagger-toggle-list-active,
 .flagger-toggle-product.flagger-toggle-product-active {
-  border: 1px solid #ff0000 !important;
+  border: 1px solid var(--custom-light-red, #ff0000) !important;
   background-color: #ffcdd2 !important;
-  color: #ff0000 !important;
+  color: var(--custom-light-red, #ff0000) !important;
 }
