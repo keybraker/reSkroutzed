@@ -4,12 +4,12 @@
 .flagged-bought-together {
   padding: 10px;
   border-radius: 5px !important;
-  box-shadow: 0px 0px 5px 2px #ff0000 !important;
+  box-shadow: var(--flagged-item-box-shadow, 0px 0px 5px 2px) !important;
 }
 
 .flagged-product-image {
   border-radius: 5px !important;
-  box-shadow: inset 0px 0px 5px 2px #ff0000 !important;
+  box-shadow: inset var(--flagged-item-box-shadow, 0px 0px 5px 2px) !important;
 }
 
 .flagged-product-store {

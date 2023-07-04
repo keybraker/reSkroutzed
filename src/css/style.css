@@ -1,3 +1,8 @@
+:root {
+  --custom-light-red: #ff0000;
+  --flagged-item-box-shadow: 0px 0px 5px 2px var(--custom-light-red, #ff0000) !important;
+}
+
 .display-none {
   display: none !important;
 }
@@ -59,7 +64,7 @@ text-black {
 .info-label-negative {
   border-radius: 5px !important;
   padding: 10px !important;
-  border: 1px solid #ff0000 !important;
+  border: 1px solid var(--custom-light-red, #ff0000) !important;
   background-color: #fef3e8 !important;
   font-weight: bold !important;
   color: #f68b24 !important;

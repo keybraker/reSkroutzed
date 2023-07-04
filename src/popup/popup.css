@@ -39,6 +39,6 @@ dd.right-span {
 }
 
 dd.right-span {
-  color: #ff0000 !important;
+  color: var(--custom-light-red, #ff0000) !important;
   font-weight: bold !important;
 }
