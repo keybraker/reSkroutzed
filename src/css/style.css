@@ -55,10 +55,10 @@ text-black {
 .info-label-positive {
   border-radius: 5px !important;
   padding: 10px !important;
-  border: 1px solid #50b64a !important;
+  border: 1px solid #2e6f2b !important;
   background-color: #c6ffc3 !important;
   font-weight: bold !important;
-  color: #50b64a !important;
+  color: #2e6f2b !important;
 }
 
 .info-label-negative {

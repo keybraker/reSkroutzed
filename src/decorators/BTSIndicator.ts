@@ -152,10 +152,7 @@ export class BTSIndicator {
     information.classList.add("font-bold");
     disclaimer.classList.add("align-end", "text-black");
 
-    const svgElement = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg"
-    );
+    const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svgElement.setAttribute("viewBox", "0 96 960 960");
     svgElement.setAttribute("width", "16");
     svgElement.setAttribute("height", "16");
