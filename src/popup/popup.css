@@ -39,6 +39,27 @@ dd.right-span {
 }
 
 dd.right-span {
-  color: #ff0000 !important;
+  color: var(--custom-light-red, #ff0000) !important;
   font-weight: bold !important;
+}
+
+.rate-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.rate-section p {
+  margin: 0;
+  margin-right: 16px;
+}
+
+.rate-section img {
+  width: 24px;
+  height: auto;
+}
+
+.rate-section a:not(:last-child) {
+  margin-right: 8px;
 }

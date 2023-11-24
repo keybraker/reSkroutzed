@@ -115,7 +115,7 @@ export class BlockIndicator {
   }
 
   private addButtonToFilters(existingButton?: HTMLButtonElement): void {
-    const liOfferElements = document.querySelector("li.sku-offers");
+    const liOfferElements = document.querySelector("div.sku-actions-wrapper");
     if (liOfferElements) {
       this.insertElement(
         liOfferElements.parentNode as Node,

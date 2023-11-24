@@ -97,21 +97,34 @@ export class BTSIndicator {
       }
 
       const responseJSON = await response.json();
+      const productCards = responseJSON.product_cards as {
+        raw_price: number,
+        shipping_cost: number,
+        final_price_formatted?: string,
+        price: number,
+      }[];
+      const currency = responseJSON.price_min.trim().slice(-1);
+      let lowestPrice = Number.MAX_VALUE;
+
+      Object.values(productCards).forEach(card => {
+        const totalCost = card.raw_price + card.shipping_cost;
+        if (totalCost < lowestPrice) {
+          lowestPrice = totalCost;
+        }
+      });
+
+      if (lowestPrice === Number.MAX_VALUE) {
+        throw new Error("No available products found");
+      }
 
       return {
-        formatted: responseJSON.price_min as string,
-        unformatted: this.convertToFloat(responseJSON.price_min) as number,
+        formatted: `${lowestPrice} ${currency}`,
+        unformatted: lowestPrice,
       };
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
       return undefined;
     }
-  }
-
-  private convertToFloat(priceString: string): number {
-    const cleanString = priceString.replace(',', '.').replace(' €', '');
-    const number = parseFloat(cleanString);
-    return isNaN(number) ? 0 : number;
   }
 
   private insertPriceIndication(element: Element): void {
@@ -139,10 +152,7 @@ export class BTSIndicator {
     information.classList.add("font-bold");
     disclaimer.classList.add("align-end", "text-black");
 
-    const svgElement = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg"
-    );
+    const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svgElement.setAttribute("viewBox", "0 96 960 960");
     svgElement.setAttribute("width", "16");
     svgElement.setAttribute("height", "16");
@@ -170,9 +180,7 @@ export class BTSIndicator {
 
     icon.appendChild(img);
 
-    const lowestPrice = this.lowestPriceData
-      ? this.lowestPriceData.unformatted
-      : undefined;
+    const lowestPrice = this.lowestPriceData ? this.lowestPriceData.unformatted : undefined;
     const formattedLowestPrice = lowestPrice?.toFixed(2);
 
     information.textContent =
