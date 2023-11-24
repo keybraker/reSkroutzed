@@ -1,17 +1,12 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ZipWebpackPlugin = require("zip-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  mode: "production",
-  entry: "./src/background.ts",
   output: {
-    filename: "background.js",
     path: path.resolve(__dirname, "../build/chrome_build"),
   },
   plugins: [
-    new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         { from: "src/popup/popup.js", to: "popup.js" },
@@ -28,16 +23,4 @@ module.exports = {
       cleanStaleWebpackAssets: true,
     }),
   ],
-  resolve: {
-    extensions: [".ts", ".js"],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        use: "ts-loader",
-        exclude: /node_modules/,
-      },
-    ],
-  },
 };

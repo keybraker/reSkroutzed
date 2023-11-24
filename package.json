@@ -4,8 +4,8 @@
     "clean-webpack-plugin": "^4.0.0"
   },
   "scripts": {
-    "build:chrome": "webpack --config webpack/webpack.chrome.config.js",
-    "build:firefox": "webpack --config webpack/webpack.firefox.config.js"
+    "build:chrome": "webpack --env chrome",
+    "build:firefox": "webpack --env firefox"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
@@ -13,6 +13,7 @@
     "typescript": "^5.0.4",
     "webpack": "^5.81.0",
     "webpack-cli": "^5.0.2",
+    "webpack-merge": "^5.10.0",
     "zip-webpack-plugin": "^4.0.1"
   }
 }

@@ -1,3 +1,4 @@
 {
-    "git-blame.gitWebUrl": ""
+  "git-blame.gitWebUrl": "",
+  "window.title": "${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}${appName}${separator}[Branch: refactor/webpack-config]"
 }
