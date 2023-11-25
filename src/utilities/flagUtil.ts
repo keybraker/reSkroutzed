@@ -3,7 +3,7 @@ export function isFlagged(element: Element | null) {
         return false;
     }
 
-    const sponsoredTexts = ["Sponsored", "Προωθούμενα", "Sponsored", "Προωθούμενo"];
+    const sponsoredTexts = ["Sponsored Stores", "Προωθούμενα Καταστήματα", "Sponsored Store", "Προωθούμενo Κατάστημα"];
 
     return sponsoredTexts.includes(element.textContent);
 }
