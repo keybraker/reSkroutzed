@@ -32,5 +32,8 @@
             "error",
             "always"
         ]
-    }
+    },
+    "globals": {
+        "chrome": "readonly"
+    }    
 }
