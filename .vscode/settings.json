@@ -1,3 +1,7 @@
 {
-  "git-blame.gitWebUrl": ""
+  "git-blame.gitWebUrl": "",
+  "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+  },
+  "eslint.validate": ["javascript"]
 }

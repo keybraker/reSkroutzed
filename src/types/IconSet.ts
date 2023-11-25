@@ -1,9 +1,9 @@
-type IconSet = {
+export type IconSet = {
     eyeOpenIcon: Icon;
     eyeSlashedIcon: Icon;
 };
 
-type Icon = {
+export type Icon = {
     viewBox: string;
     path: string;
 };

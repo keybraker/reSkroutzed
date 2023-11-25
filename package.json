@@ -5,10 +5,14 @@
   },
   "scripts": {
     "build:chrome": "webpack --env chrome",
-    "build:firefox": "webpack --env firefox"
+    "build:firefox": "webpack --env firefox",
+    "lint": "eslint \"**/*.ts\""
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
     "copy-webpack-plugin": "^11.0.0",
+    "eslint": "^8.54.0",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.4",
     "webpack": "^5.89.0",
