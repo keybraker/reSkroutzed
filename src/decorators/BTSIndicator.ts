@@ -1,3 +1,4 @@
+import { Language } from "../enums/Language";
 import { State } from "../types/State";
 
 interface LowestPriceData {
@@ -127,14 +128,11 @@ export class BTSIndicator {
         const priceIndication = document.createElement("div");
         const colFlex = document.createElement("div");
 
-        const status =
-      this.btsPrice &&
-      this.lowestPriceData &&
-      this.btsPrice <= this.lowestPriceData.unformatted
-          ? "info-label-positive"
-          : "info-label-negative";
+        const status = this.btsPrice && this.lowestPriceData && this.btsPrice <= this.lowestPriceData.unformatted
+            ? "info-label-positive"
+            : "info-label-negative";
 
-        priceIndication.classList.add("display-padding", "inline-flex-row", status);
+        priceIndication.classList.add("display-padding", "inline-flex-row", "bts-outline", status);
         colFlex.classList.add("inline-flex-col");
 
         const icon = document.createElement("div");
@@ -148,23 +146,8 @@ export class BTSIndicator {
         svgElement.setAttribute("width", "16");
         svgElement.setAttribute("height", "16");
 
-        // const pathElement = document.createElementNS(
-        //   "http://www.w3.org/2000/svg",
-        //   "path"
-        // );
-        // pathElement.setAttribute(
-        //   "d",
-        //   "m40 936 440-760 440 760H40Zm104-60h672L480 296 144 876Zm340.175-57q12.825 0 " +
-        //     "21.325-8.675 8.5-8.676 8.5-21.5 0-12.825-8.675-21.325-8.676-8.5-21.5-8.5-12.825 " +
-        //     "0-21.325 8.675-8.5 8.676-8.5 21.5 0 12.825 8.675 21.325 8.676 8.5 21.5 8.5ZM454 708h60V484h-60v224Zm26-122Z"
-        // );
-        //
-        // svgElement.appendChild(pathElement);
-        // icon.appendChild(svgElement);
-
         const img = document.createElement("img");
-        img.src =
-      "https://raw.githubusercontent.com/keybraker/skroutz-sponsored-flagger/main/src/assets/icons/48.png";
+        img.src = "https://raw.githubusercontent.com/keybraker/skroutz-sponsored-flagger/main/src/assets/icons/48.png";
         img.alt = "Skroutz Sponsored Flagger";
         img.width = 16;
         img.height = 16;
@@ -174,10 +157,9 @@ export class BTSIndicator {
         const lowestPrice = this.lowestPriceData ? this.lowestPriceData.unformatted : undefined;
         const formattedLowestPrice = lowestPrice?.toFixed(2);
 
-        information.textContent =
-      this.state.language === "EN"
-          ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
-          : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
+        information.textContent = this.state.language === Language.ENGLISH
+            ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
+            : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
 
         colFlex.appendChild(information);
         // colFlex.appendChild(img);

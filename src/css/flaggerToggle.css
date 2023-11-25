@@ -1,34 +1,42 @@
-.flagger-toggle-list,
+.flagger-toggle-list {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 8px 0px 16px 8px !important;
+  padding: 11px 23px !important;
+  border: 1px solid #bbbbbb !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  color: #707070 !important;
+  white-space: nowrap !important;
+}
+
+
 .flagger-toggle-product {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 16px 16px 0px !important;
+  padding: 9px 17px !important;
+  display: flex !important;
+  align-items: center !important;
   border: 1px solid #bbbbbb !important;
   border-radius: 5px !important;
   background: transparent !important;
   color: #707070 !important;
 }
 
-.flagger-toggle-list {
-  margin: 8px 0px 16px 8px !important;
-  padding: 11px 23px !important;
-}
-
-.flagger-toggle-product {
-  margin: 8px 16px 16px 0px !important;
-  padding: 9px 17px !important;
-}
-
-.flagger-toggle-list {
-  display: flex !important;
-  align-items: center !important;
-}
-
 .flagger-toggle-list svg,
 .flagger-toggle-product svg {
   vertical-align: middle !important;
+  flex-shrink: 0 !important;
+  margin-right: 6px !important;
 }
 
 .flagger-toggle-list:hover,
 .flagger-toggle-product:hover,
 .flagger-toggle-list.flagger-toggle-list-active,
+.flagger-toggle-header.flagger-toggle-header-active,
 .flagger-toggle-product.flagger-toggle-product-active {
   border: 1px solid var(--custom-light-red, #ff0000) !important;
   background-color: #ffcdd2 !important;

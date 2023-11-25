@@ -14,6 +14,20 @@ const icons = {
     },
 } as IconSet;
 
+// export enum SponsoredFlagger {
+//   PRODUCT_PAGE,
+//   DESKTOP_PAGE,
+//   MOBILE_PAGE
+// }
+
+// function SponsoredFlaggerMapper(sponsoredFlagger: SponsoredFlagger) {
+//     switch(sponsoredFlagger) {
+//     case SponsoredFlagger.DESKTOP_PAGE: return "flagger-toggle-list-active";
+//     case SponsoredFlagger.MOBILE_PAGE: return "flagger-toggle-header-active";
+//     case SponsoredFlagger.PRODUCT_PAGE: default: return "flagger-toggle-product-active";
+//     }
+// }
+
 export class BlockIndicator {
     state: State;
 
@@ -61,9 +75,7 @@ export class BlockIndicator {
         sponsoredButtonToggle: HTMLElement,
         isProduct: boolean = true
     ): void {
-        const activeButtonClass = isProduct
-            ? "flagger-toggle-product-active"
-            : "flagger-toggle-list-active";
+        const activeButtonClass = isProduct ? "flagger-toggle-product-active" : "flagger-toggle-list-active";
         const text = getSponsoredText(true, this.state.language);
         const icon = this.state.visible ? icons.eyeOpenIcon : icons.eyeSlashedIcon;
 
@@ -87,9 +99,7 @@ export class BlockIndicator {
         isProduct: boolean = true
     ): HTMLButtonElement {
         const sponsoredButtonToggle = document.createElement("button");
-        const buttonClass = isProduct
-            ? "flagger-toggle-product"
-            : "flagger-toggle-list";
+        const buttonClass = isProduct ? "flagger-toggle-product" : "flagger-toggle-list";
         sponsoredButtonToggle.classList.add(buttonClass);
         sponsoredButtonToggle.setAttribute("id", "sponsored-flagger-button");
 
