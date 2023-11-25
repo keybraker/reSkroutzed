@@ -1,4 +1,4 @@
-import { State } from '../types/State';
+import { State } from "../types/State";
 
 interface LowestPriceData {
   formatted: string;
@@ -15,7 +15,7 @@ export class BTSIndicator {
     }
 
     public async start() {
-        const offeringCard = document.querySelector('article.offering-card');
+        const offeringCard = document.querySelector("article.offering-card");
 
         if (offeringCard) {
             this.lowestPriceData = await this.fetchMarketData();
@@ -27,14 +27,14 @@ export class BTSIndicator {
     }
 
     private fetchBTSPrice() {
-        const priceElement = document.querySelector('.price');
+        const priceElement = document.querySelector(".price");
         return priceElement ? this.priceElementToNumber(priceElement) : undefined;
     }
 
     private priceElementToNumber(element: Element) {
-        let priceValue = '';
+        let priceValue = "";
 
-        const leftPart = element.querySelector('span.comma');
+        const leftPart = element.querySelector("span.comma");
         if (!leftPart?.previousSibling) {
             return undefined;
         }
@@ -42,7 +42,7 @@ export class BTSIndicator {
         const integerPart = leftPart.previousSibling.textContent;
         priceValue = `${priceValue}${integerPart}`;
 
-        const rightPart = element.querySelector('span.comma + span');
+        const rightPart = element.querySelector("span.comma + span");
         if (!rightPart) {
             return undefined;
         }
@@ -56,11 +56,11 @@ export class BTSIndicator {
     //
 
     private getProductCode(): string | null {
-        const element = document.querySelector('span.sku-code');
+        const element = document.querySelector("span.sku-code");
         if (element) {
             const text = element.textContent;
             if (text) {
-                const parts = text.split(': ');
+                const parts = text.split(": ");
                 return parts[1];
             }
         }
@@ -71,20 +71,20 @@ export class BTSIndicator {
         try {
             const productCode = this.getProductCode();
             if (!productCode) {
-                throw new Error('Failed to fetch product code');
+                throw new Error("Failed to fetch product code");
             }
 
             const response = await fetch(
                 `https://www.skroutz.gr/s/${productCode}/filter_products.json`,
                 {
-                    method: 'GET',
+                    method: "GET",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                 }
             );
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error("Network response was not ok");
             }
 
             const responseJSON = await response.json();
@@ -105,7 +105,7 @@ export class BTSIndicator {
             });
 
             if (lowestPrice === Number.MAX_VALUE) {
-                throw new Error('No available products found');
+                throw new Error("No available products found");
             }
 
             return {
@@ -113,7 +113,7 @@ export class BTSIndicator {
                 unformatted: lowestPrice,
             };
         } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
+            console.error("There was a problem with the fetch operation:", error);
             return undefined;
         }
     }
@@ -124,29 +124,29 @@ export class BTSIndicator {
     }
 
     private createPriceIndicationElement(): HTMLDivElement {
-        const priceIndication = document.createElement('div');
-        const colFlex = document.createElement('div');
+        const priceIndication = document.createElement("div");
+        const colFlex = document.createElement("div");
 
         const status =
       this.btsPrice &&
       this.lowestPriceData &&
       this.btsPrice <= this.lowestPriceData.unformatted
-          ? 'info-label-positive'
-          : 'info-label-negative';
+          ? "info-label-positive"
+          : "info-label-negative";
 
-        priceIndication.classList.add('display-padding', 'inline-flex-row', status);
-        colFlex.classList.add('inline-flex-col');
+        priceIndication.classList.add("display-padding", "inline-flex-row", status);
+        colFlex.classList.add("inline-flex-col");
 
-        const icon = document.createElement('div');
-        const information = document.createElement('div');
-        const disclaimer = document.createElement('div');
-        information.classList.add('font-bold');
-        disclaimer.classList.add('align-end', 'text-black');
+        const icon = document.createElement("div");
+        const information = document.createElement("div");
+        const disclaimer = document.createElement("div");
+        information.classList.add("font-bold");
+        disclaimer.classList.add("align-end", "text-black");
 
-        const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svgElement.setAttribute('viewBox', '0 96 960 960');
-        svgElement.setAttribute('width', '16');
-        svgElement.setAttribute('height', '16');
+        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svgElement.setAttribute("viewBox", "0 96 960 960");
+        svgElement.setAttribute("width", "16");
+        svgElement.setAttribute("height", "16");
 
         // const pathElement = document.createElementNS(
         //   "http://www.w3.org/2000/svg",
@@ -162,10 +162,10 @@ export class BTSIndicator {
         // svgElement.appendChild(pathElement);
         // icon.appendChild(svgElement);
 
-        const img = document.createElement('img');
+        const img = document.createElement("img");
         img.src =
-      'https://raw.githubusercontent.com/keybraker/skroutz-sponsored-flagger/main/src/assets/icons/48.png';
-        img.alt = 'Skroutz Sponsored Flagger';
+      "https://raw.githubusercontent.com/keybraker/skroutz-sponsored-flagger/main/src/assets/icons/48.png";
+        img.alt = "Skroutz Sponsored Flagger";
         img.width = 16;
         img.height = 16;
 
@@ -175,7 +175,7 @@ export class BTSIndicator {
         const formattedLowestPrice = lowestPrice?.toFixed(2);
 
         information.textContent =
-      this.state.language === 'EN'
+      this.state.language === "EN"
           ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
           : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
 

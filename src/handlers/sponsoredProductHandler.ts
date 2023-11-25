@@ -1,10 +1,10 @@
-import { flagProductListItem, isFlagged } from '../utilities/flagUtil';
+import { flagProductListItem, isFlagged } from "../utilities/flagUtil";
 import {
     isSponsored,
     toggleVisibility,
     updateSponsoredTextSingle,
-} from '../utilities/sponsoredUtil';
-import { State } from '../types/State';
+} from "../utilities/sponsoredUtil";
+import { State } from "../types/State";
 
 export class SponsoredProductHandler {
     private state: State;
@@ -17,7 +17,7 @@ export class SponsoredProductHandler {
         this.updateSponsoredCount();
 
         const nonFlaggedProductListItems = document.querySelectorAll(
-            'li:not(.flagged-product)'
+            "li:not(.flagged-product)"
         );
 
         [...nonFlaggedProductListItems]
@@ -39,9 +39,9 @@ export class SponsoredProductHandler {
     }
 
     private updateSponsoredCount(): void {
-        const flaggedProductLists = document.querySelectorAll('li.flagged-product');
+        const flaggedProductLists = document.querySelectorAll("li.flagged-product");
         const flaggedProductDivs = document.querySelectorAll(
-            'div.flagged-bought-together'
+            "div.flagged-bought-together"
         );
 
         if (flaggedProductLists?.length === 0 && flaggedProductDivs?.length === 0) {
@@ -50,12 +50,12 @@ export class SponsoredProductHandler {
     }
 
     private hasSponsoredLabelText(listItem: Element): boolean {
-        const labelTextElement = listItem.querySelector('.label-text');
+        const labelTextElement = listItem.querySelector(".label-text");
         return !!labelTextElement && isSponsored(labelTextElement);
     }
 
     private hasFlaggedLabelText(listItem: Element): boolean {
-        const labelTextElement = listItem.querySelector('.label-text');
+        const labelTextElement = listItem.querySelector(".label-text");
         return !!labelTextElement && isFlagged(labelTextElement);
     }
 }

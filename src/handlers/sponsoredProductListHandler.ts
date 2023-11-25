@@ -2,8 +2,8 @@ import {
     isSponsored,
     updateSponsoredTextPlural,
     toggleVisibility,
-} from '../utilities/sponsoredUtil';
-import { State } from '../types/State';
+} from "../utilities/sponsoredUtil";
+import { State } from "../types/State";
 
 export class SponsoredProductListHandler {
     private state: State;
@@ -14,7 +14,7 @@ export class SponsoredProductListHandler {
 
     public flag(): void {
         const promotedBoxes = document.querySelectorAll(
-            'h2:not(.flagged-list-title)'
+            "h2:not(.flagged-list-title)"
         );
 
         [...promotedBoxes]
@@ -23,7 +23,7 @@ export class SponsoredProductListHandler {
     }
 
     private flagPromotedBox(promotedBox: Element): void {
-        promotedBox.classList.add('flagged-list-title');
+        promotedBox.classList.add("flagged-list-title");
         updateSponsoredTextPlural(promotedBox, this.state.language);
         toggleVisibility(promotedBox, this.state);
     }

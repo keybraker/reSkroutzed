@@ -1,15 +1,15 @@
-import { Language } from './enums/Language';
-import { PromotionalVideoHandler } from './handlers/promotionalVideoHandler';
-import { SponsoredFBTHandler } from './handlers/sponsoredFBTHandler';
-import { SponsoredProductHandler } from './handlers/sponsoredProductHandler';
-import { SponsoredProductListHandler } from './handlers/sponsoredProductListHandler';
-import { SponsoredShelfHandler } from './handlers/sponsoredShelfHandler';
-import { toggleContentVisibility } from './actions/visibilityAction';
-import { retrieveLanguage } from './retrievers/languageRetriever';
-import { retrieveVisibility } from './retrievers/visibilityRetriever';
-import { State } from './types/State';
-import { BlockIndicator } from './decorators/BlockIndicator';
-import { BTSIndicator } from './decorators/BTSIndicator';
+import { Language } from "./enums/Language";
+import { PromotionalVideoHandler } from "./handlers/promotionalVideoHandler";
+import { SponsoredFBTHandler } from "./handlers/sponsoredFBTHandler";
+import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
+import { SponsoredProductListHandler } from "./handlers/sponsoredProductListHandler";
+import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
+import { toggleContentVisibility } from "./actions/visibilityAction";
+import { retrieveLanguage } from "./retrievers/languageRetriever";
+import { retrieveVisibility } from "./retrievers/visibilityRetriever";
+import { State } from "./types/State";
+import { BlockIndicator } from "./decorators/BlockIndicator";
+import { BTSIndicator } from "./decorators/BTSIndicator";
 
 const state: State = {
     visible: true,
@@ -58,8 +58,8 @@ const btsIndicator = new BTSIndicator(state);
             (mutationsList: MutationRecord[]) => {
                 for (const mutation of mutationsList) {
                     if (
-                        mutation.type === 'attributes' &&
-            mutation.attributeName === 'id'
+                        mutation.type === "attributes" &&
+            mutation.attributeName === "id"
                     ) {
                         blockIndicator.addOrUpdate();
                     }
@@ -87,7 +87,7 @@ chrome.runtime.onMessage.addListener(
       videoCount: number;
     }) => void
     ) => {
-        if (request.action === 'getCount') {
+        if (request.action === "getCount") {
             sendResponse({
                 sponsoredCount: state.sponsoredCount,
                 sponsoredShelfCount: state.sponsoredShelfCount,

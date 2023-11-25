@@ -1,5 +1,5 @@
-import { State } from '../types/State';
-import { toggleVisibility } from '../utilities/sponsoredUtil';
+import { State } from "../types/State";
+import { toggleVisibility } from "../utilities/sponsoredUtil";
 
 function toggleVisibilityByClass(selector: string, state: State) {
     const elements = document.querySelectorAll(selector);
@@ -7,8 +7,8 @@ function toggleVisibilityByClass(selector: string, state: State) {
 }
 
 export function toggleContentVisibility(state: State) {
-    toggleVisibilityByClass('li.flagged-product', state);
-    toggleVisibilityByClass('div.flagged-shelf', state);
-    toggleVisibilityByClass('div.selected-product-cards', state);
-    toggleVisibilityByClass('div.flagged-bought-together', state);
+    toggleVisibilityByClass("li.flagged-product", state);
+    toggleVisibilityByClass("div.flagged-shelf", state);
+    toggleVisibilityByClass("div.selected-product-cards", state);
+    toggleVisibilityByClass("div.flagged-bought-together", state);
 }
