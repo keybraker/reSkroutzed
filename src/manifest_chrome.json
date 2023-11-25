@@ -1,7 +1,7 @@
 {
   "name": "Skroutz Sponsored Flagger",
   "description": "Flags sponsored products on Skroutz.gr",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "manifest_version": 3,
   "permissions": [],
   "content_scripts": [
