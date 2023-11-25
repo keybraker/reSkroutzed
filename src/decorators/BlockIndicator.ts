@@ -14,20 +14,6 @@ const icons = {
     },
 } as IconSet;
 
-// export enum SponsoredFlagger {
-//   PRODUCT_PAGE,
-//   DESKTOP_PAGE,
-//   MOBILE_PAGE
-// }
-
-// function SponsoredFlaggerMapper(sponsoredFlagger: SponsoredFlagger) {
-//     switch(sponsoredFlagger) {
-//     case SponsoredFlagger.DESKTOP_PAGE: return "flagger-toggle-list-active";
-//     case SponsoredFlagger.MOBILE_PAGE: return "flagger-toggle-header-active";
-//     case SponsoredFlagger.PRODUCT_PAGE: default: return "flagger-toggle-product-active";
-//     }
-// }
-
 export class BlockIndicator {
     state: State;
 
@@ -36,16 +22,17 @@ export class BlockIndicator {
     }
 
     public addOrUpdate(): void {
-        const existingBlockIndicationButton = document.getElementById(
-            "sponsored-flagger-button"
-        ) as HTMLButtonElement | null;
+        const existingBlockIndicationButton = document.getElementById("sponsored-flagger-button") as HTMLButtonElement | null;
         if (existingBlockIndicationButton) {
             this.updateDisplayText(existingBlockIndicationButton, false);
             return;
         }
 
-        this.addButtonToFilters();
-        this.addButtonToOrderOptions();
+        // desktop
+        this.addButtonToFiltersDesktop();
+        this.addButtonToOrderOptionsDesktop();
+        // mobile
+        this.addButtonToFiltersMobile();
     }
 
     private createSvgIcon(icon: {
@@ -125,24 +112,35 @@ export class BlockIndicator {
         parentElement.insertBefore(newElement, referenceElement);
     }
 
-    private addButtonToFilters(existingButton?: HTMLButtonElement): void {
-        const liOfferElements = document.querySelector("div.sku-actions-wrapper");
-        if (liOfferElements) {
+    private addButtonToFiltersDesktop(existingButton?: HTMLButtonElement): void {
+        const actionWrapperDiv = document.querySelector("div.sku-actions-wrapper");
+        if (actionWrapperDiv) {
             this.insertElement(
-        liOfferElements.parentNode as Node,
+        actionWrapperDiv.parentNode as Node,
         existingButton ?? this.createSponsoredIndicatorButton(true),
-        liOfferElements
+        actionWrapperDiv
             );
         }
     }
 
-    private addButtonToOrderOptions(existingButton?: HTMLButtonElement): void {
+    private addButtonToOrderOptionsDesktop(existingButton?: HTMLButtonElement): void {
         const orderOptionsDiv = document.getElementById("order-options");
         if (orderOptionsDiv) {
             this.insertElement(
         orderOptionsDiv.parentNode as Node,
         existingButton ?? this.createSponsoredIndicatorButton(false),
         orderOptionsDiv.nextSibling
+            );
+        }
+    }
+
+    private addButtonToFiltersMobile(existingButton?: HTMLButtonElement): void {
+        const switchButtonWrapperDiv = document.querySelector("div.switch-btn-wrapper");
+        if (switchButtonWrapperDiv) {
+            this.insertElement(
+        switchButtonWrapperDiv.parentNode as Node,
+        existingButton ?? this.createSponsoredIndicatorButton(true),
+        switchButtonWrapperDiv
             );
         }
     }
