@@ -71,27 +71,27 @@
 
 .label-section {
   display: flex;
-  align-items: center; /* Vertically centers the items */
-  justify-content: start; /* Aligns items to the start of the flex container */
-  margin-bottom: 20px; /* Adds some space below the section */
+  align-items: center;
+  justify-content: start;
+  margin-bottom: 20px;
 }
 
 .logo {
-  margin-right: 10px; /* Adds some space between the logo and the text */
+  margin-right: 10px;
 }
 
 .rate-icon {
-  width: 32px; /* Adjust the size of the logo if needed */
+  width: 32px;
   height: auto;
 }
 
 .label-section p {
-  margin: 0; /* Removes default paragraph margins */
-  font-weight: 700; /* Makes the font bold */
-  font-size: 1.2em; /* Adjusts the size of the text */
-  color: #333; /* Sets the text color */
-  flex: 1; /* Allows the paragraph to fill the available space */
-  white-space: nowrap; /* Prevents the text from wrapping */
-  overflow: hidden; /* Keeps the content from spilling out */
-  text-overflow: ellipsis; /* Adds an ellipsis if the text is too long */
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.2em;
+  color: #333;
+  flex: 1;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
