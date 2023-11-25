@@ -4,33 +4,44 @@
     <meta charset="utf-8" />
     <title>Skroutz Sponsored Flagger</title>
     <link rel="stylesheet" href="popup.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   </head>
   <body class="popup-body">
-    <dl class="content">
-      <div class="content-flex">
-        <dt class="left-span"><strong>Sponsored products</strong> flagged</dt>
-        <dd class="right-span circle" id="sponsoredCount">...</dd>
+    <div class="label-section">
+      <div class="logo">
+        <a href="https://github.com/keybraker/skroutz-sponsored-flagger" target="_blank" rel="noopener noreferrer" class="icon-link">
+            <img src="https://raw.githubusercontent.com/keybraker/skroutz-sponsored-flagger/main/src/assets/icons/48.png" alt="Skroutz sponsored flagger icon" class="rate-icon" />
+        </a>
       </div>
-      <div class="content-flex">
-        <dt class="left-span"><strong>Sponsored shelves</strong> flagged</dt>
-        <dd class="right-span circle" id="sponsoredShelfCount">...</dd>
+      <p><strong><br>Skroutz Sponsored Flagger</strong></p>
+    </div>
+
+    <div class="content">
+      <div class="content-item">
+          <span class="item-label"><strong>Sponsored products</strong> flagged</span>
+          <span class="item-value" id="sponsoredCount">...</span>
       </div>
-      <div class="content-flex">
-        <dt class="left-span"><strong>Promotional videos</strong> flagged</dt>
-        <dd class="right-span circle" id="videoCount">...</dd>
+      <div class="content-item">
+          <span class="item-label"><strong>Sponsored shelves</strong> flagged</span>
+          <span class="item-value" id="sponsoredShelfCount">...</span>
       </div>
-    </dl>
+      <div class="content-item">
+          <span class="item-label"><strong>Promotional videos</strong> flagged</span>
+          <span class="item-value" id="videoCount">...</span>
+      </div>
+    </div>
 
     <div class="rate-section">
       <p><strong>If you enjoy SSF<br>rate it on</strong></p>
-      <a href="https://addons.mozilla.org/en-US/firefox/addon/skroutz-sponsored-flagger/reviews/" target="_blank" rel="noopener noreferrer">
-        <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/logo.eb1324e44442.svg" alt="Rate on Firefox Add-ons" />
-      </a>
-      <a href="https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl?hl=en&authuser=0" target="_blank" rel="noopener noreferrer">
-        <img src="https://www.google.com/chrome/static/images/chrome-logo-m100.svg" alt="Rate on Chrome Web Store" />
-      </a>
+      <div class="icons">
+        <a href="https://addons.mozilla.org/en-US/firefox/addon/skroutz-sponsored-flagger/reviews/" target="_blank" rel="noopener noreferrer" class="icon-link">
+            <img src="https://www.mozilla.org/media/protocol/img/logos/firefox/browser/logo.eb1324e44442.svg" alt="Rate on Firefox Add-ons" class="rate-icon" />
+        </a>
+        <a href="https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl?hl=en&authuser=0" target="_blank" rel="noopener noreferrer" class="icon-link">
+            <img src="https://www.google.com/chrome/static/images/chrome-logo-m100.svg" alt="Rate on Chrome Web Store" class="rate-icon" />
+        </a>
+      </div>
     </div>
   </body>
-
   <script src="../popup.js"></script>
 </html>
