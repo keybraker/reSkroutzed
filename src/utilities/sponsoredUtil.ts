@@ -9,8 +9,8 @@ export function toggleVisibility(element: Element, state: State) {
 
 export function getSponsoredText(isPlural = false, language: Language) {
     return isPlural
-        ? language === "EN" ? "Sponsored" : "Προωθούμενα"
-        : language == "EN" ? "Sponsored" : "Προωθούμενo";
+        ? language === Language.ENGLISH ? "Sponsored" : "Προωθούμενα"
+        : language === Language.ENGLISH ? "Sponsored" : "Προωθούμενo";
 }
 
 export function updateSponsoredTextPlural(

@@ -13,7 +13,7 @@ import { BTSIndicator } from "./decorators/BTSIndicator";
 
 const state: State = {
     visible: true,
-    language: Language.EN,
+    language: Language.ENGLISH,
     sponsoredCount: 0,
     sponsoredShelfCount: 0,
     videoCount: 0,

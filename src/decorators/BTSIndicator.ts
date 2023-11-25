@@ -1,3 +1,4 @@
+import { Language } from "../enums/Language";
 import { State } from "../types/State";
 
 interface LowestPriceData {
@@ -156,7 +157,7 @@ export class BTSIndicator {
         const lowestPrice = this.lowestPriceData ? this.lowestPriceData.unformatted : undefined;
         const formattedLowestPrice = lowestPrice?.toFixed(2);
 
-        information.textContent = this.state.language === "EN"
+        information.textContent = this.state.language === Language.ENGLISH
             ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
             : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
 

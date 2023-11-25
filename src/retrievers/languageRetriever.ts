@@ -1,6 +1,11 @@
 import { Language } from "../enums/Language";
 
 export function retrieveLanguage(): Language {
-    const languageElement = document.querySelector("a[title='language'], a[title='Language'], a[title='γλώσσα'], a[title='Γλώσσα']");
-    return languageElement?.textContent ? languageElement.textContent.trim() as Language : Language.EN;
+    const languageAttribute = document.documentElement.lang;
+
+    if (languageAttribute === "el") {
+        return Language.GREEK;
+    } else {
+        return Language.ENGLISH;
+    }
 }
