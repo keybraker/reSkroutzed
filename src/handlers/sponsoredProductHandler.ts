@@ -51,11 +51,11 @@ export class SponsoredProductHandler {
 
     private hasSponsoredLabelText(listItem: Element): boolean {
         const labelTextElement = listItem.querySelector(".label-text");
-        return !!labelTextElement && isSponsored(labelTextElement);
+        return isSponsored(labelTextElement);
     }
 
     private hasFlaggedLabelText(listItem: Element): boolean {
         const labelTextElement = listItem.querySelector(".label-text");
-        return !!labelTextElement && isFlagged(labelTextElement);
+        return isFlagged(labelTextElement);
     }
 }

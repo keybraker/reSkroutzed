@@ -49,8 +49,8 @@ export function updateSponsoredTextSingle(
     }
 }
 
-export function isSponsored(element: Element | null) {
-    if (!element || !element?.textContent) {
+export function isSponsored(element: Element | null): boolean {
+    if (!element || !element.textContent) {
         return false;
     }
 
@@ -64,5 +64,6 @@ export function isSponsored(element: Element | null) {
         "Sponsored",
     ];
 
-    return sponsoredTexts.includes(element.textContent);
+    return sponsoredTexts.includes(element.textContent.trim());
 }
+
