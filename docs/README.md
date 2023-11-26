@@ -1,8 +1,6 @@
 # ![Alt Text](../src/assets/icons/48.png) Skroutz Sponsored Flagger
 
 Skroutz Sponsored Flagger is a browser extension that detects and highlights sponsored products on [skroutz.gr](https://skroutz.gr).<br>
-You can start using it by simply downloading it from the [Firefox Add-ons Store](https://addons.mozilla.org/en-US/firefox/addon/skroutz-sponsored-flagger) or [Chrome Extension Store](https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl).
-
 
 ![Alt Text](../assets/large_promo.png)
 
