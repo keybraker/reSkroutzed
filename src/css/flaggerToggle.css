@@ -13,9 +13,6 @@
 
 
 .flagger-toggle-product {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin: 8px 16px 16px 0px !important;
   padding: 9px 17px !important;
   display: flex !important;
