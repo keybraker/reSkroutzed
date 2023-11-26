@@ -44,11 +44,11 @@ If you have any suggestions for improvements or are facing a bug, feel free to s
 
 This extension is licensed under the GNU general public license. See the LICENSE file for more details.
 
-<p align="center">
+<p align="left">
   <a href="https://addons.mozilla.org/en-US/firefox/addon/skroutz-sponsored-flagger">
-    <img src="../assets/store_images/firefox.png" alt="Firefox" width="300" style="vertical-align: middle;">
+    <img src="../assets/store_images/firefox.png" alt="Firefox" width="250" style="vertical-align: middle;">
   </a>
   <a href="https://chrome.google.com/webstore/detail/skroutz-sponsored-flagger/amglnkndjeoojnjjeepeheobhneeogcl">
-    <img src="../assets/store_images/chrome.png" alt="Chrome" width="300" style="vertical-align: middle;">
+    <img src="../assets/store_images/chrome.png" alt="Chrome" width="250" style="vertical-align: middle;">
   </a>
 </p>
