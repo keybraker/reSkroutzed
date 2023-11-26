@@ -4,6 +4,9 @@
   "version": "1.5.7",
   "manifest_version": 3,
   "permissions": [],
+  "host_permissions": [
+    "*://www.skroutz.gr/*"
+  ],
   "content_scripts": [
     {
       "matches": [

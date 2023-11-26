@@ -36,9 +36,9 @@ export class BlockIndicator {
     }
 
     private createSvgIcon(icon: {
-    viewBox: string;
-    path: string;
-  }): SVGSVGElement {
+        viewBox: string;
+        path: string;
+    }): SVGSVGElement {
         const svgElement = document.createElementNS(
             "http://www.w3.org/2000/svg",
             "svg"
@@ -82,11 +82,10 @@ export class BlockIndicator {
         sponsoredButtonToggle.appendChild(countSpan);
     }
 
-    private createSponsoredIndicatorButton(
-        isProduct: boolean = true
-    ): HTMLButtonElement {
+    private createSponsoredIndicatorButton(isProduct: boolean = true): HTMLButtonElement {
         const sponsoredButtonToggle = document.createElement("button");
         const buttonClass = isProduct ? "flagger-toggle-product" : "flagger-toggle-list";
+
         sponsoredButtonToggle.classList.add(buttonClass);
         sponsoredButtonToggle.setAttribute("id", "sponsored-flagger-button");
 
@@ -104,11 +103,7 @@ export class BlockIndicator {
         return sponsoredButtonToggle;
     }
 
-    private insertElement(
-        parentElement: Node,
-        newElement: Node,
-        referenceElement: Node | null
-    ): void {
+    private insertElement(parentElement: Node,newElement: Node,referenceElement: Node | null): void {
         parentElement.insertBefore(newElement, referenceElement);
     }
 
