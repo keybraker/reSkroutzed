@@ -56,23 +56,16 @@ export class BTSIndicator {
 
     //
 
-    private getProductCode(): string | null {
-        const element = document.querySelector("span.sku-code");
-        if (element) {
-            const text = element.textContent;
-            if (text) {
-                const parts = text.split(": ");
-                return parts[1];
-            }
-        }
-        return null;
+    private getSKU(): string | null {
+        const metaTag = document.querySelector("meta[itemprop=\"sku\"]") as HTMLMetaElement | null;
+        return metaTag ? metaTag.content : null;
     }
 
     private async fetchMarketData() {
         try {
-            const productCode = this.getProductCode();
+            const productCode = this.getSKU();
             if (!productCode) {
-                throw new Error("Failed to fetch product code");
+                throw new Error("Failed to fetch product SKU");
             }
 
             const response = await fetch(
@@ -84,17 +77,18 @@ export class BTSIndicator {
                     },
                 }
             );
+
             if (!response.ok) {
-                throw new Error("Network response was not ok");
+                throw new Error(`Failed to fetch (HTTP: ${response.status}) price data for product with SKU ${productCode}`);
             }
 
             const responseJSON = await response.json();
             const productCards = responseJSON.product_cards as {
-        raw_price: number,
-        shipping_cost: number,
-        final_price_formatted?: string,
-        price: number,
-      }[];
+                raw_price: number,
+                shipping_cost: number,
+                final_price_formatted?: string,
+                price: number,
+            }[];
             const currency = responseJSON.price_min.trim().slice(-1);
             let lowestPrice = Number.MAX_VALUE;
 
