@@ -96,3 +96,12 @@ chrome.runtime.onMessage.addListener(
         }
     }
 );
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.action === "toggleVisibility") {
+        state.visible = !state.visible;
+        localStorage.setItem("ssf-sponsored-visibility", `${state.visible}`);
+        // this.updateDisplayText(sponsoredButtonToggle, isProduct);
+        toggleContentVisibility(state);
+    }
+});

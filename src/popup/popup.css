@@ -96,3 +96,29 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.flagger-toggle-list {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 8px 0px 16px 8px !important;
+  padding: 11px 8px !important;
+  border: 1px solid #bbbbbb !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  color: #707070 !important;
+  white-space: nowrap !important;
+}
+
+.flagger-toggle-list svg,
+.flagger-toggle-product svg {
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.flagger-toggle-list:hover,
+.flagger-toggle-list.flagger-toggle-list-active {
+  border: 1px solid var(--custom-light-red, #ff0000);
+  background-color: #ffcdd2;
+  color: var(--custom-light-red, #ff0000);
+}

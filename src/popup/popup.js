@@ -4,9 +4,18 @@ function updateCounts(sponsored, sponsoredShelf, video) {
     document.getElementById("videoCount").textContent = video || 0;
 }
 
+function changeState() {
+    document.getElementById('sponsored-flagger-button')
+        .addEventListener('click', function() {
+            chrome.runtime.sendMessage({action: "toggleVisibility"});
+        });
+}
+
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs || tabs.length === 0) {
         updateCounts();
+        changeState();
+
         return;
     }
 
@@ -18,3 +27,5 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         }
     );
 });
+
+
