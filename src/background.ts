@@ -9,7 +9,7 @@ import { retrieveLanguage } from "./retrievers/languageRetriever";
 import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
 import { BlockIndicator } from "./decorators/BlockIndicator";
-import { BTSIndicator } from "./decorators/BTSIndicator";
+import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator";
 
 const state: State = {
     visible: true,
@@ -26,7 +26,7 @@ const sponsoredProductListHandler = new SponsoredProductListHandler(state);
 const sponsoredFBTHandler = new SponsoredFBTHandler(state);
 
 const blockIndicator = new BlockIndicator(state);
-const btsIndicator = new BTSIndicator(state);
+const btsIndicator = new PriceCheckerIndicator(state);
 
 (function () {
     async function initializer() {

@@ -6,7 +6,7 @@ interface LowestPriceData {
   unformatted: number;
 }
 
-export class BTSIndicator {
+export class PriceCheckerIndicator {
     private state: State;
     private btsPrice: number | undefined = undefined;
     private lowestPriceData: LowestPriceData | undefined = undefined;
@@ -126,7 +126,7 @@ export class BTSIndicator {
             ? "info-label-positive"
             : "info-label-negative";
 
-        priceIndication.classList.add("display-padding", "inline-flex-row", "bts-outline", status);
+        priceIndication.classList.add("display-padding", "inline-flex-row", "price-checker-outline", status);
         colFlex.classList.add("inline-flex-col");
 
         const icon = document.createElement("div");
