@@ -89,3 +89,167 @@ text-black {
   height: 26px !important;
   flex-shrink: 0 !important;
 }
+
+:root {
+  --color-background-base-default: #121212 !important;
+  --color-background-neutral-default: #929292 !important;
+  --color-background-neutral-strong: #252525 !important;
+  --color-background-neutral-stronger: #2e2e2e !important;
+  --color-background-neutral-strongest: #363636 !important;
+  --color-background-success-weak: #204520 !important;
+  --color-background-success-default: #0aa812 !important;
+  --color-background-informative-weak: #1a3a60 !important;
+  --color-background-informative-default: #1d4b8f !important;
+  --color-background-warning-weak: #4a3a00 !important;
+  --color-background-warning-default: #665700 !important;
+  --color-background-warning-strong: #7c6f00 !important;
+  --color-background-danger-weak: #4a1a1a !important;
+  --color-background-danger-default: #bd0202 !important;
+  --color-background-accent-weak: #3a2c21 !important;
+  --color-background-accent-default: #5a3c2a !important;
+  --color-background-marketplace-weak: #1e4a1e !important;
+  --color-background-marketplace-default: #0aa812 !important;
+  --color-background-plus-weak: #322359 !important;
+  --color-background-plus-default: #422c6d !important;
+  --color-background-favorite-default: #782c2c !important;
+}
+
+:root {
+  --color-border-base-default: #444 !important;
+  --color-border-neutral-default: #333 !important;
+  --color-border-neutral-strong: #222 !important;
+  --color-border-primary-default: #285781 !important;
+  --color-border-success-weak: #2d4d2d !important;
+  --color-border-success-default: #0aa812 !important;
+  --color-border-informative-weak: #3d6f96 !important;
+  --color-border-informative-default: #285781 !important;
+  --color-border-warning-default: #8f7500 !important;
+  --color-border-warning-strong: #7c6f00 !important;
+  --color-border-danger-weak: #5a3c3c !important;
+  --color-border-danger-default: #bd0202 !important;
+  --color-border-accent-default: #9c5d15 !important;
+  --color-border-plus-default: #3a2076 !important;
+}
+
+:root {
+  --color-icon-base-default: #ddd !important;
+  --color-icon-neutral-weak: #aaa !important;
+  --color-icon-neutral-default: #888 !important;
+  --color-icon-neutral-strong: #666 !important;
+  --color-icon-success-default: #0aa812 !important;
+  --color-icon-informative-default: #285781 !important;
+  --color-icon-warning-default: #8f7500 !important;
+  --color-icon-danger-default: #bd0202 !important;
+  --color-icon-accent-default: #9c5d15 !important;
+  --color-icon-marketplace-default: #0aa812 !important;
+  --color-icon-marketplace-strong: #1d4b22 !important;
+  --color-icon-plus-default: #3a2076 !important;
+  --color-icon-plus-strong: #2a1853 !important;
+  --color-icon-favorite-default: #9c3c3c !important;
+}
+
+:root {
+  --color-text-base-default: #ddd !important;
+  --color-text-neutral-weak: #aaa !important;
+  --color-text-neutral-default: #888 !important;
+  --color-text-neutral-strong: #666 !important;
+  --color-text-primary-default: #285781 !important;
+  --color-text-primary-strong: #1d4b6a !important;
+  --color-text-success-default: #0aa812 !important;
+  --color-text-success-strong: #1d4b22 !important;
+  --color-text-warning-default: #8f7500 !important;
+  --color-text-danger-default: #bd0202 !important;
+  --color-text-danger-strong: #561616 !important;
+  --color-text-accent-default: #9c5d15 !important;
+  --color-text-accent-strong: #7c4b12 !important;
+  --color-text-marketplace-default: #0aa812 !important;
+  --color-text-marketplace-strong: #1d4b22 !important;
+  --color-text-plus-default: #3a2076 !important;
+  --color-text-plus-strong: #2a1853 !important;
+}
+
+:root {
+  --color-border-base-default: #555 !important;
+  --color-border-neutral-default: #434343 !important;
+  --color-border-neutral-strong: #333 !important;
+  --color-border-primary-default: #3b6d9a !important;
+  --color-border-success-weak: #367547 !important;
+  --color-border-success-default: #0d8c1f !important;
+  --color-border-informative-weak: #4a7b8f !important;
+  --color-border-informative-default: #3b6d9a !important;
+  --color-border-warning-default: #a68b00 !important;
+  --color-border-warning-strong: #947a00 !important;
+  --color-border-danger-weak: #6f5656 !important;
+  --color-border-danger-default: #7d4b4b !important;
+  --color-border-accent-default: #ac6e28 !important;
+  --color-border-plus-default: #503688 !important;
+}
+
+.card,
+.button,
+.section,
+.content,
+.sku-info-bar,
+.qna-card,
+.sku-form-wrapper,
+.offerings-wrap,
+.add-to-cart-wrap,
+.has-add-to-cart-cards,
+.offering-card,
+.description,
+.price,
+.shop,
+.js-product-card,
+.sku-details,
+.navigation-bar,
+.user-info,
+.phone-banner-container,
+.sku-pick-shelf,
+.guide-pick-shelf,
+.scroll-area,
+.has-next,
+.site-header,
+.js-site-header,
+.default,
+.link-to-sku,
+.separator,
+.show-more,
+.first-row,
+.comparison-table-wrap table,
+.comparison-table-wrap content section tracking-img-container,
+.sku-page section.top-section {
+  background: #121212 !important;
+  background-color: #121212 !important;
+  border-color: #666 !important;
+}
+
+.tl-card-divider {
+  background: #666 !important;
+  background-color: #666 !important;
+  border-color: #666 !important;
+}
+
+.qna-item-data {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.6); /* Dark shadow for depth */
+  background-color: #1e1e1e; /* Dark background color */
+  color: #ccc; /* Light text color for contrast */
+  border-radius: 4px; /* Optional: Adds rounded corners */
+  padding: 4px;
+}
+
+.prices-shops-title, .price, .js-sku-nav-options active {
+  color: #666 !important;
+}
+
+.pic {
+  background: null !important;
+}
+
+.list h2>a,
+.final-price,
+.price-details em,
+.primary,
+.list .sku-link, .list .product-link,
+.username, .top-tabs ul li a.active, .qna-card .sku-name a, .qna-card .category-name a {
+  color: #dad0d0 !important;
+}

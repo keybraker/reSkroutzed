@@ -10,6 +10,7 @@ import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
 import { BlockIndicator } from "./decorators/BlockIndicator";
 import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator";
+import { DarkModeButton } from "./decorators/darkModeButton";
 
 const state: State = {
     visible: true,
@@ -27,6 +28,7 @@ const sponsoredFBTHandler = new SponsoredFBTHandler(state);
 
 const blockIndicator = new BlockIndicator(state);
 const btsIndicator = new PriceCheckerIndicator(state);
+const darkModeButton = new DarkModeButton(state);
 
 (function () {
     async function initializer() {
@@ -37,6 +39,7 @@ const btsIndicator = new PriceCheckerIndicator(state);
         await flagAdditionalContent();
 
         blockIndicator.addOrUpdate();
+        darkModeButton.add();
     }
 
     function flagContent() {

@@ -12,3 +12,4 @@ export function toggleContentVisibility(state: State) {
     toggleVisibilityByClass("div.selected-product-cards", state);
     toggleVisibilityByClass("div.flagged-bought-together", state);
 }
+
