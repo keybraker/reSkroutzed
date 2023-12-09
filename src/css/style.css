@@ -1,6 +1,6 @@
 :root {
   --custom-light-red: #ff0000;
-  --flagged-item-box-shadow: 0px 0px 5px 2px var(--custom-light-red, #ff0000) !important;
+  --flagged-item-box-shadow: 0px 0px 5px 2px var(--custom-light-red) !important;
 }
 
 .display-none {
@@ -47,10 +47,9 @@ text-black {
 .label-text {
   border-radius: 2px !important;
   padding: 8px 12px !important;
-
   background-color: #ffdbdf !important;
   font-weight: bold !important;
-  color: red !important;
+  color: var(--custom-light-red) !important;
 }
 
 .price-checker-outline {
@@ -59,8 +58,42 @@ text-black {
   padding: 20px 24px !important;
 }
 
-.info-label-positive {
+.go-to-shop-button-positive:hover {
+  background-color: var(--color-text-marketplace-strong) !important;
+  transition: background-color 0.3s ease;
+}
+
+.go-to-shop-button-positive {
   border: 1px solid var(--color-text-success-default) !important;
+  border-radius: 32px !important;
+  padding: 8px 12px !important;
+  font-weight: 400 !important;
+  background-color: var(--color-text-success-default) !important;
+  color: var(--color-text-base-default) !important;
+}
+
+.go-to-shop-button-negative:hover {
+  background-color: #db791a !important;
+  transition: background-color 0.3s ease;
+}
+
+.go-to-shop-button-negative {
+  border: 1px solid var(--color-text-accent-default) !important;
+  border-radius: 32px !important;
+  padding: 8px 12px !important;
+  font-weight: 400 !important;
+  background-color: var(--color-text-accent-default) !important;
+  color: var(--color-text-base-default) !important;
+}
+
+.lowest-price-store-highlight {
+  border: 2px solid var(--color-text-success-default) !important;
+  box-shadow: 1px 1px 0 var(--color-text-success-default) !important;
+}
+
+.info-label-positive {
+  /* border: 1px solid var(--color-text-success-default) !important; */
+  border: 1px solid var(--color-background-success-weak) !important;
   line-height: 1.4 !important;
   font-size: 16px !important;
   font-weight: 500 !important;
@@ -69,7 +102,8 @@ text-black {
 }
 
 .info-label-negative {
-  border: 1px solid var(--custom-light-red, #ff0000) !important;
+  /* border: 1px solid var(--color-text-accent-default) !important; */
+  border: 1px solid var(--color-background-accent-weak) !important;
   line-height: 1.4 !important;
   font-size: 16px !important;
   font-weight: 500 !important;

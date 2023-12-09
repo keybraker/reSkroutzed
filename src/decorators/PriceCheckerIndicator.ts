@@ -4,6 +4,7 @@ import { State } from "../types/State";
 interface LowestPriceData {
   formatted: string;
   unformatted: number;
+  shopId: number;
 }
 
 export class PriceCheckerIndicator {
@@ -54,8 +55,6 @@ export class PriceCheckerIndicator {
         return parseFloat(priceValue);
     }
 
-    //
-
     private getSKU(): string | null {
         const metaTag = document.querySelector("meta[itemprop=\"sku\"]") as HTMLMetaElement | null;
         return metaTag ? metaTag.content : null;
@@ -85,17 +84,20 @@ export class PriceCheckerIndicator {
             const responseJSON = await response.json();
             const productCards = responseJSON.product_cards as {
                 raw_price: number,
+                shop_id: number,
                 shipping_cost: number,
                 final_price_formatted?: string,
                 price: number,
             }[];
             const currency = responseJSON.price_min.trim().slice(-1);
+            let shopId = 0;
             let lowestPrice = Number.MAX_VALUE;
 
             Object.values(productCards).forEach(card => {
                 const totalCost = card.raw_price + card.shipping_cost;
                 if (totalCost < lowestPrice) {
                     lowestPrice = totalCost;
+                    shopId = card.shop_id;
                 }
             });
 
@@ -106,6 +108,7 @@ export class PriceCheckerIndicator {
             return {
                 formatted: `${lowestPrice} ${currency}`,
                 unformatted: lowestPrice,
+                shopId,
             };
         } catch (error) {
             console.error("There was a problem with the fetch operation:", error);
@@ -122,17 +125,17 @@ export class PriceCheckerIndicator {
         const priceIndication = document.createElement("div");
         const colFlex = document.createElement("div");
 
-        const status = this.btsPrice && this.lowestPriceData && this.btsPrice <= this.lowestPriceData.unformatted
-            ? "info-label-positive"
-            : "info-label-negative";
+        const isLowestPrice = !!this.btsPrice && !!this.lowestPriceData && this.btsPrice <= this.lowestPriceData.unformatted;
+        const checkerStyle = isLowestPrice ? "info-label-positive" : "info-label-negative";
 
-        priceIndication.classList.add("display-padding", "inline-flex-row", "price-checker-outline", status);
+        priceIndication.classList.add("display-padding", "inline-flex-row", "price-checker-outline", checkerStyle);
         colFlex.classList.add("inline-flex-col");
 
         const icon = document.createElement("div");
         const information = document.createElement("div");
         const disclaimer = document.createElement("div");
-        information.classList.add("font-bold");
+
+        information.classList.add("align-center", "font-bold");
         disclaimer.classList.add("align-end", "text-black");
 
         const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -156,11 +159,36 @@ export class PriceCheckerIndicator {
             : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
 
         colFlex.appendChild(information);
-        // colFlex.appendChild(img);
+
+        const goToStoreButton = this.goToStoreButtonCreator(isLowestPrice);
+        colFlex.appendChild(goToStoreButton);
 
         priceIndication.appendChild(icon);
         priceIndication.appendChild(colFlex);
 
         return priceIndication;
+    }
+
+    private goToStoreButtonCreator(isLowestPrice: boolean): HTMLButtonElement {
+        const goToStoreButton = document.createElement("button");
+        const buttonStyle = isLowestPrice ? "go-to-shop-button-positive" : "go-to-shop-button-negative";
+
+        goToStoreButton.classList.add(buttonStyle);
+        goToStoreButton.textContent = this.state.language === Language.ENGLISH
+            ? "Go to Shop"
+            : "Μετάβαση στο κατάστημα";
+        goToStoreButton.classList.add("custom-button-class");
+
+        goToStoreButton.addEventListener("click", () => {
+            const targetId = `shop-${this.lowestPriceData?.shopId}`;
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+                targetElement.classList.add("lowest-price-store-highlight");
+            }
+        });
+
+        return goToStoreButton;
     }
 }
