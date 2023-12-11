@@ -144,8 +144,8 @@ export class PriceCheckerIndicator {
         svgElement.setAttribute("height", "16");
 
         const img = document.createElement("img");
-        img.src = "https://raw.githubusercontent.com/keybraker/skroutz-sponsored-flagger/main/src/assets/icons/128.png";
-        img.alt = "Skroutz Sponsored Flagger";
+        img.src = "https://raw.githubusercontent.com/keybraker/reskroutzed/main/src/assets/icons/128.png";
+        img.alt = "reSkroutzed";
         img.width = 16;
         img.height = 16;
 
