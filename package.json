@@ -6,7 +6,8 @@
   "scripts": {
     "build:chrome": "webpack --env chrome",
     "build:firefox": "webpack --env firefox",
-    "lint": "eslint \"**/*.ts\""
+    "lint": "eslint \"**/*.ts\"",
+    "lint-fix": "eslint \"**/*.ts\" --fix"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.12.0",
