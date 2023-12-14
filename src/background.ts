@@ -1,15 +1,16 @@
+import { toggleContentVisibility } from "./actions/visibilityAction";
+import { BlockIndicator } from "./decorators/BlockIndicator";
+import { CorrectFinalPrice } from "./decorators/CorrectFinalPrice";
+import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator";
 import { Language } from "./enums/Language";
 import { PromotionalVideoHandler } from "./handlers/promotionalVideoHandler";
 import { SponsoredFBTHandler } from "./handlers/sponsoredFBTHandler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
 import { SponsoredProductListHandler } from "./handlers/sponsoredProductListHandler";
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
-import { toggleContentVisibility } from "./actions/visibilityAction";
 import { retrieveLanguage } from "./retrievers/languageRetriever";
 import { retrieveVisibility } from "./retrievers/visibilityRetriever";
 import { State } from "./types/State";
-import { BlockIndicator } from "./decorators/BlockIndicator";
-import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator";
 
 const state: State = {
     visible: true,
@@ -27,6 +28,7 @@ const sponsoredFBTHandler = new SponsoredFBTHandler(state);
 
 const blockIndicator = new BlockIndicator(state);
 const btsIndicator = new PriceCheckerIndicator(state);
+const correctFinalPrice = new CorrectFinalPrice(state);
 
 (function () {
     async function initializer() {
@@ -50,6 +52,7 @@ const btsIndicator = new PriceCheckerIndicator(state);
     async function flagAdditionalContent() {
         toggleContentVisibility(state);
         await btsIndicator.start();
+        await correctFinalPrice.start();
     }
 
     function observeMutations() {
