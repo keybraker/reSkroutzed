@@ -1,7 +1,7 @@
 {
   "name": "reSkroutzed",
   "description": "Flags sponsored products on Skroutz.gr",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "manifest_version": 3,
   "permissions": [],
   "host_permissions": [

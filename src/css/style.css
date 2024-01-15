@@ -123,3 +123,24 @@ text-black {
   height: 26px !important;
   flex-shrink: 0 !important;
 }
+
+.icon-border {
+  display: inline-block !important;
+  padding: 4px 12px !important;
+  color: var(--color-text-neutral-strong) !important;
+  font-size: 14px !important;
+  font-style: italic !important;
+  font-family: Arial, sans-serif !important;
+  text-align: end !important;
+  vertical-align: middle !important;
+}
+
+.deliver-cost {
+  display: inline-block;
+  padding: 4px;
+  color: var(--color-text-neutral-strong);
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  vertical-align: bottom;
+}
+

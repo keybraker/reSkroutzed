@@ -1,4 +1,7 @@
 import { Language } from "../enums/Language";
+import { buyThroughSkroutzDeliveryCostRetriever } from "../retrievers/buyThroughSkroutzDeliveryCost";
+import { buyThroughSkroutzRetriever } from "../retrievers/buyThroughSkroutzRetriever";
+import { marketDataReceiver } from "../retrievers/marketDataRetriever";
 import { State } from "../types/State";
 
 interface LowestPriceData {
@@ -10,6 +13,7 @@ interface LowestPriceData {
 export class PriceCheckerIndicator {
     private state: State;
     private btsPrice: number | undefined = undefined;
+    private btsDeliveryCost: number | undefined = undefined;
     private lowestPriceData: LowestPriceData | undefined = undefined;
 
     constructor(state: State) {
@@ -20,99 +24,12 @@ export class PriceCheckerIndicator {
         const offeringCard = document.querySelector("article.offering-card");
 
         if (offeringCard) {
-            this.lowestPriceData = await this.fetchMarketData();
+            this.lowestPriceData = await marketDataReceiver();
             if (this.lowestPriceData) {
-                this.btsPrice = this.fetchBTSPrice();
+                this.btsPrice = buyThroughSkroutzRetriever();
+                this.btsDeliveryCost = buyThroughSkroutzDeliveryCostRetriever();
                 this.insertPriceIndication(offeringCard);
             }
-        }
-    }
-
-    private fetchBTSPrice() {
-        const priceElement = document.querySelector(".price");
-        return priceElement ? this.priceElementToNumber(priceElement) : undefined;
-    }
-
-    private priceElementToNumber(element: Element) {
-        let priceValue = "";
-
-        const leftPart = element.querySelector("span.comma");
-        if (!leftPart?.previousSibling) {
-            return undefined;
-        }
-
-        const integerPart = leftPart.previousSibling.textContent;
-        priceValue = `${priceValue}${integerPart}`;
-
-        const rightPart = element.querySelector("span.comma + span");
-        if (!rightPart) {
-            return undefined;
-        }
-
-        const decimalPart = rightPart.textContent;
-        priceValue = `${priceValue}.${decimalPart}`;
-
-        return parseFloat(priceValue);
-    }
-
-    private getSKU(): string | null {
-        const metaTag = document.querySelector("meta[itemprop=\"sku\"]") as HTMLMetaElement | null;
-        return metaTag ? metaTag.content : null;
-    }
-
-    private async fetchMarketData() {
-        try {
-            const productCode = this.getSKU();
-            if (!productCode) {
-                throw new Error("Failed to fetch product SKU");
-            }
-
-            const response = await fetch(
-                `https://www.skroutz.gr/s/${productCode}/filter_products.json`,
-                {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(`Failed to fetch (HTTP: ${response.status}) price data for product with SKU ${productCode}`);
-            }
-
-            const responseJSON = await response.json();
-            const productCards = responseJSON.product_cards as {
-                raw_price: number,
-                shop_id: number,
-                shipping_cost: number,
-                final_price_formatted?: string,
-                price: number,
-            }[];
-            const currency = responseJSON.price_min.trim().slice(-1);
-            let shopId = 0;
-            let lowestPrice = Number.MAX_VALUE;
-
-            Object.values(productCards).forEach(card => {
-                const totalCost = card.raw_price + card.shipping_cost;
-                if (totalCost < lowestPrice) {
-                    lowestPrice = totalCost;
-                    shopId = card.shop_id;
-                }
-            });
-
-            if (lowestPrice === Number.MAX_VALUE) {
-                throw new Error("No available products found");
-            }
-
-            return {
-                formatted: `${lowestPrice} ${currency}`,
-                unformatted: lowestPrice,
-                shopId,
-            };
-        } catch (error) {
-            console.error("There was a problem with the fetch operation:", error);
-            return undefined;
         }
     }
 
@@ -125,16 +42,24 @@ export class PriceCheckerIndicator {
         const priceIndication = document.createElement("div");
         const colFlex = document.createElement("div");
 
-        const isLowestPrice = !!this.btsPrice && !!this.lowestPriceData && this.btsPrice <= this.lowestPriceData.unformatted;
+        const deliveryCost = this.btsDeliveryCost ?? 0;
+        let isLowestPrice = false;
+        if (!!this.btsPrice && !!this.lowestPriceData) {
+            isLowestPrice = this.btsPrice + deliveryCost <= this.lowestPriceData.unformatted;
+        }
+
         const checkerStyle = isLowestPrice ? "info-label-positive" : "info-label-negative";
 
         priceIndication.classList.add("display-padding", "inline-flex-row", "price-checker-outline", checkerStyle);
         colFlex.classList.add("inline-flex-col");
 
-        const icon = document.createElement("div");
+        // const icon = document.createElement("div");
+        const brand = document.createElement("div");
         const information = document.createElement("div");
         const disclaimer = document.createElement("div");
 
+        // icon.classList.add("align-center", "icon-border");
+        brand.classList.add("icon-border", "font-bold");
         information.classList.add("align-center", "font-bold");
         disclaimer.classList.add("align-end", "text-black");
 
@@ -143,13 +68,13 @@ export class PriceCheckerIndicator {
         svgElement.setAttribute("width", "16");
         svgElement.setAttribute("height", "16");
 
-        const img = document.createElement("img");
-        img.src = "https://raw.githubusercontent.com/keybraker/reskroutzed/main/src/assets/icons/128.png";
-        img.alt = "reSkroutzed";
-        img.width = 16;
-        img.height = 16;
+        // const img = document.createElement("img");
+        // img.src = "https://raw.githubusercontent.com/keybraker/reskroutzed/main/src/assets/icons/128.png";
+        // img.alt = "reSkroutzed";
+        // img.width = 16;
+        // img.height = 16;
 
-        icon.appendChild(img);
+        // icon.appendChild(img);
 
         const lowestPrice = this.lowestPriceData ? this.lowestPriceData.unformatted : undefined;
         const formattedLowestPrice = lowestPrice?.toFixed(2);
@@ -157,13 +82,16 @@ export class PriceCheckerIndicator {
         information.textContent = this.state.language === Language.ENGLISH
             ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
             : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
-
+        information.title =  `(note that "Buy through Skroutz" is ${this.btsPrice}€ + ${deliveryCost}€ shipping)`;
         colFlex.appendChild(information);
 
         const goToStoreButton = this.goToStoreButtonCreator(isLowestPrice);
         colFlex.appendChild(goToStoreButton);
 
-        priceIndication.appendChild(icon);
+        brand.textContent = "by reSkroutzed";
+        colFlex.appendChild(brand);
+
+        // priceIndication.appendChild(icon);
         priceIndication.appendChild(colFlex);
 
         return priceIndication;
