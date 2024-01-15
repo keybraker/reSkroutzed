@@ -13,7 +13,7 @@ interface LowestPriceData {
 export class PriceCheckerIndicator {
     private state: State;
     private btsPrice: number | undefined = undefined;
-    private btsDeliveryCost: number | undefined = undefined;
+    private btsShippingCost: number | undefined = undefined;
     private lowestPriceData: LowestPriceData | undefined = undefined;
 
     constructor(state: State) {
@@ -23,14 +23,18 @@ export class PriceCheckerIndicator {
     public async start() {
         const offeringCard = document.querySelector("article.offering-card");
 
-        if (offeringCard) {
-            this.lowestPriceData = await marketDataReceiver();
-            if (this.lowestPriceData) {
-                this.btsPrice = buyThroughSkroutzRetriever();
-                this.btsDeliveryCost = buyThroughSkroutzDeliveryCostRetriever();
-                this.insertPriceIndication(offeringCard);
-            }
+        if (!offeringCard) {
+            return;
         }
+
+        this.lowestPriceData = await marketDataReceiver();
+        if (!this.lowestPriceData) {
+            return;
+        }
+
+        this.btsPrice = buyThroughSkroutzRetriever();
+        this.btsShippingCost = buyThroughSkroutzDeliveryCostRetriever();
+        this.insertPriceIndication(offeringCard);
     }
 
     private insertPriceIndication(element: Element): void {
@@ -42,7 +46,7 @@ export class PriceCheckerIndicator {
         const priceIndication = document.createElement("div");
         const colFlex = document.createElement("div");
 
-        const deliveryCost = this.btsDeliveryCost ?? 0;
+        const deliveryCost = this.btsShippingCost ?? 0;
         let isLowestPrice = false;
         if (!!this.btsPrice && !!this.lowestPriceData) {
             isLowestPrice = this.btsPrice + deliveryCost <= this.lowestPriceData.unformatted;
