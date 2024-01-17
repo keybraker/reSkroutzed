@@ -127,7 +127,7 @@ text-black {
 .icon-border {
   display: inline-block !important;
   padding: 4px 12px !important;
-  color: var(--color-text-neutral-strong) !important;
+  color: var(--color-text-neutral-default) !important;
   font-size: 14px !important;
   font-style: italic !important;
   font-family: Arial, sans-serif !important;
@@ -144,3 +144,13 @@ text-black {
   vertical-align: bottom;
 }
 
+.shipping-cost {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-text-neutral-strong);
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600 !important;
+  padding-left: 8px;
+}

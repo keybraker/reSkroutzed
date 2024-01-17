@@ -36,6 +36,13 @@ export class CorrectFinalPrice {
         if (!shippingCostEm.parentElement) {
             return;
         }
-        priceElement.appendChild(shippingCostEm.parentElement.cloneNode(true));
+
+        const parent = shippingCostEm.parentElement.cloneNode(true);
+        if (!(parent instanceof Element)) {
+            return;
+        }
+        // parent.textContent = this.state.language === Language.ENGLISH ? `(shipping cost: ${parent.textContent})` : `(μεταφορικά: ${parent.textContent})`;
+        parent.classList.add("shipping-cost");
+        priceElement.appendChild(parent);
     }
 }

@@ -1,5 +1,5 @@
 import { Language } from "../enums/Language";
-import { buyThroughSkroutzDeliveryCostRetriever } from "../retrievers/buyThroughSkroutzDeliveryCost";
+import { buyThroughSkroutzShippingCostRetriever } from "../retrievers/buyThroughSkroutzShippingCostRetriever";
 import { buyThroughSkroutzRetriever } from "../retrievers/buyThroughSkroutzRetriever";
 import { marketDataReceiver } from "../retrievers/marketDataRetriever";
 import { State } from "../types/State";
@@ -33,7 +33,7 @@ export class PriceCheckerIndicator {
         }
 
         this.btsPrice = buyThroughSkroutzRetriever();
-        this.btsShippingCost = buyThroughSkroutzDeliveryCostRetriever();
+        this.btsShippingCost = buyThroughSkroutzShippingCostRetriever();
         this.insertPriceIndication(offeringCard);
     }
 
@@ -46,10 +46,10 @@ export class PriceCheckerIndicator {
         const priceIndication = document.createElement("div");
         const colFlex = document.createElement("div");
 
-        const deliveryCost = this.btsShippingCost ?? 0;
+        const shippingCost = this.btsShippingCost ?? 0;
         let isLowestPrice = false;
         if (!!this.btsPrice && !!this.lowestPriceData) {
-            isLowestPrice = this.btsPrice + deliveryCost <= this.lowestPriceData.unformatted;
+            isLowestPrice = this.btsPrice + shippingCost <= this.lowestPriceData.unformatted;
         }
 
         const checkerStyle = isLowestPrice ? "info-label-positive" : "info-label-negative";
@@ -57,12 +57,12 @@ export class PriceCheckerIndicator {
         priceIndication.classList.add("display-padding", "inline-flex-row", "price-checker-outline", checkerStyle);
         colFlex.classList.add("inline-flex-col");
 
-        // const icon = document.createElement("div");
+        const icon = document.createElement("div");
         const brand = document.createElement("div");
         const information = document.createElement("div");
         const disclaimer = document.createElement("div");
 
-        // icon.classList.add("align-center", "icon-border");
+        icon.classList.add("align-center", "icon-border");
         brand.classList.add("icon-border", "font-bold");
         information.classList.add("align-center", "font-bold");
         disclaimer.classList.add("align-end", "text-black");
@@ -72,13 +72,13 @@ export class PriceCheckerIndicator {
         svgElement.setAttribute("width", "16");
         svgElement.setAttribute("height", "16");
 
-        // const img = document.createElement("img");
-        // img.src = "https://raw.githubusercontent.com/keybraker/reskroutzed/main/src/assets/icons/128.png";
-        // img.alt = "reSkroutzed";
-        // img.width = 16;
-        // img.height = 16;
+        const img = document.createElement("img");
+        img.src = "https://raw.githubusercontent.com/keybraker/reskroutzed/main/src/assets/icons/128.png";
+        img.alt = "reSkroutzed";
+        img.width = 16;
+        img.height = 16;
 
-        // icon.appendChild(img);
+        icon.appendChild(img);
 
         const lowestPrice = this.lowestPriceData ? this.lowestPriceData.unformatted : undefined;
         const formattedLowestPrice = lowestPrice?.toFixed(2);
@@ -86,16 +86,16 @@ export class PriceCheckerIndicator {
         information.textContent = this.state.language === Language.ENGLISH
             ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
             : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
-        information.title =  `(note that "Buy through Skroutz" is ${this.btsPrice}€ + ${deliveryCost}€ shipping)`;
+        information.title =  `(note that "Buy through Skroutz" is ${this.btsPrice}€ + ${shippingCost}€ shipping)`;
         colFlex.appendChild(information);
 
         const goToStoreButton = this.goToStoreButtonCreator(isLowestPrice);
         colFlex.appendChild(goToStoreButton);
 
         brand.textContent = "by reSkroutzed";
+        brand.appendChild(icon);
         colFlex.appendChild(brand);
 
-        // priceIndication.appendChild(icon);
         priceIndication.appendChild(colFlex);
 
         return priceIndication;
