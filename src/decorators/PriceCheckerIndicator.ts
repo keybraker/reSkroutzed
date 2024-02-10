@@ -59,6 +59,7 @@ export class PriceCheckerIndicator {
 
         const icon = document.createElement("div");
         const brand = document.createElement("div");
+        const brandLink = document.createElement("a");
         const information = document.createElement("div");
         const disclaimer = document.createElement("div");
 
@@ -86,16 +87,24 @@ export class PriceCheckerIndicator {
         information.textContent = this.state.language === Language.ENGLISH
             ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
             : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
-        information.title =  `(note that "Buy through Skroutz" is ${this.btsPrice}€ + ${shippingCost}€ shipping)`;
         colFlex.appendChild(information);
 
         const goToStoreButton = this.goToStoreButtonCreator(isLowestPrice);
         colFlex.appendChild(goToStoreButton);
 
-        brand.textContent = "by reSkroutzed";
+        brandLink.href = "https://paypal.me/tsiakkas";
+        brandLink.textContent = "by reSkroutzed";
+        brandLink.classList.add("icon-border", "font-bold");
+
+        brand.appendChild(brandLink);
+        brand.appendChild(icon);
+
         brand.appendChild(icon);
         colFlex.appendChild(brand);
 
+        priceIndication.title =  this.state.language === Language.ENGLISH
+            ? `(note that "Buy through Skroutz" is ${this.btsPrice}€ + ${shippingCost}€ shipping)`
+            : `(σημειώστε ότι "Αγορά μέσω Skroutz" είναι ${this.btsPrice}€ + ${shippingCost}€ μεταφορικά)`;
         priceIndication.appendChild(colFlex);
 
         return priceIndication;
