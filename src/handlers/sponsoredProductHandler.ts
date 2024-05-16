@@ -21,7 +21,7 @@ export class SponsoredProductHandler {
         );
 
         [...nonFlaggedProductListItems]
-            ?.filter(this.hasSponsoredLabelText)
+            ?.filter(this.isSponsored)
             ?.forEach((listItem) => {
                 flagProductListItem(listItem);
                 updateSponsoredTextSingle(listItem, this.state.language);
@@ -49,9 +49,13 @@ export class SponsoredProductHandler {
         }
     }
 
-    private hasSponsoredLabelText(listItem: Element): boolean {
+    private isSponsored(listItem: Element): boolean {
         const labelTextElement = listItem.querySelector(".label-text");
-        return isSponsored(labelTextElement);
+        if (isSponsored(labelTextElement) ) {
+            return true;
+        }
+
+        return false;
     }
 
     private hasFlaggedLabelText(listItem: Element): boolean {

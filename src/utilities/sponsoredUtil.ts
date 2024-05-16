@@ -62,6 +62,10 @@ export function isSponsored(element: Element | null): boolean {
         "Eπιλεγμένα καταστήματα",
         "Selected shops",
         "Sponsored",
+        "Sponsored Store",
+        "Ad",
+        "Advertisement",
+        "Advertisement",
     ];
 
     return sponsoredTexts.includes(element.textContent.trim());

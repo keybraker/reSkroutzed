@@ -9,6 +9,7 @@ reSkroutzed is a browser extension that detects and highlights sponsored product
 Skroutz has been using dark patterns to mislead consumers into purchasing sponsored products (advertisements). The purpose of this extension is to make it easier for consumers to identify which products are sponsored and which are not, so they can make informed purchasing decisions. It also gives the consumer the ability to hide the sponsored products if they so wish to.
 
 Extra features include:
+
 - Lowest price checker outside of "Buy through Skroutz"
 - Product page sponsored flagging and removal
 - Frequently bought together sponsored flagging and removal
@@ -16,13 +17,14 @@ Extra features include:
 
 ## Manual Installation (for contributing)
 
-To install the extension via Github, simply download the source code from this repository, and follow the instructions based on the browser you wish to load it on.
+To install the extension via GitHub, simply download the source code from this repository, and follow the instructions based on the browser you wish to load it on.
 
 ### Load on Chrome
 
 ```bash
 npm run build:chrome
 ```
+
 and load the build extension by clicking `Load unpacked` at `chrome://extensions/` and clicking on the `build/chrome_build` folder.
 
 ### Load on Firefox
