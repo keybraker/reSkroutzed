@@ -53,62 +53,60 @@ text-black {
 }
 
 .price-checker-outline {
-  border: 1px solid var(--color-border-neutral-default) !important;
+  border: 1px solid var(--color-border-neutral-0) !important;
   border-radius: 16px !important;
   padding: 20px 24px !important;
 }
 
 .go-to-shop-button-positive:hover {
-  background-color: var(--color-text-marketplace-strong) !important;
+  background-color: var(--color-icon-marketplace-1) !important;
   transition: background-color 0.3s ease;
 }
 
 .go-to-shop-button-positive {
-  border: 1px solid var(--color-text-success-default) !important;
+  border: 1px solid var(--color-border-neutral-0) !important;
   border-radius: 32px !important;
   padding: 8px 12px !important;
   font-weight: 400 !important;
-  background-color: var(--color-text-success-default) !important;
+  background-color: var(--color-text-success-0) !important;
   color: var(--color-text-base-default) !important;
 }
 
 .go-to-shop-button-negative:hover {
-  background-color: #db791a !important;
+  background-color: var(--color-text-danger-1) !important;
   transition: background-color 0.3s ease;
 }
 
 .go-to-shop-button-negative {
-  border: 1px solid var(--color-text-accent-default) !important;
+  border: 1px solid var(--color-border-neutral-0) !important;
   border-radius: 32px !important;
   padding: 8px 12px !important;
   font-weight: 400 !important;
-  background-color: var(--color-text-accent-default) !important;
+  background-color: var(--color-border-danger-0) !important;
   color: var(--color-text-base-default) !important;
 }
 
 .lowest-price-store-highlight {
-  border: 2px solid var(--color-text-success-default) !important;
-  box-shadow: 1px 1px 0 var(--color-text-success-default) !important;
+  border: 2px solid var(--color-text-success-0) !important;
+  box-shadow: 1px 1px 0 var(--color-text-success-0) !important;
 }
 
 .info-label-positive {
-  /* border: 1px solid var(--color-text-success-default) !important; */
-  border: 1px solid var(--color-background-success-weak) !important;
+  border: 2px solid var(--color-border-neutral-0) !important;
   line-height: 1.4 !important;
   font-size: 16px !important;
   font-weight: 500 !important;
-  background-color: var(--color-background-success-weak) !important;
-  color: var(--color-text-success-default) !important;
+  background-color: var(--color-text-link-marketplace-visited) !important;
+  color: #FFFFFF !important;
 }
 
 .info-label-negative {
-  /* border: 1px solid var(--color-text-accent-default) !important; */
-  border: 1px solid var(--color-background-accent-weak) !important;
+  border: 2px solid var(--color-border-neutral-0) !important;
   line-height: 1.4 !important;
   font-size: 16px !important;
   font-weight: 500 !important;
-  background-color: var(--color-background-accent-weak) !important;
-  color: var(--color-text-accent-default) !important;
+  background-color: var(--color-text-link-danger-visited) !important;
+  color: #FFFFFF !important;
 }
 
 .sponsored-label svg,
