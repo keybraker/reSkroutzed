@@ -59,7 +59,7 @@ text-black {
 }
 
 .go-to-shop-button-positive:hover {
-  background-color: var(--color-icon-marketplace-1) !important;
+  background-color: var(--color-text-link-marketplace-active) !important;
   transition: background-color 0.3s ease;
 }
 
@@ -73,7 +73,7 @@ text-black {
 }
 
 .go-to-shop-button-negative:hover {
-  background-color: var(--color-text-danger-1) !important;
+  background-color: var(--color-icon-inline-alert-danger) !important;
   transition: background-color 0.3s ease;
 }
 
@@ -82,8 +82,8 @@ text-black {
   border-radius: 32px !important;
   padding: 8px 12px !important;
   font-weight: 400 !important;
-  background-color: var(--color-border-danger-0) !important;
-  color: var(--color-text-danger-3) !important;
+  background-color: var(--color-border-inline-alert-danger) !important;
+  color: var(--color-text-base-default) !important;
 }
 
 .lowest-price-store-highlight {

@@ -92,11 +92,6 @@ export class PriceCheckerIndicator {
 
         const diff = roundToZero((lowestPrice ?? 0) - (this.btsPrice ?? 0) - shippingCost);
 
-        console.log("lowestPrice :>> ", lowestPrice);
-        console.log("this.btsPrice :>> ", this.btsPrice);
-        console.log("shippingCost :>> ", shippingCost);
-        console.log("diff === 0 :>> ", `${diff} === 0 :>> `, diff === 0);
-
         if (diff > 0) {
             priceDifference.textContent = ` ${diff} / ${diff.toFixed(2)}€`;
             priceDifferenceExplanation.textContent = this.state.language === Language.ENGLISH
@@ -143,7 +138,6 @@ export class PriceCheckerIndicator {
         goToStoreButton.textContent = this.state.language === Language.ENGLISH
             ? "Go to Shop"
             : "Μετάβαση στο κατάστημα";
-        goToStoreButton.classList.add("custom-button-class");
 
         goToStoreButton.addEventListener("click", () => {
             const targetId = `shop-${this.lowestPriceData?.shopId}`;
