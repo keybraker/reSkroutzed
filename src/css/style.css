@@ -83,7 +83,7 @@ text-black {
   padding: 8px 12px !important;
   font-weight: 400 !important;
   background-color: var(--color-border-danger-0) !important;
-  color: var(--color-text-base-default) !important;
+  color: var(--color-text-danger-3) !important;
 }
 
 .lowest-price-store-highlight {

@@ -9,8 +9,5 @@ export function buyThroughSkroutzShippingCostRetriever() {
     const articleEm = document.querySelector("article.offering-card");
     const shippingCostEm = articleEm?.querySelector("em");
 
-    const a = shippingCostEm ? elementToNumber(shippingCostEm) : undefined;
-    console.log("a :>> ", a);
-
-    return a;
+    return shippingCostEm ? elementToNumber(shippingCostEm) : undefined;
 }

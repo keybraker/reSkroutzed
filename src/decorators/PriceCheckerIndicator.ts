@@ -10,6 +10,10 @@ interface LowestPriceData {
   shopId: number;
 }
 
+function roundToZero(value: number, precision = 1e-10) {
+    return Math.abs(value) < precision ? 0 : value;
+}
+
 export class PriceCheckerIndicator {
     private state: State;
     private btsPrice: number | undefined = undefined;
@@ -45,6 +49,8 @@ export class PriceCheckerIndicator {
     private createPriceIndicationElement(): HTMLDivElement {
         const priceIndication = document.createElement("div");
         const colFlex = document.createElement("div");
+        const rowFlex = document.createElement("div");
+        const otherLowestPrice = document.createElement("div");
 
         const shippingCost = this.btsShippingCost ?? 0;
         let isLowestPrice = false;
@@ -56,59 +62,78 @@ export class PriceCheckerIndicator {
 
         priceIndication.classList.add("display-padding", "inline-flex-row", "price-checker-outline", checkerStyle);
         colFlex.classList.add("inline-flex-col");
+        rowFlex.classList.add("inline-flex-row");
+        otherLowestPrice.classList.add("price");
 
-        const icon = document.createElement("div");
-        const brand = document.createElement("div");
-        const brandLink = document.createElement("a");
-        const information = document.createElement("div");
-        const disclaimer = document.createElement("div");
-
-        icon.classList.add("align-center", "icon-border");
-        brand.classList.add("icon-border", "font-bold");
-        information.classList.add("align-center", "font-bold");
-        disclaimer.classList.add("align-end", "text-black");
-
-        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svgElement.setAttribute("viewBox", "0 96 960 960");
-        svgElement.setAttribute("width", "16");
-        svgElement.setAttribute("height", "16");
-
-        const img = document.createElement("img");
-        img.src = "https://raw.githubusercontent.com/keybraker/reskroutzed/main/src/assets/icons/128.png";
-        img.alt = "reSkroutzed";
-        img.width = 16;
-        img.height = 16;
-
-        icon.appendChild(img);
+        const priceComma = document.createElement("span");
+        const priceDecimal = document.createElement("span");
+        const currencySymbol = document.createElement("span");
+        const loyaltyPoints = document.createElement("span");
+        const shippingInfo = document.createElement("span");
 
         const lowestPrice = this.lowestPriceData ? this.lowestPriceData.unformatted : undefined;
-        const formattedLowestPrice = lowestPrice?.toFixed(2);
+        const [integerPart, decimalPart] = (lowestPrice?.toFixed(2) ?? "?").split(".");
 
+        priceComma.textContent = ",";
+        priceDecimal.textContent = decimalPart;
+        currencySymbol.textContent = "€";
+
+        priceComma.classList.add("comma");
+
+        otherLowestPrice.textContent = integerPart;
+        otherLowestPrice.appendChild(priceComma);
+        otherLowestPrice.appendChild(priceDecimal);
+        otherLowestPrice.appendChild(currencySymbol);
+        otherLowestPrice.appendChild(loyaltyPoints);
+        otherLowestPrice.appendChild(shippingInfo);
+
+        const priceDifference = document.createElement("span");
+        const priceDifferenceExplanation = document.createElement("span");
+
+        const diff = roundToZero((lowestPrice ?? 0) - (this.btsPrice ?? 0) - shippingCost);
+
+        console.log("lowestPrice :>> ", lowestPrice);
+        console.log("this.btsPrice :>> ", this.btsPrice);
+        console.log("shippingCost :>> ", shippingCost);
+        console.log("diff === 0 :>> ", `${diff} === 0 :>> `, diff === 0);
+
+        if (diff > 0) {
+            priceDifference.textContent = ` ${diff} / ${diff.toFixed(2)}€`;
+            priceDifferenceExplanation.textContent = this.state.language === Language.ENGLISH
+                ? "  more expensive"
+                : "  ακριβότερο";
+        } else if (diff < 0) {
+            priceDifference.textContent = `  ${diff.toFixed(2)}€`;
+            priceDifferenceExplanation.textContent = this.state.language === Language.ENGLISH
+                ? "  cheaper"
+                : "  φτηνότερο";
+        }
+
+        rowFlex.appendChild(otherLowestPrice);
+        rowFlex.appendChild(priceDifference);
+        rowFlex.appendChild(priceDifferenceExplanation);
+
+        colFlex.appendChild(rowFlex);
+
+        const information = document.createElement("div");
         information.textContent = this.state.language === Language.ENGLISH
-            ? `${formattedLowestPrice}€ is the lowest price with shipping apart from "Buy through Skroutz"`
-            : `${formattedLowestPrice}€ είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"`;
+            ? "is the lowest price with shipping apart from \"Buy through Skroutz\""
+            : "είναι η χαμηλότερη τιμή με μεταφορικά εκτός \"Αγορά μέσω Skroutz\"";
+        information.classList.add("align-center", "font-bold");
+
         colFlex.appendChild(information);
 
         const goToStoreButton = this.goToStoreButtonCreator(isLowestPrice);
         colFlex.appendChild(goToStoreButton);
 
-        brandLink.href = "https://paypal.me/tsiakkas";
-        brandLink.textContent = "by reSkroutzed";
-        brandLink.classList.add("icon-border", "font-bold");
-
-        brand.appendChild(brandLink);
-        brand.appendChild(icon);
-
-        brand.appendChild(icon);
-        colFlex.appendChild(brand);
-
-        priceIndication.title =  this.state.language === Language.ENGLISH
+        priceIndication.title = this.state.language === Language.ENGLISH
             ? `(note that "Buy through Skroutz" is ${this.btsPrice}€ + ${shippingCost}€ shipping)`
             : `(σημειώστε ότι "Αγορά μέσω Skroutz" είναι ${this.btsPrice}€ + ${shippingCost}€ μεταφορικά)`;
         priceIndication.appendChild(colFlex);
 
         return priceIndication;
     }
+
 
     private goToStoreButtonCreator(isLowestPrice: boolean): HTMLButtonElement {
         const goToStoreButton = document.createElement("button");

@@ -4,6 +4,8 @@
     "clean-webpack-plugin": "^4.0.0"
   },
   "scripts": {
+    "start:chrome": "web-ext run --source-dir ./build/chrome_build/",
+    "start:firefox": "web-ext run --source-dir ./build/firefox_build/",
     "build:chrome": "webpack --env chrome",
     "build:firefox": "webpack --env firefox",
     "lint": "eslint \"**/*.ts\"",
