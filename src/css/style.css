@@ -87,8 +87,9 @@ text-black {
 }
 
 .lowest-price-store-highlight {
-  border: 2px solid var(--color-text-success-0) !important;
-  box-shadow: 1px 1px 0 var(--color-text-success-0) !important;
+  border: 2px solid var(--color-text-link-marketplace-visited) !important;
+  box-shadow: 1px 1px 0 var(--color-text-link-marketplace-visited) !important;
+  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
 .info-label-positive {

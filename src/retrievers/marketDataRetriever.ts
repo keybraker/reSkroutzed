@@ -1,9 +1,16 @@
+export type LowestPriceData = {
+    lowestProductPrice: number;
+    lowestShippingCost: number;
+    lowestTotalPrice: number;
+    shopId: number;
+}
+
 function getSKU(): string | null {
     const metaTag = document.querySelector("meta[itemprop=\"sku\"]") as HTMLMetaElement | null;
     return metaTag ? metaTag.content : null;
 }
 
-export async function marketDataReceiver() {
+export async function marketDataReceiver(): Promise<LowestPriceData | undefined> {
     try {
         const productCode = getSKU();
         if (!productCode) {
@@ -32,14 +39,19 @@ export async function marketDataReceiver() {
             final_price_formatted?: string,
             price: number,
         }[];
-        const currency = responseJSON.price_min.trim().slice(-1);
+        // const currency = responseJSON.price_min.trim().slice(-1);
         let shopId = 0;
         let lowestPrice = Number.MAX_VALUE;
+        let lowestProductPrice = Number.MAX_VALUE;
+        let lowestShippingCost = Number.MAX_VALUE;
 
         Object.values(productCards).forEach(card => {
             const totalCost = card.raw_price + card.shipping_cost;
             if (totalCost < lowestPrice) {
                 lowestPrice = totalCost;
+                lowestProductPrice = card.raw_price;
+                lowestShippingCost = card.shipping_cost;
+
                 shopId = card.shop_id;
             }
         });
@@ -49,8 +61,9 @@ export async function marketDataReceiver() {
         }
 
         return {
-            formatted: `${lowestPrice} ${currency}`,
-            unformatted: lowestPrice,
+            lowestProductPrice,
+            lowestShippingCost,
+            lowestTotalPrice: lowestPrice,
             shopId,
         };
     } catch (error) {
