@@ -117,14 +117,14 @@ html.dark-mode,
   --color-border-neutral-7: #8c8c8c !important;
 
   --color-text-primary: #ffffff !important;
-  --color-text-secondary: #b0b0b0 !important;
+  --color-text-secondary: #e2e2e2 !important;
   --color-text-highlight: #ffcc00 !important;
 
   --color-border-primary: #3a3a3a !important;
   --color-border-highlight: #ffcc00 !important;
 
-  --color-link: #1e90ff !important;
-  --color-link-hover: #6495ed !important;
+  --color-link: #dddddd !important;
+  --color-link-hover: #a7a7a7 !important;
 
   --color-button-background: #3a3a3a !important;
   --color-button-text: #ffffff !important;
@@ -151,7 +151,7 @@ a:hover {
 button {
   background-color: var(--color-button-background) !important;
   color: var(--color-button-text) !important;
-  border: 1px solid var(--color-border-primary) !important;
+  /* border: 1px solid var(--color-border-primary) !important; */
 }
 
 button:hover {
@@ -159,9 +159,8 @@ button:hover {
 }
 
 .card {
-  background-color: var(--color-card-background) !important;
+  background-color: var(--color-background-base) !important;
   color: var(--color-card-text) !important;
-  border: 1px solid var(--color-card-border) !important;
 }
 
 header {
@@ -194,9 +193,23 @@ header {
 .dark-mode .bottom-drawer-content,
 .dark-mode .notification,
 .dark-mode .remain-sticky {
-  background-color: var(--color-card-background) !important;
+  background-color: var(--color-background-base) !important;
   color: var(--color-text-primary) !important;
   border-bottom: 1px solid var(--color-border-primary) !important;
+}
+
+.dark-mode .info-label-positive {
+  background-color: #2c632a !important;
+}
+
+.dark-mode .info-label-negative {
+  background-color: #c93633 !important;
+}
+
+.dark-mode .lowest-price-store-highlight {
+  border: 3px solid #58a054 !important;
+  box-shadow: 1px 1px 0 #ffffff !important;
+  box-shadow: 0px 2px 4px #ffffff !important;
 }
 
 /*************************************************************************************************************/
@@ -266,7 +279,7 @@ text-black {
   border-radius: 32px !important;
   padding: 8px 12px !important;
   font-weight: 400 !important;
-  background-color: var(--color-text-success-0) !important;
+  background-color: #58a054 !important;
   color: var(--color-text-base-default) !important;
 }
 
@@ -280,14 +293,14 @@ text-black {
   border-radius: 32px !important;
   padding: 8px 12px !important;
   font-weight: 400 !important;
-  background-color: var(--color-border-inline-alert-danger) !important;
+  background-color: #c93633 !important;
   color: var(--color-text-base-default) !important;
 }
 
 .lowest-price-store-highlight {
-  border: 2px solid var(--color-text-link-marketplace-visited) !important;
-  box-shadow: 1px 1px 0 var(--color-text-link-marketplace-visited) !important;
-  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.1) !important;
+  border: 3px solid #58a054 !important;
+  box-shadow: 1px 1px 0 #000000 !important;
+  box-shadow: 0px 2px 4px #000000 !important;
 }
 
 .info-label-positive {
@@ -295,8 +308,8 @@ text-black {
   line-height: 1.4 !important;
   font-size: 16px !important;
   font-weight: 500 !important;
-  background-color: var(--color-text-link-marketplace-visited) !important;
-  color: #ffffff !important;
+  background-color: #58a054 !important;
+  color: #e7e7e7 !important;
 }
 
 .info-label-negative {
@@ -304,8 +317,8 @@ text-black {
   line-height: 1.4 !important;
   font-size: 16px !important;
   font-weight: 500 !important;
-  background-color: var(--color-text-link-danger-visited) !important;
-  color: #ffffff !important;
+  background-color: #c93633 !important;
+  color: #e7e7e7 !important;
 }
 
 .sponsored-label svg,
