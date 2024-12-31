@@ -1,7 +1,199 @@
 :root {
-  --custom-light-red: #ff0000;
+  --custom-light-red: #ff0000 !important;
   --flagged-item-box-shadow: 0px 0px 5px 2px var(--custom-light-red) !important;
+
+  --dark-mode-bg: #1a1a1a !important;
+  --dark-mode-text: #ffffff !important;
+  --dark-mode-border: #404040 !important;
+  --dark-mode-hover: #2d2d2d !important;
+  --dark-mode-sponsored: #3d0000 !important;
+  --dark-mode-sponsored-text: #ff6b6b !important;
+  --dark-mode-button: #2d2d2d !important;
+  --dark-mode-button-text: #d0d0d0 !important;
 }
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+body.dark-mode,
+.dark-mode body {
+  background-color: var(--color-background-base) !important;
+  color: var(--color-text-primary) !important;
+}
+
+html.dark-mode,
+.dark-mode html {
+  background-color: var(--color-background-base) !important;
+}
+
+.dark-mode * {
+  background-color: transparent !important;
+}
+
+.dark-mode {
+  --color-text-primary: #ffffff !important;
+  --color-text-secondary: #cccccc !important;
+  --color-text-muted: #999999 !important;
+
+  --color-background-base: #121212 !important;
+  --color-background-secondary: #1a1a1a !important;
+  --color-background-highlight: #252525 !important;
+}
+
+.dark-mode body,
+.dark-mode * {
+  color: var(--color-text-primary) !important;
+}
+
+.dark-mode p,
+.dark-mode li,
+.dark-mode span,
+.dark-mode a {
+  color: var(--color-text-secondary) !important;
+}
+
+.dark-mode a {
+  text-decoration: none;
+  color: var(--color-link) !important;
+}
+
+.dark-mode a:hover {
+  color: var(--color-link-hover) !important;
+}
+
+.dark-mode .muted-text,
+.dark-mode .low-contrast-text {
+  color: var(--color-text-muted) !important;
+}
+
+.dark-mode button {
+  color: var(--color-button-text) !important;
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+  color: var(--color-text-primary) !important;
+  font-weight: bold;
+}
+
+.dark-mode {
+  --color-background-base: #121212 !important;
+  --color-background-secondary: #1e1e1e !important;
+  --color-background-highlight: #252525 !important;
+  --color-background-base-0: #121212 !important;
+  --color-background-neutral-0: #181818 !important;
+  --color-background-neutral-1: #1f1f1f !important;
+  --color-background-neutral-2: #252525 !important;
+  --color-background-neutral-3: #2c2c2c !important;
+  --color-background-neutral-4: #333333 !important;
+  --color-background-neutral-5: #3b3b3b !important;
+  --color-background-neutral-6: #444444 !important;
+  --color-background-neutral-7: #4d4d4d !important;
+  --color-background-neutral-8: #555555 !important;
+  --color-background-neutral-9: #666666 !important;
+  --color-background-neutral-10: #777777 !important;
+  --color-text-neutral-0: #e0e0e0 !important;
+  --color-text-neutral-1: #d4d4d4 !important;
+  --color-text-neutral-2: #c8c8c8 !important;
+  --color-text-neutral-3: #bcbcbc !important;
+  --color-text-neutral-4: #b0b0b0 !important;
+  --color-text-neutral-5: #a4a4a4 !important;
+  --color-text-neutral-6: #989898 !important;
+  --color-text-neutral-7: #8c8c8c !important;
+  --color-text-neutral-8: #808080 !important;
+  --color-text-neutral-9: #747474 !important;
+  --color-text-neutral-10: #686868 !important;
+  --color-border-neutral-1: #2c2c2c !important;
+  --color-border-neutral-2: #3c3c3c !important;
+  --color-border-neutral-3: #4c4c4c !important;
+  --color-border-neutral-4: #5c5c5c !important;
+  --color-border-neutral-5: #6c6c6c !important;
+  --color-border-neutral-6: #7c7c7c !important;
+  --color-border-neutral-7: #8c8c8c !important;
+
+  --color-text-primary: #ffffff !important;
+  --color-text-secondary: #b0b0b0 !important;
+  --color-text-highlight: #ffcc00 !important;
+
+  --color-border-primary: #3a3a3a !important;
+  --color-border-highlight: #ffcc00 !important;
+
+  --color-link: #1e90ff !important;
+  --color-link-hover: #6495ed !important;
+
+  --color-button-background: #3a3a3a !important;
+  --color-button-text: #ffffff !important;
+  --color-button-hover: #555555 !important;
+
+  --color-card-background: #1f1f1f !important;
+  --color-card-border: #333333 !important;
+  --color-card-text: #e0e0e0 !important;
+}
+
+body.dark-mode {
+  background-color: var(--color-background-base) !important;
+  color: var(--color-text-primary) !important;
+}
+
+a {
+  color: var(--color-link) !important;
+}
+
+a:hover {
+  color: var(--color-link-hover) !important;
+}
+
+button {
+  background-color: var(--color-button-background) !important;
+  color: var(--color-button-text) !important;
+  border: 1px solid var(--color-border-primary) !important;
+}
+
+button:hover {
+  background-color: var(--color-button-hover) !important;
+}
+
+.card {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-card-text) !important;
+  border: 1px solid var(--color-card-border) !important;
+}
+
+header {
+  background-color: var(--color-background-highlight) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.tooltip {
+  background-color: var(--color-background-secondary) !important;
+  color: var(--color-text-secondary) !important;
+  border: 1px solid var(--color-border-primary) !important;
+}
+
+.modal {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-card-text) !important;
+  border: 1px solid var(--color-border-highlight) !important;
+}
+
+.dark-mode .sku-info-bar,
+.dark-mode .sku-card-favorite,
+.dark-mode .slider-btn,
+.dark-mode .suggestions-list-wrapper,
+.dark-mode .bottom-drawer-content,
+.dark-mode .notification,
+.dark-mode .remain-sticky {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text-primary) !important;
+  border-bottom: 1px solid var(--color-border-primary) !important;
+}
+
+/*************************************************************************************************************/
 
 .display-none {
   display: none !important;
@@ -98,7 +290,7 @@ text-black {
   font-size: 16px !important;
   font-weight: 500 !important;
   background-color: var(--color-text-link-marketplace-visited) !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 .info-label-negative {
@@ -107,7 +299,7 @@ text-black {
   font-size: 16px !important;
   font-weight: 500 !important;
   background-color: var(--color-text-link-danger-visited) !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 .sponsored-label svg,

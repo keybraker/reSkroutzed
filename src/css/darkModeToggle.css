@@ -1,0 +1,28 @@
+.dark-mode-toggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 50px !important;
+  height: 50px !important;
+  padding: 8px !important;
+  border: 1px solid #bbbbbb !important;
+  border-radius: 50% !important;
+  background: #55868c !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  position: fixed !important;
+  bottom: 20px !important;
+  left: 20px !important;
+  z-index: 9999 !important;
+}
+
+.dark-mode .dark-mode-toggle {
+  border-color: var(--dark-mode-border) !important;
+  color: var(--dark-mode-text) !important;
+}
+
+.dark-mode-toggle svg {
+  width: 24px !important;
+  height: 24px !important;
+  margin: 0 !important;
+}
