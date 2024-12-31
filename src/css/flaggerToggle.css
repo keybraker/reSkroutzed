@@ -36,7 +36,7 @@
 .flagger-toggle-list.flagger-toggle-list-active,
 .flagger-toggle-header.flagger-toggle-header-active,
 .flagger-toggle-product.flagger-toggle-product-active {
-  border: 1px solid var(--custom-light-red, #ff0000) !important;
-  background-color: #ffcdd2 !important;
-  color: var(--custom-light-red, #ff0000) !important;
+  border: 1px solid #ff7482 !important;
+  background-color: #ff0000 !important;
+  color: #e9e9e9 !important;
 }

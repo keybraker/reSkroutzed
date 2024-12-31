@@ -212,6 +212,12 @@ header {
   box-shadow: 0px 2px 4px #ffffff !important;
 }
 
+.dark-mode .sponsored-label,
+.dark-mode .flagged-list-title,
+.dark-mode .label-text {
+  background-color: #ff3048 !important;
+}
+
 /*************************************************************************************************************/
 
 .display-none {
@@ -256,9 +262,9 @@ text-black {
 .sponsored-label,
 .flagged-list-title,
 .label-text {
-  border-radius: 2px !important;
+  border-radius: 4px !important;
   padding: 8px 12px !important;
-  background-color: #ffdbdf !important;
+  background-color: #ff94a0 !important;
   font-weight: bold !important;
   color: var(--custom-light-red) !important;
 }
