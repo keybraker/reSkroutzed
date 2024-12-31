@@ -181,6 +181,12 @@ header {
   border: 1px solid var(--color-border-highlight) !important;
 }
 
+.dark-mode .notification-popup,
+.dark-mode .rc-icon-btn,
+.dark-mode .filters-form,
+.dark-mode .filter-indicator,
+.dark-mode .slider-wrapper,
+.dark-mode .histogram,
 .dark-mode .sku-info-bar,
 .dark-mode .sku-card-favorite,
 .dark-mode .slider-btn,
