@@ -43,6 +43,14 @@ export class DarkModeHandler {
 
     button.addEventListener("click", () => this.toggleDarkMode());
 
+    // Add hover event listeners
+    button.addEventListener("mouseover", () =>
+      document.body.classList.add("dark-mode-hover")
+    );
+    button.addEventListener("mouseout", () =>
+      document.body.classList.remove("dark-mode-hover")
+    );
+
     colFlex.appendChild(button);
 
     return colFlex;

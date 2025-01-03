@@ -5,19 +5,36 @@
   width: 50px !important;
   height: 50px !important;
   padding: 8px !important;
-  border: 1px solid #bbbbbb !important;
+  border: 2px solid #bbbbbb !important; /* Slightly thicker border for better visibility */
   border-radius: 50% !important;
-  background: #55868c !important;
-  color: #ffffff !important;
+  background: #58a054 !important; /* Default green background */
+  color: #ffffff !important; /* White text/icon */
   cursor: pointer !important;
   position: fixed !important;
   bottom: 20px !important;
   left: 20px !important;
   z-index: 9999 !important;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    transform 0.2s ease !important; /* Added transform for interaction */
+}
+
+.dark-mode-toggle:hover {
+  background: #488544 !important; /* Darker green on hover */
+  border-color: #ffffff !important; /* White border on hover */
+  transform: scale(1.1) !important; /* Slightly enlarge on hover */
+}
+
+.dark-mode-toggle:active {
+  background: #38703c !important; /* Even darker green on active click */
+  border-color: #ffffff !important; /* Keep border white on click */
+  transform: scale(0.95) !important; /* Slightly shrink on click */
 }
 
 .dark-mode .dark-mode-toggle {
   border-color: var(--dark-mode-border) !important;
+  background: var(
+    --dark-mode-hover
+  ) !important; /* Match dark mode hover background */
   color: var(--dark-mode-text) !important;
 }
 
@@ -25,4 +42,5 @@
   width: 24px !important;
   height: 24px !important;
   margin: 0 !important;
+  fill: currentColor !important; /* Ensures the icon matches the text color */
 }
