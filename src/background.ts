@@ -5,7 +5,7 @@ import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator";
 import { Language } from "./enums/Language";
 import { DarkModeHandler } from "./handlers/darkModeHandler";
 import { PromotionalVideoHandler } from "./handlers/promotionalVideoHandler";
-import { SponsoredFbtHandler } from "./handlers/SponsoredFbtHandler";
+import { SponsoredFbtHandler } from "./handlers/sponsoredFbtHandler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
 import { SponsoredProductListHandler } from "./handlers/sponsoredProductListHandler";
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
