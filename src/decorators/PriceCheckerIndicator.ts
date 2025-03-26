@@ -36,6 +36,7 @@ export class PriceCheckerIndicator {
 
     this.btsPrice = buyThroughSkroutzRetriever();
     this.btsShippingCost = buyThroughSkroutzShippingCostRetriever();
+
     this.insertPriceIndication(offeringCard);
   }
 
