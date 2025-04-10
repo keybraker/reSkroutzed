@@ -1,7 +1,7 @@
 {
   "name": "reSkroutzed",
-  "description": "Flags sponsored products on Skroutz.gr",
-  "version": "1.6.8",
+  "description": "hances Skroutz.gr by flagging sponsored products, price checker, and providing a dark mode toggle",
+  "version": "1.6.9",
   "manifest_version": 3,
   "permissions": [],
   "host_permissions": [

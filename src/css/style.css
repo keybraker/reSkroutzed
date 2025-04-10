@@ -87,8 +87,9 @@ html.dark-mode {
 .dark-mode .remain-sticky,
 .dark-mode .country-picker-form,
 .dark-mode .modal-container-content,
-.dark-mode .js-order-options,
-.dark-mode .desktop-order-options {
+.dark-mode .desktop-order-options,
+.dark-mode .sku-reviews-order,
+.dark-mode .sku-reviews-order.active {
   background-color: var(--color-background-base) !important;
   color: var(--color-text-primary) !important;
   border-bottom: 1px solid var(--color-border-primary) !important;
@@ -138,6 +139,29 @@ html.dark-mode {
 .dark-mode .button-success:hover {
   background-color: #45a049 !important; /* Slightly darker green on hover */
   transition: background-color 0.3s ease !important;
+}
+
+/* Button dark mode styling for View at store and Add to cart */
+.dark-mode .js-product-link.btn-blue.redirection-btn {
+  background-color: #0e4377 !important; /* Dark blue */
+  color: var(--dark-mode-text) !important;
+  border-color: #0a3056 !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.dark-mode .js-product-link.btn-blue.redirection-btn:hover {
+  background-color: #0c5299 !important; /* Slightly lighter blue on hover */
+}
+
+.dark-mode .add-to-cart-quantity-button .add-to-cart-btn.btn-green {
+  background-color: #285e36 !important; /* Dark green */
+  color: var(--dark-mode-text) !important;
+  border-color: #1e4528 !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.dark-mode .add-to-cart-quantity-button .add-to-cart-btn.btn-green:hover {
+  background-color: #347a45 !important; /* Slightly lighter green on hover */
 }
 
 /*************************************************************************************************************/
