@@ -10,6 +10,7 @@
   --dark-mode-sponsored-text: #ff6b6b !important;
   --dark-mode-button: #2d2d2d !important;
   --dark-mode-button-text: #d0d0d0 !important;
+  --dark-mode-shadow: rgba(0, 0, 0, 0.5) !important;
 }
 
 body.dark-mode {
@@ -91,6 +92,13 @@ html.dark-mode {
   background-color: var(--color-background-base) !important;
   color: var(--color-text-primary) !important;
   border-bottom: 1px solid var(--color-border-primary) !important;
+}
+
+.dark-mode .site-header.is-visible,
+.dark-mode .remain-sticky {
+  background-color: var(--color-background-highlight) !important;
+  color: var(--color-text-primary) !important;
+  box-shadow: 0 2px 8px var(--dark-mode-shadow) !important;
 }
 
 .dark-mode * {
@@ -218,6 +226,10 @@ text-black {
   width: 26px !important;
   height: 26px !important;
   flex-shrink: 0 !important;
+}
+
+.dark-mode .icon {
+  color: #ffffff !important;
 }
 
 .icon-border {
