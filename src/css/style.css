@@ -106,6 +106,40 @@ html.dark-mode {
   color: var(--color-text-primary) !important;
 }
 
+.dark-mode .tl-shelf,
+.dark-mode .tl-shelf-content,
+.dark-mode .reels-layout {
+  color: var(--color-text-primary) !important;
+}
+
+/* Heart button dark mode styling */
+.dark-mode .rc-icon-btn.icon.heart {
+  background-color: var(--dark-mode-border) !important;
+  color: var(--dark-mode-text) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dark-mode .rc-icon-btn.icon.heart:hover {
+  background-color: var(--dark-mode-hover) !important;
+  transform: scale(1.05) !important;
+}
+
+.dark-mode .rc-icon-btn.icon.heart[data-active="true"],
+.dark-mode .rc-icon-btn.icon.heart.active {
+  color: var(--custom-light-red) !important;
+}
+
+.dark-mode .button-success {
+  background-color: #4caf50 !important; /* Updated green background */
+  color: var(--dark-mode-button-text) !important;
+  border: 1px solid var(--color-border-primary) !important;
+}
+
+.dark-mode .button-success:hover {
+  background-color: #45a049 !important; /* Slightly darker green on hover */
+  transition: background-color 0.3s ease !important;
+}
+
 /*************************************************************************************************************/
 
 .display-none {
@@ -261,4 +295,42 @@ text-black {
   font-size: 16px;
   font-weight: 600 !important;
   padding-left: 8px;
+}
+
+/* Badge styling */
+.badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Dark mode badge styling */
+.dark-mode .badge {
+  color: var(--dark-mode-text) !important;
+  border: 1px solid var(--dark-mode-border) !important;
+  box-shadow: 0 1px 3px var(--dark-mode-shadow) !important;
+}
+
+/* Preserve badge background colors in dark mode */
+.dark-mode .badge[style*="background-color"] {
+  background-color: attr(style background-color) !important;
+  filter: brightness(
+    0.85
+  ) !important; /* Slightly dim the background for dark mode */
+}
+
+/* Badge specific dark mode color adjustments */
+.dark-mode .badge[style*="background-color:#0971C8"] {
+  background-color: #075fa1 !important; /* Darker blue for dark mode */
+}
+
+.dark-mode .dummy-badge {
+  /* If there are specific adjustments needed for dummy badges in dark mode */
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5) !important;
 }
