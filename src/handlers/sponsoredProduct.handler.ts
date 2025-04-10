@@ -1,10 +1,10 @@
-import { flagProductListItem, isFlagged } from "../utilities/flagUtil";
+import { flagProductListItem, isFlagged } from "../utilities/flag.util";
 import {
   isSponsored,
   toggleVisibility,
   updateSponsoredTextSingle,
-} from "../utilities/sponsoredUtil";
-import { State } from "../types/State";
+} from "../utilities/sponsored.util";
+import { State } from "../types/State.type";
 
 export class SponsoredProductHandler {
   private state: State;

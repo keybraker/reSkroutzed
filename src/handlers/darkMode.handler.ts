@@ -1,5 +1,5 @@
 import { appendLogoChild } from "../functions/appendLogoChild";
-import { State } from "../types/State";
+import { State } from "../types/State.type";
 
 export class DarkModeHandler {
   private state: State;

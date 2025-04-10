@@ -1,17 +1,17 @@
-import { toggleContentVisibility } from "./actions/visibilityAction";
-import { BlockIndicator } from "./decorators/BlockIndicator";
-import { CorrectFinalPrice } from "./decorators/CorrectFinalPrice";
-import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator";
-import { Language } from "./enums/Language";
-import { DarkModeHandler } from "./handlers/darkModeHandler";
-import { PromotionalVideoHandler } from "./handlers/promotionalVideoHandler";
-import { SponsoredFbtHandler } from "./handlers/sponsoredFbtHandler";
-import { SponsoredProductHandler } from "./handlers/sponsoredProductHandler";
-import { SponsoredProductListHandler } from "./handlers/sponsoredProductListHandler";
-import { SponsoredShelfHandler } from "./handlers/sponsoredShelfHandler";
-import { retrieveLanguage } from "./retrievers/languageRetriever";
-import { retrieveVisibility } from "./retrievers/visibilityRetriever";
-import { State } from "./types/State";
+import { toggleContentVisibility } from "./actions/visibility.action";
+import { BlockIndicator } from "./decorators/BlockIndicator.decorator";
+import { CorrectFinalPrice } from "./decorators/CorrectFinalPrice.decorator";
+import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator.decorator";
+import { Language } from "./enums/Language.enum";
+import { DarkModeHandler } from "./handlers/darkMode.handler";
+import { PromotionalVideoHandler } from "./handlers/promotionalVideo.handler";
+import { SponsoredFbtHandler } from "./handlers/sponsoredFbt.handler";
+import { SponsoredProductHandler } from "./handlers/sponsoredProduct.handler";
+import { SponsoredProductListHandler } from "./handlers/sponsoredProductList.handler";
+import { SponsoredShelfHandler } from "./handlers/sponsoredShelf.handler";
+import { retrieveLanguage } from "./retrievers/language.retriever";
+import { retrieveVisibility } from "./retrievers/visibility.retriever";
+import { State } from "./types/State.type";
 
 const state: State = {
   visible: true,

@@ -1,11 +1,11 @@
-import { Language } from "../enums/Language";
-import { buyThroughSkroutzShippingCostRetriever } from "../retrievers/buyThroughSkroutzShippingCostRetriever";
-import { buyThroughSkroutzRetriever } from "../retrievers/buyThroughSkroutzRetriever";
+import { Language } from "../enums/Language.enum";
+import { buyThroughSkroutzShippingCostRetriever } from "../retrievers/buyThroughSkroutzShippingCost.retriever";
+import { buyThroughSkroutzRetriever } from "../retrievers/buyThroughSkroutz.retriever";
 import {
   LowestPriceData,
   marketDataReceiver,
-} from "../retrievers/marketDataRetriever";
-import { State } from "../types/State";
+} from "../retrievers/marketData.retriever";
+import { State } from "../types/State.type";
 import { appendCreditChild } from "../functions/appendCreditChild";
 
 function roundToZero(value: number, precision = 1e-10) {

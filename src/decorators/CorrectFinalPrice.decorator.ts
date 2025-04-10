@@ -1,5 +1,5 @@
-import { Language } from "../enums/Language";
-import { State } from "../types/State";
+import { Language } from "../enums/Language.enum";
+import { State } from "../types/State.type";
 
 export class CorrectFinalPrice {
   private state: State;

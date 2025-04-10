@@ -2,8 +2,8 @@ import {
   isSponsored,
   updateSponsoredTextPlural,
   toggleVisibility,
-} from "../utilities/sponsoredUtil";
-import { State } from "../types/State";
+} from "../utilities/sponsored.util";
+import { State } from "../types/State.type";
 
 export class SponsoredProductListHandler {
   private state: State;
