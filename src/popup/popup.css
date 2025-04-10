@@ -1,98 +1,165 @@
-.popup-body {
-  font-family: 'Roboto', sans-serif;
-  height: 100%;
-  padding: 15px;
-  background-color: #f7f7f7;
-  color: #333;
-  border-radius: 8px;
-  border: 1px solid #bbbbbb;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+/* Modern Corporate Popup Styling */
+:root {
+  --primary-color: #ff6e00; /* Changed from #2c3e50 to Skroutz orange */
+  --secondary-color: #3498db;
+  --accent-color: #58a054;
+  --background-color: #f8f9fa;
+  --card-background: #ffffff;
+  --text-dark: #2c3e50;
+  --text-medium: #505a66;
+  --text-light: #7f8c8d;
+  --border-color: #e0e0e0;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.content {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-.content-item {
+.popup-body {
+  font-family: "Inter", sans-serif;
+  min-width: 320px;
+  max-width: 380px;
+  background-color: var(--background-color);
+  color: var(--text-dark);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Header Section */
+.header {
+  padding: 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+}
+
+.app-title {
+  margin-left: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Content Section */
+.content {
+  padding: 16px;
+}
+
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  padding: 14px 16px;
+  background-color: var(--card-background);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
 }
 
-.item-label {
+/* Removing the hover effect with transform */
+.stat-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-label {
   font-size: 14px;
-  color: #555;
+  font-weight: 500;
+  color: var(--text-medium);
 }
 
-.item-value {
-  background-color: #fff;
-  color: #333;
-  padding: 5px 10px;
-  border-radius: 20px;
-  border: 2px solid #333;
-  font-weight: bold;
+.stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 4px 12px;
+  background-color: var(
+    --primary-color
+  ); /* Changed from secondary-color to primary-color (orange) */
+  color: white;
+  border-radius: 16px;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Footer Section */
+.footer {
+  padding: 16px;
+  background-color: white;
+  border-top: 1px solid var(--border-color);
 }
 
 .rate-section {
-  text-align: center;
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .rate-section p {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-medium);
+  margin-bottom: 12px;
 }
 
-.icons {
+.store-links {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 16px;
 }
 
-.icon-link {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.rate-icon {
-  width: 32px;
-  height: auto;
-  margin: 0 5px;
-}
-
-.rate-icon:hover {
-  opacity: 0.8;
-}
-
-.label-section {
+.store-link {
+  transition: opacity 0.2s;
   display: flex;
   align-items: center;
-  vertical-align: middle;
-  justify-content: start;
-  margin-bottom: 20px;
+  justify-content: center;
+  height: 42px;
 }
 
-.logo {
-  margin-right: 10px;
-}
-
-.rate-icon {
-  width: 32px;
+.store-icon {
+  max-width: 100px;
+  max-height: 42px;
+  width: auto;
   height: auto;
+  object-fit: contain;
+  border: 2px solid white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.label-section p {
-  margin: 0;
-  font-weight: 700;
-  font-size: 1.2em;
-  color: #333;
-  flex: 1;
-  white-space: wrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #e86400; /* Darker orange for dark mode */
+    --secondary-color: #2980b9;
+    --accent-color: #3d8b3d;
+    --background-color: #121212;
+    --card-background: #1e1e1e;
+    --text-dark: #e0e0e0;
+    --text-medium: #a0a0a0;
+    --text-light: #707070;
+    --border-color: #333333;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .footer {
+    background-color: #1a1a1a;
+  }
 }
