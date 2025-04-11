@@ -7,7 +7,7 @@
   padding: 8px !important;
   border: 2px solid #bbbbbb !important;
   border-radius: 50% !important;
-  background: #58a054 !important;
+  background: #a08e54 !important;
   color: #ffffff !important;
   cursor: pointer !important;
   position: fixed !important;
@@ -16,12 +16,34 @@
   z-index: 9999 !important;
   transition: background-color 0.3s ease, border-color 0.3s ease,
     transform 0.2s ease !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Add tooltip to explain the button's purpose */
+.dark-mode-toggle::after {
+  content: "Toggle Dark Mode" !important;
+  position: absolute !important;
+  left: 60px !important;
+  white-space: nowrap !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: white !important;
+  padding: 5px 10px !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  pointer-events: none !important;
+}
+
+.dark-mode-toggle:hover::after {
+  opacity: 1 !important;
 }
 
 .dark-mode-toggle:hover {
   background: #488544 !important;
   border-color: #ffffff !important;
   transform: scale(1.1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 .dark-mode-toggle:active {
@@ -30,10 +52,35 @@
   transform: scale(0.95) !important;
 }
 
+/* Add a subtle indicator for the current mode */
+.dark-mode-toggle::before {
+  content: "☀️" !important;
+  position: absolute !important;
+  top: -5px !important;
+  right: -5px !important;
+  background: #fff !important;
+  border-radius: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  font-size: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid #ddd !important;
+  transition: all 0.3s ease !important;
+}
+
+.dark-mode .dark-mode-toggle::before {
+  content: "🌙" !important;
+  background: #333 !important;
+  border-color: #555 !important;
+}
+
 .dark-mode .dark-mode-toggle {
   border-color: var(--dark-mode-border) !important;
   background: var(--dark-mode-hover) !important;
   color: var(--dark-mode-text) !important;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1) !important;
 }
 
 .dark-mode-toggle svg {
