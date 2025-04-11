@@ -506,3 +506,10 @@ text-black {
   color: var(--dark-mode-text) !important;
   box-shadow: 0 1px 3px var(--dark-mode-shadow) !important;
 }
+
+.dark-mode .sku-card-pic,
+.dark-mode .js-sku-link,
+.dark-mode .featured-links li {
+  background-color: var(--color-card-background) !important;
+  color: var(--color-text-primary) !important;
+}
