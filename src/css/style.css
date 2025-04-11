@@ -358,3 +358,151 @@ text-black {
   /* If there are specific adjustments needed for dummy badges in dark mode */
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5) !important;
 }
+
+/* Dark mode styles for personalization settings toggle */
+.dark-mode .personalization-settings {
+  background-color: var(--color-background-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: 4px !important;
+  padding: 8px !important;
+  border: 1px solid var(--color-border-primary) !important;
+}
+
+.dark-mode .toggle-switch-label {
+  color: var(--color-text-primary) !important;
+  font-weight: 500 !important;
+}
+
+.dark-mode .btn-toggle-round {
+  background-color: var(--dark-mode-button) !important;
+  border-color: var(--dark-mode-border) !important;
+}
+
+.dark-mode .btn-toggle-round:checked {
+  background-color: #3a8c3a !important; /* Dark green when active */
+}
+
+.dark-mode .btn-toggle-round + label {
+  background-color: var(--dark-mode-button) !important;
+  border-color: var(--dark-mode-border) !important;
+}
+
+.dark-mode .btn-toggle-round:checked + label {
+  background-color: #3a8c3a !important;
+}
+
+.dark-mode .btn-toggle-round + label:before {
+  background-color: var(--dark-mode-text) !important;
+}
+
+.dark-mode .btn-toggle-round + label:after {
+  background-color: var(--dark-mode-text) !important;
+}
+
+.dark-mode .toggle-switch.small + label {
+  box-shadow: 0 1px 3px var(--dark-mode-shadow) !important;
+}
+
+.dark-mode .personalization-settings:hover {
+  background-color: var(--dark-mode-hover) !important;
+  transition: background-color 0.3s ease !important;
+}
+
+/* Dark mode styles for tooltip/info popup */
+.dark-mode #tooltip-wrapper,
+.dark-mode .tooltip-wrapper {
+  background-color: var(--color-background-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border-primary) !important;
+  box-shadow: 0 2px 5px var(--dark-mode-shadow) !important;
+}
+
+.dark-mode #tooltip-wrapper a,
+.dark-mode .tooltip-wrapper a {
+  color: #4d9ce6 !important; /* Lighter blue for links in dark mode */
+  text-decoration: underline !important;
+  font-weight: 500 !important;
+  transition: color 0.2s ease !important;
+}
+
+.dark-mode #tooltip-wrapper a:hover,
+.dark-mode .tooltip-wrapper a:hover {
+  color: #74b6fa !important;
+  text-decoration: underline !important;
+}
+
+/* Dark mode styles for cart items count */
+.dark-mode .js-cart-items-count {
+  background-color: #3a8c3a !important; /* Dark green background */
+  color: #ffffff !important; /* White text for maximum contrast */
+  border-radius: 50% !important; /* Circular shape */
+  padding: 2px 6px !important; /* Proper padding */
+  font-weight: bold !important; /* Make text bold for better visibility */
+  box-shadow: 0 1px 3px var(--dark-mode-shadow) !important; /* Add shadow for depth */
+  display: inline-block !important; /* Ensure proper display */
+  min-width: 16px !important; /* Minimum width for consistency */
+  text-align: center !important; /* Center the text */
+}
+
+.dark-mode .rating.big_stars {
+  color: var(--dark-mode-text) !important;
+}
+
+.dark-mode .rating .rating-wrapper {
+  background-color: #333333 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 3px var(--dark-mode-shadow) !important;
+}
+
+.dark-mode .rating-wrapper span[data-testid="star-rating-value"] {
+  color: var(--dark-mode-text) !important;
+  font-weight: 600 !important;
+}
+
+.dark-mode .reviews-count a {
+  color: #b8b8b8 !important; /* Slightly muted text for reviews count */
+  text-decoration: none !important;
+  transition: color 0.2s ease !important;
+}
+
+.dark-mode .reviews-count a:hover {
+  color: var(--dark-mode-text) !important;
+  text-decoration: underline !important;
+}
+
+.dark-mode .sku-info-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.dark-mode .sku-social-stats .badge {
+  background-color: #1e4156 !important; /* Dark blue background */
+  color: #a8d8ff !important; /* Light blue text */
+  border: 1px solid #2c5a75 !important;
+  font-size: 12px !important;
+  padding: 5px 8px !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+}
+
+/* .dark-mode .rating-average, */
+.dark-mode .price-history,
+.dark-mode .rating-with-count {
+  background-color: #2d2d2d !important;
+  color: #d0d0d0 !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--dark-mode-border) !important;
+  transition: all 0.2s ease !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.dark-mode .btn-reset.icon.price-history:hover {
+  background-color: #3a3a3a !important;
+  color: var(--dark-mode-text) !important;
+  box-shadow: 0 1px 3px var(--dark-mode-shadow) !important;
+}
