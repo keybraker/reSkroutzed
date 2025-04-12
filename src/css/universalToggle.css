@@ -1,0 +1,148 @@
+/* Universal Toggle Menu */
+.universal-toggle-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: fixed !important;
+  bottom: 20px !important;
+  left: 20px !important;
+  z-index: 9999 !important;
+}
+
+.universal-toggle-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 50px !important;
+  height: 50px !important;
+  padding: 8px !important;
+  border: 2px solid #000000 !important;
+  border-radius: 50% !important;
+  /* Dimmer Skroutz orange color gradient */
+  background: linear-gradient(145deg, #e66300, #d95500) !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  z-index: 10000 !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+.universal-toggle-button:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.universal-toggle-button:active {
+  transform: scale(0.95) !important;
+}
+
+.toggle-buttons-container {
+  position: absolute !important;
+  display: flex !important;
+  flex-direction: row !important;
+  left: 25px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: transform 0.3s ease, opacity 0.3s ease !important;
+}
+
+.toggle-option-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  margin-right: 10px !important;
+  padding: 8px !important;
+  border: 2px solid #000000 !important; /* Black borders in light mode */
+  border-radius: 50% !important;
+  background: #4a4a4a !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  transform: scale(0) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  opacity: 0 !important;
+}
+
+/* Notification bubble */
+.notification-bubble {
+  position: absolute !important;
+  top: -5px !important;
+  right: -5px !important;
+  background-color: #ff3b30 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  border: 2px solid white !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Animation for submenu buttons */
+.menu-open .toggle-buttons-container {
+  left: 70px !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.menu-open .toggle-option-button.button-active {
+  transform: scale(1) !important;
+  opacity: 1 !important;
+}
+
+.toggle-option-button:hover {
+  transform: scale(1.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.toggle-option-button.active {
+  background: #e74c3c !important;
+}
+
+/* Dark mode button styling */
+.dark-mode-option {
+  background: #333333 !important; /* Darker in light mode */
+}
+
+.dark-mode-option.active {
+  background: #e74c3c !important;
+}
+
+/* Dark mode adjustments */
+.dark-mode .toggle-option-button {
+  border-color: #ffffff !important;
+  background: #4d4d4d !important; /* Lighter in dark mode */
+}
+
+.dark-mode .dark-mode-option {
+  background: #666666 !important; /* Lighter in dark mode */
+}
+
+.dark-mode .dark-mode-option.active {
+  background: #e74c3c !important;
+}
+
+/* Ad toggle button styling */
+.ad-toggle-option {
+  background: #4a4a4a !important;
+}
+
+.ad-toggle-option.active {
+  background: #e74c3c !important;
+}
+
+/* Video toggle button styling */
+.video-toggle-option {
+  background: #4a4a4a !important;
+}
+
+.video-toggle-option.active {
+  background: #e74c3c !important;
+}

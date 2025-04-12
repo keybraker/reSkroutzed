@@ -18,7 +18,8 @@
         "css/shelfFlags.css",
         "css/style.css",
         "css/videoFlags.css",
-        "css/darkModeToggle.css"
+        "css/darkModeToggle.css",
+        "css/universalToggle.css"
       ],
       "js": [
         "background.js"

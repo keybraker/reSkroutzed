@@ -6,5 +6,6 @@ export type State = {
   sponsoredCount: number;
   sponsoredShelfCount: number;
   videoCount: number;
+  videoVisible: boolean;
   darkMode: boolean;
 };

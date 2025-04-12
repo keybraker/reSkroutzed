@@ -9,8 +9,12 @@ import { SponsoredFbtHandler } from "./handlers/sponsoredFbt.handler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProduct.handler";
 import { SponsoredProductListHandler } from "./handlers/sponsoredProductList.handler";
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelf.handler";
+import { UniversalToggleHandler } from "./handlers/universalToggle.handler";
 import { retrieveLanguage } from "./retrievers/language.retriever";
-import { retrieveVisibility } from "./retrievers/visibility.retriever";
+import {
+  retrieveVisibility,
+  retrieveVideoVisibility,
+} from "./retrievers/visibility.retriever";
 import { State } from "./types/State.type";
 
 const state: State = {
@@ -19,6 +23,7 @@ const state: State = {
   sponsoredCount: 0,
   sponsoredShelfCount: 0,
   videoCount: 0,
+  videoVisible: true,
   darkMode: false,
 };
 
@@ -32,14 +37,23 @@ const darkModeHandler = new DarkModeHandler(state);
 const blockIndicator = new BlockIndicator(state);
 const btsIndicator = new PriceCheckerIndicator(state);
 const correctFinalPrice = new CorrectFinalPrice(state);
+const universalToggleHandler = new UniversalToggleHandler(
+  state,
+  darkModeHandler,
+  promotionalVideoHandler,
+  blockIndicator
+);
 
 (function () {
   async function initializer() {
     state.visible = retrieveVisibility();
+    state.videoVisible = retrieveVideoVisibility();
     state.language = retrieveLanguage();
 
-    document.body.appendChild(darkModeHandler.createDarkModeToggle());
+    // Add the universal toggle button to the body
+    document.body.appendChild(universalToggleHandler.createUniversalToggle());
 
+    // Remove individual video toggle buttons since they're now in the universal menu
     flagContent();
     await flagAdditionalContent();
 

@@ -120,6 +120,9 @@ export class BlockIndicator {
   }
 
   private addButtonToFiltersDesktop(existingButton?: HTMLButtonElement): void {
+    // This button has been replaced by the universal toggle menu
+    // which provides a more centralized control for all visibility settings
+    /*
     const actionWrapperDiv = document.querySelector("div.sku-actions-wrapper");
     if (actionWrapperDiv) {
       this.insertElement(
@@ -128,11 +131,15 @@ export class BlockIndicator {
         actionWrapperDiv
       );
     }
+    */
   }
 
   private addButtonToOrderOptionsDesktop(
     existingButton?: HTMLButtonElement
   ): void {
+    // This button has been replaced by the universal toggle menu
+    // which provides a more centralized control for all visibility settings
+    /*
     const orderOptionsDiv = document.getElementById("order-options");
     if (orderOptionsDiv) {
       this.insertElement(
@@ -141,9 +148,13 @@ export class BlockIndicator {
         orderOptionsDiv.nextSibling
       );
     }
+    */
   }
 
   private addButtonToFiltersMobile(existingButton?: HTMLButtonElement): void {
+    // This button has been replaced by the universal toggle menu
+    // which provides a more centralized control for all visibility settings
+    /*
     const switchButtonWrapperDiv = document.querySelector(
       "div.switch-btn-wrapper"
     );
@@ -154,5 +165,6 @@ export class BlockIndicator {
         switchButtonWrapperDiv
       );
     }
+    */
   }
 }
