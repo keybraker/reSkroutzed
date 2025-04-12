@@ -8,5 +8,14 @@
   ],
   "cSpell.words": [
     "Skroutzed"
+  ],
+  "spellright.language": [
+    "en"
+  ],
+  "spellright.documentTypes": [
+    "markdown",
+    "latex",
+    "plaintext",
+    "css"
   ]
 }

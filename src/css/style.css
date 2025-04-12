@@ -210,15 +210,20 @@ text-black {
 .label-text {
   border-radius: 4px !important;
   padding: 8px 12px !important;
-  background-color: #ff94a0 !important;
+  background-color: #fd1530 !important;
   font-weight: bold !important;
-  color: var(--custom-light-red) !important;
+  color: var(--dark-mode-text) !important;
+  margin-bottom: 8px !important;
 }
 
 .price-checker-outline {
   border: 1px solid var(--color-border-neutral-0) !important;
   border-radius: 16px !important;
   padding: 20px 24px !important;
+}
+
+.bold-text {
+  font-weight: bold !important;
 }
 
 .go-to-shop-button-positive:hover {
@@ -269,7 +274,7 @@ text-black {
   line-height: 1.4 !important;
   font-size: 16px !important;
   font-weight: 500 !important;
-  background-color: #c93633 !important;
+  background-color: #8d0e0b !important;
   color: #e7e7e7 !important;
 }
 

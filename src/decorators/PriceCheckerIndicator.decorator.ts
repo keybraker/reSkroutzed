@@ -195,8 +195,8 @@ export class PriceCheckerIndicator {
   private goToStoreButtonCreator(isLowestPrice: boolean): HTMLButtonElement {
     const goToStoreButton = document.createElement("button");
     const buttonStyle = isLowestPrice
-      ? "go-to-shop-button-positive"
-      : "go-to-shop-button-negative";
+      ? "go-to-shop-button-positive bold-text"
+      : "go-to-shop-button-negative bold-text";
 
     goToStoreButton.classList.add(buttonStyle);
     goToStoreButton.textContent =
