@@ -131,37 +131,37 @@ html.dark-mode {
 }
 
 .dark-mode .button-success {
-  background-color: #4caf50 !important; /* Updated green background */
+  background-color: #4caf50 !important;
   color: var(--dark-mode-button-text) !important;
   border: 1px solid var(--color-border-primary) !important;
 }
 
 .dark-mode .button-success:hover {
-  background-color: #45a049 !important; /* Slightly darker green on hover */
+  background-color: #45a049 !important;
   transition: background-color 0.3s ease !important;
 }
 
 /* Button dark mode styling for View at store and Add to cart */
 .dark-mode .js-product-link.btn-blue.redirection-btn {
-  background-color: #0e4377 !important; /* Dark blue */
+  background-color: #0e4377 !important;
   color: var(--dark-mode-text) !important;
   border-color: #0a3056 !important;
   transition: background-color 0.3s ease !important;
 }
 
 .dark-mode .js-product-link.btn-blue.redirection-btn:hover {
-  background-color: #0c5299 !important; /* Slightly lighter blue on hover */
+  background-color: #0c5299 !important;
 }
 
 .dark-mode .add-to-cart-quantity-button .add-to-cart-btn.btn-green {
-  background-color: #285e36 !important; /* Dark green */
+  background-color: #285e36 !important;
   color: var(--dark-mode-text) !important;
   border-color: #1e4528 !important;
   transition: background-color 0.3s ease !important;
 }
 
 .dark-mode .add-to-cart-quantity-button .add-to-cart-btn.btn-green:hover {
-  background-color: #347a45 !important; /* Slightly lighter green on hover */
+  background-color: #347a45 !important;
 }
 
 /*************************************************************************************************************/
@@ -344,18 +344,15 @@ text-black {
 /* Preserve badge background colors in dark mode */
 .dark-mode .badge[style*="background-color"] {
   background-color: attr(style background-color) !important;
-  filter: brightness(
-    0.85
-  ) !important; /* Slightly dim the background for dark mode */
+  filter: brightness(0.85) !important;
 }
 
 /* Badge specific dark mode color adjustments */
 .dark-mode .badge[style*="background-color:#0971C8"] {
-  background-color: #075fa1 !important; /* Darker blue for dark mode */
+  background-color: #075fa1 !important;
 }
 
 .dark-mode .dummy-badge {
-  /* If there are specific adjustments needed for dummy badges in dark mode */
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5) !important;
 }
 
@@ -379,7 +376,7 @@ text-black {
 }
 
 .dark-mode .btn-toggle-round:checked {
-  background-color: #3a8c3a !important; /* Dark green when active */
+  background-color: #3a8c3a !important;
 }
 
 .dark-mode .btn-toggle-round + label {
@@ -419,7 +416,7 @@ text-black {
 
 .dark-mode #tooltip-wrapper a,
 .dark-mode .tooltip-wrapper a {
-  color: #4d9ce6 !important; /* Lighter blue for links in dark mode */
+  color: #4d9ce6 !important;
   text-decoration: underline !important;
   font-weight: 500 !important;
   transition: color 0.2s ease !important;
@@ -433,15 +430,15 @@ text-black {
 
 /* Dark mode styles for cart items count */
 .dark-mode .js-cart-items-count {
-  background-color: #3a8c3a !important; /* Dark green background */
-  color: #ffffff !important; /* White text for maximum contrast */
-  border-radius: 50% !important; /* Circular shape */
-  padding: 2px 6px !important; /* Proper padding */
-  font-weight: bold !important; /* Make text bold for better visibility */
-  box-shadow: 0 1px 3px var(--dark-mode-shadow) !important; /* Add shadow for depth */
-  display: inline-block !important; /* Ensure proper display */
-  min-width: 16px !important; /* Minimum width for consistency */
-  text-align: center !important; /* Center the text */
+  background-color: #3a8c3a !important;
+  color: #ffffff !important;
+  border-radius: 50% !important;
+  padding: 2px 6px !important;
+  font-weight: bold !important;
+  box-shadow: 0 1px 3px var(--dark-mode-shadow) !important;
+  display: inline-block !important;
+  min-width: 16px !important;
+  text-align: center !important;
 }
 
 .dark-mode .rating.big_stars {
@@ -449,9 +446,9 @@ text-black {
 }
 
 .dark-mode .rating .rating-wrapper {
-  background-color: #333333 !important;
+  /* background-color: #333333 !important; */
   border-radius: 4px !important;
-  box-shadow: 0 1px 3px var(--dark-mode-shadow) !important;
+  /* box-shadow: 0 1px 3px var(--dark-mode-shadow) !important; */
 }
 
 .dark-mode .rating-wrapper span[data-testid="star-rating-value"] {
@@ -460,7 +457,7 @@ text-black {
 }
 
 .dark-mode .reviews-count a {
-  color: #b8b8b8 !important; /* Slightly muted text for reviews count */
+  color: #b8b8b8 !important;
   text-decoration: none !important;
   transition: color 0.2s ease !important;
 }
@@ -477,8 +474,8 @@ text-black {
 }
 
 .dark-mode .sku-social-stats .badge {
-  background-color: #1e4156 !important; /* Dark blue background */
-  color: #a8d8ff !important; /* Light blue text */
+  background-color: #1e4156 !important;
+  color: #a8d8ff !important;
   border: 1px solid #2c5a75 !important;
   font-size: 12px !important;
   padding: 5px 8px !important;
@@ -486,9 +483,7 @@ text-black {
   font-weight: 500 !important;
 }
 
-/* .dark-mode .rating-average, */
-.dark-mode .price-history,
-.dark-mode .rating-with-count {
+.dark-mode .price-history {
   background-color: #2d2d2d !important;
   color: #d0d0d0 !important;
   padding: 6px 12px !important;
@@ -511,5 +506,17 @@ text-black {
 .dark-mode .js-sku-link,
 .dark-mode .featured-links li {
   background-color: var(--color-card-background) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.dark-mode .storefront-header,
+.dark-mode .countdown-timer,
+.dark-mode .rating-average {
+  background-color: var(--color-border-primary) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: 4px !important;
+}
+
+.dark-mode .rating-with-count {
   color: var(--color-text-primary) !important;
 }
