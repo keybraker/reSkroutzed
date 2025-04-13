@@ -9,6 +9,7 @@ import { SponsoredFbtHandler } from "./handlers/sponsoredFbt.handler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProduct.handler";
 import { SponsoredProductListHandler } from "./handlers/sponsoredProductList.handler";
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelf.handler";
+import { SponsorshipHandler } from "./handlers/sponsorship.handler";
 import { UniversalToggleHandler } from "./handlers/universalToggle.handler";
 import { retrieveLanguage } from "./retrievers/language.retriever";
 import {
@@ -32,6 +33,7 @@ const promotionalVideoHandler = new PromotionalVideoHandler(state);
 const sponsoredProductHandler = new SponsoredProductHandler(state);
 const sponsoredProductListHandler = new SponsoredProductListHandler(state);
 const sponsoredFbtHandler = new SponsoredFbtHandler(state);
+const sponsorshipHandler = new SponsorshipHandler(state);
 const darkModeHandler = new DarkModeHandler(state);
 
 const blockIndicator = new BlockIndicator(state);
@@ -41,7 +43,8 @@ const universalToggleHandler = new UniversalToggleHandler(
   state,
   darkModeHandler,
   promotionalVideoHandler,
-  blockIndicator
+  blockIndicator,
+  sponsorshipHandler
 );
 
 (function () {
@@ -66,6 +69,7 @@ const universalToggleHandler = new UniversalToggleHandler(
     sponsoredProductHandler.flag();
     sponsoredProductListHandler.flag();
     sponsoredFbtHandler.flag();
+    sponsorshipHandler.flag();
   }
 
   async function flagAdditionalContent() {

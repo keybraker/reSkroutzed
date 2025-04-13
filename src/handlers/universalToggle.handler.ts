@@ -3,27 +3,37 @@ import { State } from "../types/State.type";
 import { DarkModeHandler } from "./darkMode.handler";
 import { PromotionalVideoHandler } from "./promotionalVideo.handler";
 import { BlockIndicator } from "../decorators/BlockIndicator.decorator";
+import { SponsorshipHandler } from "./sponsorship.handler";
+import { PriceCheckerIndicator } from "../decorators/PriceCheckerIndicator.decorator";
 
 export class UniversalToggleHandler {
   private state: State;
   private darkModeHandler: DarkModeHandler;
   private videoHandler: PromotionalVideoHandler;
   private blockIndicator: BlockIndicator;
+  private sponsorshipHandler: SponsorshipHandler;
+  private priceChecker: PriceCheckerIndicator;
   private isMenuOpen: boolean = false;
 
   constructor(
     state: State,
     darkModeHandler: DarkModeHandler,
     videoHandler: PromotionalVideoHandler,
-    blockIndicator: BlockIndicator
+    blockIndicator: BlockIndicator,
+    sponsorshipHandler: SponsorshipHandler
   ) {
     this.state = state;
     this.darkModeHandler = darkModeHandler;
     this.videoHandler = videoHandler;
     this.blockIndicator = blockIndicator;
+    this.sponsorshipHandler = sponsorshipHandler;
+    this.priceChecker = new PriceCheckerIndicator(state);
   }
 
   public createUniversalToggle(): HTMLDivElement {
+    // Initialize PriceCheckerIndicator
+    this.priceChecker.start();
+
     // Create main container
     const container = document.createElement("div");
     container.classList.add("universal-toggle-container");
@@ -46,11 +56,13 @@ export class UniversalToggleHandler {
     const darkModeButton = this.createDarkModeToggleButton();
     const adToggleButton = this.createAdToggleButton();
     const videoToggleButton = this.createVideoToggleButton();
+    const sponsorshipToggleButton = this.createSponsorshipToggleButton();
 
     // Add buttons to container
     buttonsContainer.appendChild(darkModeButton);
     buttonsContainer.appendChild(adToggleButton);
     buttonsContainer.appendChild(videoToggleButton);
+    buttonsContainer.appendChild(sponsorshipToggleButton);
 
     // Add event listener for main toggle
     mainToggle.addEventListener("click", () => this.toggleMenu(container));
@@ -204,28 +216,17 @@ export class UniversalToggleHandler {
     button.classList.add("toggle-option-button", "ad-toggle-option");
     button.title = this.state.visible ? "Hide Ads" : "Show Ads";
 
-    // Create icon
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 16 16");
-    svg.setAttribute("width", "16");
-    svg.setAttribute("height", "16");
+    // Create text-based AD icon instead of eye icon
+    const adTextSpan = document.createElement("span");
+    adTextSpan.classList.add("ad-text-icon");
+    adTextSpan.textContent = "AD";
 
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    if (this.state.visible) {
-      path.setAttribute(
-        "d",
-        "M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
-      );
-    } else {
-      path.setAttribute(
-        "d",
-        "M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"
-      );
+    // Apply line-through if ads are hidden
+    if (!this.state.visible) {
+      adTextSpan.classList.add("ad-text-disabled");
     }
-    path.setAttribute("fill", "currentColor");
 
-    svg.appendChild(path);
-    button.appendChild(svg);
+    button.appendChild(adTextSpan);
 
     // Add notification bubble with ad count
     const notificationBubble = document.createElement("div");
@@ -233,9 +234,21 @@ export class UniversalToggleHandler {
     notificationBubble.textContent = `${this.state.sponsoredCount}`;
     button.appendChild(notificationBubble);
 
-    // Update notification count when it changes
+    // Update notification count when it changes - only query the actual DOM elements once
+    // rather than relying on state.sponsoredCount which might increase incorrectly
     const updateNotificationCount = () => {
+      // Count all flagged product elements in the DOM to show an accurate count
+      const flaggedElements = document.querySelectorAll(
+        "li.flagged-product, div.flagged-bought-together, .card.flagged-product, .card.tracking-img-container.flagged-product"
+      );
+
+      // Only update state if there's a mismatch to avoid incrementing repeatedly
+      if (flaggedElements.length !== this.state.sponsoredCount) {
+        this.state.sponsoredCount = flaggedElements.length;
+      }
+
       notificationBubble.textContent = `${this.state.sponsoredCount}`;
+
       // Hide bubble if count is zero
       if (this.state.sponsoredCount === 0) {
         notificationBubble.style.display = "none";
@@ -263,6 +276,16 @@ export class UniversalToggleHandler {
       this.state.visible = !this.state.visible;
       localStorage.setItem("ssf-sponsored-visibility", `${this.state.visible}`);
 
+      // Update the text icon appearance
+      const adText = button.querySelector(".ad-text-icon");
+      if (adText) {
+        if (this.state.visible) {
+          adText.classList.remove("ad-text-disabled");
+        } else {
+          adText.classList.add("ad-text-disabled");
+        }
+      }
+
       // Instead of directly calling the private method, let's update the sponsored-flagger-button
       // and trigger UI updates through the DOM
       const sponsoredFlagButton = document.getElementById(
@@ -281,31 +304,6 @@ export class UniversalToggleHandler {
       // Use our own content visibility toggle method
       this.toggleContentVisibility();
       button.classList.toggle("active");
-
-      // Update icon based on visibility state
-      const newPath = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path"
-      );
-      if (this.state.visible) {
-        newPath.setAttribute(
-          "d",
-          "M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
-        );
-      } else {
-        newPath.setAttribute(
-          "d",
-          "M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"
-        );
-      }
-      newPath.setAttribute("fill", "currentColor");
-
-      // Replace the path in the SVG
-      const oldPath = svg.querySelector("path");
-      if (oldPath) {
-        svg.removeChild(oldPath);
-      }
-      svg.appendChild(newPath);
 
       button.title = this.state.visible ? "Hide Ads" : "Show Ads";
     });
@@ -333,11 +331,10 @@ export class UniversalToggleHandler {
     } else {
       path.setAttribute(
         "d",
-        "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V7zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
+        "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
       );
     }
     path.setAttribute("fill", "currentColor");
-
     svg.appendChild(path);
     button.appendChild(svg);
 
@@ -398,7 +395,7 @@ export class UniversalToggleHandler {
       } else {
         newPath.setAttribute(
           "d",
-          "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V7zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
+          "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
         );
       }
       newPath.setAttribute("fill", "currentColor");
@@ -416,6 +413,110 @@ export class UniversalToggleHandler {
     return button;
   }
 
+  private createSponsorshipToggleButton(): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.classList.add("toggle-option-button", "sponsorship-toggle-option");
+    button.title = this.state.visible
+      ? "Hide Sponsorships"
+      : "Show Sponsorships";
+
+    // Create icon
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 16 16");
+    svg.setAttribute("width", "16");
+    svg.setAttribute("height", "16");
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    if (this.state.visible) {
+      // Megaphone icon for visible state
+      path.setAttribute(
+        "d",
+        "M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z"
+      );
+    } else {
+      // Blocked megaphone icon for hidden state
+      path.setAttribute(
+        "d",
+        "M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z M13.354 3.354a.5.5 0 0 0-.708-.708L2.646 12.646a.5.5 0 0 0 .708.708L13.354 3.354z"
+      );
+    }
+    path.setAttribute("fill", "currentColor");
+
+    svg.appendChild(path);
+    button.appendChild(svg);
+
+    // Add notification bubble with sponsorship count
+    const notificationBubble = document.createElement("div");
+    notificationBubble.classList.add(
+      "notification-bubble",
+      "sponsorship-notification"
+    );
+    notificationBubble.textContent = "0";
+    button.appendChild(notificationBubble);
+
+    // Update notification count when it changes
+    const updateNotificationCount = () => {
+      const sponsorshipElements = document.querySelectorAll(
+        "div#sponsorship.flagged-sponsorship"
+      );
+      notificationBubble.textContent = `${sponsorshipElements.length}`;
+      // Hide bubble if count is zero
+      notificationBubble.style.display =
+        sponsorshipElements.length === 0 ? "none" : "flex";
+    };
+
+    // Initial update
+    updateNotificationCount();
+
+    // Set up an observer to watch for changes to sponsorship count
+    setInterval(updateNotificationCount, 2000);
+
+    // Add active class if sponsorships are hidden
+    if (!this.state.visible) {
+      button.classList.add("active");
+    }
+
+    // Add click event
+    button.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.sponsorshipHandler.toggleSponsorship();
+      button.classList.toggle("active");
+
+      // Update icon based on visibility state
+      const newPath = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path"
+      );
+      if (!button.classList.contains("active")) {
+        // Megaphone icon for visible state
+        newPath.setAttribute(
+          "d",
+          "M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z"
+        );
+      } else {
+        // Blocked megaphone icon for hidden state
+        newPath.setAttribute(
+          "d",
+          "M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z M13.354 3.354a.5.5 0 0 0-.708-.708L2.646 12.646a.5.5 0 0 0 .708.708L13.354 3.354z"
+        );
+      }
+      newPath.setAttribute("fill", "currentColor");
+
+      // Replace the path in the SVG
+      const oldPath = svg.querySelector("path");
+      if (oldPath) {
+        svg.removeChild(oldPath);
+      }
+      svg.appendChild(newPath);
+
+      button.title = button.classList.contains("active")
+        ? "Show Sponsorships"
+        : "Hide Sponsorships";
+    });
+
+    return button;
+  }
+
   private toggleContentVisibility(): void {
     const selectors = [
       "li.flagged-product",
@@ -424,6 +525,7 @@ export class UniversalToggleHandler {
       "div.flagged-bought-together",
       ".card.tracking-img-container.flagged-product",
       ".card.flagged-product",
+      // Removed div.flagged-sponsorship since it's handled by sponsorship button
     ];
 
     selectors.forEach((selector) => {
@@ -436,11 +538,16 @@ export class UniversalToggleHandler {
     });
 
     // Special handling for card tracking-img-container elements with shop-promoter
-    // This ensures they are toggled properly even if they don't have the flagged-product class yet
     document
       .querySelectorAll(".card.tracking-img-container")
       .forEach((card) => {
         if (card.querySelector(".shop-promoter")) {
+          // If this card hasn't been flagged yet, mark it and count it
+          if (!card.classList.contains("flagged-product")) {
+            card.classList.add("flagged-product");
+            this.state.sponsoredCount++;
+          }
+
           this.state.visible
             ? card.classList.remove("display-none")
             : card.classList.add("display-none");
