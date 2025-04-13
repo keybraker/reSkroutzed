@@ -1,10 +1,10 @@
+import { BlockIndicator } from "../decorators/BlockIndicator.decorator";
 import { appendLogoChild } from "../functions/appendLogoChild";
 import { State } from "../types/State.type";
 import { DarkModeHandler } from "./darkMode.handler";
 import { PromotionalVideoHandler } from "./promotionalVideo.handler";
-import { BlockIndicator } from "../decorators/BlockIndicator.decorator";
 import { SponsorshipHandler } from "./sponsorship.handler";
-import { PriceCheckerIndicator } from "../decorators/PriceCheckerIndicator.decorator";
+// import { PriceCheckerIndicator } from "../decorators/PriceCheckerIndicator.decorator";
 
 export class UniversalToggleHandler {
   private state: State;
@@ -12,7 +12,7 @@ export class UniversalToggleHandler {
   private videoHandler: PromotionalVideoHandler;
   private blockIndicator: BlockIndicator;
   private sponsorshipHandler: SponsorshipHandler;
-  private priceChecker: PriceCheckerIndicator;
+  // private priceChecker: PriceCheckerIndicator;
   private isMenuOpen: boolean = false;
 
   constructor(
@@ -27,12 +27,12 @@ export class UniversalToggleHandler {
     this.videoHandler = videoHandler;
     this.blockIndicator = blockIndicator;
     this.sponsorshipHandler = sponsorshipHandler;
-    this.priceChecker = new PriceCheckerIndicator(state);
+    // this.priceChecker = new PriceCheckerIndicator(state);
   }
 
   public createUniversalToggle(): HTMLDivElement {
     // Initialize PriceCheckerIndicator
-    this.priceChecker.start();
+    // this.priceChecker.start();
 
     // Create main container
     const container = document.createElement("div");
@@ -420,7 +420,6 @@ export class UniversalToggleHandler {
       ? "Hide Sponsorships"
       : "Show Sponsorships";
 
-    // Create icon
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 16 16");
     svg.setAttribute("width", "16");

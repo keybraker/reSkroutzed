@@ -52,11 +52,10 @@ const universalToggleHandler = new UniversalToggleHandler(
     state.visible = retrieveVisibility();
     state.videoVisible = retrieveVideoVisibility();
     state.language = retrieveLanguage();
+    console.log("document.body.appendChild");
 
-    // Add the universal toggle button to the body
     document.body.appendChild(universalToggleHandler.createUniversalToggle());
 
-    // Remove individual video toggle buttons since they're now in the universal menu
     flagContent();
     await flagAdditionalContent();
 
@@ -73,6 +72,7 @@ const universalToggleHandler = new UniversalToggleHandler(
   }
 
   async function flagAdditionalContent() {
+    console.log("flagAdditionalContent");
     toggleContentVisibility(state);
     await btsIndicator.start();
     await correctFinalPrice.start();

@@ -32,7 +32,6 @@
   padding: 8px !important;
   border: 2px solid #000000 !important;
   border-radius: 50% !important;
-  /* Dimmer Skroutz orange color gradient */
   background: linear-gradient(145deg, #e66300, #d95500) !important;
   color: #ffffff !important;
   cursor: pointer !important;
@@ -60,7 +59,6 @@
   transition: transform 0.3s ease, opacity 0.3s ease !important;
 }
 
-/* Add background behind toggle buttons */
 .menu-open .toggle-buttons-container::before {
   content: "" !important;
   position: absolute !important;
@@ -73,7 +71,6 @@
   z-index: -1 !important;
 }
 
-/* Dark mode adjustment */
 .dark-mode .menu-open .toggle-buttons-container::before {
   background-color: rgba(255, 255, 255, 0.05) !important;
 }
@@ -86,7 +83,7 @@
   height: 40px !important;
   margin-right: 10px !important;
   padding: 8px !important;
-  border: 2px solid #000000 !important; /* Black borders in light mode */
+  border: 2px solid #000000 !important;
   border-radius: 50% !important;
   background: #4a4a4a !important;
   color: #ffffff !important;
@@ -117,7 +114,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Video notification with different color */
 .notification-bubble.video-notification {
   background-color: #5856d6 !important; /* Purple for video notifications */
 }
@@ -164,10 +160,6 @@
   background-color: rgba(255, 255, 255, 0.4) !important;
 }
 
-.dark-mode-option.active {
-  background: #e74c3c !important;
-}
-
 /* Dark mode adjustments */
 .dark-mode .toggle-option-button {
   border-color: #ffffff !important;
@@ -178,17 +170,9 @@
   background: #666666 !important; /* Lighter in dark mode */
 }
 
-.dark-mode .dark-mode-option.active {
-  background: #e74c3c !important;
-}
-
 /* Ad toggle button styling */
 .ad-toggle-option {
   background: #4a4a4a !important;
-}
-
-.ad-toggle-option.active {
-  background: #e74c3c !important;
 }
 
 /* AD text icon styling */
@@ -209,6 +193,13 @@
   background: #4a4a4a !important;
 }
 
-.video-toggle-option.active {
+.dark-mode .dark-mode-option.active,
+.dark-mode-option.active,
+.dark-mode .sponsorship-toggle-option.active,
+.sponsorship-toggle-option.active,
+.dark-mode .video-toggle-option.active,
+.video-toggle-option.active,
+.dark-mode .ad-toggle-option.active,
+.ad-toggle-option.active {
   background: #e74c3c !important;
 }

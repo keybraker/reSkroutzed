@@ -72,7 +72,7 @@ export class PriceCheckerIndicator {
       checkerStyle
     );
     colFlex1.classList.add("inline-flex-col");
-    colFlex2.classList.add("inline-flex-col");
+    colFlex2.classList.add("inline-flex-row");
     rowFlex1.classList.add("inline-flex-row");
     rowFlex2.classList.add("inline-flex-row");
     rowFlex3.classList.add("inline-flex-row");
@@ -195,10 +195,10 @@ export class PriceCheckerIndicator {
   private goToStoreButtonCreator(isLowestPrice: boolean): HTMLButtonElement {
     const goToStoreButton = document.createElement("button");
     const buttonStyle = isLowestPrice
-      ? "go-to-shop-button-positive bold-text"
-      : "go-to-shop-button-negative bold-text";
+      ? "go-to-shop-button-positive"
+      : "go-to-shop-button-negative";
 
-    goToStoreButton.classList.add(buttonStyle);
+    goToStoreButton.classList.add(buttonStyle, "bold-text");
     goToStoreButton.textContent =
       this.state.language === Language.ENGLISH
         ? "Go to Shop"
