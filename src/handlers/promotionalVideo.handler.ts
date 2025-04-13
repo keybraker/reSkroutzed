@@ -46,12 +46,28 @@ export class PromotionalVideoHandler {
           : element.classList.add("display-none-promo-product");
       }
     });
+
+    // Target tl-reels elements (TikTok-like reels)
+    const tlReelsElements = document.querySelectorAll(
+      ".tl-reels:not(.flagged-video)"
+    );
+    tlReelsElements?.forEach((element) => {
+      this.state.videoCount++;
+      element.classList.add("flagged-video", "promo-video-card");
+
+      if (this.state) {
+        this.state.videoVisible
+          ? element.classList.remove("display-none-promo-product")
+          : element.classList.add("display-none-promo-product");
+      }
+    });
   }
 
   private updateVideoCountAndVisibility(liElement: Element): void {
     if (
       liElement?.classList.contains("promo-video-card") ||
-      liElement?.classList.contains("video-promo")
+      liElement?.classList.contains("video-promo") ||
+      liElement?.classList.contains("tl-reels")
     ) {
       this.state.videoCount++;
 
@@ -132,7 +148,7 @@ export class PromotionalVideoHandler {
   public toggleVideoVisibility(): void {
     // Handle all elements with flagged-video class including standalone video promos
     const videoElements = document.querySelectorAll(
-      "li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video"
+      "li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video"
     );
     videoElements?.forEach((element) => {
       this.state.videoVisible
