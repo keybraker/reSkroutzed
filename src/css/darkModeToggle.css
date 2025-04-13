@@ -35,6 +35,10 @@
   pointer-events: none !important;
 }
 
+.dark-mode .tl-shelf::after {
+  opacity: 0 !important;
+}
+
 .dark-mode-toggle:hover::after {
   opacity: 1 !important;
 }

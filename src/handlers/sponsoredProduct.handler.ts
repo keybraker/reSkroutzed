@@ -36,6 +36,20 @@ export class SponsoredProductHandler {
         updateSponsoredTextSingle(listItem, this.state.language);
         toggleVisibility(listItem, this.state);
       });
+
+    // Target shop-promoter elements (sponsored posts/ads)
+    const shopPromoterElements = document.querySelectorAll(
+      ".shop-promoter:not(.flagged-product)"
+    );
+
+    shopPromoterElements?.forEach((element) => {
+      const parentElement = this.findParentToFlag(element);
+      if (parentElement) {
+        flagProductListItem(parentElement);
+        this.state.sponsoredCount++;
+        toggleVisibility(parentElement, this.state);
+      }
+    });
   }
 
   private updateSponsoredCount(): void {
@@ -61,5 +75,24 @@ export class SponsoredProductHandler {
   private hasFlaggedLabelText(listItem: Element): boolean {
     const labelTextElement = listItem.querySelector(".label-text");
     return isFlagged(labelTextElement);
+  }
+
+  private findParentToFlag(element: Element): Element | null {
+    // First try to find a parent li element (for list items)
+    const parentLi = element.closest("li");
+    if (parentLi) {
+      return parentLi;
+    }
+
+    // For shop-promoter elements that are inside divs like timeline cards
+    const timelineCard = element.closest(
+      ".timeline-card, .generic-post, [class*='timeline']"
+    );
+    if (timelineCard) {
+      return timelineCard;
+    }
+
+    // If no appropriate parent found, use the element's parent or the element itself
+    return element.parentElement || element;
   }
 }
