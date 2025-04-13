@@ -135,6 +135,14 @@
   color: #3498db !important;
 }
 
+.dark-mode .mymarket-cta {
+  background-color: #2797e270 !important;
+}
+
+.dark-mode .efresh-cta {
+  background-color: #34b84a71 !important;
+}
+
 .dark-mode .no-opacity {
   padding: 10px, 10px, 10px, 10px !important;
   content: "🌙" !important;
