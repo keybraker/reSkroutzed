@@ -8,8 +8,14 @@ export class PromotionalVideoHandler {
   }
 
   public flag(): void {
-    const liElementsFlagged = document.querySelectorAll("li.flagged-video");
-    this.state.videoCount = liElementsFlagged?.length ?? 0;
+    // Reset count first
+    this.state.videoCount = 0;
+
+    // Count all previously flagged video elements of all types
+    const allFlaggedVideoElements = document.querySelectorAll(
+      "li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video"
+    );
+    this.state.videoCount = allFlaggedVideoElements?.length ?? 0;
 
     // Target regular video elements
     const liElements = document.querySelectorAll("li:not(.flagged-video)");

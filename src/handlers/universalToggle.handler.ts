@@ -333,13 +333,41 @@ export class UniversalToggleHandler {
     } else {
       path.setAttribute(
         "d",
-        "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
+        "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V7zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
       );
     }
     path.setAttribute("fill", "currentColor");
 
     svg.appendChild(path);
     button.appendChild(svg);
+
+    // Add notification bubble with video count
+    const videoNotificationBubble = document.createElement("div");
+    videoNotificationBubble.classList.add(
+      "notification-bubble",
+      "video-notification"
+    );
+    videoNotificationBubble.textContent = `${this.state.videoCount}`;
+    button.appendChild(videoNotificationBubble);
+
+    // Update notification count when it changes
+    const updateVideoNotificationCount = () => {
+      videoNotificationBubble.textContent = `${this.state.videoCount}`;
+      // Hide bubble if count is zero
+      if (this.state.videoCount === 0) {
+        videoNotificationBubble.style.display = "none";
+      } else {
+        videoNotificationBubble.style.display = "flex";
+      }
+    };
+
+    // Initial update
+    updateVideoNotificationCount();
+
+    // Set up an observer to watch for changes to video count
+    setInterval(() => {
+      updateVideoNotificationCount();
+    }, 2000);
 
     // Add active class if videos are hidden
     if (!this.state.videoVisible) {
@@ -370,7 +398,7 @@ export class UniversalToggleHandler {
       } else {
         newPath.setAttribute(
           "d",
-          "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1 1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V7zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
+          "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V7zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
         );
       }
       newPath.setAttribute("fill", "currentColor");
@@ -394,6 +422,8 @@ export class UniversalToggleHandler {
       "div.flagged-shelf",
       "div.selected-product-cards",
       "div.flagged-bought-together",
+      ".card.tracking-img-container.flagged-product",
+      ".card.flagged-product",
     ];
 
     selectors.forEach((selector) => {
@@ -404,5 +434,17 @@ export class UniversalToggleHandler {
           : element.classList.add("display-none");
       });
     });
+
+    // Special handling for card tracking-img-container elements with shop-promoter
+    // This ensures they are toggled properly even if they don't have the flagged-product class yet
+    document
+      .querySelectorAll(".card.tracking-img-container")
+      .forEach((card) => {
+        if (card.querySelector(".shop-promoter")) {
+          this.state.visible
+            ? card.classList.remove("display-none")
+            : card.classList.add("display-none");
+        }
+      });
   }
 }

@@ -50,6 +50,34 @@ export class SponsoredProductHandler {
         toggleVisibility(parentElement, this.state);
       }
     });
+
+    // Target card tracking-img-container elements with shop-promoter spans (frequently bought together ads)
+    // Using a direct selector approach for more reliable targeting
+    document
+      .querySelectorAll(".card.tracking-img-container:not(.flagged-product)")
+      .forEach((card) => {
+        const shopPromoter = card.querySelector(".shop-promoter");
+        if (shopPromoter) {
+          // Add flagging class
+          card.classList.add("flagged-product");
+
+          // Flag the label if exists
+          const labelText = shopPromoter.querySelector(".label-text");
+          if (labelText) {
+            labelText.classList.add("flagged-product-label");
+          }
+
+          // Increment counter
+          this.state.sponsoredCount++;
+
+          // Toggle visibility based on user preference
+          if (!this.state.visible) {
+            card.classList.add("display-none");
+          } else {
+            card.classList.remove("display-none");
+          }
+        }
+      });
   }
 
   private updateSponsoredCount(): void {
@@ -57,8 +85,15 @@ export class SponsoredProductHandler {
     const flaggedProductDivs = document.querySelectorAll(
       "div.flagged-bought-together"
     );
+    const flaggedCardElements = document.querySelectorAll(
+      ".card.flagged-product"
+    );
 
-    if (flaggedProductLists?.length === 0 && flaggedProductDivs?.length === 0) {
+    if (
+      flaggedProductLists?.length === 0 &&
+      flaggedProductDivs?.length === 0 &&
+      flaggedCardElements?.length === 0
+    ) {
       this.state.sponsoredCount = 0;
     }
   }
