@@ -44,7 +44,6 @@ html.dark-mode {
   border: 1px solid var(--color-border-primary) !important;
 }
 
-.dark-mode .filters-form,
 .dark-mode .filter-indicator,
 .dark-mode .sidebar {
   background-color: var(--color-background-secondary) !important;
@@ -76,7 +75,6 @@ html.dark-mode {
 .dark-mode .sku-info-bar,
 .dark-mode .top-filter-dropdown,
 .dark-mode .size-selection-modal,
-.dark-mode .js-order-options,
 .dark-mode .sku-card-favorite,
 .dark-mode .sku-reviews-order,
 .dark-mode .slider-btn,
@@ -87,7 +85,6 @@ html.dark-mode {
 .dark-mode .remain-sticky,
 .dark-mode .country-picker-form,
 .dark-mode .modal-container-content,
-.dark-mode .desktop-order-options,
 .dark-mode .sku-reviews-order,
 .dark-mode .sku-reviews-order.active {
   background-color: var(--color-background-base) !important;

@@ -113,7 +113,8 @@
   }
 }
 
-.dark-mode .vertical-gallery {
+.dark-mode .vertical-gallery,
+.dark-mode .qna-intro-button {
   background-color: var(--dark-mode-hover) !important;
 }
 
@@ -132,4 +133,11 @@
 
 .dark-mode .user-action-icons .share {
   color: #3498db !important;
+}
+
+.dark-mode .no-opacity {
+  padding: 10px, 10px, 10px, 10px !important;
+  content: "🌙" !important;
+  background: #333 !important;
+  border-color: #555 !important;
 }
