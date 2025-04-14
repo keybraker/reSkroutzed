@@ -1,6 +1,6 @@
 {
   "name": "reSkroutzed",
-  "description": "hances Skroutz.gr by flagging sponsored products, price checker, and providing a dark mode toggle",
+  "description": "Enhances Skroutz.gr by flagging sponsored products, price checker, and providing a dark mode toggle",
   "version": "1.7.0",
   "manifest_version": 3,
   "permissions": [],
