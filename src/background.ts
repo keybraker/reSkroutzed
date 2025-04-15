@@ -52,7 +52,6 @@ const universalToggleHandler = new UniversalToggleHandler(
     state.visible = retrieveVisibility();
     state.videoVisible = retrieveVideoVisibility();
     state.language = retrieveLanguage();
-    console.log("document.body.appendChild");
 
     document.body.appendChild(universalToggleHandler.createUniversalToggle());
 
@@ -72,7 +71,6 @@ const universalToggleHandler = new UniversalToggleHandler(
   }
 
   async function flagAdditionalContent() {
-    console.log("flagAdditionalContent");
     toggleContentVisibility(state);
     await btsIndicator.start();
     await correctFinalPrice.start();

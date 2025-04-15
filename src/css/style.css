@@ -11,6 +11,13 @@
   --dark-mode-button: #2d2d2d !important;
   --dark-mode-button-text: #d0d0d0 !important;
   --dark-mode-shadow: rgba(0, 0, 0, 0.5) !important;
+
+  --price-checker-light-bg: #f5f5f7;
+  --price-checker-dark-bg: #1c1c1e;
+  --price-cheaper-color: #fd1530;
+  --price-expensive-color: #3a8c3a;
+  --text-light: #333333;
+  --text-dark: #e0e0e0;
 }
 
 body.dark-mode {
@@ -214,65 +221,318 @@ text-black {
 }
 
 .price-checker-outline {
-  border: 1px solid var(--color-border-neutral-0) !important;
-  border-radius: 16px !important;
-  padding: 20px 24px !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 20px !important;
+  margin: 16px 0 !important;
+  background-color: var(--price-checker-light-bg) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.2s ease-in-out !important;
+  position: relative !important;
+}
+
+.dark-mode .price-checker-outline {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: var(--price-checker-dark-bg) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.reskroutzed-tag {
+  position: absolute !important;
+  top: -12px !important;
+  right: 12px !important;
+  background-color: #f8f8f8 !important;
+  color: #555555 !important;
+  padding: 4px 10px !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.3px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  border: 1px solid #d0d0d0 !important;
+  z-index: 5 !important;
+}
+
+.reskroutzed-tag img {
+  width: 14px !important;
+  height: 14px !important;
+  margin-right: 2px !important;
+}
+
+.dark-mode .reskroutzed-tag {
+  background-color: #2a2a2c !important;
+  color: #e5e5e5 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Remove the previous ::before pseudo-element that had the reSkroutzed label */
+.price-checker-outline::before {
+  content: none !important;
 }
 
 .bold-text {
-  font-weight: bold !important;
-}
-
-.go-to-shop-button-positive:hover {
-  background-color: var(--color-text-link-marketplace-active) !important;
-  transition: background-color 0.3s ease;
+  font-weight: 600 !important;
 }
 
 .go-to-shop-button-positive {
-  border: 1px solid var(--color-border-neutral-0) !important;
-  border-radius: 32px !important;
-  padding: 8px 12px !important;
-  font-weight: 400 !important;
-  background-color: #58a054 !important;
-  color: var(--color-text-base-default) !important;
+  border: none !important;
+  border-radius: 24px !important;
+  padding: 8px 12px !important; /* Reduced padding to make button thinner */
+  font-weight: 500 !important;
+  background-color: #3a8c3a !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer !important;
+  letter-spacing: 0.3px !important;
+  width: 100% !important;
 }
 
-.go-to-shop-button-negative:hover {
-  background-color: var(--color-icon-inline-alert-danger) !important;
-  transition: background-color 0.3s ease;
+.go-to-shop-button-positive:hover {
+  background-color: #2e7b2e !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
 .go-to-shop-button-negative {
-  border: 1px solid var(--color-border-neutral-0) !important;
-  border-radius: 32px !important;
-  padding: 8px 12px !important;
-  font-weight: 400 !important;
-  background-color: #c93633 !important;
-  color: var(--color-text-base-default) !important;
+  border: none !important;
+  border-radius: 24px !important;
+  padding: 8px 12px !important; /* Reduced padding to make button thinner */
+  font-weight: 500 !important;
+  background-color: #a93331 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer !important;
+  letter-spacing: 0.3px !important;
+  width: 100% !important;
 }
 
-.lowest-price-store-highlight {
-  border: 3px solid #58a054 !important;
-  box-shadow: 1px 1px 0 #000000 !important;
-  box-shadow: 0px 2px 4px #000000 !important;
+.go-to-shop-button-negative:hover {
+  background-color: #932c2a !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
 .info-label-positive {
-  border: 2px solid var(--color-border-neutral-0) !important;
-  line-height: 1.4 !important;
-  font-size: 16px !important;
-  font-weight: 500 !important;
-  background-color: #58a054 !important;
-  color: #e7e7e7 !important;
+  border: none !important;
+  line-height: 1.5 !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  background-color: #e6f4e6 !important;
+  color: #2a662a !important;
+  border-radius: 8px !important;
 }
 
 .info-label-negative {
-  border: 2px solid var(--color-border-neutral-0) !important;
+  border: none !important;
+  line-height: 1.5 !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  background-color: #f9e9e9 !important;
+  color: #7d2422 !important;
+  border-radius: 8px !important;
+}
+
+.dark-mode .info-label-positive {
+  background-color: rgba(58, 140, 58, 0.25) !important;
+  color: #b8e6b8 !important;
+}
+
+.dark-mode .info-label-negative {
+  background-color: rgba(169, 51, 49, 0.25) !important;
+  color: #e6b8b8 !important;
+}
+
+.price-info-description {
+  font-size: 14px !important;
+  color: #555555 !important;
+  text-align: left !important;
+  margin-top: 10px !important;
+  margin-bottom: 12px !important;
+  font-style: normal !important;
   line-height: 1.4 !important;
+  /* Removed background and border styling */
+}
+
+.dark-mode .price-info-description {
+  color: #b0b0b0 !important;
+  /* Removed background and border styling */
+}
+
+.shipping-info {
+  display: flex !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  color: #666666 !important;
+}
+
+.dark-mode .shipping-info {
+  color: #a0a0a0 !important;
+}
+
+.transportation-cost {
+  display: flex !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  color: #666666 !important;
+  padding: 2px 6px !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-radius: 4px !important;
+  margin-top: 6px !important;
+}
+
+.dark-mode .transportation-cost {
+  color: #b0b0b0 !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.transportation-cost-label {
+  font-weight: 500 !important;
+  margin-right: 4px !important;
+}
+
+.transportation-breakdown {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+  margin: 12px 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.dark-mode .transportation-breakdown {
+  color: #b0b0b0 !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-left: 3px solid #58a054 !important;
+}
+
+.lowest-price-store-highlight {
+  border: 2px solid #3a8c3a !important;
+  box-shadow: 0 2px 8px rgba(58, 140, 58, 0.25) !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+}
+
+.price-indicator-price {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: baseline !important;
+  margin-right: 8px !important;
+  line-height: 1 !important;
+}
+
+.price-indicator-currency {
+  margin-left: 2px !important;
+  font-size: 28px !important; /* Increased size 10x from 18px */
+}
+
+.price-indicator-decimal {
+  font-size: 28px !important; /* Increased size 10x from 18px */
+}
+
+.price-indicator-comma {
+  font-size: 28px !important; /* Increased size 10x from 18px */
+  margin-right: 1px !important;
+}
+
+/* New container for price and calculation */
+.price-calculation-container {
+  display: flex !important;
+  gap: 8px !important;
+  flex-direction: column !important;
+  align-items: left !important;
+  justify-content: space-between !important;
+  margin-bottom: 16px !important;
+}
+
+/* Styling for calculation container */
+.calculation-container {
+  text-align: center !important;
+  width: 100% !important;
+  padding: 15px !important;
+  margin-top: 12px !important;
+  background-color: rgba(0, 0, 0, 0.015) !important;
+  border-radius: 6px !important;
+  border: 1px dashed rgba(0, 0, 0, 0.2) !important;
+  color: var(--text-light) !important;
   font-size: 16px !important;
   font-weight: 500 !important;
-  background-color: #8d0e0b !important;
-  color: #e7e7e7 !important;
+}
+
+.dark-mode .calculation-container {
+  background-color: rgba(255, 255, 255, 0.025) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.2) !important;
+  color: var(--text-dark) !important;
+}
+
+.calculation-container strong {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.price-difference {
+  font-weight: 700 !important;
+  font-size: 18px !important;
+}
+
+.price-difference.outcome-positive {
+  color: var(--price-expensive-color) !important;
+}
+
+.price-difference.outcome-negative {
+  color: var(--price-cheaper-color) !important;
+}
+
+.dark-mode .price-difference.outcome-positive {
+  color: #4caf50 !important;
+}
+
+.dark-mode .price-difference.outcome-negative {
+  color: #ff4d4d !important;
+}
+
+.price-breakdown-item {
+  width: 50% !important;
+  padding: 12px !important;
+  background-color: rgba(248, 248, 248, 0.1) !important;
+  border-radius: 4px !important;
+  border: 1px dashed rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark-mode .price-breakdown-item {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.2) !important;
+}
+
+.breakdown-label {
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+  color: #333 !important;
+  font-size: 14px !important;
+}
+
+.breakdown-value {
+  color: #666 !important;
+  font-size: 13px !important;
+}
+
+.dark-mode .breakdown-label {
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .breakdown-value {
+  color: #b0b0b0 !important;
+}
+
+.sponsored-label svg,
+.info-label-positive svg,
+.info-label-negative svg {
+  vertical-align: middle !important;
 }
 
 .sponsored-label svg,
