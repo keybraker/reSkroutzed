@@ -241,18 +241,27 @@ text-black {
   position: absolute !important;
   top: -12px !important;
   right: 12px !important;
-  background-color: #f8f8f8 !important;
-  color: #555555 !important;
-  padding: 4px 10px !important;
-  border-radius: 20px !important;
+  padding: 4px 12px !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 2px solid rgba(124, 124, 124, 0.1) !important;
+  border-radius: 12px !important;
   font-size: 12px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.3px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
   display: flex !important;
   align-items: center !important;
   gap: 5px !important;
-  border: 1px solid #d0d0d0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
   z-index: 5 !important;
+  transition: background-color 0.2s ease-in-out !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+.reskroutzed-tag:hover {
+  background-color: rgb(255, 171, 92) !important;
+  border: 2px solid rgb(255, 115, 0) !important;
 }
 
 .reskroutzed-tag img {
@@ -262,14 +271,13 @@ text-black {
 }
 
 .dark-mode .reskroutzed-tag {
-  background-color: #2a2a2c !important;
-  color: #e5e5e5 !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  background-color: rgb(46, 45, 44) !important;
 }
 
-/* Remove the previous ::before pseudo-element that had the reSkroutzed label */
-.price-checker-outline::before {
-  content: none !important;
+.dark-mode .reskroutzed-tag:hover {
+  background-color: rgb(255, 171, 92) !important;
+  border: 2px solid rgb(255, 115, 0) !important;
 }
 
 .bold-text {
@@ -779,4 +787,28 @@ text-black {
 
 .dark-mode .rating-with-count {
   color: var(--color-text-primary) !important;
+}
+
+/* Merchant coupon offering styles for dark mode */
+.dark-mode .merchant-coupon-offering-label {
+  background-color: rgba(255, 184, 0, 0.15) !important;
+  border: 1px solid rgba(255, 184, 0, 0.3) !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .merchant-coupon-offering-label-icon-wrapper {
+  color: #000000 !important;
+  background-color: #ffb800 !important;
+}
+
+.dark-mode .merchant-coupon-offering-label-title strong {
+  color: #000000 !important;
+}
+
+.dark-mode .merchant-coupon-offering-label-content {
+  color: #b0b0b0 !important;
+}
+
+.dark-mode .merchant-coupon-offering-label-expiration {
+  color: #999999 !important;
 }

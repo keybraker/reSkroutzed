@@ -163,7 +163,7 @@ class PriceComparisonBreakdownComponent {
       "div",
       "breakdown-value"
     );
-    skroutzValue.textContent = `${priceData.btsPrice.toFixed(
+    skroutzValue.innerHTML = `${priceData.btsPrice.toFixed(
       2
     )}€ + ${priceData.btsShippingCost.toFixed(
       2
@@ -204,39 +204,46 @@ class PriceComparisonBreakdownComponent {
 }
 
 class CalculationComponent {
-  static create(
-    priceData: PriceData,
-    language: Language
-  ): HTMLDivElement | null {
-    if (priceData.priceDifference === 0) {
-      return null;
-    }
-
+  static create(priceData: PriceData, language: Language): HTMLDivElement {
     const calculationContainer =
       UIFactory.createElementWithClass<HTMLDivElement>(
         "div",
         "calculation-container"
       );
 
+    if (priceData.priceDifference === 0) {
+      calculationContainer.innerHTML = `${
+        language === Language.ENGLISH
+          ? "There is no difference in price"
+          : "Δεν υπάρχει διαφορά στην τιμή"
+      }`;
+      return calculationContainer;
+    }
+
     const diffAbs = Math.abs(priceData.priceDifference);
+    const buyingThroughSkroutz =
+      language === Language.ENGLISH
+        ? "Buying through Skroutz is"
+        : 'Με "Aγορά μέσω Skroutz" είναι κατά';
 
     if (priceData.priceDifference > 0) {
-      calculationContainer.classList.add("calculation-negative");
-      calculationContainer.innerHTML = `${priceData.lowestTotalPrice.toFixed(
+      // Store price is higher than BTS
+      const cheaper = language === Language.ENGLISH ? "cheaper" : "φθηνότερο";
+      calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${diffAbs.toFixed(
         2
-      )}€ - ${priceData.btsTotalPrice.toFixed(2)}€ = <strong>${diffAbs.toFixed(
+      )}€ <u>${cheaper}</u></strong> (${priceData.lowestTotalPrice.toFixed(
         2
-      )}€</strong> ${
-        language === Language.ENGLISH ? "more expensive" : "ακριβότερο"
-      }`;
+      )}€ - ${priceData.btsTotalPrice.toFixed(2)}€)`;
     } else {
-      calculationContainer.innerHTML = `${priceData.btsTotalPrice.toFixed(
+      // BTS is higher than store price
+      calculationContainer.classList.add("calculation-negative");
+      const moreExpensive =
+        language === Language.ENGLISH ? "more expensive" : "ακριβότερο";
+      calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${diffAbs.toFixed(
         2
-      )}€ - ${priceData.lowestTotalPrice.toFixed(
+      )}€ <u>${moreExpensive}</u></strong> (${priceData.btsTotalPrice.toFixed(
         2
-      )}€ = <strong>${diffAbs.toFixed(2)}€</strong> ${
-        language === Language.ENGLISH ? "cheaper" : "φτηνότερο"
-      }`;
+      )}€ - ${priceData.lowestTotalPrice.toFixed(2)}€)`;
     }
 
     return calculationContainer;
@@ -329,9 +336,8 @@ export class PriceCheckerIndicator {
   private adjustSiteData(element: Element): void {
     const offeringHeading = element.querySelector("div.offering-heading");
     const price = offeringHeading?.querySelector("div.price");
-    const shopLink = offeringHeading?.querySelector("a");
 
-    if (!offeringHeading || !price || !shopLink) {
+    if (!offeringHeading || !price) {
       return;
     }
 
@@ -346,7 +352,8 @@ export class PriceCheckerIndicator {
       this.state.language === Language.ENGLISH ? "shipping" : "μεταφορικά"
     })`;
 
-    offeringHeading.insertBefore(shippingText, shopLink);
+    // Insert after price element instead of before shopLink
+    price.insertAdjacentElement("afterend", shippingText);
   }
 
   private insertPriceCheckerIndication(element: Element): void {
@@ -385,8 +392,26 @@ export class PriceCheckerIndicator {
     logoImg.width = 14;
     logoImg.height = 14;
 
+    reSkroutzedTag.appendChild(document.createTextNode("By ReSkroutzed"));
     reSkroutzedTag.appendChild(logoImg);
-    reSkroutzedTag.appendChild(document.createTextNode("by reSkroutzed"));
+
+    // Make the tag clickable with cursor pointer
+    reSkroutzedTag.style.cursor = "pointer";
+
+    // Add click event to open the appropriate store page based on browser
+    reSkroutzedTag.addEventListener("click", () => {
+      // Detect if browser is Firefox
+      const isFirefox =
+        navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
+
+      // Set the URL based on the browser
+      const storeUrl = isFirefox
+        ? "https://addons.mozilla.org/en-US/firefox/addon/reskroutzed/reviews/"
+        : "https://chromewebstore.google.com/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl";
+
+      // Open the URL in a new tab
+      window.open(storeUrl, "_blank");
+    });
 
     priceIndication.appendChild(reSkroutzedTag);
 
@@ -454,11 +479,11 @@ export class PriceCheckerIndicator {
     contentContainer.appendChild(actionContainer);
 
     // Set title with BTS price info
-    const shippingCostFormatted = priceData.btsShippingCost.toFixed(2);
+    // const shippingCostFormatted = priceData.btsShippingCost.toFixed(2);
     priceIndication.title =
       this.state.language === Language.ENGLISH
-        ? `(note that "Buy through Skroutz" is ${priceData.btsPrice}€ + ${shippingCostFormatted}€ shipping)`
-        : `(σημειώστε ότι "Αγορά μέσω Skroutz" είναι ${priceData.btsPrice}€ + ${shippingCostFormatted}€ μεταφορικά)`;
+        ? "Delivered to you by reSkroutzed"
+        : "Από το reSkroutzed";
 
     priceIndication.appendChild(contentContainer);
 
