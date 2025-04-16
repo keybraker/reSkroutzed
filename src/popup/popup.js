@@ -13,7 +13,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 
   chrome.tabs.sendMessage(tabs[0].id, { action: "getCount" }, (response) => {
     if (chrome.runtime.lastError) {
-      console.log("Communication error:", chrome.runtime.lastError.message);
+      console.error("Communication error:", chrome.runtime.lastError.message);
       updateCounts();
       return;
     }

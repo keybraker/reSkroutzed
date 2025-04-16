@@ -480,6 +480,18 @@ text-black {
   font-weight: 700 !important;
 }
 
+.exceeds-minimum-text {
+  font-size: 12px !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  display: block !important;
+  margin-top: 4px !important;
+  font-style: italic !important;
+}
+
+.dark-mode .exceeds-minimum-text {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
 .price-difference {
   font-weight: 700 !important;
   font-size: 18px !important;

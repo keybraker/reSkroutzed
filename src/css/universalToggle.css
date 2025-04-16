@@ -203,3 +203,111 @@
 .ad-toggle-option.active {
   background: #e74c3c !important;
 }
+.price-difference-option {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.price-difference-value {
+  position: absolute !important;
+  right: 5px !important;
+  bottom: 5px !important;
+  font-size: 8px !important;
+  background-color: #e74c3c !important;
+  color: white !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+  line-height: 1 !important;
+}
+
+.price-difference-popup {
+  width: 200px !important;
+}
+
+/* Price difference option button */
+.price-difference-option {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  width: 80px !important;
+  height: 40px !important;
+  padding: 4px !important;
+  border: 2px solid #000000 !important;
+  border-radius: 8px !important;
+  background-color: #e74c3c !important;
+  color: white !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.price-difference-option svg {
+  width: 20px !important;
+  height: 20px !important;
+  margin-bottom: 2px !important;
+  color: white !important;
+}
+
+.price-difference-option span {
+  font-size: 14px !important;
+  font-weight: bold !important;
+  color: white !important;
+}
+
+.price-difference-popup {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 100% !important;
+  margin-bottom: 10px !important;
+  transform: translateX(-50%) !important;
+  width: 150px !important;
+  padding: 10px !important;
+  background-color: #e74c3c !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 8px !important;
+  z-index: 10001 !important;
+}
+
+/* Triangle pointer for popup */
+.price-difference-popup::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 100% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  border-width: 8px !important;
+  border-style: solid !important;
+  border-color: #fff transparent transparent transparent !important;
+}
+
+.dark-mode .price-difference-popup::after {
+  border-color: #333 transparent transparent transparent !important;
+}
+
+.dark-mode .price-difference-popup {
+  background-color: #333 !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.price-difference-popup label {
+  display: block !important;
+  margin-bottom: 5px !important;
+  font-weight: bold !important;
+}
+
+.price-difference-popup input {
+  width: 100% !important;
+  padding: 5px !important;
+  margin-bottom: 10px !important;
+  border-radius: 4px !important;
+  border: 1px solid #ccc !important;
+}
+
+.dark-mode .price-difference-popup input {
+  background-color: #444 !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
+}

@@ -181,6 +181,7 @@ function createPriceComparisonBreakdownComponent(
 
 function createCalculationComponent(
   productPriceData: ProductPriceData,
+  minimumPriceDifference: number,
   language: Language
 ): HTMLDivElement {
   const calculationContainer = UIFactory.createElementWithClass<HTMLDivElement>(
@@ -212,30 +213,43 @@ function createCalculationComponent(
     return calculationContainer;
   }
 
-  const diffAbs = Math.abs(priceDifference);
+  const differenceAbsolute = Math.abs(priceDifference);
   const buyingThroughSkroutz =
     language === Language.ENGLISH
       ? "Buying through Skroutz is"
       : 'Με "Aγορά μέσω Skroutz" είναι κατά';
 
-  if (priceDifference > 0) {
-    // Store price is higher than BTS
+  if (priceDifference <= 0) {
     const cheaper = language === Language.ENGLISH ? "cheaper" : "φθηνότερο";
-    calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${diffAbs.toFixed(
+    calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${differenceAbsolute.toFixed(
       2
     )}€ <u>${cheaper}</u></strong> (${productPriceData.buyThroughStore.totalPrice.toFixed(
       2
     )}€ - ${productPriceData.buyThroughSkroutz.totalPrice.toFixed(2)}€)`;
   } else {
-    // BTS is higher than store price
     calculationContainer.classList.add("calculation-negative");
     const moreExpensive =
       language === Language.ENGLISH ? "more expensive" : "ακριβότερο";
-    calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${diffAbs.toFixed(
+    calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${differenceAbsolute.toFixed(
       2
     )}€ <u>${moreExpensive}</u></strong> (${productPriceData.buyThroughSkroutz.totalPrice.toFixed(
       2
     )}€ - ${productPriceData.buyThroughStore.totalPrice.toFixed(2)}€)`;
+
+    if (differenceAbsolute > minimumPriceDifference) {
+      const exceedsMinimumText =
+        language === Language.ENGLISH
+          ? `Exceeds minimum selected difference of ${minimumPriceDifference.toFixed(
+              2
+            )}€`
+          : `Υπερβαίνει την ελάχιστη επιλεγμένη διαφορά των ${minimumPriceDifference.toFixed(
+              2
+            )}€`;
+      const exceedsSpan = document.createElement("span");
+      exceedsSpan.classList.add("exceeds-minimum-text");
+      exceedsSpan.textContent = exceedsMinimumText;
+      calculationContainer.appendChild(exceedsSpan);
+    }
   }
 
   return calculationContainer;
@@ -243,13 +257,17 @@ function createCalculationComponent(
 
 function createShopButtonComponent(
   productPriceData: ProductPriceData,
+  minimumPriceDifference: number,
   language: Language
 ): HTMLButtonElement {
-  const buttonStyle =
-    productPriceData.buyThroughSkroutz.totalPrice <=
-    productPriceData.buyThroughStore.totalPrice
-      ? "go-to-shop-button-positive"
-      : "go-to-shop-button-negative";
+  const showPositiveStyling = isPositiveStyling(
+    productPriceData,
+    minimumPriceDifference
+  );
+
+  const buttonStyle = showPositiveStyling
+    ? "go-to-shop-button-positive"
+    : "go-to-shop-button-negative";
 
   const goToStoreButton = UIFactory.createElementWithClass<HTMLButtonElement>(
     "button",
@@ -283,23 +301,34 @@ function createShopButtonComponent(
   return goToStoreButton;
 }
 
-function createPriceIndicationElement(
+function isPositiveStyling(
   productPriceData: ProductPriceData,
-  language: Language,
   minimumPriceDifference: number
-): HTMLDivElement {
+): boolean {
   const isPositive =
     productPriceData.buyThroughSkroutz.totalPrice <=
     productPriceData.buyThroughStore.totalPrice;
 
-  let showPositiveStyling = isPositive;
   if (!isPositive) {
     const priceDifference =
       productPriceData.buyThroughSkroutz.totalPrice -
       productPriceData.buyThroughStore.totalPrice;
 
-    showPositiveStyling = Math.abs(priceDifference) <= minimumPriceDifference;
+    return Math.abs(priceDifference) <= minimumPriceDifference;
   }
+
+  return true;
+}
+
+function createPriceIndicationElement(
+  productPriceData: ProductPriceData,
+  language: Language,
+  minimumPriceDifference: number
+): HTMLDivElement {
+  const showPositiveStyling = isPositiveStyling(
+    productPriceData,
+    minimumPriceDifference
+  );
 
   const priceIndication = UIFactory.createElementWithClass<HTMLDivElement>(
     "div",
@@ -375,6 +404,7 @@ function createPriceIndicationElement(
 
   const calculationContainer = createCalculationComponent(
     productPriceData,
+    minimumPriceDifference,
     language
   );
   if (calculationContainer) {
@@ -389,7 +419,11 @@ function createPriceIndicationElement(
 
   contentContainer.appendChild(infoContainer);
 
-  const goToStoreButton = createShopButtonComponent(productPriceData, language);
+  const goToStoreButton = createShopButtonComponent(
+    productPriceData,
+    minimumPriceDifference,
+    language
+  );
   actionContainer.appendChild(goToStoreButton);
 
   contentContainer.appendChild(actionContainer);
@@ -508,6 +542,7 @@ export class PriceCheckerIndicator {
         this.state.language,
         this.state.minimumPriceDifference
       );
+
       offeringCard.insertBefore(priceIndication, offeringCard.children[1]);
     } finally {
       this.isInitializing = false;

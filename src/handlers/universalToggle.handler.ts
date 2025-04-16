@@ -283,22 +283,20 @@ export class UniversalToggleHandler {
         : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
     button.title = titleText;
 
-    button.style.width = "56px";
-    button.style.height = "56px";
-    button.style.margin = "5px";
-    button.style.borderRadius = "12px";
-    button.style.display = "flex";
-    button.style.flexDirection = "column";
-    button.style.alignItems = "center";
-    button.style.justifyContent = "center";
-    button.style.position = "relative";
-    button.style.padding = "8px";
+    const flexContainer = document.createElement("div");
+    flexContainer.style.display = "flex";
+    flexContainer.style.alignItems = "center";
+    flexContainer.style.justifyContent = "center";
+
+    const valueDisplay = document.createElement("span");
+    valueDisplay.textContent = this.state.minimumPriceDifference.toString();
+    flexContainer.appendChild(valueDisplay);
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 16 16");
-    svg.setAttribute("width", "20");
-    svg.setAttribute("height", "20");
-    svg.style.marginBottom = "2px";
+    svg.setAttribute("width", "16");
+    svg.setAttribute("height", "16");
+    svg.style.marginLeft = "5px";
 
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute(
@@ -307,54 +305,27 @@ export class UniversalToggleHandler {
     );
     path.setAttribute("fill", "currentColor");
     svg.appendChild(path);
-    button.appendChild(svg);
+    flexContainer.appendChild(svg);
 
-    const valueDisplay = document.createElement("span");
-    valueDisplay.textContent = this.state.minimumPriceDifference.toString();
-    valueDisplay.style.fontSize = "18px";
-    valueDisplay.style.fontWeight = "bold";
-    valueDisplay.style.marginTop = "2px";
-    button.appendChild(valueDisplay);
+    button.appendChild(flexContainer);
 
     button.addEventListener("click", (e) => {
       e.stopPropagation();
 
       const popup = document.createElement("div");
       popup.classList.add("price-difference-popup");
-      popup.style.position = "absolute";
-      popup.style.backgroundColor = "#fff";
-      popup.style.padding = "10px";
-      popup.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)";
-      popup.style.borderRadius = "8px";
-      popup.style.zIndex = "10001";
-      popup.style.left = "70px";
-      popup.style.top = "0";
-      popup.style.width = "200px";
-
-      if (this.state.darkMode) {
-        popup.style.backgroundColor = "#333";
-        popup.style.color = "#fff";
-      }
 
       const label = document.createElement("label");
       label.textContent =
         this.state.language === Language.GREEK
           ? "Ελάχιστη διαφορά τιμής (€):"
           : "Minimum price difference (€):";
-      label.style.display = "block";
-      label.style.marginBottom = "5px";
-      label.style.fontWeight = "bold";
 
       const input = document.createElement("input");
       input.type = "number";
       input.min = "0";
       input.step = "0.5";
       input.value = this.state.minimumPriceDifference.toString();
-      input.style.width = "100%";
-      input.style.padding = "5px";
-      input.style.marginBottom = "10px";
-      input.style.borderRadius = "4px";
-      input.style.border = "1px solid #ccc";
 
       const saveValue = () => {
         const newValue = parseFloat(input.value);
@@ -377,12 +348,10 @@ export class UniversalToggleHandler {
             document.dispatchEvent(event);
           }
         }
-
         popup.remove();
       };
 
       input.addEventListener("blur", saveValue);
-
       input.addEventListener("keyup", (event) => {
         if (event.key === "Enter") {
           saveValue();
@@ -391,9 +360,7 @@ export class UniversalToggleHandler {
 
       popup.appendChild(label);
       popup.appendChild(input);
-
       button.appendChild(popup);
-
       input.focus();
 
       const closePopupHandler = (event: MouseEvent) => {

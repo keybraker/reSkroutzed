@@ -47,9 +47,8 @@ async function getProductData(productCode: string): Promise<ProductData> {
 function getSkroutzPriceData(productData: ProductData): PriceData {
   const productCards = productData.product_cards;
 
-  const sponsoredProductCardId = productData.sponsored_product_card_ids[0];
-  const sponsoredProductCard = Object.values(productCards).find(
-    (card) => card.id === sponsoredProductCardId
+  const sponsoredProductCard = Object.values(productCards).find((card) =>
+    productData.sponsored_product_card_ids.includes(card.id)
   );
   if (!sponsoredProductCard) {
     throw new Error("Sponsored product card not found");
