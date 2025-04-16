@@ -1,3 +1,4 @@
+import { Language } from "../enums/Language.enum";
 import { appendLogoChild } from "../functions/appendLogoChild";
 import { DarkModeStorageAdapter } from "../storageRetrievers/darkMode.storage.handler";
 import { ProductAdVisibilityStorageAdapter } from "../storageRetrievers/ProductAdVisibility.storage.handler";
@@ -42,11 +43,13 @@ export class UniversalToggleHandler {
     const adToggleButton = this.createAdToggleButton();
     const videoToggleButton = this.createVideoToggleButton();
     const sponsorshipToggleButton = this.createSponsorshipToggleButton();
+    const priceDifferenceButton = this.createPriceDifferenceOption();
 
     buttonsContainer.appendChild(darkModeButton);
     buttonsContainer.appendChild(adToggleButton);
     buttonsContainer.appendChild(videoToggleButton);
     buttonsContainer.appendChild(sponsorshipToggleButton);
+    buttonsContainer.appendChild(priceDifferenceButton);
 
     mainToggle.addEventListener("click", () => this.toggleMenu(container));
 
@@ -262,6 +265,147 @@ export class UniversalToggleHandler {
       button.classList.toggle("active");
 
       button.title = this.state.hideProductAds ? "Hide Ads" : "Show Ads";
+    });
+
+    return button;
+  }
+
+  private createPriceDifferenceOption(): HTMLButtonElement {
+    const MinimumPriceDifferenceStorageAdapter =
+      require("../storageRetrievers/MinimumPriceDifference.storage.handler").MinimumPriceDifferenceStorageAdapter;
+
+    const button = document.createElement("button");
+    button.classList.add("toggle-option-button", "price-difference-option");
+
+    const titleText =
+      this.state.language === Language.GREEK
+        ? `Ελάχιστη διαφορά τιμής: ${this.state.minimumPriceDifference}€`
+        : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
+    button.title = titleText;
+
+    button.style.width = "56px";
+    button.style.height = "56px";
+    button.style.margin = "5px";
+    button.style.borderRadius = "12px";
+    button.style.display = "flex";
+    button.style.flexDirection = "column";
+    button.style.alignItems = "center";
+    button.style.justifyContent = "center";
+    button.style.position = "relative";
+    button.style.padding = "8px";
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 16 16");
+    svg.setAttribute("width", "20");
+    svg.setAttribute("height", "20");
+    svg.style.marginBottom = "2px";
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute(
+      "d",
+      "M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936c0-.11 0-.219.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.617 6.617 0 0 0 10.341 2c-2.928 0-4.82 1.569-5.244 4.3H4v.928h1.01v1.265H4v.928z"
+    );
+    path.setAttribute("fill", "currentColor");
+    svg.appendChild(path);
+    button.appendChild(svg);
+
+    const valueDisplay = document.createElement("span");
+    valueDisplay.textContent = this.state.minimumPriceDifference.toString();
+    valueDisplay.style.fontSize = "18px";
+    valueDisplay.style.fontWeight = "bold";
+    valueDisplay.style.marginTop = "2px";
+    button.appendChild(valueDisplay);
+
+    button.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      const popup = document.createElement("div");
+      popup.classList.add("price-difference-popup");
+      popup.style.position = "absolute";
+      popup.style.backgroundColor = "#fff";
+      popup.style.padding = "10px";
+      popup.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)";
+      popup.style.borderRadius = "8px";
+      popup.style.zIndex = "10001";
+      popup.style.left = "70px";
+      popup.style.top = "0";
+      popup.style.width = "200px";
+
+      if (this.state.darkMode) {
+        popup.style.backgroundColor = "#333";
+        popup.style.color = "#fff";
+      }
+
+      const label = document.createElement("label");
+      label.textContent =
+        this.state.language === Language.GREEK
+          ? "Ελάχιστη διαφορά τιμής (€):"
+          : "Minimum price difference (€):";
+      label.style.display = "block";
+      label.style.marginBottom = "5px";
+      label.style.fontWeight = "bold";
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = "0";
+      input.step = "0.5";
+      input.value = this.state.minimumPriceDifference.toString();
+      input.style.width = "100%";
+      input.style.padding = "5px";
+      input.style.marginBottom = "10px";
+      input.style.borderRadius = "4px";
+      input.style.border = "1px solid #ccc";
+
+      const saveValue = () => {
+        const newValue = parseFloat(input.value);
+        if (!isNaN(newValue) && newValue >= 0) {
+          this.state.minimumPriceDifference = newValue;
+          valueDisplay.textContent = newValue.toString();
+
+          const updatedTitle =
+            this.state.language === Language.GREEK
+              ? `Ελάχιστη διαφορά τιμής: ${newValue}€`
+              : `Minimum Price Difference: ${newValue}€`;
+          button.title = updatedTitle;
+
+          const adapter = new MinimumPriceDifferenceStorageAdapter();
+          adapter.setValue(newValue);
+
+          const productPage = document.querySelector("article.offering-card");
+          if (productPage) {
+            const event = new Event("priceThresholdChange");
+            document.dispatchEvent(event);
+          }
+        }
+
+        popup.remove();
+      };
+
+      input.addEventListener("blur", saveValue);
+
+      input.addEventListener("keyup", (event) => {
+        if (event.key === "Enter") {
+          saveValue();
+        }
+      });
+
+      popup.appendChild(label);
+      popup.appendChild(input);
+
+      button.appendChild(popup);
+
+      input.focus();
+
+      const closePopupHandler = (event: MouseEvent) => {
+        if (!popup.contains(event.target as Node) && event.target !== button) {
+          saveValue();
+          document.removeEventListener("click", closePopupHandler);
+        }
+      };
+
+      setTimeout(() => {
+        document.addEventListener("click", closePopupHandler);
+      }, 100);
     });
 
     return button;

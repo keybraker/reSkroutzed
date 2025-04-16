@@ -11,6 +11,7 @@ import { SponsorshipHandler } from "./handlers/sponsorship.handler";
 import { UniversalToggleHandler } from "./handlers/universalToggle.handler";
 import { DarkModeStorageAdapter } from "./storageRetrievers/darkMode.storage.handler";
 import { LanguageStorageAdapter } from "./storageRetrievers/Language.storage.handler";
+import { MinimumPriceDifferenceStorageAdapter } from "./storageRetrievers/MinimumPriceDifference.storage.handler";
 import { ProductAdVisibilityStorageAdapter } from "./storageRetrievers/ProductAdVisibility.storage.handler";
 import { SponsorshipVisibilityStorageAdapter } from "./storageRetrievers/SponsorshipVisibility.storage.handler";
 import { VideoAdVisibilityStorageAdapter } from "./storageRetrievers/VideoAdVisibility.storage.handler";
@@ -25,6 +26,7 @@ const state: State = {
   ShelfAdCount: 0,
   videoAdCount: 0,
   darkMode: false,
+  minimumPriceDifference: 0,
 };
 
 function loadStorage() {
@@ -35,6 +37,8 @@ function loadStorage() {
     new SponsorshipVisibilityStorageAdapter();
   const darkModeStorageAdapter = new DarkModeStorageAdapter();
   const languageStorageAdapter = new LanguageStorageAdapter();
+  const minimumPriceDifferenceStorageAdapter =
+    new MinimumPriceDifferenceStorageAdapter();
 
   state.language = languageStorageAdapter.getValue();
 
@@ -68,6 +72,15 @@ function loadStorage() {
     state.darkMode = false;
   } else {
     state.darkMode = darkMode;
+  }
+
+  const minimumPriceDifference =
+    minimumPriceDifferenceStorageAdapter.getValue();
+  if (minimumPriceDifference === null) {
+    minimumPriceDifferenceStorageAdapter.setValue(0);
+    state.minimumPriceDifference = 0;
+  } else {
+    state.minimumPriceDifference = minimumPriceDifference;
   }
 
   state.language = languageStorageAdapter.getValue();

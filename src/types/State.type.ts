@@ -12,4 +12,6 @@ export type State = {
   // config
   language: Language;
   darkMode: boolean;
+  // price checker
+  minimumPriceDifference: number;
 };

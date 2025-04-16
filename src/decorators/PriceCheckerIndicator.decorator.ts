@@ -285,17 +285,28 @@ function createShopButtonComponent(
 
 function createPriceIndicationElement(
   productPriceData: ProductPriceData,
-  language: Language
+  language: Language,
+  minimumPriceDifference: number
 ): HTMLDivElement {
+  const isPositive =
+    productPriceData.buyThroughSkroutz.totalPrice <=
+    productPriceData.buyThroughStore.totalPrice;
+
+  let showPositiveStyling = isPositive;
+  if (!isPositive) {
+    const priceDifference =
+      productPriceData.buyThroughSkroutz.totalPrice -
+      productPriceData.buyThroughStore.totalPrice;
+
+    showPositiveStyling = Math.abs(priceDifference) <= minimumPriceDifference;
+  }
+
   const priceIndication = UIFactory.createElementWithClass<HTMLDivElement>(
     "div",
     [
       "display-padding",
       "price-checker-outline",
-      productPriceData.buyThroughSkroutz.totalPrice <=
-      productPriceData.buyThroughStore.totalPrice
-        ? "info-label-positive"
-        : "info-label-negative",
+      showPositiveStyling ? "info-label-positive" : "info-label-negative",
     ]
   );
 
@@ -494,7 +505,8 @@ export class PriceCheckerIndicator {
       this.adjustSiteData(offeringCard);
       const priceIndication = createPriceIndicationElement(
         this.productPriceData!,
-        this.state.language
+        this.state.language,
+        this.state.minimumPriceDifference
       );
       offeringCard.insertBefore(priceIndication, offeringCard.children[1]);
     } finally {
