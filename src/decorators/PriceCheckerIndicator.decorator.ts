@@ -392,7 +392,11 @@ export class PriceCheckerIndicator {
 
       await this.fetchData();
 
-      if (!this.isDataComplete()) {
+      const isDataComplete =
+        !!this.lowestPriceData &&
+        this.btsPrice !== undefined &&
+        this.btsShippingCost !== undefined;
+      if (!isDataComplete) {
         this.isInitializing = false;
         return;
       }
@@ -420,14 +424,6 @@ export class PriceCheckerIndicator {
     this.lowestPriceData = await marketDataReceiver();
     this.btsPrice = buyThroughSkroutzRetriever();
     this.btsShippingCost = buyThroughSkroutzShippingCostRetriever();
-  }
-
-  private isDataComplete(): boolean {
-    return (
-      !!this.lowestPriceData &&
-      this.btsPrice !== undefined &&
-      this.btsShippingCost !== undefined
-    );
   }
 
   private adjustSiteData(element: Element): void {

@@ -1,3 +1,4 @@
+import { VideoAdVisibilityStorageAdapter } from "../storageRetrievers/VideoAdVisibility.storage.handler";
 import { State } from "../types/State.type";
 
 export class PromotionalVideoHandler {
@@ -90,10 +91,11 @@ export class PromotionalVideoHandler {
 
     videoButtonToggle.addEventListener("click", () => {
       this.state.hideVideoAds = !this.state.hideVideoAds;
-      localStorage.setItem(
-        "reSkroutzed-video-visibility",
-        `${this.state.hideVideoAds}`
-      );
+
+      const videoAdVisibilityStorageAdapter =
+        new VideoAdVisibilityStorageAdapter();
+      videoAdVisibilityStorageAdapter.setValue(this.state.hideVideoAds);
+
       this.updateVideoButtonText(videoButtonToggle);
       this.toggleVideoVisibility();
     });

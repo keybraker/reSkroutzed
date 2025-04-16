@@ -1,19 +1,12 @@
 import { appendLogoChild } from "../functions/appendLogoChild";
+import { DarkModeStorageAdapter } from "../storageRetrievers/darkMode.storage.handler";
 import { State } from "../types/State.type";
 
 export class DarkModeHandler {
   private state: State;
-  private darkModeKey = "reSkroutzed-dark-mode";
 
   constructor(state: State) {
     this.state = state;
-    this.initializeDarkMode();
-  }
-
-  private initializeDarkMode(): void {
-    const darkMode = localStorage.getItem(this.darkModeKey) === "true";
-    this.state.darkMode = darkMode;
-    this.applyDarkMode();
   }
 
   private applyDarkMode(): void {
@@ -26,7 +19,10 @@ export class DarkModeHandler {
 
   public toggleDarkMode(): void {
     this.state.darkMode = !this.state.darkMode;
-    localStorage.setItem(this.darkModeKey, String(this.state.darkMode));
+
+    const darkModeStorageAdapter = new DarkModeStorageAdapter();
+    darkModeStorageAdapter.setValue(this.state.darkMode);
+
     this.applyDarkMode();
   }
 

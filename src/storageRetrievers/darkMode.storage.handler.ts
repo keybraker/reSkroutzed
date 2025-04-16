@@ -1,10 +1,10 @@
 import { IStorageRetrieverAdapter } from "./IStorageRetriever";
 import { IStorageSetterAdapter } from "./IStorageSetter";
 
-export class ProductAdVisibilityStorageAdapter
+export class DarkModeStorageAdapter
   implements IStorageRetrieverAdapter<boolean>, IStorageSetterAdapter<boolean>
 {
-  private readonly key = "RESKROUTZED-product-ad-visibility";
+  private readonly key = "RESKROUTZED-dark-mode";
 
   public getValue(): boolean | null {
     const item = localStorage.getItem(this.key);

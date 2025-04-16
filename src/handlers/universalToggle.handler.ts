@@ -1,76 +1,61 @@
 import { appendLogoChild } from "../functions/appendLogoChild";
+import { DarkModeStorageAdapter } from "../storageRetrievers/darkMode.storage.handler";
+import { ProductAdVisibilityStorageAdapter } from "../storageRetrievers/ProductAdVisibility.storage.handler";
+import { VideoAdVisibilityStorageAdapter } from "../storageRetrievers/VideoAdVisibility.storage.handler";
 import { State } from "../types/State.type";
 import { DarkModeHandler } from "./darkMode.handler";
 import { PromotionalVideoHandler } from "./promotionalVideo.handler";
 import { SponsorshipHandler } from "./sponsorship.handler";
-// import { PriceCheckerIndicator } from "../decorators/PriceCheckerIndicator.decorator";
 
 export class UniversalToggleHandler {
   private state: State;
-  private darkModeHandler: DarkModeHandler;
   private videoHandler: PromotionalVideoHandler;
   private sponsorshipHandler: SponsorshipHandler;
-  // private priceChecker: PriceCheckerIndicator;
   private isMenuOpen: boolean = false;
 
   constructor(
     state: State,
-    darkModeHandler: DarkModeHandler,
     videoHandler: PromotionalVideoHandler,
     sponsorshipHandler: SponsorshipHandler
   ) {
     this.state = state;
-    this.darkModeHandler = darkModeHandler;
     this.videoHandler = videoHandler;
     this.sponsorshipHandler = sponsorshipHandler;
-    // this.priceChecker = new PriceCheckerIndicator(state);
   }
 
   public createUniversalToggle(): HTMLDivElement {
-    // Initialize PriceCheckerIndicator
-    // this.priceChecker.start();
-
-    // Create main container
     const container = document.createElement("div");
     container.classList.add("universal-toggle-container");
 
-    // Create main toggle button
     const mainToggle = document.createElement("button");
     mainToggle.classList.add("universal-toggle-button");
     mainToggle.title = "ReSkroutzed Options";
 
-    // Add ReSkroutzed logo
     const logoSvg = this.createLogoIcon();
     mainToggle.appendChild(logoSvg);
     appendLogoChild(mainToggle);
 
-    // Create buttons container
     const buttonsContainer = document.createElement("div");
     buttonsContainer.classList.add("toggle-buttons-container");
 
-    // Create individual toggle buttons
     const darkModeButton = this.createDarkModeToggleButton();
     const adToggleButton = this.createAdToggleButton();
     const videoToggleButton = this.createVideoToggleButton();
-    // const sponsorshipToggleButton = this.createSponsorshipToggleButton();
+    const sponsorshipToggleButton = this.createSponsorshipToggleButton();
 
-    // Add buttons to container
     buttonsContainer.appendChild(darkModeButton);
     buttonsContainer.appendChild(adToggleButton);
     buttonsContainer.appendChild(videoToggleButton);
-    // buttonsContainer.appendChild(sponsorshipToggleButton);
+    buttonsContainer.appendChild(sponsorshipToggleButton);
 
-    // Add event listener for main toggle
     mainToggle.addEventListener("click", () => this.toggleMenu(container));
 
-    // Add event listener for clicking outside
     document.addEventListener("click", (event) => {
       if (this.isMenuOpen && !container.contains(event.target as Node)) {
         this.closeMenu(container);
       }
     });
 
-    // Add elements to container
     container.appendChild(buttonsContainer);
     container.appendChild(mainToggle);
 
@@ -89,7 +74,6 @@ export class UniversalToggleHandler {
     container.classList.add("menu-open");
     this.isMenuOpen = true;
 
-    // Add animation classes to buttons
     const buttons = container.querySelectorAll(".toggle-option-button");
     buttons.forEach((button, index) => {
       setTimeout(() => {
@@ -102,7 +86,6 @@ export class UniversalToggleHandler {
     container.classList.remove("menu-open");
     this.isMenuOpen = false;
 
-    // Remove animation classes from buttons
     const buttons = container.querySelectorAll(".toggle-option-button");
     buttons.forEach((button) => {
       button.classList.remove("button-active");
@@ -133,7 +116,6 @@ export class UniversalToggleHandler {
       ? "Switch to Light Mode"
       : "Switch to Dark Mode";
 
-    // Create icon
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 24 24");
     svg.setAttribute("width", "16");
@@ -141,7 +123,6 @@ export class UniversalToggleHandler {
 
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
-    // Use moon icon for dark mode, sun icon for light mode
     if (this.state.darkMode) {
       // Moon icon
       path.setAttribute(
@@ -161,18 +142,15 @@ export class UniversalToggleHandler {
     svg.appendChild(path);
     button.appendChild(svg);
 
-    // Add active class if dark mode is enabled
     if (this.state.darkMode) {
       button.classList.add("active");
     }
 
-    // Add click event
     button.addEventListener("click", (e) => {
       e.stopPropagation();
-      this.darkModeHandler.toggleDarkMode();
+      new DarkModeHandler(this.state).toggleDarkMode();
       button.classList.toggle("active");
 
-      // Update icon based on current mode
       const newPath = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "path"
@@ -192,7 +170,6 @@ export class UniversalToggleHandler {
       }
       newPath.setAttribute("fill", "currentColor");
 
-      // Replace the path in the SVG
       const oldPath = svg.querySelector("path");
       if (oldPath) {
         svg.removeChild(oldPath);
@@ -212,42 +189,33 @@ export class UniversalToggleHandler {
     button.classList.add("toggle-option-button", "ad-toggle-option");
     button.title = this.state.hideProductAds ? "Hide Ads" : "Show Ads";
 
-    // Create text-based AD icon instead of eye icon
     const adTextSpan = document.createElement("span");
     adTextSpan.classList.add("ad-text-icon");
     adTextSpan.textContent = "AD";
 
-    // Apply line-through if ads are hidden
     if (!this.state.hideProductAds) {
       adTextSpan.classList.add("ad-text-disabled");
-      // Add active class if ads are hidden (button should be orange when ads are hidden)
       button.classList.add("active");
     }
 
     button.appendChild(adTextSpan);
 
-    // Add notification bubble with ad count
     const notificationBubble = document.createElement("div");
     notificationBubble.classList.add("notification-bubble");
     notificationBubble.textContent = `${this.state.productAdCount}`;
     button.appendChild(notificationBubble);
 
-    // Update notification count when it changes - only query the actual DOM elements once
-    // rather than relying on state.sponsoredCount which might increase incorrectly
     const updateNotificationCount = () => {
-      // Count all flagged product elements in the DOM to show an accurate count
       const flaggedElements = document.querySelectorAll(
         "li.flagged-product, div.flagged-bought-together, .card.flagged-product, .card.tracking-img-container.flagged-product"
       );
 
-      // Only update state if there's a mismatch to avoid incrementing repeatedly
       if (flaggedElements.length !== this.state.productAdCount) {
         this.state.productAdCount = flaggedElements.length;
       }
 
       notificationBubble.textContent = `${this.state.productAdCount}`;
 
-      // Hide bubble if count is zero
       if (this.state.productAdCount === 0) {
         notificationBubble.style.display = "none";
       } else {
@@ -255,24 +223,20 @@ export class UniversalToggleHandler {
       }
     };
 
-    // Initial update
     updateNotificationCount();
 
-    // Set up an observer to watch for changes to sponsored count
     setInterval(() => {
       updateNotificationCount();
     }, 2000);
 
-    // Add click event
     button.addEventListener("click", (e) => {
       e.stopPropagation();
       this.state.hideProductAds = !this.state.hideProductAds;
-      localStorage.setItem(
-        "reSkroutzed-sponsored-visibility",
-        `${this.state.hideProductAds}`
-      );
 
-      // Update the text icon appearance
+      const productAdVisibilityStorageAdapter =
+        new ProductAdVisibilityStorageAdapter();
+      productAdVisibilityStorageAdapter.setValue(this.state.hideProductAds);
+
       const adText = button.querySelector(".ad-text-icon");
       if (adText) {
         if (this.state.hideProductAds) {
@@ -282,8 +246,6 @@ export class UniversalToggleHandler {
         }
       }
 
-      // Instead of directly calling the private method, let's update the sponsored-flagger-button
-      // and trigger UI updates through the DOM
       const sponsoredFlagButton = document.getElementById(
         "sponsored-flagger-button"
       );
@@ -296,7 +258,6 @@ export class UniversalToggleHandler {
         }
       }
 
-      // Use our own content visibility toggle method
       this.toggleContentVisibility();
       button.classList.toggle("active");
 
@@ -311,7 +272,6 @@ export class UniversalToggleHandler {
     button.classList.add("toggle-option-button", "video-toggle-option");
     button.title = this.state.hideVideoAds ? "Hide Videos" : "Show Videos";
 
-    // Create icon
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 16 16");
     svg.setAttribute("width", "16");
@@ -333,7 +293,6 @@ export class UniversalToggleHandler {
     svg.appendChild(path);
     button.appendChild(svg);
 
-    // Add notification bubble with video count
     const videoNotificationBubble = document.createElement("div");
     videoNotificationBubble.classList.add(
       "notification-bubble",
@@ -342,10 +301,8 @@ export class UniversalToggleHandler {
     videoNotificationBubble.textContent = `${this.state.videoAdCount}`;
     button.appendChild(videoNotificationBubble);
 
-    // Update notification count when it changes
     const updateVideoNotificationCount = () => {
       videoNotificationBubble.textContent = `${this.state.videoAdCount}`;
-      // Hide bubble if count is zero
       if (this.state.videoAdCount === 0) {
         videoNotificationBubble.style.display = "none";
       } else {
@@ -353,10 +310,8 @@ export class UniversalToggleHandler {
       }
     };
 
-    // Initial update
     updateVideoNotificationCount();
 
-    // Set up an observer to watch for changes to video count
     setInterval(() => {
       updateVideoNotificationCount();
     }, 2000);
@@ -365,18 +320,17 @@ export class UniversalToggleHandler {
       button.classList.add("active");
     }
 
-    // Add click event
     button.addEventListener("click", (e) => {
       e.stopPropagation();
       this.state.hideVideoAds = !this.state.hideVideoAds;
-      localStorage.setItem(
-        "reSkroutzed-video-visibility",
-        `${this.state.hideVideoAds}`
-      );
+
+      const videoAdVisibilityStorageAdapter =
+        new VideoAdVisibilityStorageAdapter();
+      videoAdVisibilityStorageAdapter.setValue(this.state.hideVideoAds);
+
       this.videoHandler.toggleVideoVisibility();
       button.classList.toggle("active");
 
-      // Update icon based on visibility state
       const newPath = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "path"
@@ -394,7 +348,6 @@ export class UniversalToggleHandler {
       }
       newPath.setAttribute("fill", "currentColor");
 
-      // Replace the path in the SVG
       const oldPath = svg.querySelector("path");
       if (oldPath) {
         svg.removeChild(oldPath);
@@ -410,7 +363,7 @@ export class UniversalToggleHandler {
   private createSponsorshipToggleButton(): HTMLButtonElement {
     const button = document.createElement("button");
     button.classList.add("toggle-option-button", "sponsorship-toggle-option");
-    button.title = this.state.hideProductAds
+    button.title = this.state.hideSponsorships
       ? "Hide Sponsorships"
       : "Show Sponsorships";
 
@@ -420,7 +373,7 @@ export class UniversalToggleHandler {
     svg.setAttribute("height", "16");
 
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    if (this.state.hideProductAds) {
+    if (this.state.hideSponsorships) {
       // Megaphone icon for visible state
       path.setAttribute(
         "d",
@@ -438,7 +391,6 @@ export class UniversalToggleHandler {
     svg.appendChild(path);
     button.appendChild(svg);
 
-    // Add notification bubble with sponsorship count
     const notificationBubble = document.createElement("div");
     notificationBubble.classList.add(
       "notification-bubble",
@@ -447,35 +399,28 @@ export class UniversalToggleHandler {
     notificationBubble.textContent = "0";
     button.appendChild(notificationBubble);
 
-    // Update notification count when it changes
     const updateNotificationCount = () => {
       const sponsorshipElements = document.querySelectorAll(
         "div#sponsorship.flagged-sponsorship"
       );
       notificationBubble.textContent = `${sponsorshipElements.length}`;
-      // Hide bubble if count is zero
       notificationBubble.style.display =
         sponsorshipElements.length === 0 ? "none" : "flex";
     };
 
-    // Initial update
     updateNotificationCount();
 
-    // Set up an observer to watch for changes to sponsorship count
     setInterval(updateNotificationCount, 2000);
 
-    // Add active class if sponsorships are hidden
-    if (!this.state.hideProductAds) {
+    if (!this.state.hideSponsorships) {
       button.classList.add("active");
     }
 
-    // Add click event
     button.addEventListener("click", (e) => {
       e.stopPropagation();
       this.sponsorshipHandler.toggleSponsorship();
       button.classList.toggle("active");
 
-      // Update icon based on visibility state
       const newPath = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "path"
@@ -495,7 +440,6 @@ export class UniversalToggleHandler {
       }
       newPath.setAttribute("fill", "currentColor");
 
-      // Replace the path in the SVG
       const oldPath = svg.querySelector("path");
       if (oldPath) {
         svg.removeChild(oldPath);
@@ -518,7 +462,6 @@ export class UniversalToggleHandler {
       "div.flagged-bought-together",
       ".card.tracking-img-container.flagged-product",
       ".card.flagged-product",
-      // Removed div.flagged-sponsorship since it's handled by sponsorship button
     ];
 
     selectors.forEach((selector) => {
@@ -530,12 +473,10 @@ export class UniversalToggleHandler {
       });
     });
 
-    // Special handling for card tracking-img-container elements with shop-promoter
     document
       .querySelectorAll(".card.tracking-img-container")
       .forEach((card) => {
         if (card.querySelector(".shop-promoter")) {
-          // If this card hasn't been flagged yet, mark it and count it
           if (!card.classList.contains("flagged-product")) {
             card.classList.add("flagged-product");
             this.state.productAdCount++;

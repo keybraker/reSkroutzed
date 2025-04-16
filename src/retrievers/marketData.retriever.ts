@@ -46,7 +46,7 @@ export async function marketDataReceiver(): Promise<
       final_price_formatted?: string;
       price: number;
     }[];
-
+    console.log(responseJSON);
     let shopId = 0;
     let lowestPrice = Number.MAX_VALUE;
     let lowestProductPrice = Number.MAX_VALUE;

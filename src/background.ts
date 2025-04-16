@@ -2,7 +2,6 @@ import { toggleContentVisibility } from "./actions/visibility.action";
 import { CorrectFinalPrice } from "./decorators/CorrectFinalPrice.decorator";
 import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator.decorator";
 import { Language } from "./enums/Language.enum";
-import { DarkModeHandler } from "./handlers/darkMode.handler";
 import { PromotionalVideoHandler } from "./handlers/promotionalVideo.handler";
 import { SponsoredFbtHandler } from "./handlers/sponsoredFbt.handler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProduct.handler";
@@ -10,6 +9,7 @@ import { SponsoredProductListHandler } from "./handlers/sponsoredProductList.han
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelf.handler";
 import { SponsorshipHandler } from "./handlers/sponsorship.handler";
 import { UniversalToggleHandler } from "./handlers/universalToggle.handler";
+import { DarkModeStorageAdapter } from "./storageRetrievers/darkMode.storage.handler";
 import { LanguageStorageAdapter } from "./storageRetrievers/Language.storage.handler";
 import { ProductAdVisibilityStorageAdapter } from "./storageRetrievers/ProductAdVisibility.storage.handler";
 import { SponsorshipVisibilityStorageAdapter } from "./storageRetrievers/SponsorshipVisibility.storage.handler";
@@ -33,7 +33,10 @@ function loadStorage() {
   const videoAdVisibilityStorageAdapter = new VideoAdVisibilityStorageAdapter();
   const sponsorshipVisibilityStorageAdapter =
     new SponsorshipVisibilityStorageAdapter();
+  const darkModeStorageAdapter = new DarkModeStorageAdapter();
   const languageStorageAdapter = new LanguageStorageAdapter();
+
+  state.language = languageStorageAdapter.getValue();
 
   const hideProductAds = productAdVisibilityStorageAdapter.getValue();
   if (hideProductAds === null) {
@@ -53,16 +56,23 @@ function loadStorage() {
 
   const hideSponsorships = sponsorshipVisibilityStorageAdapter.getValue();
   if (hideSponsorships === null) {
-    videoAdVisibilityStorageAdapter.setValue(false);
+    sponsorshipVisibilityStorageAdapter.setValue(false);
     state.hideSponsorships = false;
   } else {
     state.hideSponsorships = hideSponsorships;
   }
 
+  const darkMode = darkModeStorageAdapter.getValue();
+  if (darkMode === null) {
+    darkModeStorageAdapter.setValue(false);
+    state.darkMode = false;
+  } else {
+    state.darkMode = darkMode;
+  }
+
   state.language = languageStorageAdapter.getValue();
 }
 
-// Load storage immediately before initializing handlers
 loadStorage();
 
 const sponsoredShelfHandler = new SponsoredShelfHandler(state);
@@ -71,12 +81,10 @@ const sponsoredProductHandler = new SponsoredProductHandler(state);
 const sponsoredProductListHandler = new SponsoredProductListHandler(state);
 const sponsoredFbtHandler = new SponsoredFbtHandler(state);
 const sponsorshipHandler = new SponsorshipHandler(state);
-const darkModeHandler = new DarkModeHandler(state);
 const priceCheckerIndicator = new PriceCheckerIndicator(state);
 const correctFinalPrice = new CorrectFinalPrice(state);
 const universalToggleHandler = new UniversalToggleHandler(
   state,
-  darkModeHandler,
   promotionalVideoHandler,
   sponsorshipHandler
 );
