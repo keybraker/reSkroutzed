@@ -1,84 +1,110 @@
-export type LowestPriceData = {
-  lowestProductPrice: number;
-  lowestShippingCost: number;
-  lowestTotalPrice: number;
+import { ProductData } from "./types";
+
+type PriceData = {
+  price: number;
+  shippingCost: number;
+  totalPrice: number;
   shopId: number;
 };
 
-function getSKU(): string | null {
+export type ProductPriceData = {
+  buyThroughSkroutz: PriceData;
+  buyThroughStore: PriceData;
+};
+
+function getSku(): string {
   const metaTag = document.querySelector(
     'meta[itemprop="sku"]'
   ) as HTMLMetaElement | null;
-  return metaTag ? metaTag.content : null;
+
+  if (!metaTag) {
+    throw new Error("Failed to fetch product SKU");
+  }
+
+  return metaTag.content;
 }
 
-export async function marketDataReceiver(): Promise<
-  LowestPriceData | undefined
-> {
-  try {
-    const productCode = getSKU();
-    if (!productCode) {
-      throw new Error("Failed to fetch product SKU");
+async function getProductData(productCode: string): Promise<ProductData> {
+  const response = await fetch(
+    `https://www.skroutz.gr/s/${productCode}/filter_products.json`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
+  );
 
-    const response = await fetch(
-      `https://www.skroutz.gr/s/${productCode}/filter_products.json`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch (HTTP: ${response.status}) price data for product with SKU ${productCode}`
     );
+  }
 
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch (HTTP: ${response.status}) price data for product with SKU ${productCode}`
-      );
+  return (await response.json()) as ProductData;
+}
+
+function getSkroutzPriceData(productData: ProductData): PriceData {
+  const productCards = productData.product_cards;
+
+  const sponsoredProductCardId = productData.sponsored_product_card_ids[0];
+  const sponsoredProductCard = Object.values(productCards).find(
+    (card) => card.id === sponsoredProductCardId
+  );
+  if (!sponsoredProductCard) {
+    throw new Error("Sponsored product card not found");
+  }
+
+  return {
+    price: sponsoredProductCard.raw_price,
+    shippingCost: sponsoredProductCard.shipping_cost,
+    totalPrice:
+      sponsoredProductCard.raw_price + sponsoredProductCard.shipping_cost,
+    shopId: sponsoredProductCard.shop_id,
+  };
+}
+
+function getStorePriceData(productData: ProductData): PriceData {
+  const productCards = productData.product_cards;
+
+  let lowestStorePrice = Number.MAX_VALUE;
+  let lowestStoreProductPrice = Number.MAX_VALUE;
+  let lowestStoreShippingCost = Number.MAX_VALUE;
+  let storeShopId = 0;
+
+  Object.values(productCards).forEach((card) => {
+    card.raw_price =
+      card.ecommerce_final_price !== 0
+        ? card.ecommerce_final_price
+        : card.raw_price;
+    const totalCost = card.raw_price + card.shipping_cost;
+    if (totalCost < lowestStorePrice) {
+      lowestStorePrice = totalCost;
+      lowestStoreProductPrice = card.raw_price;
+      lowestStoreShippingCost = card.shipping_cost;
+      storeShopId = card.shop_id;
     }
+  });
 
-    const responseJSON = await response.json();
-    const productCards = responseJSON.product_cards as {
-      raw_price: number;
-      ecommerce_final_price: number | 0;
-      shop_id: number;
-      shipping_cost: number;
-      final_price_formatted?: string;
-      price: number;
-    }[];
-    console.log(responseJSON);
-    let shopId = 0;
-    let lowestPrice = Number.MAX_VALUE;
-    let lowestProductPrice = Number.MAX_VALUE;
-    let lowestShippingCost = Number.MAX_VALUE;
+  return {
+    price: lowestStoreProductPrice,
+    shippingCost: lowestStoreShippingCost,
+    totalPrice: lowestStorePrice,
+    shopId: storeShopId,
+  };
+}
 
-    Object.values(productCards).forEach((card) => {
-      card.raw_price =
-        card.ecommerce_final_price !== 0
-          ? card.ecommerce_final_price
-          : card.raw_price;
-      const totalCost = card.raw_price + card.shipping_cost;
-      if (totalCost < lowestPrice) {
-        lowestPrice = totalCost;
-        lowestProductPrice = card.raw_price;
-        lowestShippingCost = card.shipping_cost;
-
-        shopId = card.shop_id;
-      }
-    });
-
-    if (lowestPrice === Number.MAX_VALUE) {
-      throw new Error("No available products found");
-    }
+export async function marketDataReceiver(): Promise<ProductPriceData> {
+  try {
+    const productCode = getSku();
+    const productData = await getProductData(productCode);
 
     return {
-      lowestProductPrice,
-      lowestShippingCost,
-      lowestTotalPrice: lowestPrice,
-      shopId,
+      buyThroughSkroutz: getSkroutzPriceData(productData),
+      buyThroughStore: getStorePriceData(productData),
     };
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
-    return undefined;
+    throw error;
   }
 }
