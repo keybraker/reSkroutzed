@@ -239,13 +239,13 @@ text-black {
 
 .reskroutzed-tag {
   position: absolute !important;
-  top: -12px !important;
-  right: 12px !important;
+  top: -20px !important;
+  right: 20px !important;
   padding: 4px 12px !important;
   color: #000000 !important;
-  background-color: #ffffff !important;
-  border: 2px solid rgba(124, 124, 124, 0.1) !important;
-  border-radius: 12px !important;
+  background-color: rgb(233, 233, 233) !important;
+  border: 2px solid rgb(255, 255, 255) !important;
+  border-radius: 24px !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   letter-spacing: 0.5px !important;
@@ -260,8 +260,7 @@ text-black {
 }
 
 .reskroutzed-tag:hover {
-  background-color: rgb(255, 171, 92) !important;
-  border: 2px solid rgb(255, 115, 0) !important;
+  background-color: rgb(255, 209, 169) !important;
 }
 
 .reskroutzed-tag img {
@@ -272,12 +271,12 @@ text-black {
 
 .dark-mode .reskroutzed-tag {
   color: #ffffff !important;
-  background-color: rgb(46, 45, 44) !important;
+  background-color: rgb(128, 125, 122) !important;
+  border: 2px solid rgb(71, 71, 71) !important;
 }
 
 .dark-mode .reskroutzed-tag:hover {
-  background-color: rgb(255, 171, 92) !important;
-  border: 2px solid rgb(255, 115, 0) !important;
+  background-color: rgb(194, 159, 129) !important;
 }
 
 .bold-text {

@@ -181,7 +181,10 @@ class PriceComparisonBreakdownComponent {
       "div",
       "breakdown-label"
     );
-    storeLabel.textContent = getLabel("Store", "Κατάστημα");
+    storeLabel.textContent = getLabel(
+      "Buy through Store",
+      "Αγορά από το κατάστημα"
+    );
 
     const storeValue = UIFactory.createElementWithClass<HTMLDivElement>(
       "div",
