@@ -24,7 +24,7 @@ export class SponsorshipHandler {
       element.classList.add("flagged-sponsorship", "flagged-product");
 
       // Increment the sponsored count in the state
-      this.state.sponsoredCount++;
+      this.state.productAdCount++;
 
       // Find shop-promoter span and flag it if not already flagged
       const shopPromoterSpan = element.querySelector(
@@ -47,8 +47,11 @@ export class SponsorshipHandler {
   }
 
   public toggleSponsorship(): void {
-    this.state.visible = !this.state.visible;
-    localStorage.setItem("ssf-sponsored-visibility", `${this.state.visible}`);
+    this.state.hideProductAds = !this.state.hideProductAds;
+    localStorage.setItem(
+      "reSkroutzed-sponsored-visibility",
+      `${this.state.hideProductAds}`
+    );
 
     document
       .querySelectorAll("div#sponsorship.flagged-sponsorship")

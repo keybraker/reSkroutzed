@@ -19,7 +19,7 @@ export class SponsoredFbtHandler {
       const sponsoredSpan = this.getSponsoredSpan(div);
 
       if (sponsoredSpan) {
-        this.state.sponsoredCount++;
+        this.state.productAdCount++;
         this.flagSponsoredSpan(sponsoredSpan);
         this.flagSponsoredDiv(div);
       }

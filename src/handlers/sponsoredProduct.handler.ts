@@ -25,7 +25,7 @@ export class SponsoredProductHandler {
       ?.forEach((listItem) => {
         flagProductListItem(listItem);
         updateSponsoredTextSingle(listItem, this.state.language);
-        this.state.sponsoredCount++;
+        this.state.productAdCount++;
         toggleVisibility(listItem, this.state);
       });
 
@@ -46,7 +46,7 @@ export class SponsoredProductHandler {
       const parentElement = this.findParentToFlag(element);
       if (parentElement) {
         flagProductListItem(parentElement);
-        this.state.sponsoredCount++;
+        this.state.productAdCount++;
         toggleVisibility(parentElement, this.state);
       }
     });
@@ -68,10 +68,10 @@ export class SponsoredProductHandler {
           }
 
           // Increment counter
-          this.state.sponsoredCount++;
+          this.state.productAdCount++;
 
           // Toggle visibility based on user preference
-          if (!this.state.visible) {
+          if (!this.state.hideProductAds) {
             card.classList.add("display-none");
           } else {
             card.classList.remove("display-none");
@@ -94,7 +94,7 @@ export class SponsoredProductHandler {
       flaggedProductDivs?.length === 0 &&
       flaggedCardElements?.length === 0
     ) {
-      this.state.sponsoredCount = 0;
+      this.state.productAdCount = 0;
     }
   }
 

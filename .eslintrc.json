@@ -31,9 +31,20 @@
         "semi": [
             "error",
             "always"
+        ],
+        "max-len": [
+            "error",
+            {
+                "code": 120,
+                "tabWidth": 4,
+                "ignoreComments": true,
+                "ignoreUrls": true,
+                "ignoreStrings": true,
+                "ignoreTemplateLiterals": true
+            }
         ]
     },
     "globals": {
         "chrome": "readonly"
-    }    
+    }
 }

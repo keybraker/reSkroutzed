@@ -3,7 +3,7 @@ import { State } from "../types/State.type";
 
 export class DarkModeHandler {
   private state: State;
-  private darkModeKey = "ssf-dark-mode";
+  private darkModeKey = "reSkroutzed-dark-mode";
 
   constructor(state: State) {
     this.state = state;

@@ -28,12 +28,12 @@ export class SponsoredShelfHandler {
     const flaggedShelf = document.querySelectorAll("h4.flagged-shelf");
 
     if (flaggedShelf?.length === 0) {
-      this.state.sponsoredShelfCount = 0;
+      this.state.ShelfAdCount = 0;
     }
   }
 
   private updateShelfCountAndVisibility(h4Element: Element): void {
-    this.state.sponsoredShelfCount++;
+    this.state.ShelfAdCount++;
 
     h4Element.classList.add("sponsored-label");
     updateSponsoredTextPlural(h4Element, this.state.language);
@@ -52,7 +52,7 @@ export class SponsoredShelfHandler {
 
       if (sponsoredItems) {
         [...sponsoredItems]?.forEach((element) => {
-          this.state.sponsoredCount++;
+          this.state.productAdCount++;
           flagProductListItem(element);
           updateSponsoredTextSingle(element, this.state.language);
         });

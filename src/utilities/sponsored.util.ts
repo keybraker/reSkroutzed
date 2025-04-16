@@ -2,7 +2,7 @@ import { Language } from "../enums/Language.enum";
 import { State } from "../types/State.type";
 
 export function toggleVisibility(element: Element, state: State) {
-  state.visible
+  state.hideProductAds
     ? element.classList.remove("display-none")
     : element.classList.add("display-none");
 }

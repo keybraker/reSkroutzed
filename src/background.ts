@@ -1,5 +1,4 @@
 import { toggleContentVisibility } from "./actions/visibility.action";
-import { BlockIndicator } from "./decorators/BlockIndicator.decorator";
 import { CorrectFinalPrice } from "./decorators/CorrectFinalPrice.decorator";
 import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator.decorator";
 import { Language } from "./enums/Language.enum";
@@ -11,22 +10,60 @@ import { SponsoredProductListHandler } from "./handlers/sponsoredProductList.han
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelf.handler";
 import { SponsorshipHandler } from "./handlers/sponsorship.handler";
 import { UniversalToggleHandler } from "./handlers/universalToggle.handler";
-import { retrieveLanguage } from "./retrievers/language.retriever";
-import {
-  retrieveVisibility,
-  retrieveVideoVisibility,
-} from "./retrievers/visibility.retriever";
+import { LanguageStorageAdapter } from "./storageRetrievers/Language.storage.handler";
+import { ProductAdVisibilityStorageAdapter } from "./storageRetrievers/ProductAdVisibility.storage.handler";
+import { SponsorshipVisibilityStorageAdapter } from "./storageRetrievers/SponsorshipVisibility.storage.handler";
+import { VideoAdVisibilityStorageAdapter } from "./storageRetrievers/VideoAdVisibility.storage.handler";
 import { State } from "./types/State.type";
 
 const state: State = {
-  visible: true,
-  language: Language.ENGLISH,
-  sponsoredCount: 0,
-  sponsoredShelfCount: 0,
-  videoCount: 0,
-  videoVisible: true,
+  hideProductAds: false,
+  hideVideoAds: false,
+  hideSponsorships: false,
+  language: Language.GREEK,
+  productAdCount: 0,
+  ShelfAdCount: 0,
+  videoAdCount: 0,
   darkMode: false,
 };
+
+function loadStorage() {
+  const productAdVisibilityStorageAdapter =
+    new ProductAdVisibilityStorageAdapter();
+  const videoAdVisibilityStorageAdapter = new VideoAdVisibilityStorageAdapter();
+  const sponsorshipVisibilityStorageAdapter =
+    new SponsorshipVisibilityStorageAdapter();
+  const languageStorageAdapter = new LanguageStorageAdapter();
+
+  const hideProductAds = productAdVisibilityStorageAdapter.getValue();
+  if (hideProductAds === null) {
+    productAdVisibilityStorageAdapter.setValue(false);
+    state.hideProductAds = false;
+  } else {
+    state.hideProductAds = hideProductAds;
+  }
+
+  const hideVideoAds = videoAdVisibilityStorageAdapter.getValue();
+  if (hideVideoAds === null) {
+    videoAdVisibilityStorageAdapter.setValue(false);
+    state.hideVideoAds = false;
+  } else {
+    state.hideVideoAds = hideVideoAds;
+  }
+
+  const hideSponsorships = sponsorshipVisibilityStorageAdapter.getValue();
+  if (hideSponsorships === null) {
+    videoAdVisibilityStorageAdapter.setValue(false);
+    state.hideSponsorships = false;
+  } else {
+    state.hideSponsorships = hideSponsorships;
+  }
+
+  state.language = languageStorageAdapter.getValue();
+}
+
+// Load storage immediately before initializing handlers
+loadStorage();
 
 const sponsoredShelfHandler = new SponsoredShelfHandler(state);
 const promotionalVideoHandler = new PromotionalVideoHandler(state);
@@ -35,30 +72,24 @@ const sponsoredProductListHandler = new SponsoredProductListHandler(state);
 const sponsoredFbtHandler = new SponsoredFbtHandler(state);
 const sponsorshipHandler = new SponsorshipHandler(state);
 const darkModeHandler = new DarkModeHandler(state);
-
-const blockIndicator = new BlockIndicator(state);
-const btsIndicator = new PriceCheckerIndicator(state);
+const priceCheckerIndicator = new PriceCheckerIndicator(state);
 const correctFinalPrice = new CorrectFinalPrice(state);
 const universalToggleHandler = new UniversalToggleHandler(
   state,
   darkModeHandler,
   promotionalVideoHandler,
-  blockIndicator,
   sponsorshipHandler
 );
 
 (function () {
   async function initializer() {
-    state.visible = retrieveVisibility();
-    state.videoVisible = retrieveVideoVisibility();
-    state.language = retrieveLanguage();
-
+    await priceCheckerIndicator.start();
     document.body.appendChild(universalToggleHandler.createUniversalToggle());
 
     flagContent();
-    await flagAdditionalContent();
+    toggleContentVisibility(state);
 
-    blockIndicator.addOrUpdate();
+    await correctFinalPrice.start();
   }
 
   function flagContent() {
@@ -70,29 +101,10 @@ const universalToggleHandler = new UniversalToggleHandler(
     sponsorshipHandler.flag();
   }
 
-  async function flagAdditionalContent() {
-    toggleContentVisibility(state);
-    await btsIndicator.start();
-    await correctFinalPrice.start();
-  }
-
   function observeMutations() {
     const observer1 = new MutationObserver(() => flagContent());
-    const observer2 = new MutationObserver(
-      (mutationsList: MutationRecord[]) => {
-        for (const mutation of mutationsList) {
-          if (
-            mutation.type === "attributes" &&
-            mutation.attributeName === "id"
-          ) {
-            blockIndicator.addOrUpdate();
-          }
-        }
-      }
-    );
 
     observer1.observe(document.body, { childList: true, subtree: true });
-    observer2.observe(document.body, { attributes: true });
   }
 
   window.onload = async function () {
@@ -113,9 +125,9 @@ chrome.runtime.onMessage.addListener(
   ) => {
     if (request.action === "getCount") {
       sendResponse({
-        sponsoredCount: state.sponsoredCount,
-        sponsoredShelfCount: state.sponsoredShelfCount,
-        videoCount: state.videoCount,
+        sponsoredCount: state.productAdCount,
+        sponsoredShelfCount: state.ShelfAdCount,
+        videoCount: state.videoAdCount,
       });
     }
   }

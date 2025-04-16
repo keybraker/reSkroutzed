@@ -16,6 +16,12 @@
     "markdown",
     "latex",
     "plaintext",
-    "css"
-  ]
+    "css",
+    "Log"
+  ],
+  "spellright.parserByClass": {
+    "Log": {
+      "parser": "plain"
+    }
+  }
 }

@@ -8,61 +8,55 @@ export class PromotionalVideoHandler {
   }
 
   public flag(): void {
-    // Reset count first
-    this.state.videoCount = 0;
+    this.state.videoAdCount = 0;
 
-    // Count all previously flagged video elements of all types
     const allFlaggedVideoElements = document.querySelectorAll(
       "li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video"
     );
-    this.state.videoCount = allFlaggedVideoElements?.length ?? 0;
+    this.state.videoAdCount = allFlaggedVideoElements?.length ?? 0;
 
-    // Target regular video elements
     const liElements = document.querySelectorAll("li:not(.flagged-video)");
     liElements?.forEach((element) =>
       this.updateVideoCountAndVisibility(element)
     );
 
-    // Target the listing-reels-shelf elements (video reels)
     const reelsShelfElements = document.querySelectorAll(
       ".listing-reels-shelf:not(.flagged-video)"
     );
     reelsShelfElements?.forEach((element) => {
-      this.state.videoCount++;
+      this.state.videoAdCount++;
       element.classList.add("flagged-video", "promo-video-card");
 
       if (this.state) {
-        this.state.videoVisible
+        this.state.hideVideoAds
           ? element.classList.remove("display-none-promo-product")
           : element.classList.add("display-none-promo-product");
       }
     });
 
-    // Target standalone video-promo elements (YouTube embedded ads)
     const videoPromoElements = document.querySelectorAll(
       ".video-promo:not(.flagged-video)"
     );
     videoPromoElements?.forEach((element) => {
-      this.state.videoCount++;
+      this.state.videoAdCount++;
       element.classList.add("flagged-video", "promo-video-card");
 
       if (this.state) {
-        this.state.videoVisible
+        this.state.hideVideoAds
           ? element.classList.remove("display-none-promo-product")
           : element.classList.add("display-none-promo-product");
       }
     });
 
-    // Target tl-reels elements (TikTok-like reels)
     const tlReelsElements = document.querySelectorAll(
       ".tl-reels:not(.flagged-video)"
     );
     tlReelsElements?.forEach((element) => {
-      this.state.videoCount++;
+      this.state.videoAdCount++;
       element.classList.add("flagged-video", "promo-video-card");
 
       if (this.state) {
-        this.state.videoVisible
+        this.state.hideVideoAds
           ? element.classList.remove("display-none-promo-product")
           : element.classList.add("display-none-promo-product");
       }
@@ -75,12 +69,12 @@ export class PromotionalVideoHandler {
       liElement?.classList.contains("video-promo") ||
       liElement?.classList.contains("tl-reels")
     ) {
-      this.state.videoCount++;
+      this.state.videoAdCount++;
 
       liElement.classList.add("flagged-video");
 
       if (this.state) {
-        this.state.videoVisible
+        this.state.hideVideoAds
           ? liElement.classList.remove("display-none-promo-product")
           : liElement.classList.add("display-none-promo-product");
       }
@@ -95,10 +89,10 @@ export class PromotionalVideoHandler {
     this.updateVideoButtonText(videoButtonToggle);
 
     videoButtonToggle.addEventListener("click", () => {
-      this.state.videoVisible = !this.state.videoVisible;
+      this.state.hideVideoAds = !this.state.hideVideoAds;
       localStorage.setItem(
-        "ssf-video-visibility",
-        `${this.state.videoVisible}`
+        "reSkroutzed-video-visibility",
+        `${this.state.hideVideoAds}`
       );
       this.updateVideoButtonText(videoButtonToggle);
       this.toggleVideoVisibility();
@@ -123,7 +117,7 @@ export class PromotionalVideoHandler {
     eyeOpenSvg.setAttribute("height", "16");
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
-    if (this.state.videoVisible) {
+    if (this.state.hideVideoAds) {
       path.setAttribute(
         "d",
         "M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
@@ -147,17 +141,16 @@ export class PromotionalVideoHandler {
     videoButtonToggle.appendChild(gap);
 
     const countSpan = document.createElement("span");
-    countSpan.textContent = `${text} (${this.state.videoCount})`;
+    countSpan.textContent = `${text} (${this.state.videoAdCount})`;
     videoButtonToggle.appendChild(countSpan);
   }
 
   public toggleVideoVisibility(): void {
-    // Handle all elements with flagged-video class including standalone video promos
     const videoElements = document.querySelectorAll(
       "li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video"
     );
     videoElements?.forEach((element) => {
-      this.state.videoVisible
+      this.state.hideVideoAds
         ? element.classList.remove("display-none-promo-product")
         : element.classList.add("display-none-promo-product");
     });
