@@ -302,24 +302,118 @@ export class PriceCheckerIndicator {
   private btsPrice: number | undefined = undefined;
   private btsShippingCost: number | undefined = undefined;
   private lowestPriceData: LowestPriceData | undefined = undefined;
+  private observer: MutationObserver | null = null;
+  private isInitializing: boolean = false;
+  private lastProductId: string | null = null;
 
   constructor(state: State) {
     this.state = state;
   }
 
   public async start() {
+    await this.initializeProductView();
+    this.setupNavigationHandlers();
+  }
+
+  private setupNavigationHandlers() {
+    window.addEventListener("popstate", this.handleNavigation.bind(this));
+
+    this.setupProductViewObserver();
+  }
+
+  private async handleNavigation() {
+    await this.initializeProductView();
+  }
+
+  private setupProductViewObserver() {
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
+
+    this.observer = new MutationObserver((mutations) => {
+      if (this.isInitializing) return;
+
+      for (const mutation of mutations) {
+        if (mutation.type === "childList") {
+          this.checkForProductViewChange();
+        }
+      }
+    });
+
+    this.observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  private checkForProductViewChange() {
     const offeringCard = document.querySelector("article.offering-card");
-    if (!offeringCard) {
+    if (!offeringCard) return;
+
+    const currentProductId = this.getProductId();
+
+    if (currentProductId && currentProductId !== this.lastProductId) {
+      this.lastProductId = currentProductId;
+      this.initializeProductView();
+    }
+  }
+
+  private getProductId(): string | null {
+    const urlMatch = window.location.pathname.match(/\/p\/(\d+)/);
+    if (urlMatch && urlMatch[1]) {
+      return urlMatch[1];
+    }
+
+    const productElement = document.querySelector("[data-product-id]");
+    if (productElement) {
+      return productElement.getAttribute("data-product-id");
+    }
+
+    return window.location.href;
+  }
+
+  private async initializeProductView() {
+    // Prevent concurrent initializations
+    if (this.isInitializing) {
       return;
     }
 
-    await this.fetchData();
-    if (!this.isDataComplete()) {
-      return;
-    }
+    try {
+      this.isInitializing = true;
 
-    this.adjustSiteData(offeringCard);
-    this.insertPriceCheckerIndication(offeringCard);
+      const offeringCard = document.querySelector("article.offering-card");
+      if (!offeringCard) {
+        this.isInitializing = false;
+        return;
+      }
+
+      this.cleanup();
+
+      await this.fetchData();
+
+      if (!this.isDataComplete()) {
+        this.isInitializing = false;
+        return;
+      }
+
+      this.adjustSiteData(offeringCard);
+      this.insertPriceCheckerIndication(offeringCard);
+    } finally {
+      this.isInitializing = false;
+    }
+  }
+
+  private cleanup() {
+    const existingIndicators = document.querySelectorAll(
+      ".price-checker-outline"
+    );
+    const existingShippingTexts = document.querySelectorAll(
+      ".shipping-cost-text"
+    );
+
+    existingIndicators.forEach((element) => element.remove());
+    existingShippingTexts.forEach((element) => element.remove());
   }
 
   private async fetchData() {
