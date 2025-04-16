@@ -296,7 +296,6 @@ class ShopButtonComponent {
   }
 }
 
-// Main class
 export class PriceCheckerIndicator {
   private state: State;
   private btsPrice: number | undefined = undefined;
@@ -374,7 +373,6 @@ export class PriceCheckerIndicator {
   }
 
   private async initializeProductView() {
-    // Prevent concurrent initializations
     if (this.isInitializing) {
       return;
     }
@@ -445,7 +443,6 @@ export class PriceCheckerIndicator {
       this.state.language === Language.ENGLISH ? "shipping" : "μεταφορικά"
     })`;
 
-    // Insert after price element instead of before shopLink
     price.insertAdjacentElement("afterend", shippingText);
   }
 
@@ -455,14 +452,12 @@ export class PriceCheckerIndicator {
   }
 
   private createPriceIndicationElement(): HTMLDivElement {
-    // Create price data object for calculations
     const priceData = new PriceData(
       this.btsPrice!,
       this.btsShippingCost!,
       this.lowestPriceData!
     );
 
-    // Create main container
     const priceIndication = UIFactory.createElementWithClass<HTMLDivElement>(
       "div",
       [
@@ -472,7 +467,6 @@ export class PriceCheckerIndicator {
       ]
     );
 
-    // Create the "by reSkroutzed" tag with logo
     const reSkroutzedTag = UIFactory.createElementWithClass<HTMLDivElement>(
       "div",
       "reskroutzed-tag"
@@ -488,27 +482,21 @@ export class PriceCheckerIndicator {
     reSkroutzedTag.appendChild(document.createTextNode("By ReSkroutzed"));
     reSkroutzedTag.appendChild(logoImg);
 
-    // Make the tag clickable with cursor pointer
     reSkroutzedTag.style.cursor = "pointer";
 
-    // Add click event to open the appropriate store page based on browser
     reSkroutzedTag.addEventListener("click", () => {
-      // Detect if browser is Firefox
       const isFirefox =
         navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
 
-      // Set the URL based on the browser
       const storeUrl = isFirefox
         ? "https://addons.mozilla.org/en-US/firefox/addon/reskroutzed/reviews/"
         : "https://chromewebstore.google.com/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl";
 
-      // Open the URL in a new tab
       window.open(storeUrl, "_blank");
     });
 
     priceIndication.appendChild(reSkroutzedTag);
 
-    // Create content container
     const contentContainer = UIFactory.createElementWithClass<HTMLDivElement>(
       "div",
       "inline-flex-col"
@@ -543,7 +531,6 @@ export class PriceCheckerIndicator {
 
     contentContainer.appendChild(priceCalculationContainer);
 
-    // Add calculation component if available
     const calculationContainer = CalculationComponent.create(
       priceData,
       this.state.language
@@ -552,7 +539,6 @@ export class PriceCheckerIndicator {
       contentContainer.appendChild(calculationContainer);
     }
 
-    // Add transportation breakdown
     const transportationBreakdown = PriceComparisonBreakdownComponent.create(
       priceData,
       this.state.language
@@ -561,7 +547,6 @@ export class PriceCheckerIndicator {
 
     contentContainer.appendChild(infoContainer);
 
-    // Add action button
     const goToStoreButton = ShopButtonComponent.create(
       priceData,
       this.state.language,
@@ -571,8 +556,6 @@ export class PriceCheckerIndicator {
 
     contentContainer.appendChild(actionContainer);
 
-    // Set title with BTS price info
-    // const shippingCostFormatted = priceData.btsShippingCost.toFixed(2);
     priceIndication.title =
       this.state.language === Language.ENGLISH
         ? "Delivered to you by reSkroutzed"

@@ -1,21 +1,16 @@
 function priceElementToNumber(element: Element) {
-    let priceValue = "";
+    const rawTextContent = element.childNodes[0]?.textContent || "";
 
-    const leftPart = element.querySelector("span.comma");
-    if (!leftPart?.previousSibling) {
+    const commaElement = element.querySelector("span.comma");
+    const decimalElement = element.querySelector("span.comma + span");
+
+    if (!commaElement || !decimalElement) {
         return undefined;
     }
 
-    const integerPart = leftPart.previousSibling.textContent;
-    priceValue = `${priceValue}${integerPart}`;
-
-    const rightPart = element.querySelector("span.comma + span");
-    if (!rightPart) {
-        return undefined;
-    }
-
-    const decimalPart = rightPart.textContent;
-    priceValue = `${priceValue}.${decimalPart}`;
+    const decimalPart = decimalElement.textContent || "";
+    const integerPart = rawTextContent.replace(/\./g, "");
+    const priceValue = `${integerPart}.${decimalPart}`;
 
     return parseFloat(priceValue);
 }
