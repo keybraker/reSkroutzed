@@ -406,7 +406,6 @@ text-black {
 .dark-mode .transportation-breakdown {
   color: #b0b0b0 !important;
   background-color: rgba(255, 255, 255, 0.05) !important;
-  border-left: 3px solid #58a054 !important;
 }
 
 .lowest-price-store-highlight {
@@ -535,12 +534,6 @@ text-black {
   vertical-align: middle !important;
 }
 
-.sponsored-label svg,
-.info-label-positive svg,
-.info-label-negative svg {
-  vertical-align: middle !important;
-}
-
 .info-label-positive img,
 .info-label-negative img {
   width: 26px !important;
@@ -576,11 +569,16 @@ text-black {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--color-text-neutral-strong);
+  color: black !important;
   gap: 6px;
   font-size: 16px;
   font-weight: 600 !important;
   padding-left: 8px;
+}
+
+/* Add dark mode override for shipping cost */
+.dark-mode .shipping-cost {
+  color: white !important;
 }
 
 /* Badge styling */

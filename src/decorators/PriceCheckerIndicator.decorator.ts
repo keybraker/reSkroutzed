@@ -75,9 +75,17 @@ class PriceData {
   }
 }
 
-// UI Components
 class PriceDisplayComponent {
-  static create(price: number, language: Language): HTMLDivElement {
+  static create(
+    price: number,
+    shippingCost: number,
+    language: Language
+  ): HTMLDivElement {
+    const container = UIFactory.createElementWithClass<HTMLDivElement>(
+      "div",
+      "price-display-wrapper"
+    );
+
     const priceElement = UIFactory.createElementWithClass<HTMLDivElement>(
       "div",
       "price-indicator-price"
@@ -108,7 +116,19 @@ class PriceDisplayComponent {
     currencySymbol.textContent = "€";
     priceElement.appendChild(currencySymbol);
 
-    return priceElement;
+    container.appendChild(priceElement);
+
+    const shippingText = UIFactory.createElementWithClass<HTMLDivElement>(
+      "div",
+      "shipping-cost-text"
+    );
+    const formattedShipping = shippingCost.toFixed(2).replace(".", ",");
+    shippingText.textContent = `(+${formattedShipping}€ ${
+      language === Language.ENGLISH ? "shipping" : "μεταφορικά"
+    })`;
+    container.appendChild(shippingText);
+
+    return container;
   }
 }
 
@@ -288,6 +308,7 @@ export class PriceCheckerIndicator {
       return;
     }
 
+    this.adjustSiteData(offeringCard);
     this.insertPriceCheckerIndication(offeringCard);
   }
 
@@ -303,6 +324,29 @@ export class PriceCheckerIndicator {
       this.btsPrice !== undefined &&
       this.btsShippingCost !== undefined
     );
+  }
+
+  private adjustSiteData(element: Element): void {
+    const offeringHeading = element.querySelector("div.offering-heading");
+    const price = offeringHeading?.querySelector("div.price");
+    const shopLink = offeringHeading?.querySelector("a");
+
+    if (!offeringHeading || !price || !shopLink) {
+      return;
+    }
+
+    const shippingText = UIFactory.createElementWithClass<HTMLDivElement>(
+      "div",
+      "shipping-cost-text"
+    );
+    const formattedShipping = (this.btsShippingCost ?? 0)
+      .toFixed(2)
+      .replace(".", ",");
+    shippingText.textContent = `(+${formattedShipping}€ ${
+      this.state.language === Language.ENGLISH ? "shipping" : "μεταφορικά"
+    })`;
+
+    offeringHeading.insertBefore(shippingText, shopLink);
   }
 
   private insertPriceCheckerIndication(element: Element): void {
@@ -367,6 +411,7 @@ export class PriceCheckerIndicator {
 
     const priceDisplay = PriceDisplayComponent.create(
       priceData.lowestProductPrice,
+      priceData.lowestShippingCost,
       this.state.language
     );
     priceCalculationContainer.appendChild(priceDisplay);
