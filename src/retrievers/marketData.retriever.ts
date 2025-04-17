@@ -46,20 +46,26 @@ async function getProductData(productCode: string): Promise<ProductData> {
 
 function getSkroutzPriceData(productData: ProductData): PriceData {
   const productCards = productData.product_cards;
+  let lowestPrice = Number.MAX_VALUE;
+  let lowestPriceCard = null;
 
-  const sponsoredProductCard = Object.values(productCards).find((card) =>
-    productData.sponsored_product_card_ids.includes(card.id)
-  );
-  if (!sponsoredProductCard) {
-    throw new Error("Sponsored product card not found");
+  for (const cardId of productData.sponsored_product_card_ids) {
+    const card = productCards[cardId];
+    if (card && card.raw_price < lowestPrice) {
+      lowestPrice = card.raw_price;
+      lowestPriceCard = card;
+    }
+  }
+
+  if (!lowestPriceCard) {
+    throw new Error("No sponsored product cards found");
   }
 
   return {
-    price: sponsoredProductCard.raw_price,
-    shippingCost: sponsoredProductCard.shipping_cost,
-    totalPrice:
-      sponsoredProductCard.raw_price + sponsoredProductCard.shipping_cost,
-    shopId: sponsoredProductCard.shop_id,
+    price: lowestPriceCard.raw_price,
+    shippingCost: lowestPriceCard.shipping_cost,
+    totalPrice: lowestPriceCard.raw_price + lowestPriceCard.shipping_cost,
+    shopId: lowestPriceCard.shop_id,
   };
 }
 

@@ -226,6 +226,12 @@ function createCalculationComponent(
     )}€ <u>${cheaper}</u></strong> (${productPriceData.buyThroughStore.totalPrice.toFixed(
       2
     )}€ - ${productPriceData.buyThroughSkroutz.totalPrice.toFixed(2)}€)`;
+
+    console.log(
+      `${differenceAbsolute} <= ${minimumPriceDifference} = ${
+        differenceAbsolute <= minimumPriceDifference
+      }`
+    );
   } else {
     calculationContainer.classList.add("calculation-negative");
     const moreExpensive =
@@ -235,21 +241,27 @@ function createCalculationComponent(
     )}€ <u>${moreExpensive}</u></strong> (${productPriceData.buyThroughSkroutz.totalPrice.toFixed(
       2
     )}€ - ${productPriceData.buyThroughStore.totalPrice.toFixed(2)}€)`;
+  }
 
-    if (differenceAbsolute > minimumPriceDifference) {
-      const exceedsMinimumText =
-        language === Language.ENGLISH
-          ? `Exceeds minimum selected difference of ${minimumPriceDifference.toFixed(
-              2
-            )}€`
-          : `Υπερβαίνει την ελάχιστη επιλεγμένη διαφορά των ${minimumPriceDifference.toFixed(
-              2
-            )}€`;
-      const exceedsSpan = document.createElement("span");
-      exceedsSpan.classList.add("exceeds-minimum-text");
-      exceedsSpan.textContent = exceedsMinimumText;
-      calculationContainer.appendChild(exceedsSpan);
-    }
+  if (minimumPriceDifference > 0) {
+    const isBelow = differenceAbsolute <= minimumPriceDifference;
+    const message =
+      language === Language.ENGLISH
+        ? `${
+            isBelow ? "Below" : "Exceeds"
+          } the minimum price difference threshold of ${minimumPriceDifference.toFixed(
+            2
+          )}€`
+        : `${
+            isBelow ? "Κάτω από" : "Υπερβαίνει"
+          } την ελάχιστη διαφορά τιμής των ${minimumPriceDifference.toFixed(
+            2
+          )}€`;
+
+    const span = document.createElement("span");
+    span.className = "minimum-price-difference-text";
+    span.textContent = message;
+    calculationContainer.appendChild(span);
   }
 
   return calculationContainer;

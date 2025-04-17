@@ -480,7 +480,7 @@ text-black {
   font-weight: 700 !important;
 }
 
-.exceeds-minimum-text {
+.minimum-price-difference-text {
   font-size: 12px !important;
   color: rgba(0, 0, 0, 0.6) !important;
   display: block !important;
@@ -488,7 +488,7 @@ text-black {
   font-style: italic !important;
 }
 
-.dark-mode .exceeds-minimum-text {
+.dark-mode .minimum-price-difference-text {
   color: rgba(255, 255, 255, 0.6) !important;
 }
 
