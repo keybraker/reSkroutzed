@@ -1,0 +1,41 @@
+{
+  "name": "reSkroutzed",
+  "description": "Enhances Skroutz.gr by flagging sponsored products, price checker, and providing a dark mode toggle",
+  "version": "1.8.1",
+  "manifest_version": 3,
+  "permissions": [],
+  "host_permissions": [
+    "*://www.skroutz.gr/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.skroutz.gr/*"
+      ],
+      "css": [
+        "css/flaggerToggle.css",
+        "css/productFlags.css",
+        "css/shelfFlags.css",
+        "css/style.css",
+        "css/videoFlags.css",
+        "css/darkModeToggle.css",
+        "css/universalToggle.css"
+      ],
+      "js": [
+        "background.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "48": "/assets/icons/48.png",
+      "128": "/assets/icons/128.png"
+    }
+  },
+  "icons": {
+    "48": "/assets/icons/48.png",
+    "128": "/assets/icons/128.png"
+  }
+}
