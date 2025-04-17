@@ -1,6 +1,6 @@
 import { toggleContentVisibility } from "./actions/visibility.action";
-import { CorrectFinalPrice } from "./decorators/CorrectFinalPrice.decorator";
-import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator.decorator";
+import { CorrectFinalPriceDecorator } from "./decorators/CorrectFinalPrice.decorator";
+import { PriceCheckerDecorator } from "./decorators/PriceChecker.decorator";
 import { Language } from "./enums/Language.enum";
 import { DarkModeHandler } from "./handlers/darkMode.handler";
 import { PromotionalVideoHandler } from "./handlers/promotionalVideo.handler";
@@ -96,8 +96,8 @@ const sponsoredProductHandler = new SponsoredProductHandler(state);
 const sponsoredProductListHandler = new SponsoredProductListHandler(state);
 const sponsoredFbtHandler = new SponsoredFbtHandler(state);
 const sponsorshipHandler = new SponsorshipHandler(state);
-const priceCheckerIndicator = new PriceCheckerIndicator(state);
-const correctFinalPrice = new CorrectFinalPrice(state);
+const priceCheckerIndicator = new PriceCheckerDecorator(state);
+const correctFinalPrice = new CorrectFinalPriceDecorator(state);
 const universalToggleHandler = new UniversalToggleHandler(
   state,
   promotionalVideoHandler,

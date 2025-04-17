@@ -1,7 +1,7 @@
 import { Language } from "../enums/Language.enum";
 import { State } from "../types/State.type";
 
-export class CorrectFinalPrice {
+export class CorrectFinalPriceDecorator {
   private state: State;
 
   constructor(state: State) {
@@ -22,30 +22,5 @@ export class CorrectFinalPrice {
           ? " (with cash on delivery)"
           : " (με αντικαταβολή)";
     }
-  }
-
-  private shippingCostFixer() {
-    const priceElement = document.querySelector(".price");
-    if (!priceElement) {
-      return;
-    }
-
-    const articleEm = document.querySelector("article.offering-card");
-    const shippingCostEm = articleEm?.querySelector("em");
-    if (!shippingCostEm) {
-      return;
-    }
-
-    if (!shippingCostEm.parentElement) {
-      return;
-    }
-
-    const parent = shippingCostEm.parentElement.cloneNode(true);
-    if (!(parent instanceof Element)) {
-      return;
-    }
-    // parent.textContent = this.state.language === Language.ENGLISH ? `(shipping cost: ${parent.textContent})` : `(μεταφορικά: ${parent.textContent})`;
-    parent.classList.add("shipping-cost");
-    priceElement.appendChild(parent);
   }
 }

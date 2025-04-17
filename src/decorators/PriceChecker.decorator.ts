@@ -450,7 +450,7 @@ function createPriceIndicationElement(
   return priceIndication;
 }
 
-export class PriceCheckerIndicator {
+export class PriceCheckerDecorator {
   private readonly state: State;
   /* Configuration */
   private observer: MutationObserver | null = null;
