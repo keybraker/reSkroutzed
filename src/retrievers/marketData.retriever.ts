@@ -131,6 +131,7 @@ export async function marketDataReceiver(): Promise<ProductPriceData> {
   try {
     const productCode = getSku();
     const skroutzRawPrice = getSkroutzRawPrice();
+
     const productData = await getProductData(productCode);
 
     return {

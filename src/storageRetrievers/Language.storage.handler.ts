@@ -9,8 +9,16 @@ export class LanguageStorageAdapter
 
     if (languageAttribute === "el") {
       return Language.GREEK;
-    } else {
+    } else if (languageAttribute === "ro") {
+      return Language.ROMANIAN;
+    } else if (languageAttribute === "bg") {
+      return Language.BULGARIAN;
+    } else if (languageAttribute === "de") {
+      return Language.GERMAN;
+    } else if (languageAttribute === "en") {
       return Language.ENGLISH;
     }
+
+    return Language.ENGLISH;
   }
 }
