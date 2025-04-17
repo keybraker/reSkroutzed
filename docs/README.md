@@ -1,8 +1,8 @@
-# ![Alt Text](../src/assets/icons/48.png) ReSkroutzed
+# ![Alt Text](../icons/48.png) ReSkroutzed
 
 ### ReSkroutzed is a browser extension that enhances the shopping experience on [skroutz.gr](https://skroutz.gr).<br>
 
-![Alt Text](../assets/large_promo.png)
+![Alt Text](../imagery/large_promo.png)
 
 ## Why it was made?
 

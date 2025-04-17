@@ -30,13 +30,13 @@
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {
-      "48": "/assets/icons/48.png",
-      "128": "/assets/icons/128.png"
+      "48": "/icons/48.png",
+      "128": "/icons/128.png"
     }
   },
   "icons": {
-    "48": "/assets/icons/48.png",
-    "128": "/assets/icons/128.png"
+    "48": "/icons/48.png",
+    "128": "/icons/128.png"
   },
   "browser_specific_settings": {
     "gecko": {
