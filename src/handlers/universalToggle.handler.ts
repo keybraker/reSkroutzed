@@ -1,6 +1,5 @@
 import { Language } from "../enums/Language.enum";
 import { appendLogoChild } from "../functions/appendLogoChild";
-import { DarkModeStorageAdapter } from "../storageRetrievers/darkMode.storage.handler";
 import { ProductAdVisibilityStorageAdapter } from "../storageRetrievers/ProductAdVisibility.storage.handler";
 import { VideoAdVisibilityStorageAdapter } from "../storageRetrievers/VideoAdVisibility.storage.handler";
 import { State } from "../types/State.type";

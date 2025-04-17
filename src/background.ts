@@ -2,6 +2,7 @@ import { toggleContentVisibility } from "./actions/visibility.action";
 import { CorrectFinalPrice } from "./decorators/CorrectFinalPrice.decorator";
 import { PriceCheckerIndicator } from "./decorators/PriceCheckerIndicator.decorator";
 import { Language } from "./enums/Language.enum";
+import { DarkModeHandler } from "./handlers/darkMode.handler";
 import { PromotionalVideoHandler } from "./handlers/promotionalVideo.handler";
 import { SponsoredFbtHandler } from "./handlers/sponsoredFbt.handler";
 import { SponsoredProductHandler } from "./handlers/sponsoredProduct.handler";
@@ -72,6 +73,7 @@ function loadStorage() {
     state.darkMode = false;
   } else {
     state.darkMode = darkMode;
+    new DarkModeHandler(state).applyDarkMode();
   }
 
   const minimumPriceDifference =

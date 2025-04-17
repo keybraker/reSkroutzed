@@ -9,7 +9,7 @@ export class DarkModeHandler {
     this.state = state;
   }
 
-  private applyDarkMode(): void {
+  public applyDarkMode(): void {
     if (this.state.darkMode) {
       document.body.classList.add("dark-mode");
     } else {
