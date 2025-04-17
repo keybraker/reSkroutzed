@@ -1,10 +1,16 @@
 const path = require("path");
+const fs = require("fs");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ZipWebpackPlugin = require("zip-webpack-plugin");
 
+const buildDir = path.resolve(__dirname, "../build/firefox_build");
+if (!fs.existsSync(buildDir)) {
+    fs.mkdirSync(buildDir, { recursive: true });
+}
+
 module.exports = {
     output: {
-        path: path.resolve(__dirname, "../build/firefox_build"),
+        path: buildDir,
     },
     plugins: [
         new CopyWebpackPlugin({
