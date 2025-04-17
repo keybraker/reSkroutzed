@@ -133,6 +133,7 @@ export async function marketDataReceiver(): Promise<ProductPriceData> {
     const skroutzRawPrice = getSkroutzRawPrice();
 
     const productData = await getProductData(productCode);
+    console.log('productData :>> ', productData);
 
     return {
       buyThroughSkroutz: getSkroutzPriceData(productData, skroutzRawPrice),

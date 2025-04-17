@@ -9,20 +9,6 @@
   z-index: 9999 !important;
 }
 
-/* Background overlay when menu is open */
-/* Remove the old full viewport overlay */
-/* .menu-open::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.1);
-  pointer-events: none;
-  z-index: 9998;
-} */
-
 .universal-toggle-button {
   display: flex !important;
   align-items: center !important;
@@ -53,6 +39,13 @@
   transform: scale(0.95) !important;
 }
 
+/* Animation for main button when menu is open */
+.menu-open .universal-toggle-button {
+  transform: rotate(180deg) scale(1.05) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
+}
+
 .toggle-buttons-container {
   position: absolute !important;
   display: flex !important;
@@ -60,7 +53,8 @@
   left: 25px !important;
   opacity: 0 !important;
   pointer-events: none !important;
-  transition: transform 0.3s ease, opacity 0.3s ease !important;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
+  transform: translateX(-20px) !important;
 }
 
 .menu-open .toggle-buttons-container::before {
@@ -73,10 +67,27 @@
   background-color: rgba(0, 0, 0, 0.4) !important;
   border-radius: 10px 25px 25px 10px !important;
   z-index: -1 !important;
+  animation: fadeIn 0.3s ease forwards !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .dark-mode .menu-open .toggle-buttons-container::before {
   background-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.menu-open .toggle-buttons-container {
+  left: 70px !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateX(0) !important;
 }
 
 .toggle-option-button {
@@ -93,8 +104,8 @@
   color: #ffffff !important;
   cursor: pointer !important;
   position: relative !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-  transform: scale(0) !important;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, box-shadow 0.3s ease !important;
+  transform: scale(0) translateY(10px) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
   opacity: 0 !important;
 }
@@ -116,6 +127,7 @@
   font-weight: bold !important;
   border: 2px solid white !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  transition: opacity 0.3s ease !important;
 }
 
 .notification-bubble.video-notification {
@@ -123,24 +135,22 @@
 }
 
 /* Animation for submenu buttons */
-.menu-open .toggle-buttons-container {
-  left: 70px !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
 .menu-open .toggle-option-button.button-active {
-  transform: scale(1) !important;
+  transform: scale(1) translateY(0) !important;
   opacity: 1 !important;
 }
 
+/* Add bounce effect to buttons on hover */
 .toggle-option-button:hover {
-  transform: scale(1.15) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  transform: scale(1.15) translateY(-3px) !important;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
 }
 
+/* Ensure smooth transition for active state changes */
 .toggle-option-button.active {
   background: linear-gradient(145deg, #e66300, #d95500) !important;
+  transition: background 0.3s ease, transform 0.3s ease !important;
 }
 
 /* Dark mode button styling */

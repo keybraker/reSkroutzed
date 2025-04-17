@@ -74,9 +74,72 @@ html.dark-mode {
   color: var(--dark-mode-sponsored-text) !important;
 }
 
+.lowest-price-store-highlight {
+  border: 2px solid #3a8c3a !important;
+  background-color: #e6f4e6 !important;
+  box-shadow: 0 2px 8px rgba(58, 140, 58, 0.25) !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease-in-out !important;
+  animation: highlight-in 0.5s ease-in forwards;
+}
+
+.lowest-price-store-highlight.is-out {
+  animation: highlight-out 0.5s ease-out forwards;
+}
+
+@keyframes highlight-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes highlight-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
 .dark-mode .lowest-price-store-highlight {
   border: 3px solid #58a054 !important;
-  box-shadow: 0px 2px 4px #ffffff !important;
+  box-shadow: 0px 2px 4px rgba(255, 255, 255, 0.3) !important;
+  transition: all 0.3s ease-in-out !important;
+  animation: dark-highlight-in 0.5s ease-in forwards;
+}
+
+.dark-mode .lowest-price-store-highlight.is-out {
+  animation: dark-highlight-out 0.5s ease-out forwards;
+}
+
+@keyframes dark-highlight-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dark-highlight-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 .dark-mode .sku-info-bar,
@@ -411,14 +474,6 @@ text-black {
 
 .dark-mode .transportation-breakdown {
   color: #b0b0b0 !important;
-  background-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-.lowest-price-store-highlight {
-  border: 2px solid #3a8c3a !important;
-  box-shadow: 0 2px 8px rgba(58, 140, 58, 0.25) !important;
-  border-radius: 6px !important;
-  transition: all 0.3s ease !important;
 }
 
 .price-indicator-price {

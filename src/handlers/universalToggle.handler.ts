@@ -36,14 +36,14 @@ export class UniversalToggleHandler {
     const buttonsContainer = document.createElement("div");
     buttonsContainer.classList.add("toggle-buttons-container");
 
+    const priceDifferenceButton = this.createPriceDifferenceOption();
     const darkModeButton = this.createDarkModeToggleButton();
     const adToggleButton = this.createAdToggleButton();
     const videoToggleButton = this.createVideoToggleButton();
     const sponsorshipToggleButton = this.createSponsorshipToggleButton();
-    const priceDifferenceButton = this.createPriceDifferenceOption();
 
-    buttonsContainer.appendChild(darkModeButton);
     buttonsContainer.appendChild(priceDifferenceButton);
+    buttonsContainer.appendChild(darkModeButton);
     buttonsContainer.appendChild(adToggleButton);
     buttonsContainer.appendChild(videoToggleButton);
     buttonsContainer.appendChild(sponsorshipToggleButton);
@@ -78,18 +78,23 @@ export class UniversalToggleHandler {
     buttons.forEach((button, index) => {
       setTimeout(() => {
         button.classList.add("button-active");
-      }, 50 * (buttons.length - index));
+      }, 80 * index); // More pronounced staggering (start from first button)
     });
   }
 
   private closeMenu(container: HTMLElement): void {
-    container.classList.remove("menu-open");
     this.isMenuOpen = false;
 
     const buttons = container.querySelectorAll(".toggle-option-button");
-    buttons.forEach((button) => {
-      button.classList.remove("button-active");
+    buttons.forEach((button, index) => {
+      setTimeout(() => {
+        button.classList.remove("button-active");
+      }, 50 * index);
     });
+
+    setTimeout(() => {
+      container.classList.remove("menu-open");
+    }, 50 * buttons.length + 100);
   }
 
   private createDarkModeToggleButton(): HTMLButtonElement {
