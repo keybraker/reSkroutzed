@@ -14,9 +14,9 @@ export function addDeveloperSupportToElement(
   brandLink.target = "_blank"; // Open in new tab
   brandLink.rel = "noopener noreferrer"; // Security best practice for external links
   if (language === Language.GREEK) {
-    brandLink.textContent = "Υποστήριξε το ReSkroutzed";
+    brandLink.textContent = "ReSkroutzed";
   } else {
-    brandLink.textContent = "Support the ReSkroutzed";
+    brandLink.textContent = "ReSkroutzed";
   }
   brandLink.classList.add("icon-border", "font-bold");
 
