@@ -12,6 +12,34 @@ export type ProductPriceData = {
   buyThroughStore: PriceData;
 };
 
+function getSkroutzRawPrice(): number {
+  const offeringCard = document.querySelector("article.offering-card")!;
+  const priceElement = offeringCard.querySelector("div.price")!;
+
+  if (!priceElement) {
+    throw new Error("Failed to fetch price");
+  }
+
+  // Get the integer part (including thousand separators)
+  const integerPart = priceElement.firstChild?.textContent?.trim() || ""; // "1.028"
+
+  // Get the decimal part that comes after the comma
+  const decimalPart =
+    priceElement.querySelector("span.comma + span")?.textContent?.trim() || ""; // "89"
+
+  // Combine parts, removing thousand separators (dots)
+  const priceText = integerPart.replace(/\./g, "") + "." + decimalPart;
+
+  // Convert to a number and return
+  const price = parseFloat(priceText);
+
+  if (isNaN(price)) {
+    throw new Error("Failed to parse price");
+  }
+
+  return price;
+}
+
 function getSku(): string {
   const metaTag = document.querySelector(
     'meta[itemprop="sku"]'
@@ -44,28 +72,28 @@ async function getProductData(productCode: string): Promise<ProductData> {
   return (await response.json()) as ProductData;
 }
 
-function getSkroutzPriceData(productData: ProductData): PriceData {
+function getSkroutzPriceData(
+  productData: ProductData,
+  skroutzRawPrice: number
+): PriceData {
   const productCards = productData.product_cards;
-  let lowestPrice = Number.MAX_VALUE;
-  let lowestPriceCard = null;
 
-  for (const cardId of productData.sponsored_product_card_ids) {
-    const card = productCards[cardId];
-    if (card && card.raw_price < lowestPrice) {
-      lowestPrice = card.raw_price;
-      lowestPriceCard = card;
-    }
+  const firstCard = Object.values(productCards).find(
+    (card) => card.raw_price === skroutzRawPrice
+  );
+  if (!firstCard) {
+    throw new Error("No product cards found");
   }
 
-  if (!lowestPriceCard) {
+  if (!firstCard) {
     throw new Error("No sponsored product cards found");
   }
 
   return {
-    price: lowestPriceCard.raw_price,
-    shippingCost: lowestPriceCard.shipping_cost,
-    totalPrice: lowestPriceCard.raw_price + lowestPriceCard.shipping_cost,
-    shopId: lowestPriceCard.shop_id,
+    price: firstCard.raw_price,
+    shippingCost: firstCard.shipping_cost,
+    totalPrice: firstCard.raw_price + firstCard.shipping_cost,
+    shopId: firstCard.shop_id,
   };
 }
 
@@ -102,10 +130,11 @@ function getStorePriceData(productData: ProductData): PriceData {
 export async function marketDataReceiver(): Promise<ProductPriceData> {
   try {
     const productCode = getSku();
+    const skroutzRawPrice = getSkroutzRawPrice();
     const productData = await getProductData(productCode);
 
     return {
-      buyThroughSkroutz: getSkroutzPriceData(productData),
+      buyThroughSkroutz: getSkroutzPriceData(productData, skroutzRawPrice),
       buyThroughStore: getStorePriceData(productData),
     };
   } catch (error) {

@@ -241,12 +241,11 @@ text-black {
   position: absolute !important;
   top: -20px !important;
   right: 20px !important;
-  padding: 4px 12px !important;
   color: #000000 !important;
   background-color: rgb(233, 233, 233) !important;
   border: 2px solid rgb(255, 255, 255) !important;
   border-radius: 24px !important;
-  font-size: 12px !important;
+  font-size: 8px !important;
   font-weight: 600 !important;
   letter-spacing: 0.5px !important;
   display: flex !important;

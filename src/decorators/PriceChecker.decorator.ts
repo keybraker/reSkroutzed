@@ -1,4 +1,5 @@
 import { Language } from "../enums/Language.enum";
+import { addDeveloperSupportToElement } from "../functions/addDeveloperSupportToElement";
 import {
   ProductPriceData,
   marketDataReceiver,
@@ -356,27 +357,7 @@ function createPriceIndicationElement(
     "reskroutzed-tag"
   );
 
-  const logoImg = document.createElement("img");
-  logoImg.src =
-    "https://raw.githubusercontent.com/keybraker/reskroutzed/main/src/assets/icons/128.png";
-  logoImg.alt = "reSkroutzed";
-  logoImg.width = 14;
-  logoImg.height = 14;
-
-  reSkroutzedTag.appendChild(document.createTextNode("By ReSkroutzed"));
-  reSkroutzedTag.appendChild(logoImg);
-
-  reSkroutzedTag.style.cursor = "pointer";
-
-  reSkroutzedTag.addEventListener("click", () => {
-    const isFirefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
-
-    const storeUrl = isFirefox
-      ? "https://addons.mozilla.org/en-US/firefox/addon/reskroutzed/reviews/"
-      : "https://chromewebstore.google.com/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl";
-
-    window.open(storeUrl, "_blank");
-  });
+  addDeveloperSupportToElement(reSkroutzedTag, language);
 
   priceIndication.appendChild(reSkroutzedTag);
 

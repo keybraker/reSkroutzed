@@ -1,4 +1,5 @@
 import { Language } from "../enums/Language.enum";
+import { addDeveloperSupportToElement } from "../functions/addDeveloperSupportToElement";
 import { appendLogoChild } from "../functions/appendLogoChild";
 import { ProductAdVisibilityStorageAdapter } from "../storageRetrievers/ProductAdVisibility.storage.handler";
 import { VideoAdVisibilityStorageAdapter } from "../storageRetrievers/VideoAdVisibility.storage.handler";
@@ -31,8 +32,7 @@ export class UniversalToggleHandler {
     mainToggle.classList.add("universal-toggle-button");
     mainToggle.title = "ReSkroutzed Options";
 
-    const logoSvg = this.createLogoIcon();
-    mainToggle.appendChild(logoSvg);
+    mainToggle.appendChild(this.createLogoIcon());
     appendLogoChild(mainToggle);
 
     const buttonsContainer = document.createElement("div");

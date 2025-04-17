@@ -1,5 +1,5 @@
 import { toggleContentVisibility } from "./actions/visibility.action";
-import { CorrectFinalPriceDecorator } from "./decorators/CorrectFinalPrice.decorator";
+import { correctFinalPriceDecorator } from "./decorators/correctFinalPrice.decorator";
 import { PriceCheckerDecorator } from "./decorators/PriceChecker.decorator";
 import { Language } from "./enums/Language.enum";
 import { DarkModeHandler } from "./handlers/darkMode.handler";
@@ -97,7 +97,6 @@ const sponsoredProductListHandler = new SponsoredProductListHandler(state);
 const sponsoredFbtHandler = new SponsoredFbtHandler(state);
 const sponsorshipHandler = new SponsorshipHandler(state);
 const priceCheckerIndicator = new PriceCheckerDecorator(state);
-const correctFinalPrice = new CorrectFinalPriceDecorator(state);
 const universalToggleHandler = new UniversalToggleHandler(
   state,
   promotionalVideoHandler,
@@ -111,8 +110,7 @@ const universalToggleHandler = new UniversalToggleHandler(
 
     flagContent();
     toggleContentVisibility(state);
-
-    await correctFinalPrice.start();
+    correctFinalPriceDecorator(state.language);
   }
 
   function flagContent() {
