@@ -1,5 +1,5 @@
-import { IStorageRetrieverAdapter } from "./IStorageRetriever";
-import { IStorageSetterAdapter } from "./IStorageSetter";
+import { IStorageRetrieverAdapter } from "./interfaces/IStorageRetriever.adapter";
+import { IStorageSetterAdapter } from "./interfaces/IStorageSetter.adapter";
 
 export class SponsorshipVisibilityStorageAdapter
   implements IStorageRetrieverAdapter<boolean>, IStorageSetterAdapter<boolean>

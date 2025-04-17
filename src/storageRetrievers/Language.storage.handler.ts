@@ -1,5 +1,5 @@
 import { Language } from "../enums/Language.enum";
-import { IStorageRetrieverAdapter } from "./IStorageRetriever";
+import { IStorageRetrieverAdapter } from "./interfaces/IStorageRetriever.adapter";
 
 export class LanguageStorageAdapter
   implements IStorageRetrieverAdapter<Language>
