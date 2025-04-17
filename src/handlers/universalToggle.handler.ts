@@ -1,5 +1,4 @@
 import { Language } from "../enums/Language.enum";
-import { addDeveloperSupportToElement } from "../functions/addDeveloperSupportToElement";
 import { appendLogoChild } from "../functions/appendLogoChild";
 import { ProductAdVisibilityStorageAdapter } from "../storageRetrievers/ProductAdVisibility.storage.handler";
 import { VideoAdVisibilityStorageAdapter } from "../storageRetrievers/VideoAdVisibility.storage.handler";
@@ -32,7 +31,6 @@ export class UniversalToggleHandler {
     mainToggle.classList.add("universal-toggle-button");
     mainToggle.title = "ReSkroutzed Options";
 
-    mainToggle.appendChild(this.createLogoIcon());
     appendLogoChild(mainToggle);
 
     const buttonsContainer = document.createElement("div");
@@ -45,10 +43,10 @@ export class UniversalToggleHandler {
     const priceDifferenceButton = this.createPriceDifferenceOption();
 
     buttonsContainer.appendChild(darkModeButton);
+    buttonsContainer.appendChild(priceDifferenceButton);
     buttonsContainer.appendChild(adToggleButton);
     buttonsContainer.appendChild(videoToggleButton);
     buttonsContainer.appendChild(sponsorshipToggleButton);
-    buttonsContainer.appendChild(priceDifferenceButton);
 
     mainToggle.addEventListener("click", () => this.toggleMenu(container));
 
@@ -92,23 +90,6 @@ export class UniversalToggleHandler {
     buttons.forEach((button) => {
       button.classList.remove("button-active");
     });
-  }
-
-  private createLogoIcon(): SVGSVGElement {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("width", "20");
-    svg.setAttribute("height", "20");
-
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute(
-      "d",
-      "M14.5 2.5c0 1.5-1.5 2.5-2.5 2.5s-2.5-1-2.5-2.5S10.5 0 12 0s2.5 1 2.5 2.5zM0 14c1.5 0 4.5-3 7.5-3s4.5 3 7.5 3 4.5-3 7.5-3c0 0 1.5 0 1.5 2S20 17 18.5 17c-2 0-4.5-3-7.5-3s-4.5 3-7.5 3S0 14 0 14z"
-    );
-    path.setAttribute("fill", "currentColor");
-
-    svg.appendChild(path);
-    return svg;
   }
 
   private createDarkModeToggleButton(): HTMLButtonElement {

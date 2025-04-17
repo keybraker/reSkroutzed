@@ -8,15 +8,15 @@ export function addDeveloperSupportToElement(
   const brand = document.createElement("div");
   const brandLink = document.createElement("a");
 
-  brand.classList.add("icon-border", "font-bold");
+  brand.classList.add("support-developer", "icon-border", "font-bold");
 
   brandLink.href = "https://paypal.me/tsiakkas";
   brandLink.target = "_blank"; // Open in new tab
   brandLink.rel = "noopener noreferrer"; // Security best practice for external links
   if (language === Language.GREEK) {
-    brandLink.textContent = "υποστηρίξτε τον προγραμματιστή";
+    brandLink.textContent = "Υποστήριξε το ReSkroutzed";
   } else {
-    brandLink.textContent = "support the developer";
+    brandLink.textContent = "Support the ReSkroutzed";
   }
   brandLink.classList.add("icon-border", "font-bold");
 

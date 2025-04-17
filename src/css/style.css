@@ -565,9 +565,9 @@ text-black {
 
 .icon-border {
   display: inline-block !important;
-  padding: 4px 12px !important;
+  padding: 2px 4px !important;
   color: var(--color-text-neutral-default) !important;
-  font-size: 14px !important;
+  font-size: 11px !important;
   font-style: italic !important;
   font-family: Arial, sans-serif !important;
   text-align: end !important;
