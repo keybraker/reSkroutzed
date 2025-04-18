@@ -1,4 +1,4 @@
-import { VideoAdVisibilityStorageAdapter } from "../storageRetrievers/VideoAdVisibility.storage.handler";
+import { StorageKey, StorageService } from "../services/storage.service";
 import { State } from "../types/State.type";
 
 export class PromotionalVideoHandler {
@@ -92,9 +92,7 @@ export class PromotionalVideoHandler {
     videoButtonToggle.addEventListener("click", () => {
       this.state.hideVideoAds = !this.state.hideVideoAds;
 
-      const videoAdVisibilityStorageAdapter =
-        new VideoAdVisibilityStorageAdapter();
-      videoAdVisibilityStorageAdapter.setValue(this.state.hideVideoAds);
+      StorageService.setValue(StorageKey.VIDEO_AD_VISIBILITY, this.state.hideVideoAds);
 
       this.updateVideoButtonText(videoButtonToggle);
       this.toggleVideoVisibility();
@@ -151,6 +149,7 @@ export class PromotionalVideoHandler {
     const videoElements = document.querySelectorAll(
       "li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video"
     );
+
     videoElements?.forEach((element) => {
       this.state.hideVideoAds
         ? element.classList.remove("display-none-promo-product")

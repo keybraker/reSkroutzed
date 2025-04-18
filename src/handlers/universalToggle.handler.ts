@@ -1,7 +1,6 @@
 import { Language } from "../enums/Language.enum";
 import { appendLogoChild } from "../functions/appendLogoChild";
-import { ProductAdVisibilityStorageAdapter } from "../storageRetrievers/ProductAdVisibility.storage.handler";
-import { VideoAdVisibilityStorageAdapter } from "../storageRetrievers/VideoAdVisibility.storage.handler";
+import { StorageService, StorageKey } from "../services/storage.service";
 import { State } from "../types/State.type";
 import { DarkModeHandler } from "./darkMode.handler";
 import { PromotionalVideoHandler } from "./promotionalVideo.handler";
@@ -221,9 +220,7 @@ export class UniversalToggleHandler {
       e.stopPropagation();
       this.state.hideProductAds = !this.state.hideProductAds;
 
-      const productAdVisibilityStorageAdapter =
-        new ProductAdVisibilityStorageAdapter();
-      productAdVisibilityStorageAdapter.setValue(this.state.hideProductAds);
+      StorageService.setValue(StorageKey.PRODUCT_AD_VISIBILITY, this.state.hideProductAds);
 
       const adText = button.querySelector(".ad-text-icon");
       if (adText) {
@@ -256,9 +253,6 @@ export class UniversalToggleHandler {
   }
 
   private createPriceDifferenceOption(): HTMLButtonElement {
-    const MinimumPriceDifferenceStorageAdapter =
-      require("../storageRetrievers/MinimumPriceDifference.storage.handler").MinimumPriceDifferenceStorageAdapter;
-
     const button = document.createElement("button");
     button.classList.add("toggle-option-button", "price-difference-option");
 
@@ -324,8 +318,7 @@ export class UniversalToggleHandler {
               : `Minimum Price Difference: ${newValue}€`;
           button.title = updatedTitle;
 
-          const adapter = new MinimumPriceDifferenceStorageAdapter();
-          adapter.setValue(newValue);
+          StorageService.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);
 
           const productPage = document.querySelector("article.offering-card");
           if (productPage) {
@@ -420,9 +413,8 @@ export class UniversalToggleHandler {
       e.stopPropagation();
       this.state.hideVideoAds = !this.state.hideVideoAds;
 
-      const videoAdVisibilityStorageAdapter =
-        new VideoAdVisibilityStorageAdapter();
-      videoAdVisibilityStorageAdapter.setValue(this.state.hideVideoAds);
+      // Add this line to persist the video visibility setting to storage
+      StorageService.setValue(StorageKey.VIDEO_AD_VISIBILITY, this.state.hideVideoAds);
 
       this.videoHandler.toggleVideoVisibility();
       button.classList.toggle("active");
@@ -439,7 +431,7 @@ export class UniversalToggleHandler {
       } else {
         newPath.setAttribute(
           "d",
-          "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
+          "M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V7zm-2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z"
         );
       }
       newPath.setAttribute("fill", "currentColor");

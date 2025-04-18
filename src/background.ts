@@ -10,12 +10,7 @@ import { SponsoredProductListHandler } from "./handlers/sponsoredProductList.han
 import { SponsoredShelfHandler } from "./handlers/sponsoredShelf.handler";
 import { SponsorshipHandler } from "./handlers/sponsorship.handler";
 import { UniversalToggleHandler } from "./handlers/universalToggle.handler";
-import { DarkModeStorageAdapter } from "./storageRetrievers/darkMode.storage.handler";
-import { LanguageStorageAdapter } from "./storageRetrievers/Language.storage.handler";
-import { MinimumPriceDifferenceStorageAdapter } from "./storageRetrievers/MinimumPriceDifference.storage.handler";
-import { ProductAdVisibilityStorageAdapter } from "./storageRetrievers/ProductAdVisibility.storage.handler";
-import { SponsorshipVisibilityStorageAdapter } from "./storageRetrievers/SponsorshipVisibility.storage.handler";
-import { VideoAdVisibilityStorageAdapter } from "./storageRetrievers/VideoAdVisibility.storage.handler";
+import { StorageService, StorageKey } from "./services/storage.service";
 import { State } from "./types/State.type";
 
 const state: State = {
@@ -31,61 +26,22 @@ const state: State = {
 };
 
 function loadStorage() {
-  const productAdVisibilityStorageAdapter =
-    new ProductAdVisibilityStorageAdapter();
-  const videoAdVisibilityStorageAdapter = new VideoAdVisibilityStorageAdapter();
-  const sponsorshipVisibilityStorageAdapter =
-    new SponsorshipVisibilityStorageAdapter();
-  const darkModeStorageAdapter = new DarkModeStorageAdapter();
-  const languageStorageAdapter = new LanguageStorageAdapter();
-  const minimumPriceDifferenceStorageAdapter =
-    new MinimumPriceDifferenceStorageAdapter();
+  // Load language first since other translations may depend on it
+  state.language = StorageService.getLanguage();
 
-  state.language = languageStorageAdapter.getValue();
+  // Load boolean settings with defaults
+  state.hideProductAds = StorageService.getValue<boolean>(StorageKey.PRODUCT_AD_VISIBILITY);
+  state.hideVideoAds = StorageService.getValue<boolean>(StorageKey.VIDEO_AD_VISIBILITY);
+  state.hideSponsorships = StorageService.getValue<boolean>(StorageKey.SPONSORSHIP_VISIBILITY);
 
-  const hideProductAds = productAdVisibilityStorageAdapter.getValue();
-  if (hideProductAds === null) {
-    productAdVisibilityStorageAdapter.setValue(false);
-    state.hideProductAds = false;
-  } else {
-    state.hideProductAds = hideProductAds;
-  }
-
-  const hideVideoAds = videoAdVisibilityStorageAdapter.getValue();
-  if (hideVideoAds === null) {
-    videoAdVisibilityStorageAdapter.setValue(false);
-    state.hideVideoAds = false;
-  } else {
-    state.hideVideoAds = hideVideoAds;
-  }
-
-  const hideSponsorships = sponsorshipVisibilityStorageAdapter.getValue();
-  if (hideSponsorships === null) {
-    sponsorshipVisibilityStorageAdapter.setValue(false);
-    state.hideSponsorships = false;
-  } else {
-    state.hideSponsorships = hideSponsorships;
-  }
-
-  const darkMode = darkModeStorageAdapter.getValue();
-  if (darkMode === null) {
-    darkModeStorageAdapter.setValue(false);
-    state.darkMode = false;
-  } else {
-    state.darkMode = darkMode;
+  // Load dark mode and apply it immediately if enabled
+  state.darkMode = StorageService.getValue<boolean>(StorageKey.DARK_MODE);
+  if (state.darkMode) {
     new DarkModeHandler(state).applyDarkMode();
   }
 
-  const minimumPriceDifference =
-    minimumPriceDifferenceStorageAdapter.getValue();
-  if (minimumPriceDifference === null) {
-    minimumPriceDifferenceStorageAdapter.setValue(0);
-    state.minimumPriceDifference = 0;
-  } else {
-    state.minimumPriceDifference = minimumPriceDifference;
-  }
-
-  state.language = languageStorageAdapter.getValue();
+  // Load numeric settings
+  state.minimumPriceDifference = StorageService.getValue<number>(StorageKey.MINIMUM_PRICE_DIFFERENCE);
 }
 
 loadStorage();

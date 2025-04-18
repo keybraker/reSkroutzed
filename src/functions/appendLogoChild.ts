@@ -14,7 +14,7 @@ export function appendLogoChild(element: HTMLDivElement | HTMLButtonElement) {
 
   const img = document.createElement("img");
   img.src =
-    "https://raw.githubusercontent.com/keybraker/reskroutzed/main/src/assets/icons/128.png";
+    "https://raw.githubusercontent.com/keybraker/reskroutzed/main/icons/128.png";
   img.alt = "reSkroutzed";
   img.width = 18;
   img.height = 18;

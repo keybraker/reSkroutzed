@@ -1,4 +1,4 @@
-import { SponsorshipVisibilityStorageAdapter } from "../storageRetrievers/SponsorshipVisibility.storage.handler";
+import { StorageService, StorageKey } from "../services/storage.service";
 import { State } from "../types/State.type";
 import {
   toggleVisibility,
@@ -42,9 +42,7 @@ export class SponsorshipHandler {
   public toggleSponsorship(): void {
     this.state.hideSponsorships = !this.state.hideSponsorships;
 
-    const sponsorshipVisibilityStorageAdapter =
-      new SponsorshipVisibilityStorageAdapter();
-    sponsorshipVisibilityStorageAdapter.setValue(this.state.hideSponsorships);
+    StorageService.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
 
     document
       .querySelectorAll("div#sponsorship.flagged-sponsorship")
