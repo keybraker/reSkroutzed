@@ -1,4 +1,4 @@
-import { Language } from '../enums/Language.enum';
+import { Language } from '../common/enums/Language.enum';
 
 export function correctFinalPriceDecorator(language: Language) {
   const finalPriceLabel = document.querySelector('label.toggle-switch-label');

@@ -1,5 +1,5 @@
-import { Language } from '../enums/Language.enum';
-import { State } from '../types/State.type';
+import { Language } from '../common/enums/Language.enum';
+import { State } from '../common/types/State.type';
 
 export function toggleVisibility(element: Element, state: State) {
   state.hideProductAds

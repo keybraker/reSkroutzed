@@ -1,4 +1,4 @@
-import { Language } from '../../enums/Language.enum';
+import { Language } from '../../common/enums/Language.enum';
 
 export type StorageValueType = boolean | Language | number | string;
 

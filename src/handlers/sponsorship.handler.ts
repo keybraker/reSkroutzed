@@ -1,5 +1,5 @@
 import { BrowserClient, StorageKey } from '../clients/browser/client';
-import { State } from '../types/State.type';
+import { State } from '../common/types/State.type';
 import { toggleVisibility, updateSponsoredTextSingle } from '../utilities/sponsored.util';
 
 export class SponsorshipHandler {

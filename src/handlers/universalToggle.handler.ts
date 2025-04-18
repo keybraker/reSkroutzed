@@ -1,7 +1,7 @@
-import { Language } from '../enums/Language.enum';
+import { Language } from '../common/enums/Language.enum';
 import { appendLogoChild } from '../functions/appendLogoChild';
 import { BrowserClient, StorageKey } from '../clients/browser/client';
-import { State } from '../types/State.type';
+import { State } from '../common/types/State.type';
 import { DarkModeHandler } from './darkMode.handler';
 import { PromotionalVideoHandler } from './promotionalVideo.handler';
 import { SponsorshipHandler } from './sponsorship.handler';

@@ -3,7 +3,7 @@ import {
   updateSponsoredTextPlural,
   toggleVisibility,
 } from '../utilities/sponsored.util';
-import { State } from '../types/State.type';
+import { State } from '../common/types/State.type';
 
 export class SponsoredProductListHandler {
   private state: State;

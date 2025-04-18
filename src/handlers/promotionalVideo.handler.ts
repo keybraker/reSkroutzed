@@ -1,5 +1,5 @@
 import { StorageKey, BrowserClient } from '../clients/browser/client';
-import { State } from '../types/State.type';
+import { State } from '../common/types/State.type';
 
 export class PromotionalVideoHandler {
   private state: State;

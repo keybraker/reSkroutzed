@@ -1,7 +1,7 @@
-import { Language } from '../enums/Language.enum';
+import { Language } from '../common/enums/Language.enum';
 import { addDeveloperSupportToElement } from '../functions/addDeveloperSupportToElement';
 import { ProductPriceData, SkroutzClient } from '../clients/skroutz/client';
-import { State } from '../types/State.type';
+import { State } from '../common/types/State.type';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;

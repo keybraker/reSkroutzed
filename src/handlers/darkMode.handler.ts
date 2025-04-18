@@ -1,6 +1,6 @@
 import { appendLogoChild } from '../functions/appendLogoChild';
 import { BrowserClient, StorageKey } from '../clients/browser/client';
-import { State } from '../types/State.type';
+import { State } from '../common/types/State.type';
 
 export class DarkModeHandler {
   private state: State;

@@ -1,7 +1,7 @@
 import { toggleContentVisibility } from './actions/visibility.action';
 import { correctFinalPriceDecorator } from './decorators/correctFinalPrice.decorator';
 import { PriceCheckerDecorator } from './decorators/PriceChecker.decorator';
-import { Language } from './enums/Language.enum';
+import { Language } from './common/enums/Language.enum';
 import { DarkModeHandler } from './handlers/darkMode.handler';
 import { PromotionalVideoHandler } from './handlers/promotionalVideo.handler';
 import { SponsoredFbtHandler } from './handlers/sponsoredFbt.handler';
@@ -11,7 +11,7 @@ import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
 import { SponsorshipHandler } from './handlers/sponsorship.handler';
 import { UniversalToggleHandler } from './handlers/universalToggle.handler';
 import { BrowserClient, StorageKey } from './clients/browser/client';
-import { State } from './types/State.type';
+import { State } from './common/types/State.type';
 
 const state: State = {
   hideProductAds: false,

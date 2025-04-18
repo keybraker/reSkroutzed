@@ -1,5 +1,5 @@
 import { isSponsored, updateSponsoredTextSingle } from '../utilities/sponsored.util';
-import { State } from '../types/State.type';
+import { State } from '../common/types/State.type';
 
 // FBT: Frequently Bought Together
 export class SponsoredFbtHandler {

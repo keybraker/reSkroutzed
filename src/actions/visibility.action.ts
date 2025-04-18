@@ -1,4 +1,4 @@
-import { State } from '../types/State.type';
+import { State } from '../common/types/State.type';
 import { toggleVisibility } from '../utilities/sponsored.util';
 
 function toggleVisibilityByClass(selector: string, state: State) {
