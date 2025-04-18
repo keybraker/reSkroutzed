@@ -1,9 +1,6 @@
-import { StorageService, StorageKey } from "../services/storage.service";
-import { State } from "../types/State.type";
-import {
-  toggleVisibility,
-  updateSponsoredTextSingle,
-} from "../utilities/sponsored.util";
+import { StorageService, StorageKey } from '../services/storage.service';
+import { State } from '../types/State.type';
+import { toggleVisibility, updateSponsoredTextSingle } from '../utilities/sponsored.util';
 
 export class SponsorshipHandler {
   private state: State;
@@ -13,24 +10,20 @@ export class SponsorshipHandler {
   }
 
   public flag(): void {
-    const sponsorshipDivs = document.querySelectorAll(
-      "div#sponsorship:not(.flagged-sponsorship)"
-    );
+    const sponsorshipDivs = document.querySelectorAll('div#sponsorship:not(.flagged-sponsorship)');
 
     sponsorshipDivs?.forEach((element) => {
-      element.classList.add("flagged-sponsorship", "flagged-product");
+      element.classList.add('flagged-sponsorship', 'flagged-product');
 
       this.state.productAdCount++;
 
-      const shopPromoterSpan = element.querySelector(
-        ".shop-promoter:not(.flagged-product)"
-      );
+      const shopPromoterSpan = element.querySelector('.shop-promoter:not(.flagged-product)');
       if (shopPromoterSpan) {
-        shopPromoterSpan.classList.add("flagged-product");
+        shopPromoterSpan.classList.add('flagged-product');
 
-        const labelText = shopPromoterSpan.querySelector(".label-text");
+        const labelText = shopPromoterSpan.querySelector('.label-text');
         if (labelText) {
-          labelText.classList.add("flagged-product-label");
+          labelText.classList.add('flagged-product-label');
           updateSponsoredTextSingle(labelText, this.state.language);
         }
       }
@@ -44,11 +37,9 @@ export class SponsorshipHandler {
 
     StorageService.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
 
-    document
-      .querySelectorAll("div#sponsorship.flagged-sponsorship")
-      .forEach((element) => {
-        toggleVisibility(element, this.state);
-      });
+    document.querySelectorAll('div#sponsorship.flagged-sponsorship').forEach((element) => {
+      toggleVisibility(element, this.state);
+    });
   }
 
   private toggleSponsorshipVisibility(element: Element): void {

@@ -22,7 +22,9 @@
   color: #ffffff !important;
   cursor: pointer !important;
   z-index: 10000 !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
 }
 
@@ -43,7 +45,9 @@
 .menu-open .universal-toggle-button {
   transform: rotate(180deg) scale(1.05) !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
+  transition:
+    transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.3s ease !important;
 }
 
 .toggle-buttons-container {
@@ -53,12 +57,14 @@
   left: 25px !important;
   opacity: 0 !important;
   pointer-events: none !important;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
+  transition:
+    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.3s ease !important;
   transform: translateX(-20px) !important;
 }
 
 .menu-open .toggle-buttons-container::before {
-  content: "" !important;
+  content: '' !important;
   position: absolute !important;
   top: -10px !important;
   left: -10px !important;
@@ -104,7 +110,10 @@
   color: #ffffff !important;
   cursor: pointer !important;
   position: relative !important;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, box-shadow 0.3s ease !important;
+  transition:
+    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.3s ease,
+    box-shadow 0.3s ease !important;
   transform: scale(0) translateY(10px) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
   opacity: 0 !important;
@@ -144,13 +153,17 @@
 .toggle-option-button:hover {
   transform: scale(1.15) translateY(-3px) !important;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
+  transition:
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.3s ease !important;
 }
 
 /* Ensure smooth transition for active state changes */
 .toggle-option-button.active {
   background: linear-gradient(145deg, #e66300, #d95500) !important;
-  transition: background 0.3s ease, transform 0.3s ease !important;
+  transition:
+    background 0.3s ease,
+    transform 0.3s ease !important;
 }
 
 /* Dark mode button styling */
@@ -160,7 +173,7 @@
 
 /* Add separator after dark mode button */
 .dark-mode-option::after {
-  content: "" !important;
+  content: '' !important;
   position: absolute !important;
   right: -15px !important;
   top: 50% !important;
@@ -285,7 +298,7 @@
 
 /* Triangle pointer for popup */
 .price-difference-popup::after {
-  content: "" !important;
+  content: '' !important;
   position: absolute !important;
   top: 100% !important;
   left: 50% !important;

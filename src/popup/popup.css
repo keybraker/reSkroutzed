@@ -19,7 +19,7 @@
 }
 
 .popup-body {
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   min-width: 320px;
   max-width: 380px;
   background-color: var(--background-color);

@@ -1,17 +1,17 @@
-import { toggleContentVisibility } from "./actions/visibility.action";
-import { correctFinalPriceDecorator } from "./decorators/correctFinalPrice.decorator";
-import { PriceCheckerDecorator } from "./decorators/PriceChecker.decorator";
-import { Language } from "./enums/Language.enum";
-import { DarkModeHandler } from "./handlers/darkMode.handler";
-import { PromotionalVideoHandler } from "./handlers/promotionalVideo.handler";
-import { SponsoredFbtHandler } from "./handlers/sponsoredFbt.handler";
-import { SponsoredProductHandler } from "./handlers/sponsoredProduct.handler";
-import { SponsoredProductListHandler } from "./handlers/sponsoredProductList.handler";
-import { SponsoredShelfHandler } from "./handlers/sponsoredShelf.handler";
-import { SponsorshipHandler } from "./handlers/sponsorship.handler";
-import { UniversalToggleHandler } from "./handlers/universalToggle.handler";
-import { StorageService, StorageKey } from "./services/storage.service";
-import { State } from "./types/State.type";
+import { toggleContentVisibility } from './actions/visibility.action';
+import { correctFinalPriceDecorator } from './decorators/correctFinalPrice.decorator';
+import { PriceCheckerDecorator } from './decorators/PriceChecker.decorator';
+import { Language } from './enums/Language.enum';
+import { DarkModeHandler } from './handlers/darkMode.handler';
+import { PromotionalVideoHandler } from './handlers/promotionalVideo.handler';
+import { SponsoredFbtHandler } from './handlers/sponsoredFbt.handler';
+import { SponsoredProductHandler } from './handlers/sponsoredProduct.handler';
+import { SponsoredProductListHandler } from './handlers/sponsoredProductList.handler';
+import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
+import { SponsorshipHandler } from './handlers/sponsorship.handler';
+import { UniversalToggleHandler } from './handlers/universalToggle.handler';
+import { StorageService, StorageKey } from './services/storage.service';
+import { State } from './types/State.type';
 
 const state: State = {
   hideProductAds: false,
@@ -41,7 +41,9 @@ function loadStorage() {
   }
 
   // Load numeric settings
-  state.minimumPriceDifference = StorageService.getValue<number>(StorageKey.MINIMUM_PRICE_DIFFERENCE);
+  state.minimumPriceDifference = StorageService.getValue<number>(
+    StorageKey.MINIMUM_PRICE_DIFFERENCE,
+  );
 }
 
 loadStorage();
@@ -56,7 +58,7 @@ const priceCheckerIndicator = new PriceCheckerDecorator(state);
 const universalToggleHandler = new UniversalToggleHandler(
   state,
   promotionalVideoHandler,
-  sponsorshipHandler
+  sponsorshipHandler,
 );
 
 (function () {
@@ -98,14 +100,14 @@ chrome.runtime.onMessage.addListener(
       sponsoredCount: number;
       sponsoredShelfCount: number;
       videoCount: number;
-    }) => void
+    }) => void,
   ) => {
-    if (request.action === "getCount") {
+    if (request.action === 'getCount') {
       sendResponse({
         sponsoredCount: state.productAdCount,
         sponsoredShelfCount: state.ShelfAdCount,
         videoCount: state.videoAdCount,
       });
     }
-  }
+  },
 );

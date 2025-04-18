@@ -1,21 +1,21 @@
-import { Language } from "../enums/Language.enum";
+import { Language } from '../enums/Language.enum';
 
 export type StorageValueType = boolean | Language | number | string;
 
 /**
  * Prefix for all storage keys
  */
-const STORAGE_KEY_PREFIX = "RESKROUTZED";
+const STORAGE_KEY_PREFIX = 'RESKROUTZED';
 
 /**
  * Keys for all storage items in the application
  */
 export enum StorageKey {
-    PRODUCT_AD_VISIBILITY = STORAGE_KEY_PREFIX + "-product-ad-visibility",
-    VIDEO_AD_VISIBILITY = STORAGE_KEY_PREFIX + "-video-ad-visibility",
-    SPONSORSHIP_VISIBILITY = STORAGE_KEY_PREFIX + "-sponsorship-visibility",
-    DARK_MODE = STORAGE_KEY_PREFIX + "-dark-mode",
-    MINIMUM_PRICE_DIFFERENCE = STORAGE_KEY_PREFIX + "-minimum-difference",
+  PRODUCT_AD_VISIBILITY = STORAGE_KEY_PREFIX + '-product-ad-visibility',
+  VIDEO_AD_VISIBILITY = STORAGE_KEY_PREFIX + '-video-ad-visibility',
+  SPONSORSHIP_VISIBILITY = STORAGE_KEY_PREFIX + '-sponsorship-visibility',
+  DARK_MODE = STORAGE_KEY_PREFIX + '-dark-mode',
+  MINIMUM_PRICE_DIFFERENCE = STORAGE_KEY_PREFIX + '-minimum-difference',
 }
 
 /**
@@ -41,7 +41,7 @@ export class StorageService {
    */
   public static getValue<T extends StorageValueType>(
     key: StorageKey,
-    parseAs?: (value: string) => T
+    parseAs?: (value: string) => T,
   ): T {
     const item = localStorage.getItem(key);
 
@@ -62,9 +62,9 @@ export class StorageService {
 
     // Default parsing based on the key's default value type
     const defaultValue = STORAGE_DEFAULTS[key];
-    if (typeof defaultValue === "boolean") {
-      return (item === "true") as unknown as T;
-    } else if (typeof defaultValue === "number") {
+    if (typeof defaultValue === 'boolean') {
+      return (item === 'true') as unknown as T;
+    } else if (typeof defaultValue === 'number') {
       return parseFloat(item) as unknown as T;
     }
 
@@ -76,10 +76,7 @@ export class StorageService {
    * @param key The key to store under
    * @param value The value to store
    */
-  public static setValue<T extends StorageValueType>(
-    key: StorageKey,
-    value: T
-  ): void {
+  public static setValue<T extends StorageValueType>(key: StorageKey, value: T): void {
     localStorage.setItem(key, value.toString());
   }
 
@@ -90,15 +87,15 @@ export class StorageService {
   public static getLanguage(): Language {
     const languageAttribute = document.documentElement.lang;
 
-    if (languageAttribute === "el") {
+    if (languageAttribute === 'el') {
       return Language.GREEK;
-    } else if (languageAttribute === "ro") {
+    } else if (languageAttribute === 'ro') {
       return Language.ROMANIAN;
-    } else if (languageAttribute === "bg") {
+    } else if (languageAttribute === 'bg') {
       return Language.BULGARIAN;
-    } else if (languageAttribute === "de") {
+    } else if (languageAttribute === 'de') {
       return Language.GERMAN;
-    } else if (languageAttribute === "en") {
+    } else if (languageAttribute === 'en') {
       return Language.ENGLISH;
     }
 

@@ -1,8 +1,5 @@
-import {
-  isSponsored,
-  updateSponsoredTextSingle,
-} from "../utilities/sponsored.util";
-import { State } from "../types/State.type";
+import { isSponsored, updateSponsoredTextSingle } from '../utilities/sponsored.util';
+import { State } from '../types/State.type';
 
 // FBT: Frequently Bought Together
 export class SponsoredFbtHandler {
@@ -27,23 +24,21 @@ export class SponsoredFbtHandler {
   }
 
   private getDivElements(): Element[] {
-    const divElements = document.querySelectorAll(
-      "div.fbt-content:not(.flagged-bought-together)"
-    );
+    const divElements = document.querySelectorAll('div.fbt-content:not(.flagged-bought-together)');
     return [...divElements];
   }
 
   private getSponsoredSpan(div: Element): Element | null {
-    const sponsoredSpan = div.querySelector("span.sp-tag");
+    const sponsoredSpan = div.querySelector('span.sp-tag');
     return isSponsored(sponsoredSpan) ? sponsoredSpan : null;
   }
 
   private flagSponsoredSpan(spanElement: Element): void {
-    spanElement.classList.add("sponsored-label");
+    spanElement.classList.add('sponsored-label');
     updateSponsoredTextSingle(spanElement, this.state.language);
   }
 
   private flagSponsoredDiv(div: Element): void {
-    div.classList.add("flagged-bought-together");
+    div.classList.add('flagged-bought-together');
   }
 }

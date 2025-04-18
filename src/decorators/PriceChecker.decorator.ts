@@ -1,10 +1,7 @@
-import { Language } from "../enums/Language.enum";
-import { addDeveloperSupportToElement } from "../functions/addDeveloperSupportToElement";
-import {
-  ProductPriceData,
-  SkroutzClient,
-} from "../clients/skroutz/client";
-import { State } from "../types/State.type";
+import { Language } from '../enums/Language.enum';
+import { addDeveloperSupportToElement } from '../functions/addDeveloperSupportToElement';
+import { ProductPriceData, SkroutzClient } from '../clients/skroutz/client';
+import { State } from '../types/State.type';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
@@ -13,7 +10,7 @@ const roundToZero = (value: number, precision = 1e-10): number => {
 class UIFactory {
   static createElementWithClass<T extends HTMLElement>(
     tag: string,
-    className: string | string[]
+    className: string | string[],
   ): T {
     const element = document.createElement(tag) as T;
     if (Array.isArray(className)) {
@@ -25,7 +22,7 @@ class UIFactory {
   }
 
   static createLabeledText(label: string, value: string): HTMLSpanElement {
-    const span = document.createElement("span");
+    const span = document.createElement('span');
     span.innerHTML = `<strong>${label}</strong>: ${value}`;
     return span;
   }
@@ -33,7 +30,7 @@ class UIFactory {
   static appendWithSeparator(
     container: HTMLElement,
     elements: HTMLElement[],
-    separators: string[]
+    separators: string[],
   ): void {
     elements.forEach((element, index) => {
       container.appendChild(element);
@@ -47,52 +44,52 @@ class UIFactory {
 function createPriceDisplayComponent(
   price: number,
   shippingCost: number,
-  language: Language
+  language: Language,
 ): HTMLDivElement {
   const container = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "price-display-wrapper"
+    'div',
+    'price-display-wrapper',
   );
 
   const priceElement = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "price-indicator-price"
+    'div',
+    'price-indicator-price',
   );
 
-  const [integerPart, decimalPart] = price.toFixed(2).split(".");
+  const [integerPart, decimalPart] = price.toFixed(2).split('.');
 
   priceElement.textContent = integerPart;
 
   const priceComma = UIFactory.createElementWithClass<HTMLSpanElement>(
-    "span",
-    "price-indicator-comma"
+    'span',
+    'price-indicator-comma',
   );
-  priceComma.textContent = ",";
+  priceComma.textContent = ',';
   priceElement.appendChild(priceComma);
 
   const priceDecimal = UIFactory.createElementWithClass<HTMLSpanElement>(
-    "span",
-    "price-indicator-decimal"
+    'span',
+    'price-indicator-decimal',
   );
   priceDecimal.textContent = decimalPart;
   priceElement.appendChild(priceDecimal);
 
   const currencySymbol = UIFactory.createElementWithClass<HTMLSpanElement>(
-    "span",
-    "price-indicator-currency"
+    'span',
+    'price-indicator-currency',
   );
-  currencySymbol.textContent = "€";
+  currencySymbol.textContent = '€';
   priceElement.appendChild(currencySymbol);
 
   container.appendChild(priceElement);
 
   const shippingText = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "shipping-cost-text"
+    'div',
+    'shipping-cost-text',
   );
-  const formattedShipping = shippingCost.toFixed(2).replace(".", ",");
+  const formattedShipping = shippingCost.toFixed(2).replace('.', ',');
   shippingText.textContent = `(+${formattedShipping}€ ${
-    language === Language.ENGLISH ? "shipping" : "μεταφορικά"
+    language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
   })`;
   container.appendChild(shippingText);
 
@@ -101,47 +98,34 @@ function createPriceDisplayComponent(
 
 function createPriceComparisonBreakdownComponent(
   productPriceData: ProductPriceData,
-  language: Language
+  language: Language,
 ): HTMLElement {
-  const transportationBreakdown =
-    UIFactory.createElementWithClass<HTMLDivElement>(
-      "div",
-      "transportation-breakdown"
-    );
-  if (
-    productPriceData.buyThroughSkroutz.shopId ===
-    productPriceData.buyThroughStore.shopId
-  ) {
+  const transportationBreakdown = UIFactory.createElementWithClass<HTMLDivElement>(
+    'div',
+    'transportation-breakdown',
+  );
+  if (productPriceData.buyThroughSkroutz.shopId === productPriceData.buyThroughStore.shopId) {
     return transportationBreakdown;
   }
 
   const getLabel = (english: string, greek: string): string =>
     language === Language.ENGLISH ? english : greek;
-  transportationBreakdown.style.display = "flex";
-  transportationBreakdown.style.flexDirection = "row";
-  transportationBreakdown.style.gap = "10px";
+  transportationBreakdown.style.display = 'flex';
+  transportationBreakdown.style.flexDirection = 'row';
+  transportationBreakdown.style.gap = '10px';
 
   const skroutzContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "price-breakdown-item"
+    'div',
+    'price-breakdown-item',
   );
-  const skroutzLabel = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "breakdown-label"
-  );
-  skroutzLabel.textContent = getLabel(
-    "Buy Through Skroutz",
-    "Αγορά μέσω Skroutz"
-  );
+  const skroutzLabel = UIFactory.createElementWithClass<HTMLDivElement>('div', 'breakdown-label');
+  skroutzLabel.textContent = getLabel('Buy Through Skroutz', 'Αγορά μέσω Skroutz');
 
-  const skroutzValue = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "breakdown-value"
-  );
+  const skroutzValue = UIFactory.createElementWithClass<HTMLDivElement>('div', 'breakdown-value');
   skroutzValue.innerHTML = `${productPriceData.buyThroughSkroutz.price.toFixed(
-    2
+    2,
   )}€ + ${productPriceData.buyThroughSkroutz.shippingCost.toFixed(
-    2
+    2,
   )}€ = ${productPriceData.buyThroughSkroutz.totalPrice.toFixed(2)}€`;
 
   skroutzContainer.appendChild(skroutzLabel);
@@ -149,26 +133,17 @@ function createPriceComparisonBreakdownComponent(
 
   // Store price breakdown
   const storeContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "price-breakdown-item"
+    'div',
+    'price-breakdown-item',
   );
-  const storeLabel = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "breakdown-label"
-  );
-  storeLabel.textContent = getLabel(
-    "Buy through Store",
-    "Αγορά μέσω καταστήματος"
-  );
+  const storeLabel = UIFactory.createElementWithClass<HTMLDivElement>('div', 'breakdown-label');
+  storeLabel.textContent = getLabel('Buy through Store', 'Αγορά μέσω καταστήματος');
 
-  const storeValue = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "breakdown-value"
-  );
+  const storeValue = UIFactory.createElementWithClass<HTMLDivElement>('div', 'breakdown-value');
   storeValue.textContent = `${productPriceData.buyThroughStore.price.toFixed(
-    2
+    2,
   )}€ + ${productPriceData.buyThroughStore.shippingCost.toFixed(
-    2
+    2,
   )}€ = ${productPriceData.buyThroughStore.totalPrice.toFixed(2)}€`;
 
   storeContainer.appendChild(storeLabel);
@@ -183,33 +158,29 @@ function createPriceComparisonBreakdownComponent(
 function createCalculationComponent(
   productPriceData: ProductPriceData,
   minimumPriceDifference: number,
-  language: Language
+  language: Language,
 ): HTMLDivElement {
   const calculationContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "calculation-container"
+    'div',
+    'calculation-container',
   );
-  if (
-    productPriceData.buyThroughSkroutz.shopId ===
-    productPriceData.buyThroughStore.shopId
-  ) {
+  if (productPriceData.buyThroughSkroutz.shopId === productPriceData.buyThroughStore.shopId) {
     calculationContainer.innerHTML = `${
       language === Language.ENGLISH
-        ? "Both options are from the same shop"
-        : "Και οι δύο επιλογές είναι από το ίδιο κατάστημα"
+        ? 'Both options are from the same shop'
+        : 'Και οι δύο επιλογές είναι από το ίδιο κατάστημα'
     }`;
     return calculationContainer;
   }
 
   const priceDifference = roundToZero(
-    productPriceData.buyThroughSkroutz.totalPrice -
-      productPriceData.buyThroughStore.totalPrice
+    productPriceData.buyThroughSkroutz.totalPrice - productPriceData.buyThroughStore.totalPrice,
   );
   if (priceDifference === 0) {
     calculationContainer.innerHTML = `${
       language === Language.ENGLISH
-        ? "There is no difference in price"
-        : "Δεν υπάρχει διαφορά στην τιμή"
+        ? 'There is no difference in price'
+        : 'Δεν υπάρχει διαφορά στην τιμή'
     }`;
     return calculationContainer;
   }
@@ -217,30 +188,29 @@ function createCalculationComponent(
   const differenceAbsolute = Math.abs(priceDifference);
   const buyingThroughSkroutz =
     language === Language.ENGLISH
-      ? "Buying through Skroutz is"
+      ? 'Buying through Skroutz is'
       : 'Με "Aγορά μέσω Skroutz" είναι κατά';
 
   if (priceDifference <= 0) {
-    const cheaper = language === Language.ENGLISH ? "cheaper" : "φθηνότερο";
+    const cheaper = language === Language.ENGLISH ? 'cheaper' : 'φθηνότερο';
     calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${differenceAbsolute.toFixed(
-      2
+      2,
     )}€ <u>${cheaper}</u></strong> (${productPriceData.buyThroughStore.totalPrice.toFixed(
-      2
+      2,
     )}€ - ${productPriceData.buyThroughSkroutz.totalPrice.toFixed(2)}€)`;
 
     console.log(
       `${differenceAbsolute} <= ${minimumPriceDifference} = ${
         differenceAbsolute <= minimumPriceDifference
-      }`
+      }`,
     );
   } else {
-    calculationContainer.classList.add("calculation-negative");
-    const moreExpensive =
-      language === Language.ENGLISH ? "more expensive" : "ακριβότερο";
+    calculationContainer.classList.add('calculation-negative');
+    const moreExpensive = language === Language.ENGLISH ? 'more expensive' : 'ακριβότερο';
     calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${differenceAbsolute.toFixed(
-      2
+      2,
     )}€ <u>${moreExpensive}</u></strong> (${productPriceData.buyThroughSkroutz.totalPrice.toFixed(
-      2
+      2,
     )}€ - ${productPriceData.buyThroughStore.totalPrice.toFixed(2)}€)`;
   }
 
@@ -249,18 +219,14 @@ function createCalculationComponent(
     const message =
       language === Language.ENGLISH
         ? `${
-            isBelow ? "Below" : "Exceeds"
-          } the minimum price difference threshold of ${minimumPriceDifference.toFixed(
-            2
-          )}€`
+            isBelow ? 'Below' : 'Exceeds'
+          } the minimum price difference threshold of ${minimumPriceDifference.toFixed(2)}€`
         : `${
-            isBelow ? "Κάτω από" : "Υπερβαίνει"
-          } την ελάχιστη διαφορά τιμής των ${minimumPriceDifference.toFixed(
-            2
-          )}€`;
+            isBelow ? 'Κάτω από' : 'Υπερβαίνει'
+          } την ελάχιστη διαφορά τιμής των ${minimumPriceDifference.toFixed(2)}€`;
 
-    const span = document.createElement("span");
-    span.className = "minimum-price-difference-text";
+    const span = document.createElement('span');
+    span.className = 'minimum-price-difference-text';
     span.textContent = message;
     calculationContainer.appendChild(span);
   }
@@ -271,42 +237,38 @@ function createCalculationComponent(
 function createShopButtonComponent(
   productPriceData: ProductPriceData,
   minimumPriceDifference: number,
-  language: Language
+  language: Language,
 ): HTMLButtonElement {
-  const showPositiveStyling = isPositiveStyling(
-    productPriceData,
-    minimumPriceDifference
-  );
+  const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
 
   const buttonStyle = showPositiveStyling
-    ? "go-to-shop-button-positive"
-    : "go-to-shop-button-negative";
+    ? 'go-to-shop-button-positive'
+    : 'go-to-shop-button-negative';
 
-  const goToStoreButton = UIFactory.createElementWithClass<HTMLButtonElement>(
-    "button",
-    [buttonStyle, "bold-text"]
-  );
+  const goToStoreButton = UIFactory.createElementWithClass<HTMLButtonElement>('button', [
+    buttonStyle,
+    'bold-text',
+  ]);
 
   goToStoreButton.textContent =
-    language === Language.ENGLISH ? "Go to Shop" : "Μετάβαση στο κατάστημα";
+    language === Language.ENGLISH ? 'Go to Shop' : 'Μετάβαση στο κατάστημα';
 
-  goToStoreButton.addEventListener("click", () => {
+  goToStoreButton.addEventListener('click', () => {
     const targetId = `shop-${productPriceData.buyThroughStore.shopId}`;
     const targetElements = document.querySelectorAll(`#${targetId}`);
 
     if (targetElements.length > 0) {
-      const targetElement =
-        targetElements.length > 1 ? targetElements[1] : targetElements[0];
+      const targetElement = targetElements.length > 1 ? targetElements[1] : targetElements[0];
 
       targetElement.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center',
       });
-      targetElement.classList.add("lowest-price-store-highlight");
+      targetElement.classList.add('lowest-price-store-highlight');
 
       setTimeout(() => {
-        targetElement.classList.remove("lowest-price-store-highlight");
+        targetElement.classList.remove('lowest-price-store-highlight');
       }, 3000);
     }
   });
@@ -316,16 +278,14 @@ function createShopButtonComponent(
 
 function isPositiveStyling(
   productPriceData: ProductPriceData,
-  minimumPriceDifference: number
+  minimumPriceDifference: number,
 ): boolean {
   const isPositive =
-    productPriceData.buyThroughSkroutz.totalPrice <=
-    productPriceData.buyThroughStore.totalPrice;
+    productPriceData.buyThroughSkroutz.totalPrice <= productPriceData.buyThroughStore.totalPrice;
 
   if (!isPositive) {
     const priceDifference =
-      productPriceData.buyThroughSkroutz.totalPrice -
-      productPriceData.buyThroughStore.totalPrice;
+      productPriceData.buyThroughSkroutz.totalPrice - productPriceData.buyThroughStore.totalPrice;
 
     return Math.abs(priceDifference) <= minimumPriceDifference;
   }
@@ -336,57 +296,44 @@ function isPositiveStyling(
 function createPriceIndicationElement(
   productPriceData: ProductPriceData,
   language: Language,
-  minimumPriceDifference: number
+  minimumPriceDifference: number,
 ): HTMLDivElement {
-  const showPositiveStyling = isPositiveStyling(
-    productPriceData,
-    minimumPriceDifference
-  );
+  const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
 
-  const priceIndication = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    [
-      "display-padding",
-      "price-checker-outline",
-      showPositiveStyling ? "info-label-positive" : "info-label-negative",
-    ]
-  );
+  const priceIndication = UIFactory.createElementWithClass<HTMLDivElement>('div', [
+    'display-padding',
+    'price-checker-outline',
+    showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
+  ]);
 
-  const reSkroutzedTag = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "reskroutzed-tag"
-  );
+  const reSkroutzedTag = UIFactory.createElementWithClass<HTMLDivElement>('div', 'reskroutzed-tag');
 
   addDeveloperSupportToElement(reSkroutzedTag, language);
 
   priceIndication.appendChild(reSkroutzedTag);
 
   const contentContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "inline-flex-col"
+    'div',
+    'inline-flex-col',
   );
-  const priceCalculationContainer =
-    UIFactory.createElementWithClass<HTMLDivElement>(
-      "div",
-      "price-calculation-container"
-    );
-  const infoContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "inline-flex-col"
+  const priceCalculationContainer = UIFactory.createElementWithClass<HTMLDivElement>(
+    'div',
+    'price-calculation-container',
   );
+  const infoContainer = UIFactory.createElementWithClass<HTMLDivElement>('div', 'inline-flex-col');
   const actionContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    "div",
-    "inline-flex-row"
+    'div',
+    'inline-flex-row',
   );
 
   const priceDisplay = createPriceDisplayComponent(
     productPriceData.buyThroughStore.price,
     productPriceData.buyThroughStore.shippingCost,
-    language
+    language,
   );
   priceCalculationContainer.appendChild(priceDisplay);
 
-  const infoText = document.createElement("span");
+  const infoText = document.createElement('span');
   infoText.textContent =
     language === Language.ENGLISH
       ? 'This is the lowest price with shipping apart from "Buy through Skroutz"'
@@ -398,7 +345,7 @@ function createPriceIndicationElement(
   const calculationContainer = createCalculationComponent(
     productPriceData,
     minimumPriceDifference,
-    language
+    language,
   );
   if (calculationContainer) {
     contentContainer.appendChild(calculationContainer);
@@ -406,7 +353,7 @@ function createPriceIndicationElement(
 
   const transportationBreakdown = createPriceComparisonBreakdownComponent(
     productPriceData,
-    language
+    language,
   );
   infoContainer.appendChild(transportationBreakdown);
 
@@ -415,16 +362,14 @@ function createPriceIndicationElement(
   const goToStoreButton = createShopButtonComponent(
     productPriceData,
     minimumPriceDifference,
-    language
+    language,
   );
   actionContainer.appendChild(goToStoreButton);
 
   contentContainer.appendChild(actionContainer);
 
   priceIndication.title =
-    language === Language.ENGLISH
-      ? "Delivered to you by reSkroutzed"
-      : "Από το reSkroutzed";
+    language === Language.ENGLISH ? 'Delivered to you by reSkroutzed' : 'Από το reSkroutzed';
 
   priceIndication.appendChild(contentContainer);
 
@@ -450,7 +395,7 @@ export class PriceCheckerDecorator {
   }
 
   private setupNavigationHandlers() {
-    window.addEventListener("popstate", this.handleNavigation.bind(this));
+    window.addEventListener('popstate', this.handleNavigation.bind(this));
 
     this.setupProductViewObserver();
   }
@@ -469,7 +414,7 @@ export class PriceCheckerDecorator {
       if (this.isInitializing) return;
 
       for (const mutation of mutations) {
-        if (mutation.type === "childList") {
+        if (mutation.type === 'childList') {
           this.checkForProductViewChange();
         }
       }
@@ -482,7 +427,7 @@ export class PriceCheckerDecorator {
   }
 
   private checkForProductViewChange() {
-    const offeringCard = document.querySelector("article.offering-card");
+    const offeringCard = document.querySelector('article.offering-card');
     if (!offeringCard) return;
 
     const currentProductId = this.getProductId();
@@ -499,9 +444,9 @@ export class PriceCheckerDecorator {
       return urlMatch[1];
     }
 
-    const productElement = document.querySelector("[data-product-id]");
+    const productElement = document.querySelector('[data-product-id]');
     if (productElement) {
-      return productElement.getAttribute("data-product-id");
+      return productElement.getAttribute('data-product-id');
     }
 
     return window.location.href;
@@ -515,7 +460,7 @@ export class PriceCheckerDecorator {
     try {
       this.isInitializing = true;
 
-      const offeringCard = document.querySelector("article.offering-card");
+      const offeringCard = document.querySelector('article.offering-card');
       if (!offeringCard) {
         this.isInitializing = false;
         return;
@@ -533,7 +478,7 @@ export class PriceCheckerDecorator {
       const priceIndication = createPriceIndicationElement(
         this.productPriceData!,
         this.state.language,
-        this.state.minimumPriceDifference
+        this.state.minimumPriceDifference,
       );
 
       offeringCard.insertBefore(priceIndication, offeringCard.children[1]);
@@ -543,38 +488,32 @@ export class PriceCheckerDecorator {
   }
 
   private cleanup() {
-    const existingIndicators = document.querySelectorAll(
-      ".price-checker-outline"
-    );
-    const existingShippingTexts = document.querySelectorAll(
-      ".shipping-cost-text"
-    );
+    const existingIndicators = document.querySelectorAll('.price-checker-outline');
+    const existingShippingTexts = document.querySelectorAll('.shipping-cost-text');
 
     existingIndicators.forEach((element) => element.remove());
     existingShippingTexts.forEach((element) => element.remove());
   }
 
   private adjustSiteData(element: Element): void {
-    const offeringHeading = element.querySelector("div.offering-heading");
-    const price = offeringHeading?.querySelector("div.price");
+    const offeringHeading = element.querySelector('div.offering-heading');
+    const price = offeringHeading?.querySelector('div.price');
 
     if (!offeringHeading || !price) {
       return;
     }
 
     const shippingText = UIFactory.createElementWithClass<HTMLDivElement>(
-      "div",
-      "shipping-cost-text"
+      'div',
+      'shipping-cost-text',
     );
-    const formattedShipping = (
-      this.productPriceData?.buyThroughSkroutz.shippingCost ?? 0
-    )
+    const formattedShipping = (this.productPriceData?.buyThroughSkroutz.shippingCost ?? 0)
       .toFixed(2)
-      .replace(".", ",");
+      .replace('.', ',');
     shippingText.textContent = `(+${formattedShipping}€ ${
-      this.state.language === Language.ENGLISH ? "shipping" : "μεταφορικά"
+      this.state.language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
     })`;
 
-    price.insertAdjacentElement("afterend", shippingText);
+    price.insertAdjacentElement('afterend', shippingText);
   }
 }

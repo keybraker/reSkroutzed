@@ -14,14 +14,16 @@
   bottom: 20px !important;
   left: 20px !important;
   z-index: 9999 !important;
-  transition: background-color 0.3s ease, border-color 0.3s ease,
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
     transform 0.2s ease !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Add tooltip to explain the button's purpose */
 .dark-mode-toggle::after {
-  content: "Toggle Dark Mode" !important;
+  content: 'Toggle Dark Mode' !important;
   position: absolute !important;
   left: 60px !important;
   white-space: nowrap !important;
@@ -58,7 +60,7 @@
 
 /* Add a subtle indicator for the current mode */
 .dark-mode-toggle::before {
-  content: "☀️" !important;
+  content: '☀️' !important;
   position: absolute !important;
   top: -5px !important;
   right: -5px !important;
@@ -75,7 +77,7 @@
 }
 
 .dark-mode .dark-mode-toggle::before {
-  content: "🌙" !important;
+  content: '🌙' !important;
   background: #333 !important;
   border-color: #555 !important;
 }
@@ -91,7 +93,9 @@
   background-color: #488544 !important;
   color: #ffffff !important;
   border-color: #38703c !important;
-  transition: background-color 0.3s ease, transform 0.2s ease !important;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease !important;
 
   &:hover {
     background-color: #5a9b5a !important;
@@ -110,7 +114,9 @@
   background-color: var(--dark-mode-text) !important;
   color: var(--dark-mode-text) !important;
   border-color: var(--dark-mode-border) !important;
-  transition: background-color 0.3s ease, transform 0.2s ease !important;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease !important;
 
   &:hover {
     background-color: var(--dark-mode-hover) !important;
@@ -149,7 +155,7 @@
 
 .dark-mode .no-opacity {
   padding: 10px, 10px, 10px, 10px !important;
-  content: "🌙" !important;
+  content: '🌙' !important;
   background: #333 !important;
   border-color: #555 !important;
 }

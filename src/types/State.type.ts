@@ -1,4 +1,4 @@
-import { Language } from "../enums/Language.enum";
+import { Language } from '../enums/Language.enum';
 
 export type State = {
   // visibility

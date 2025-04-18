@@ -192,7 +192,7 @@ html.dark-mode {
   transform: scale(1.05) !important;
 }
 
-.dark-mode .rc-icon-btn.icon.heart[data-active="true"],
+.dark-mode .rc-icon-btn.icon.heart[data-active='true'],
 .dark-mode .rc-icon-btn.icon.heart.active {
   color: var(--custom-light-red) !important;
 }
@@ -675,13 +675,13 @@ text-black {
 }
 
 /* Preserve badge background colors in dark mode */
-.dark-mode .badge[style*="background-color"] {
+.dark-mode .badge[style*='background-color'] {
   background-color: attr(style background-color) !important;
   filter: brightness(0.85) !important;
 }
 
 /* Badge specific dark mode color adjustments */
-.dark-mode .badge[style*="background-color:#0971C8"] {
+.dark-mode .badge[style*='background-color:#0971C8'] {
   background-color: #075fa1 !important;
 }
 
@@ -784,7 +784,7 @@ text-black {
   /* box-shadow: 0 1px 3px var(--dark-mode-shadow) !important; */
 }
 
-.dark-mode .rating-wrapper span[data-testid="star-rating-value"] {
+.dark-mode .rating-wrapper span[data-testid='star-rating-value'] {
   color: var(--dark-mode-text) !important;
   font-weight: 600 !important;
 }
