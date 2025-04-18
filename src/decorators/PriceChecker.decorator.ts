@@ -2,8 +2,8 @@ import { Language } from "../enums/Language.enum";
 import { addDeveloperSupportToElement } from "../functions/addDeveloperSupportToElement";
 import {
   ProductPriceData,
-  marketDataReceiver,
-} from "../retrievers/marketData.retriever";
+  SkroutzClient,
+} from "../clients/skroutz/client";
 import { State } from "../types/State.type";
 
 const roundToZero = (value: number, precision = 1e-10): number => {
@@ -522,7 +522,7 @@ export class PriceCheckerDecorator {
       }
 
       this.cleanup();
-      this.productPriceData = await marketDataReceiver();
+      this.productPriceData = await SkroutzClient.getCurrentProductData();
 
       if (!this.productPriceData) {
         this.isInitializing = false;
