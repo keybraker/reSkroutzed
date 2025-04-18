@@ -1,4 +1,4 @@
-import { StorageKey, StorageService } from '../services/storage.service';
+import { StorageKey, BrowserClient } from '../clients/browser/client';
 import { State } from '../types/State.type';
 
 export class PromotionalVideoHandler {
@@ -86,7 +86,7 @@ export class PromotionalVideoHandler {
     videoButtonToggle.addEventListener('click', () => {
       this.state.hideVideoAds = !this.state.hideVideoAds;
 
-      StorageService.setValue(StorageKey.VIDEO_AD_VISIBILITY, this.state.hideVideoAds);
+      BrowserClient.setValue(StorageKey.VIDEO_AD_VISIBILITY, this.state.hideVideoAds);
 
       this.updateVideoButtonText(videoButtonToggle);
       this.toggleVideoVisibility();

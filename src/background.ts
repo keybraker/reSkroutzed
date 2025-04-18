@@ -10,7 +10,7 @@ import { SponsoredProductListHandler } from './handlers/sponsoredProductList.han
 import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
 import { SponsorshipHandler } from './handlers/sponsorship.handler';
 import { UniversalToggleHandler } from './handlers/universalToggle.handler';
-import { StorageService, StorageKey } from './services/storage.service';
+import { BrowserClient, StorageKey } from './clients/browser/client';
 import { State } from './types/State.type';
 
 const state: State = {
@@ -27,21 +27,21 @@ const state: State = {
 
 function loadStorage() {
   // Load language first since other translations may depend on it
-  state.language = StorageService.getLanguage();
+  state.language = BrowserClient.getLanguage();
 
   // Load boolean settings with defaults
-  state.hideProductAds = StorageService.getValue<boolean>(StorageKey.PRODUCT_AD_VISIBILITY);
-  state.hideVideoAds = StorageService.getValue<boolean>(StorageKey.VIDEO_AD_VISIBILITY);
-  state.hideSponsorships = StorageService.getValue<boolean>(StorageKey.SPONSORSHIP_VISIBILITY);
+  state.hideProductAds = BrowserClient.getValue<boolean>(StorageKey.PRODUCT_AD_VISIBILITY);
+  state.hideVideoAds = BrowserClient.getValue<boolean>(StorageKey.VIDEO_AD_VISIBILITY);
+  state.hideSponsorships = BrowserClient.getValue<boolean>(StorageKey.SPONSORSHIP_VISIBILITY);
 
   // Load dark mode and apply it immediately if enabled
-  state.darkMode = StorageService.getValue<boolean>(StorageKey.DARK_MODE);
+  state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
   if (state.darkMode) {
     new DarkModeHandler(state).applyDarkMode();
   }
 
   // Load numeric settings
-  state.minimumPriceDifference = StorageService.getValue<number>(
+  state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
   );
 }

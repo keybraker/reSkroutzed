@@ -1,4 +1,4 @@
-import { StorageService, StorageKey } from '../services/storage.service';
+import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { State } from '../types/State.type';
 import { toggleVisibility, updateSponsoredTextSingle } from '../utilities/sponsored.util';
 
@@ -35,7 +35,7 @@ export class SponsorshipHandler {
   public toggleSponsorship(): void {
     this.state.hideSponsorships = !this.state.hideSponsorships;
 
-    StorageService.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
+    BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
 
     document.querySelectorAll('div#sponsorship.flagged-sponsorship').forEach((element) => {
       toggleVisibility(element, this.state);

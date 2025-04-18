@@ -1,5 +1,5 @@
 import { appendLogoChild } from '../functions/appendLogoChild';
-import { StorageService, StorageKey } from '../services/storage.service';
+import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { State } from '../types/State.type';
 
 export class DarkModeHandler {
@@ -20,7 +20,7 @@ export class DarkModeHandler {
   public toggleDarkMode(): void {
     this.state.darkMode = !this.state.darkMode;
 
-    StorageService.setValue(StorageKey.DARK_MODE, this.state.darkMode);
+    BrowserClient.setValue(StorageKey.DARK_MODE, this.state.darkMode);
 
     this.applyDarkMode();
   }

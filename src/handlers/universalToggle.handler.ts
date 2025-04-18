@@ -1,6 +1,6 @@
 import { Language } from '../enums/Language.enum';
 import { appendLogoChild } from '../functions/appendLogoChild';
-import { StorageService, StorageKey } from '../services/storage.service';
+import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { State } from '../types/State.type';
 import { DarkModeHandler } from './darkMode.handler';
 import { PromotionalVideoHandler } from './promotionalVideo.handler';
@@ -216,7 +216,7 @@ export class UniversalToggleHandler {
       e.stopPropagation();
       this.state.hideProductAds = !this.state.hideProductAds;
 
-      StorageService.setValue(StorageKey.PRODUCT_AD_VISIBILITY, this.state.hideProductAds);
+      BrowserClient.setValue(StorageKey.PRODUCT_AD_VISIBILITY, this.state.hideProductAds);
 
       const adText = button.querySelector('.ad-text-icon');
       if (adText) {
@@ -312,7 +312,7 @@ export class UniversalToggleHandler {
               : `Minimum Price Difference: ${newValue}€`;
           button.title = updatedTitle;
 
-          StorageService.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);
+          BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);
 
           const productPage = document.querySelector('article.offering-card');
           if (productPage) {
@@ -405,7 +405,7 @@ export class UniversalToggleHandler {
       this.state.hideVideoAds = !this.state.hideVideoAds;
 
       // Add this line to persist the video visibility setting to storage
-      StorageService.setValue(StorageKey.VIDEO_AD_VISIBILITY, this.state.hideVideoAds);
+      BrowserClient.setValue(StorageKey.VIDEO_AD_VISIBILITY, this.state.hideVideoAds);
 
       this.videoHandler.toggleVideoVisibility();
       button.classList.toggle('active');

@@ -1,4 +1,4 @@
-import { Language } from '../enums/Language.enum';
+import { Language } from '../../enums/Language.enum';
 
 export type StorageValueType = boolean | Language | number | string;
 
@@ -32,7 +32,7 @@ const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
 /**
  * A centralized service for handling all storage operations
  */
-export class StorageService {
+export class BrowserClient {
   /**
    * Get a value from storage
    * @param key The key to retrieve
