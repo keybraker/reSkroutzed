@@ -1,9 +1,9 @@
-name: ESLint Check
+name: Prettier Check
 
 on: [push, pull_request]
 
 jobs:
-  lint:
+  format:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,5 +17,5 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: Run Prettier Check
+        run: npm run format:check

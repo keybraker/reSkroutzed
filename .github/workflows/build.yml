@@ -1,0 +1,38 @@
+name: Build Extension
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Chrome Extension
+        run: npm run build:chrome
+
+      - name: Build Firefox Extension
+        run: npm run build:firefox
+
+      - name: Upload Chrome Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: chrome-build
+          path: build/chrome_build.zip
+          retention-days: 7
+
+      - name: Upload Firefox Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: firefox-build
+          path: build/firefox_build.zip
+          retention-days: 7

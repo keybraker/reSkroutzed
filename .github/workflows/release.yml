@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Chrome Extension
+        run: npm run build:chrome
+
+      - name: Build Firefox Extension
+        run: npm run build:firefox
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ReSkroutzed ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            build/chrome_build.zip
+            build/firefox_build.zip
+          body: |
+            # ReSkroutzed ${{ github.ref_name }}
+
+            ## Release Notes
+
+            <!-- Add release notes here or edit after release creation -->
+
+            ## Installation
+
+            ### Chrome
+            - Download the chrome_build.zip file
+            - Unzip the file
+            - Go to chrome://extensions/
+            - Enable "Developer mode"
+            - Click "Load unpacked" and select the unzipped folder
+
+            ### Firefox
+            - Download the firefox_build.zip file
+            - Go to about:debugging#/runtime/this-firefox
+            - Click "Load Temporary Add-on"
+            - Select the downloaded zip file
