@@ -1,7 +1,8 @@
 import { Language } from '../common/enums/Language.enum';
-import { addDeveloperSupportToElement } from '../functions/addDeveloperSupportToElement';
 import { ProductPriceData, SkroutzClient } from '../clients/skroutz/client';
 import { State } from '../common/types/State.type';
+import { createLogoElement } from './functions/createLogoElement';
+import { DomClient } from '../clients/dom/client';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
@@ -308,7 +309,7 @@ function createPriceIndicationElement(
 
   const reSkroutzedTag = UIFactory.createElementWithClass<HTMLDivElement>('div', 'reskroutzed-tag');
 
-  addDeveloperSupportToElement(reSkroutzedTag, language);
+  addReskroutzedTagToElement(reSkroutzedTag, language);
 
   priceIndication.appendChild(reSkroutzedTag);
 
@@ -376,8 +377,34 @@ function createPriceIndicationElement(
   return priceIndication;
 }
 
+function addReskroutzedTagToElement(
+  element: HTMLDivElement | HTMLButtonElement,
+  language: Language,
+) {
+  const brand = document.createElement('div');
+  const brandLink = document.createElement('a');
+
+  brand.classList.add('support-developer', 'icon-border', 'font-bold');
+
+  brandLink.href = 'https://paypal.me/tsiakkas';
+  brandLink.target = '_blank'; // Open in new tab
+  brandLink.rel = 'noopener noreferrer'; // Security best practice for external links
+  if (language === Language.GREEK) {
+    brandLink.textContent = 'ReSkroutzed';
+  } else {
+    brandLink.textContent = 'ReSkroutzed';
+  }
+  brandLink.classList.add('icon-border', 'font-bold');
+
+  brand.appendChild(brandLink);
+
+  const reskroutzedLogo = createLogoElement();
+  DomClient.appendElementToElement(reskroutzedLogo, brand);
+
+  element.appendChild(brand);
+}
+
 export class PriceCheckerDecorator {
-  private readonly state: State;
   /* Configuration */
   private observer: MutationObserver | null = null;
   private isInitializing: boolean = false;
@@ -385,11 +412,9 @@ export class PriceCheckerDecorator {
   /* Data */
   private productPriceData: ProductPriceData | undefined = undefined;
 
-  constructor(state: State) {
-    this.state = state;
-  }
+  constructor(private readonly state: State) { }
 
-  public async start() {
+  public async execute() {
     await this.initializeProductView();
     this.setupNavigationHandlers();
   }

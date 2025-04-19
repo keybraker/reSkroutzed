@@ -1,4 +1,4 @@
-export function appendLogoChild(element: HTMLDivElement | HTMLButtonElement) {
+export function createLogoElement(): HTMLDivElement {
   const icon = document.createElement('div');
 
   icon.classList.add('align-center', 'icon-border');
@@ -17,5 +17,5 @@ export function appendLogoChild(element: HTMLDivElement | HTMLButtonElement) {
 
   icon.appendChild(img);
 
-  element.appendChild(icon);
+  return icon;
 }

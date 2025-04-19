@@ -1,9 +1,9 @@
+import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
-import { toggleVisibility } from '../utilities/sponsored.util';
 
 function toggleVisibilityByClass(selector: string, state: State) {
   const elements = document.querySelectorAll(selector);
-  elements?.forEach((element) => toggleVisibility(element, state));
+  elements?.forEach((element) => DomClient.toggleElementVisibility(element, state));
 }
 
 export function toggleContentVisibility(state: State) {

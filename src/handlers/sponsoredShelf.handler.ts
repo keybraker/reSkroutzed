@@ -1,10 +1,4 @@
-import { flagProductListItem } from '../utilities/flag.util';
-import {
-  isSponsored,
-  toggleVisibility,
-  updateSponsoredTextPlural,
-  updateSponsoredTextSingle,
-} from '../utilities/sponsored.util';
+import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
 
 export class SponsoredShelfHandler {
@@ -20,7 +14,7 @@ export class SponsoredShelfHandler {
     const h4Elements = document.querySelectorAll('h4:not(.flagged-shelf)');
 
     [...h4Elements]
-      .filter(isSponsored)
+      .filter(DomClient.isElementSponsored)
       .forEach((element) => this.updateShelfCountAndVisibility(element));
   }
 
@@ -36,24 +30,24 @@ export class SponsoredShelfHandler {
     this.state.ShelfAdCount++;
 
     h4Element.classList.add('sponsored-label');
-    updateSponsoredTextPlural(h4Element, this.state.language);
+    DomClient.updateSponsoredTextPlural(h4Element, this.state.language);
 
     const h4ParentElement = h4Element.parentElement;
 
     if (h4ParentElement) {
       h4ParentElement.classList.add('flagged-shelf');
 
-      updateSponsoredTextSingle(h4Element, this.state.language);
+      DomClient.updateSponsoredTextSingle(h4Element, this.state.language);
 
-      toggleVisibility(h4ParentElement, this.state);
+      DomClient.toggleElementVisibility(h4ParentElement, this.state);
 
       const sponsoredItems = h4ParentElement?.children[2]?.children[0]?.children;
 
       if (sponsoredItems) {
         [...sponsoredItems]?.forEach((element) => {
           this.state.productAdCount++;
-          flagProductListItem(element);
-          updateSponsoredTextSingle(element, this.state.language);
+          DomClient.flagElementAsSponsored(element);
+          DomClient.updateSponsoredTextSingle(element, this.state.language);
         });
       }
     }

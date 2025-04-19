@@ -1,9 +1,4 @@
-import { flagProductListItem, isFlagged } from '../utilities/flag.util';
-import {
-  isSponsored,
-  toggleVisibility,
-  updateSponsoredTextSingle,
-} from '../utilities/sponsored.util';
+import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
 
 export class SponsoredProductHandler {
@@ -19,16 +14,16 @@ export class SponsoredProductHandler {
     const nonFlaggedProductListItems = document.querySelectorAll('li:not(.flagged-product)');
 
     [...nonFlaggedProductListItems]?.filter(this.isSponsored)?.forEach((listItem) => {
-      flagProductListItem(listItem);
-      updateSponsoredTextSingle(listItem, this.state.language);
+      DomClient.flagElementAsSponsored(listItem);
+      DomClient.updateSponsoredTextSingle(listItem, this.state.language);
       this.state.productAdCount++;
-      toggleVisibility(listItem, this.state);
+      DomClient.toggleElementVisibility(listItem, this.state);
     });
 
     [...nonFlaggedProductListItems]?.filter(this.hasFlaggedLabelText)?.forEach((listItem) => {
-      flagProductListItem(listItem);
-      updateSponsoredTextSingle(listItem, this.state.language);
-      toggleVisibility(listItem, this.state);
+      DomClient.flagElementAsSponsored(listItem);
+      DomClient.updateSponsoredTextSingle(listItem, this.state.language);
+      DomClient.toggleElementVisibility(listItem, this.state);
     });
 
     // Target shop-promoter elements (sponsored posts/ads)
@@ -37,9 +32,9 @@ export class SponsoredProductHandler {
     shopPromoterElements?.forEach((element) => {
       const parentElement = this.findParentToFlag(element);
       if (parentElement) {
-        flagProductListItem(parentElement);
+        DomClient.flagElementAsSponsored(parentElement);
         this.state.productAdCount++;
-        toggleVisibility(parentElement, this.state);
+        DomClient.toggleElementVisibility(parentElement, this.state);
       }
     });
 
@@ -88,7 +83,7 @@ export class SponsoredProductHandler {
 
   private isSponsored(listItem: Element): boolean {
     const labelTextElement = listItem.querySelector('.label-text');
-    if (isSponsored(labelTextElement)) {
+    if (DomClient.isElementSponsored(labelTextElement)) {
       return true;
     }
 
@@ -97,7 +92,7 @@ export class SponsoredProductHandler {
 
   private hasFlaggedLabelText(listItem: Element): boolean {
     const labelTextElement = listItem.querySelector('.label-text');
-    return isFlagged(labelTextElement);
+    return DomClient.isElementFlaggedAsSponsored(labelTextElement);
   }
 
   private findParentToFlag(element: Element): Element | null {

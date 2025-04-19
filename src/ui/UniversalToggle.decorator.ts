@@ -1,12 +1,13 @@
 import { Language } from '../common/enums/Language.enum';
-import { appendLogoChild } from '../functions/appendLogoChild';
+import { createLogoElement } from './functions/createLogoElement';
 import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { State } from '../common/types/State.type';
-import { DarkModeHandler } from './darkMode.handler';
-import { PromotionalVideoHandler } from './promotionalVideo.handler';
-import { SponsorshipHandler } from './sponsorship.handler';
+import { DarkModeHandler } from '../handlers/darkMode.handler';
+import { PromotionalVideoHandler } from '../handlers/promotionalVideo.handler';
+import { SponsorshipHandler } from '../handlers/sponsorship.handler';
+import { DomClient } from '../clients/dom/client';
 
-export class UniversalToggleHandler {
+export class UniversalToggleDecorator {
   private state: State;
   private videoHandler: PromotionalVideoHandler;
   private sponsorshipHandler: SponsorshipHandler;
@@ -30,7 +31,8 @@ export class UniversalToggleHandler {
     mainToggle.classList.add('universal-toggle-button');
     mainToggle.title = 'ReSkroutzed Options';
 
-    appendLogoChild(mainToggle);
+    const reskroutzedLogo = createLogoElement();
+    DomClient.appendElementToElement(reskroutzedLogo, mainToggle);
 
     const buttonsContainer = document.createElement('div');
     buttonsContainer.classList.add('toggle-buttons-container');

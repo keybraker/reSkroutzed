@@ -58,24 +58,6 @@ export class PromotionalVideoHandler {
     });
   }
 
-  private updateVideoCountAndVisibility(liElement: Element): void {
-    if (
-      liElement?.classList.contains('promo-video-card') ||
-      liElement?.classList.contains('video-promo') ||
-      liElement?.classList.contains('tl-reels')
-    ) {
-      this.state.videoAdCount++;
-
-      liElement.classList.add('flagged-video');
-
-      if (this.state) {
-        this.state.hideVideoAds
-          ? liElement.classList.remove('display-none-promo-product')
-          : liElement.classList.add('display-none-promo-product');
-      }
-    }
-  }
-
   public createVideoToggleButton(): HTMLButtonElement {
     const videoButtonToggle = document.createElement('button');
     videoButtonToggle.classList.add('flagger-toggle-product');
@@ -95,6 +77,18 @@ export class PromotionalVideoHandler {
     videoButtonToggle.setAttribute('type', 'button');
 
     return videoButtonToggle;
+  }
+
+  public toggleVideoVisibility(): void {
+    const videoElements = document.querySelectorAll(
+      'li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video',
+    );
+
+    videoElements?.forEach((element) => {
+      this.state.hideVideoAds
+        ? element.classList.remove('display-none-promo-product')
+        : element.classList.add('display-none-promo-product');
+    });
   }
 
   private updateVideoButtonText(videoButtonToggle: HTMLElement): void {
@@ -135,15 +129,21 @@ export class PromotionalVideoHandler {
     videoButtonToggle.appendChild(countSpan);
   }
 
-  public toggleVideoVisibility(): void {
-    const videoElements = document.querySelectorAll(
-      'li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video',
-    );
+  private updateVideoCountAndVisibility(liElement: Element): void {
+    if (
+      liElement?.classList.contains('promo-video-card') ||
+      liElement?.classList.contains('video-promo') ||
+      liElement?.classList.contains('tl-reels')
+    ) {
+      this.state.videoAdCount++;
 
-    videoElements?.forEach((element) => {
-      this.state.hideVideoAds
-        ? element.classList.remove('display-none-promo-product')
-        : element.classList.add('display-none-promo-product');
-    });
+      liElement.classList.add('flagged-video');
+
+      if (this.state) {
+        this.state.hideVideoAds
+          ? liElement.classList.remove('display-none-promo-product')
+          : liElement.classList.add('display-none-promo-product');
+      }
+    }
   }
 }

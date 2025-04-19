@@ -1,4 +1,4 @@
-import { isSponsored, updateSponsoredTextSingle } from '../utilities/sponsored.util';
+import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
 
 // FBT: Frequently Bought Together
@@ -30,12 +30,12 @@ export class SponsoredFbtHandler {
 
   private getSponsoredSpan(div: Element): Element | null {
     const sponsoredSpan = div.querySelector('span.sp-tag');
-    return isSponsored(sponsoredSpan) ? sponsoredSpan : null;
+    return DomClient.isElementSponsored(sponsoredSpan) ? sponsoredSpan : null;
   }
 
   private flagSponsoredSpan(spanElement: Element): void {
     spanElement.classList.add('sponsored-label');
-    updateSponsoredTextSingle(spanElement, this.state.language);
+    DomClient.updateSponsoredTextSingle(spanElement, this.state.language);
   }
 
   private flagSponsoredDiv(div: Element): void {

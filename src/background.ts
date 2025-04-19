@@ -1,6 +1,6 @@
 import { toggleContentVisibility } from './actions/visibility.action';
-import { correctFinalPriceDecorator } from './decorators/correctFinalPrice.decorator';
-import { PriceCheckerDecorator } from './decorators/PriceChecker.decorator';
+import { FinalPriceFixer } from './ui/FinalPriceFixer.decorator';
+import { PriceCheckerDecorator } from './ui/PriceChecker.decorator';
 import { Language } from './common/enums/Language.enum';
 import { DarkModeHandler } from './handlers/darkMode.handler';
 import { PromotionalVideoHandler } from './handlers/promotionalVideo.handler';
@@ -9,9 +9,9 @@ import { SponsoredProductHandler } from './handlers/sponsoredProduct.handler';
 import { SponsoredProductListHandler } from './handlers/sponsoredProductList.handler';
 import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
 import { SponsorshipHandler } from './handlers/sponsorship.handler';
-import { UniversalToggleHandler } from './handlers/universalToggle.handler';
 import { BrowserClient, StorageKey } from './clients/browser/client';
 import { State } from './common/types/State.type';
+import { UniversalToggleDecorator } from './ui/universalToggle.decorator';
 
 const state: State = {
   hideProductAds: false,
@@ -26,21 +26,17 @@ const state: State = {
 };
 
 function loadStorage() {
-  // Load language first since other translations may depend on it
   state.language = BrowserClient.getLanguage();
 
-  // Load boolean settings with defaults
   state.hideProductAds = BrowserClient.getValue<boolean>(StorageKey.PRODUCT_AD_VISIBILITY);
   state.hideVideoAds = BrowserClient.getValue<boolean>(StorageKey.VIDEO_AD_VISIBILITY);
   state.hideSponsorships = BrowserClient.getValue<boolean>(StorageKey.SPONSORSHIP_VISIBILITY);
 
-  // Load dark mode and apply it immediately if enabled
   state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
   if (state.darkMode) {
     new DarkModeHandler(state).applyDarkMode();
   }
 
-  // Load numeric settings
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
   );
@@ -54,8 +50,10 @@ const sponsoredProductHandler = new SponsoredProductHandler(state);
 const sponsoredProductListHandler = new SponsoredProductListHandler(state);
 const sponsoredFbtHandler = new SponsoredFbtHandler(state);
 const sponsorshipHandler = new SponsorshipHandler(state);
+// Decorators
 const priceCheckerIndicator = new PriceCheckerDecorator(state);
-const universalToggleHandler = new UniversalToggleHandler(
+const finalPriceFixer = new FinalPriceFixer(state)
+const universalToggleHandler = new UniversalToggleDecorator(
   state,
   promotionalVideoHandler,
   sponsorshipHandler,
@@ -63,12 +61,12 @@ const universalToggleHandler = new UniversalToggleHandler(
 
 (function () {
   async function initializer() {
-    await priceCheckerIndicator.start();
+    await priceCheckerIndicator.execute();
+    finalPriceFixer.execute();
     document.body.appendChild(universalToggleHandler.createUniversalToggle());
 
     flagContent();
     toggleContentVisibility(state);
-    correctFinalPriceDecorator(state.language);
   }
 
   function flagContent() {

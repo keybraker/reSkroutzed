@@ -1,6 +1,6 @@
 import { BrowserClient, StorageKey } from '../clients/browser/client';
+import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
-import { toggleVisibility, updateSponsoredTextSingle } from '../utilities/sponsored.util';
 
 export class SponsorshipHandler {
   private state: State;
@@ -24,7 +24,7 @@ export class SponsorshipHandler {
         const labelText = shopPromoterSpan.querySelector('.label-text');
         if (labelText) {
           labelText.classList.add('flagged-product-label');
-          updateSponsoredTextSingle(labelText, this.state.language);
+          DomClient.updateSponsoredTextSingle(labelText, this.state.language);
         }
       }
 
@@ -38,11 +38,11 @@ export class SponsorshipHandler {
     BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
 
     document.querySelectorAll('div#sponsorship.flagged-sponsorship').forEach((element) => {
-      toggleVisibility(element, this.state);
+      DomClient.toggleElementVisibility(element, this.state);
     });
   }
 
   private toggleSponsorshipVisibility(element: Element): void {
-    toggleVisibility(element, this.state);
+    DomClient.toggleElementVisibility(element, this.state);
   }
 }
