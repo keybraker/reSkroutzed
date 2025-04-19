@@ -59,13 +59,8 @@ const universalToggleHandler = new UniversalToggleDecorator(
   sponsorshipHandler,
 );
 
-function toggleVisibilityByClass(selector: string, state: State) {
-  const elements = document.querySelectorAll(selector);
-  elements?.forEach((element) => DomClient.toggleElementVisibility(element, state));
-}
-
 (function () {
-  async function initializer() {
+  async function initializer(): Promise<void> {
     await priceCheckerIndicator.execute();
     finalPriceFixer.execute();
     document.body.appendChild(universalToggleHandler.createUniversalToggle());
@@ -79,16 +74,21 @@ function toggleVisibilityByClass(selector: string, state: State) {
     toggleVisibilityByClass('div.flagged-sponsorship', state);
   }
 
-  function flagContent() {
-    promotionalVideoHandler.flag(); // https://www.skroutz.gr/c/25/laptop.html
-    sponsoredShelfHandler.flag(); // https://www.skroutz.gr/s/28600322/Apple-MacBook-Air-13-3-2020-IPS-QHD-M1-8GB-256GB-SSD-Z1240002B-Space-Gray-International-English-Keyboard.html
+  function toggleVisibilityByClass(selector: string, state: State): void {
+    const elements = document.querySelectorAll(selector);
+    elements?.forEach((element) => DomClient.toggleElementVisibility(element, state));
+  }
+
+  function flagContent(): void {
+    promotionalVideoHandler.flag();
+    sponsoredShelfHandler.flag();
     sponsoredProductHandler.flag();
     sponsoredProductListHandler.flag();
     sponsoredFbtHandler.flag();
     sponsorshipHandler.flag();
   }
 
-  function observeMutations() {
+  function observeMutations(): void {
     const observer1 = new MutationObserver(() => flagContent());
 
     observer1.observe(document.body, { childList: true, subtree: true });
