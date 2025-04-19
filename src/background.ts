@@ -2,16 +2,16 @@ import { BrowserClient, StorageKey } from './clients/browser/client';
 import { DomClient } from './clients/dom/client';
 import { Language } from './common/enums/Language.enum';
 import { State } from './common/types/State.type';
-import { DarkModeHandler } from './handlers/darkMode.handler';
+import { FinalPriceFixer } from './features/FinalPriceFixer.decorator';
+import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
+import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
+import { themeSync } from './features/functions/themeSync';
 import { PromotionalVideoHandler } from './handlers/promotionalVideo.handler';
 import { SponsoredFbtHandler } from './handlers/sponsoredFbt.handler';
 import { SponsoredProductHandler } from './handlers/sponsoredProduct.handler';
 import { SponsoredProductListHandler } from './handlers/sponsoredProductList.handler';
 import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
 import { SponsorshipHandler } from './handlers/sponsorship.handler';
-import { FinalPriceFixer } from './features/FinalPriceFixer.decorator';
-import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
-import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
 
 const state: State = {
   hideProductAds: false,
@@ -34,7 +34,7 @@ function loadStorage(): void {
 
   state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
   if (state.darkMode) {
-    new DarkModeHandler(state).applyDarkMode();
+    themeSync(state);
   }
 
   state.minimumPriceDifference = BrowserClient.getValue<number>(

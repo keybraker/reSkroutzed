@@ -1,11 +1,11 @@
-import { Language } from '../common/enums/Language.enum';
-import { createLogoElement } from './functions/createLogoElement';
 import { BrowserClient, StorageKey } from '../clients/browser/client';
+import { DomClient } from '../clients/dom/client';
+import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
-import { DarkModeHandler } from '../handlers/darkMode.handler';
 import { PromotionalVideoHandler } from '../handlers/promotionalVideo.handler';
 import { SponsorshipHandler } from '../handlers/sponsorship.handler';
-import { DomClient } from '../clients/dom/client';
+import { createLogoElement } from './functions/createLogoElement';
+import { themeSync } from './functions/themeSync';
 
 export class UniversalToggleDecorator {
   private state: State;
@@ -138,7 +138,11 @@ export class UniversalToggleDecorator {
 
     button.addEventListener('click', (e) => {
       e.stopPropagation();
-      new DarkModeHandler(this.state).toggleDarkMode();
+
+      this.state.darkMode = !this.state.darkMode;
+      BrowserClient.setValue(StorageKey.DARK_MODE, this.state.darkMode);
+      themeSync(this.state);
+
       button.classList.toggle('active');
 
       const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
