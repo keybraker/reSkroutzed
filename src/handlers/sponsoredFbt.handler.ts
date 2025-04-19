@@ -10,7 +10,7 @@ export class SponsoredFbtHandler {
   }
 
   public flag(): void {
-    const divElements = this.getDivElements();
+    const divElements = DomClient.getElementsByClass('div.fbt-content:not(.flagged-bought-together)');
 
     divElements?.forEach((div: Element) => {
       const sponsoredSpan = this.getSponsoredSpan(div);
@@ -23,19 +23,19 @@ export class SponsoredFbtHandler {
     });
   }
 
-  private getDivElements(): Element[] {
-    const divElements = document.querySelectorAll('div.fbt-content:not(.flagged-bought-together)');
-    return [...divElements];
-  }
-
   private getSponsoredSpan(div: Element): Element | null {
-    const sponsoredSpan = div.querySelector('span.sp-tag');
-    return DomClient.isElementSponsored(sponsoredSpan) ? sponsoredSpan : null;
+    const sponsoredSpan = DomClient.getElementByClass('span.sp-tag', div);
+
+    if (!sponsoredSpan || !DomClient.isElementSponsored(sponsoredSpan)) {
+      return null;
+    }
+
+    return  sponsoredSpan;
   }
 
-  private flagSponsoredSpan(spanElement: Element): void {
-    spanElement.classList.add('sponsored-label');
-    DomClient.updateSponsoredTextSingle(spanElement, this.state.language);
+  private flagSponsoredSpan(element: Element): void {
+    element.classList.add('sponsored-label');
+    DomClient.updateSponsoredTextSingle(element, this.state.language);
   }
 
   private flagSponsoredDiv(div: Element): void {

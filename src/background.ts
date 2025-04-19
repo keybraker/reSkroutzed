@@ -1,7 +1,7 @@
-import { toggleContentVisibility } from './actions/visibility.action';
-import { FinalPriceFixer } from './ui/FinalPriceFixer.decorator';
-import { PriceCheckerDecorator } from './ui/PriceChecker.decorator';
+import { BrowserClient, StorageKey } from './clients/browser/client';
+import { DomClient } from './clients/dom/client';
 import { Language } from './common/enums/Language.enum';
+import { State } from './common/types/State.type';
 import { DarkModeHandler } from './handlers/darkMode.handler';
 import { PromotionalVideoHandler } from './handlers/promotionalVideo.handler';
 import { SponsoredFbtHandler } from './handlers/sponsoredFbt.handler';
@@ -9,9 +9,9 @@ import { SponsoredProductHandler } from './handlers/sponsoredProduct.handler';
 import { SponsoredProductListHandler } from './handlers/sponsoredProductList.handler';
 import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
 import { SponsorshipHandler } from './handlers/sponsorship.handler';
-import { BrowserClient, StorageKey } from './clients/browser/client';
-import { State } from './common/types/State.type';
-import { UniversalToggleDecorator } from './ui/universalToggle.decorator';
+import { FinalPriceFixer } from './ui/FinalPriceFixer.decorator';
+import { PriceCheckerDecorator } from './ui/PriceChecker.decorator';
+import { UniversalToggleDecorator } from './ui/dasdasUniversalToggle.decorator';
 
 const state: State = {
   hideProductAds: false,
@@ -52,12 +52,17 @@ const sponsoredFbtHandler = new SponsoredFbtHandler(state);
 const sponsorshipHandler = new SponsorshipHandler(state);
 // Decorators
 const priceCheckerIndicator = new PriceCheckerDecorator(state);
-const finalPriceFixer = new FinalPriceFixer(state)
+const finalPriceFixer = new FinalPriceFixer(state);
 const universalToggleHandler = new UniversalToggleDecorator(
   state,
   promotionalVideoHandler,
   sponsorshipHandler,
 );
+
+function toggleVisibilityByClass(selector: string, state: State) {
+  const elements = document.querySelectorAll(selector);
+  elements?.forEach((element) => DomClient.toggleElementVisibility(element, state));
+}
 
 (function () {
   async function initializer() {
@@ -66,12 +71,17 @@ const universalToggleHandler = new UniversalToggleDecorator(
     document.body.appendChild(universalToggleHandler.createUniversalToggle());
 
     flagContent();
-    toggleContentVisibility(state);
+
+    toggleVisibilityByClass('li.flagged-product', state);
+    toggleVisibilityByClass('div.flagged-shelf', state);
+    toggleVisibilityByClass('div.selected-product-cards', state);
+    toggleVisibilityByClass('div.flagged-bought-together', state);
+    toggleVisibilityByClass('div.flagged-sponsorship', state);
   }
 
   function flagContent() {
-    promotionalVideoHandler.flag();
-    sponsoredShelfHandler.flag();
+    promotionalVideoHandler.flag(); // https://www.skroutz.gr/c/25/laptop.html
+    sponsoredShelfHandler.flag(); // https://www.skroutz.gr/s/28600322/Apple-MacBook-Air-13-3-2020-IPS-QHD-M1-8GB-256GB-SSD-Z1240002B-Space-Gray-International-English-Keyboard.html
     sponsoredProductHandler.flag();
     sponsoredProductListHandler.flag();
     sponsoredFbtHandler.flag();

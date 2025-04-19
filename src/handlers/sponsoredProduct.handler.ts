@@ -26,7 +26,6 @@ export class SponsoredProductHandler {
       DomClient.toggleElementVisibility(listItem, this.state);
     });
 
-    // Target shop-promoter elements (sponsored posts/ads)
     const shopPromoterElements = document.querySelectorAll('.shop-promoter:not(.flagged-product)');
 
     shopPromoterElements?.forEach((element) => {
@@ -38,26 +37,20 @@ export class SponsoredProductHandler {
       }
     });
 
-    // Target card tracking-img-container elements with shop-promoter spans (frequently bought together ads)
-    // Using a direct selector approach for more reliable targeting
     document
       .querySelectorAll('.card.tracking-img-container:not(.flagged-product)')
       .forEach((card) => {
         const shopPromoter = card.querySelector('.shop-promoter');
         if (shopPromoter) {
-          // Add flagging class
           card.classList.add('flagged-product');
 
-          // Flag the label if exists
           const labelText = shopPromoter.querySelector('.label-text');
           if (labelText) {
             labelText.classList.add('flagged-product-label');
           }
 
-          // Increment counter
           this.state.productAdCount++;
 
-          // Toggle visibility based on user preference
           if (!this.state.hideProductAds) {
             card.classList.add('display-none');
           } else {
@@ -96,19 +89,16 @@ export class SponsoredProductHandler {
   }
 
   private findParentToFlag(element: Element): Element | null {
-    // First try to find a parent li element (for list items)
     const parentLi = element.closest('li');
     if (parentLi) {
       return parentLi;
     }
 
-    // For shop-promoter elements that are inside divs like timeline cards
     const timelineCard = element.closest(".timeline-card, .generic-post, [class*='timeline']");
     if (timelineCard) {
       return timelineCard;
     }
 
-    // If no appropriate parent found, use the element's parent or the element itself
     return element.parentElement || element;
   }
 }

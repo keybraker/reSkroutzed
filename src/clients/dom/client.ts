@@ -86,6 +86,14 @@ export class DomClient {
         parentElement.appendChild(element);
     }
 
+    public static getElementByClass(className: string, searchElement?: Element): Element | null {
+      return (searchElement ?? document).querySelector(className);
+    }
+
+    public static getElementsByClass(className: string, searchElement?: Element): Element[] {
+      return [...(searchElement ?? document).querySelectorAll(className)];
+    }
+
     public static getDom(): Document {
         return document;
     }
