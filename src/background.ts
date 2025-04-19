@@ -9,9 +9,9 @@ import { SponsoredProductHandler } from './handlers/sponsoredProduct.handler';
 import { SponsoredProductListHandler } from './handlers/sponsoredProductList.handler';
 import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
 import { SponsorshipHandler } from './handlers/sponsorship.handler';
-import { FinalPriceFixer } from './ui/FinalPriceFixer.decorator';
-import { PriceCheckerDecorator } from './ui/PriceChecker.decorator';
-import { UniversalToggleDecorator } from './ui/UniversalToggle.decorator';
+import { FinalPriceFixer } from './features/FinalPriceFixer.decorator';
+import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
+import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
 
 const state: State = {
   hideProductAds: false,
