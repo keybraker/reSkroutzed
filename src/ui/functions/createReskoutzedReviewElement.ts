@@ -20,5 +20,5 @@ export function createReskoutzedReviewElement(): HTMLDivElement {
   const icon = createLogoElement();
   DomClient.appendElementToElement(icon, reskoutzedReviewElement);
 
-  return reskoutzedReviewElement
+  return reskoutzedReviewElement;
 }

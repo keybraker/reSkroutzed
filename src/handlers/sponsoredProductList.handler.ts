@@ -1,4 +1,3 @@
-
 import { State } from '../common/types/State.type';
 import { DomClient } from '../clients/dom/client';
 
@@ -12,7 +11,9 @@ export class SponsoredProductListHandler {
   public flag(): void {
     const promotedBoxes = document.querySelectorAll('h2:not(.flagged-list-title)');
 
-    [...promotedBoxes]?.filter(DomClient.isElementSponsored)?.forEach((element) => this.flagPromotedBox(element));
+    [...promotedBoxes]
+      ?.filter(DomClient.isElementSponsored)
+      ?.forEach((element) => this.flagPromotedBox(element));
   }
 
   private flagPromotedBox(promotedBox: Element): void {

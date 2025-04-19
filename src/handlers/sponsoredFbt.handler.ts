@@ -10,7 +10,9 @@ export class SponsoredFbtHandler {
   }
 
   public flag(): void {
-    const divElements = DomClient.getElementsByClass('div.fbt-content:not(.flagged-bought-together)');
+    const divElements = DomClient.getElementsByClass(
+      'div.fbt-content:not(.flagged-bought-together)',
+    );
 
     divElements?.forEach((div: Element) => {
       const sponsoredSpan = this.getSponsoredSpan(div);
@@ -30,7 +32,7 @@ export class SponsoredFbtHandler {
       return null;
     }
 
-    return  sponsoredSpan;
+    return sponsoredSpan;
   }
 
   private flagSponsoredSpan(element: Element): void {

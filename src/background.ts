@@ -11,7 +11,7 @@ import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
 import { SponsorshipHandler } from './handlers/sponsorship.handler';
 import { FinalPriceFixer } from './ui/FinalPriceFixer.decorator';
 import { PriceCheckerDecorator } from './ui/PriceChecker.decorator';
-import { UniversalToggleDecorator } from './ui/dasdasUniversalToggle.decorator';
+import { UniversalToggleDecorator } from './ui/UniversalToggle.decorator';
 
 const state: State = {
   hideProductAds: false,
@@ -25,7 +25,7 @@ const state: State = {
   minimumPriceDifference: 0,
 };
 
-function loadStorage() {
+function loadStorage(): void {
   state.language = BrowserClient.getLanguage();
 
   state.hideProductAds = BrowserClient.getValue<boolean>(StorageKey.PRODUCT_AD_VISIBILITY);

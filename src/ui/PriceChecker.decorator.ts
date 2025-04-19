@@ -412,7 +412,7 @@ export class PriceCheckerDecorator {
   /* Data */
   private productPriceData: ProductPriceData | undefined = undefined;
 
-  constructor(private readonly state: State) { }
+  constructor(private readonly state: State) {}
 
   public async execute() {
     await this.initializeProductView();
