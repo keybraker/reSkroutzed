@@ -24,14 +24,14 @@ jobs:
         run: npm run build:firefox
 
       - name: Upload Chrome Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: chrome-build
           path: build/chrome_build.zip
           retention-days: 7
 
       - name: Upload Firefox Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firefox-build
           path: build/firefox_build.zip
