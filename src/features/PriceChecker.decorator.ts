@@ -3,97 +3,48 @@ import { ProductPriceData, SkroutzClient } from '../clients/skroutz/client';
 import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
-import { createLogoElement } from './functions/createLogoElement';
+import { createBuyMeCoffeeElement } from './functions/createBuyMeCoffeeElement';
+import { createReskoutzedReviewElement } from './functions/createReskoutzedReviewElement';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
 };
-
-class UIFactory {
-  static createElementWithClass<T extends HTMLElement>(
-    tag: string,
-    className: string | string[],
-  ): T {
-    const element = document.createElement(tag) as T;
-    if (Array.isArray(className)) {
-      element.classList.add(...className);
-    } else {
-      element.classList.add(className);
-    }
-    return element;
-  }
-
-  static createLabeledText(label: string, value: string): HTMLSpanElement {
-    const span = document.createElement('span');
-    span.innerHTML = `<strong>${label}</strong>: ${value}`;
-    return span;
-  }
-
-  static appendWithSeparator(
-    container: HTMLElement,
-    elements: HTMLElement[],
-    separators: string[],
-  ): void {
-    elements.forEach((element, index) => {
-      container.appendChild(element);
-      if (index < separators.length) {
-        container.appendChild(document.createTextNode(separators[index]));
-      }
-    });
-  }
-}
 
 function createPriceDisplayComponent(
   price: number,
   shippingCost: number,
   language: Language,
 ): HTMLDivElement {
-  const container = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'price-display-wrapper',
-  );
+  const container = DomClient.createElement('div', {
+    className: 'price-display-wrapper',
+  }) as HTMLDivElement;
 
-  const priceElement = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'price-indicator-price',
-  );
+  const priceElement = DomClient.createElement('div', { className: 'price-indicator-price' });
 
   const [integerPart, decimalPart] = price.toFixed(2).split('.');
 
   priceElement.textContent = integerPart;
 
-  const priceComma = UIFactory.createElementWithClass<HTMLSpanElement>(
-    'span',
-    'price-indicator-comma',
-  );
+  const priceComma = DomClient.createElement('span', { className: 'price-indicator-comma' });
   priceComma.textContent = ',';
-  priceElement.appendChild(priceComma);
+  DomClient.appendElementToElement(priceComma, priceElement);
 
-  const priceDecimal = UIFactory.createElementWithClass<HTMLSpanElement>(
-    'span',
-    'price-indicator-decimal',
-  );
+  const priceDecimal = DomClient.createElement('span', { className: 'price-indicator-decimal' });
   priceDecimal.textContent = decimalPart;
-  priceElement.appendChild(priceDecimal);
+  DomClient.appendElementToElement(priceDecimal, priceElement);
 
-  const currencySymbol = UIFactory.createElementWithClass<HTMLSpanElement>(
-    'span',
-    'price-indicator-currency',
-  );
+  const currencySymbol = DomClient.createElement('span', { className: 'price-indicator-currency' });
   currencySymbol.textContent = '€';
-  priceElement.appendChild(currencySymbol);
+  DomClient.appendElementToElement(currencySymbol, priceElement);
 
-  container.appendChild(priceElement);
+  DomClient.appendElementToElement(priceElement, container);
 
-  const shippingText = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'shipping-cost-text',
-  );
+  const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
   const formattedShipping = shippingCost.toFixed(2).replace('.', ',');
   shippingText.textContent = `(+${formattedShipping}€ ${
     language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
   })`;
-  container.appendChild(shippingText);
+  DomClient.appendElementToElement(shippingText, container);
 
   return container;
 }
@@ -102,10 +53,9 @@ function createPriceComparisonBreakdownComponent(
   productPriceData: ProductPriceData,
   language: Language,
 ): HTMLElement {
-  const transportationBreakdown = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'transportation-breakdown',
-  );
+  const transportationBreakdown = DomClient.createElement('div', {
+    className: 'transportation-breakdown',
+  });
   if (productPriceData.buyThroughSkroutz.shopId === productPriceData.buyThroughStore.shopId) {
     return transportationBreakdown;
   }
@@ -116,43 +66,37 @@ function createPriceComparisonBreakdownComponent(
   transportationBreakdown.style.flexDirection = 'row';
   transportationBreakdown.style.gap = '10px';
 
-  const skroutzContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'price-breakdown-item',
-  );
-  const skroutzLabel = UIFactory.createElementWithClass<HTMLDivElement>('div', 'breakdown-label');
+  const skroutzContainer = DomClient.createElement('div', { className: 'price-breakdown-item' });
+  const skroutzLabel = DomClient.createElement('div', { className: 'breakdown-label' });
   skroutzLabel.textContent = getLabel('Buy Through Skroutz', 'Αγορά μέσω Skroutz');
 
-  const skroutzValue = UIFactory.createElementWithClass<HTMLDivElement>('div', 'breakdown-value');
+  const skroutzValue = DomClient.createElement('div', { className: 'breakdown-value' });
   skroutzValue.innerHTML = `${productPriceData.buyThroughSkroutz.price.toFixed(
     2,
   )}€ + ${productPriceData.buyThroughSkroutz.shippingCost.toFixed(
     2,
   )}€ = ${productPriceData.buyThroughSkroutz.totalPrice.toFixed(2)}€`;
 
-  skroutzContainer.appendChild(skroutzLabel);
-  skroutzContainer.appendChild(skroutzValue);
+  DomClient.appendElementToElement(skroutzLabel, skroutzContainer);
+  DomClient.appendElementToElement(skroutzValue, skroutzContainer);
 
   // Store price breakdown
-  const storeContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'price-breakdown-item',
-  );
-  const storeLabel = UIFactory.createElementWithClass<HTMLDivElement>('div', 'breakdown-label');
+  const storeContainer = DomClient.createElement('div', { className: 'price-breakdown-item' });
+  const storeLabel = DomClient.createElement('div', { className: 'breakdown-label' });
   storeLabel.textContent = getLabel('Buy through Store', 'Αγορά μέσω καταστήματος');
 
-  const storeValue = UIFactory.createElementWithClass<HTMLDivElement>('div', 'breakdown-value');
+  const storeValue = DomClient.createElement('div', { className: 'breakdown-value' });
   storeValue.textContent = `${productPriceData.buyThroughStore.price.toFixed(
     2,
   )}€ + ${productPriceData.buyThroughStore.shippingCost.toFixed(
     2,
   )}€ = ${productPriceData.buyThroughStore.totalPrice.toFixed(2)}€`;
 
-  storeContainer.appendChild(storeLabel);
-  storeContainer.appendChild(storeValue);
+  DomClient.appendElementToElement(storeLabel, storeContainer);
+  DomClient.appendElementToElement(storeValue, storeContainer);
 
-  transportationBreakdown.appendChild(skroutzContainer);
-  transportationBreakdown.appendChild(storeContainer);
+  DomClient.appendElementToElement(skroutzContainer, transportationBreakdown);
+  DomClient.appendElementToElement(storeContainer, transportationBreakdown);
 
   return transportationBreakdown;
 }
@@ -162,10 +106,9 @@ function createCalculationComponent(
   minimumPriceDifference: number,
   language: Language,
 ): HTMLDivElement {
-  const calculationContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'calculation-container',
-  );
+  const calculationContainer = DomClient.createElement('div', {
+    className: 'calculation-container',
+  }) as HTMLDivElement;
   if (productPriceData.buyThroughSkroutz.shopId === productPriceData.buyThroughStore.shopId) {
     calculationContainer.innerHTML = `${
       language === Language.ENGLISH
@@ -224,7 +167,7 @@ function createCalculationComponent(
     const span = document.createElement('span');
     span.className = 'minimum-price-difference-text';
     span.textContent = message;
-    calculationContainer.appendChild(span);
+    DomClient.appendElementToElement(span, calculationContainer);
   }
 
   return calculationContainer;
@@ -241,10 +184,9 @@ function createShopButtonComponent(
     ? 'go-to-shop-button-positive'
     : 'go-to-shop-button-negative';
 
-  const goToStoreButton = UIFactory.createElementWithClass<HTMLButtonElement>('button', [
-    buttonStyle,
-    'bold-text',
-  ]);
+  const goToStoreButton = DomClient.createElement('button', {
+    className: [buttonStyle, 'bold-text'],
+  }) as HTMLButtonElement;
 
   goToStoreButton.textContent =
     language === Language.ENGLISH ? 'Go to Shop' : 'Μετάβαση στο κατάστημα';
@@ -296,47 +238,46 @@ function createPriceIndicationElement(
 ): HTMLDivElement {
   const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
 
-  const priceIndication = UIFactory.createElementWithClass<HTMLDivElement>('div', [
-    'display-padding',
-    'price-checker-outline',
-    showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
-  ]);
+  const priceIndication = DomClient.createElement('div', {
+    className: [
+      'display-padding',
+      'price-checker-outline',
+      showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
+    ],
+  }) as HTMLDivElement;
 
-  const reSkroutzedTag = UIFactory.createElementWithClass<HTMLDivElement>('div', 'reskroutzed-tag');
+  const tagsContainer = DomClient.createElement('div', { className: 'tags-container' });
 
-  addReskroutzedTagToElement(reSkroutzedTag, language);
+  const reSkroutzedReview = createReskoutzedReviewElement();
+  DomClient.appendElementToElement(reSkroutzedReview, tagsContainer);
 
-  priceIndication.appendChild(reSkroutzedTag);
+  const buyMeCoffeeElement = createBuyMeCoffeeElement();
+  DomClient.appendElementToElement(buyMeCoffeeElement, tagsContainer);
 
-  const contentContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'inline-flex-col',
-  );
-  const priceCalculationContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'price-calculation-container',
-  );
-  const infoContainer = UIFactory.createElementWithClass<HTMLDivElement>('div', 'inline-flex-col');
-  const actionContainer = UIFactory.createElementWithClass<HTMLDivElement>(
-    'div',
-    'inline-flex-row',
-  );
+  DomClient.appendElementToElement(tagsContainer, priceIndication);
+
+  const contentContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
+  const priceCalculationContainer = DomClient.createElement('div', {
+    className: 'price-calculation-container',
+  });
+  const infoContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
+  const actionContainer = DomClient.createElement('div', { className: 'inline-flex-row' });
 
   const priceDisplay = createPriceDisplayComponent(
     productPriceData.buyThroughStore.price,
     productPriceData.buyThroughStore.shippingCost,
     language,
   );
-  priceCalculationContainer.appendChild(priceDisplay);
+  DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
 
   const infoText = document.createElement('span');
   infoText.textContent =
     language === Language.ENGLISH
       ? 'This is the lowest price with shipping apart from "Buy through Skroutz"'
       : 'Αυτή είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"';
-  priceCalculationContainer.appendChild(infoText);
+  DomClient.appendElementToElement(infoText, priceCalculationContainer);
 
-  contentContainer.appendChild(priceCalculationContainer);
+  DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
 
   const calculationContainer = createCalculationComponent(
     productPriceData,
@@ -344,59 +285,32 @@ function createPriceIndicationElement(
     language,
   );
   if (calculationContainer) {
-    contentContainer.appendChild(calculationContainer);
+    DomClient.appendElementToElement(calculationContainer, contentContainer);
   }
 
   const transportationBreakdown = createPriceComparisonBreakdownComponent(
     productPriceData,
     language,
   );
-  infoContainer.appendChild(transportationBreakdown);
+  DomClient.appendElementToElement(transportationBreakdown, infoContainer);
 
-  contentContainer.appendChild(infoContainer);
+  DomClient.appendElementToElement(infoContainer, contentContainer);
 
   const goToStoreButton = createShopButtonComponent(
     productPriceData,
     minimumPriceDifference,
     language,
   );
-  actionContainer.appendChild(goToStoreButton);
+  DomClient.appendElementToElement(goToStoreButton, actionContainer);
 
-  contentContainer.appendChild(actionContainer);
+  DomClient.appendElementToElement(actionContainer, contentContainer);
 
   priceIndication.title =
     language === Language.ENGLISH ? 'Delivered to you by reSkroutzed' : 'Από το reSkroutzed';
 
-  priceIndication.appendChild(contentContainer);
+  DomClient.appendElementToElement(contentContainer, priceIndication);
 
   return priceIndication;
-}
-
-function addReskroutzedTagToElement(
-  element: HTMLDivElement | HTMLButtonElement,
-  language: Language,
-): void {
-  const brand = document.createElement('div');
-  const brandLink = document.createElement('a');
-
-  brand.classList.add('support-developer', 'icon-border', 'font-bold');
-
-  brandLink.href = 'https://paypal.me/tsiakkas';
-  brandLink.target = '_blank'; // Open in new tab
-  brandLink.rel = 'noopener noreferrer'; // Security best practice for external links
-  if (language === Language.GREEK) {
-    brandLink.textContent = 'ReSkroutzed';
-  } else {
-    brandLink.textContent = 'ReSkroutzed';
-  }
-  brandLink.classList.add('icon-border', 'font-bold');
-
-  brand.appendChild(brandLink);
-
-  const reskroutzedLogo = createLogoElement();
-  DomClient.appendElementToElement(reskroutzedLogo, brand);
-
-  element.appendChild(brand);
 }
 
 export class PriceCheckerDecorator implements FeatureInstance {
@@ -523,10 +437,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
       return;
     }
 
-    const shippingText = UIFactory.createElementWithClass<HTMLDivElement>(
-      'div',
-      'shipping-cost-text',
-    );
+    const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
     const formattedShipping = (this.productPriceData?.buyThroughSkroutz.shippingCost ?? 0)
       .toFixed(2)
       .replace('.', ',');

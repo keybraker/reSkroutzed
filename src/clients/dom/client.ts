@@ -2,6 +2,10 @@ import { Language } from '../../common/enums/Language.enum';
 import { State } from '../../common/types/State.type';
 
 export class DomClient {
+  public static getDom(): Document {
+    return document;
+  }
+
   public static toggleElementVisibility(element: Element, state: State): void {
     state.hideProductAds
       ? element.classList.remove('display-none')
@@ -94,8 +98,19 @@ export class DomClient {
     return [...(searchElement ?? document).querySelectorAll(className)];
   }
 
-  public static getDom(): Document {
-    return document;
+  public static createElement(
+    tagName: 'div' | 'span' | 'button',
+    options: { className?: string | string[] },
+  ): HTMLElement {
+    const element = document.createElement(tagName) as HTMLElement;
+
+    if (Array.isArray(options.className)) {
+      element.classList.add(...options.className);
+    } else if (options.className) {
+      element.classList.add(options.className);
+    }
+
+    return element;
   }
 
   // PRIVATE

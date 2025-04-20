@@ -5,7 +5,7 @@ export function createReskoutzedReviewElement(): HTMLDivElement {
   const reskoutzedReviewElement = document.createElement('div');
   const reskoutzedLink = document.createElement('a');
 
-  reskoutzedReviewElement.classList.add('icon-border', 'font-bold');
+  reskoutzedReviewElement.classList.add('reskroutzed-tag', 'icon-border', 'font-bold');
 
   const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   const storeUrl = isFirefox
@@ -16,7 +16,7 @@ export function createReskoutzedReviewElement(): HTMLDivElement {
   reskoutzedLink.textContent = 'by reSkroutzed';
   reskoutzedLink.classList.add('icon-border', 'font-bold');
 
-  reskoutzedReviewElement.appendChild(reskoutzedLink);
+  DomClient.appendElementToElement(reskoutzedLink, reskoutzedReviewElement);
   const icon = createLogoElement();
   DomClient.appendElementToElement(icon, reskoutzedReviewElement);
 

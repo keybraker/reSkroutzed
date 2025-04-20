@@ -300,10 +300,39 @@ text-black {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
 
-.reskroutzed-tag {
+.tags-container {
   position: absolute !important;
   top: -20px !important;
   right: 20px !important;
+  display: flex !important;
+  gap: 10px !important;
+  z-index: 5 !important;
+}
+
+.buy-me-coffee {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.coffee-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+.dark-mode .buy-me-coffee {
+  color: #222222 !important;
+  border: 2px solid rgb(71, 71, 71) !important;
+}
+
+.reskroutzed-tag {
+  position: static !important;
   color: #000000 !important;
   background-color: rgb(233, 233, 233) !important;
   border: 2px solid rgb(255, 255, 255) !important;

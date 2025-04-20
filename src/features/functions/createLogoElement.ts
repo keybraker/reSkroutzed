@@ -1,3 +1,5 @@
+import { DomClient } from '../../clients/dom/client';
+
 export function createLogoElement(): HTMLDivElement {
   const icon = document.createElement('div');
 
@@ -15,7 +17,7 @@ export function createLogoElement(): HTMLDivElement {
   img.width = 18;
   img.height = 18;
 
-  icon.appendChild(img);
+  DomClient.appendElementToElement(img, icon);
 
   return icon;
 }

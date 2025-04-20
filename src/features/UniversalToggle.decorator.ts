@@ -44,11 +44,11 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const videoToggleButton = this.createVideoToggleButton();
     const sponsorshipToggleButton = this.createSponsorshipToggleButton();
 
-    buttonsContainer.appendChild(priceDifferenceButton);
-    buttonsContainer.appendChild(darkModeButton);
-    buttonsContainer.appendChild(adToggleButton);
-    buttonsContainer.appendChild(videoToggleButton);
-    buttonsContainer.appendChild(sponsorshipToggleButton);
+    DomClient.appendElementToElement(priceDifferenceButton, buttonsContainer);
+    DomClient.appendElementToElement(darkModeButton, buttonsContainer);
+    DomClient.appendElementToElement(adToggleButton, buttonsContainer);
+    DomClient.appendElementToElement(videoToggleButton, buttonsContainer);
+    DomClient.appendElementToElement(sponsorshipToggleButton, buttonsContainer);
 
     mainToggle.addEventListener('click', () => this.toggleMenu(container));
 
@@ -58,8 +58,8 @@ export class UniversalToggleDecorator implements FeatureInstance {
       }
     });
 
-    container.appendChild(buttonsContainer);
-    container.appendChild(mainToggle);
+    DomClient.appendElementToElement(buttonsContainer, container);
+    DomClient.appendElementToElement(mainToggle, container);
 
     return container;
   }
@@ -130,8 +130,8 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     path.setAttribute('fill', 'currentColor');
 
-    svg.appendChild(path);
-    button.appendChild(svg);
+    DomClient.appendElementToElement(path, svg);
+    DomClient.appendElementToElement(svg, button);
 
     if (this.state.darkMode) {
       button.classList.add('active');
@@ -166,7 +166,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       if (oldPath) {
         svg.removeChild(oldPath);
       }
-      svg.appendChild(newPath);
+      DomClient.appendElementToElement(newPath, svg);
 
       button.title = this.state.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode';
     });
@@ -188,12 +188,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
       button.classList.add('active');
     }
 
-    button.appendChild(adTextSpan);
+    DomClient.appendElementToElement(adTextSpan, button);
 
     const notificationBubble = document.createElement('div');
     notificationBubble.classList.add('notification-bubble');
     notificationBubble.textContent = `${this.state.productAdCount}`;
-    button.appendChild(notificationBubble);
+    DomClient.appendElementToElement(notificationBubble, button);
 
     const updateNotificationCount = (): void => {
       const flaggedElements = document.querySelectorAll(
@@ -270,7 +270,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     const valueDisplay = document.createElement('span');
     valueDisplay.textContent = this.state.minimumPriceDifference.toString();
-    flexContainer.appendChild(valueDisplay);
+    DomClient.appendElementToElement(valueDisplay, flexContainer);
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 16 16');
@@ -284,10 +284,10 @@ export class UniversalToggleDecorator implements FeatureInstance {
       'M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936c0-.11 0-.219.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.617 6.617 0 0 0 10.341 2c-2.928 0-4.82 1.569-5.244 4.3H4v.928h1.01v1.265H4v.928z',
     );
     path.setAttribute('fill', 'currentColor');
-    svg.appendChild(path);
-    flexContainer.appendChild(svg);
+    DomClient.appendElementToElement(path, svg);
+    DomClient.appendElementToElement(svg, flexContainer);
 
-    button.appendChild(flexContainer);
+    DomClient.appendElementToElement(flexContainer, button);
 
     button.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -337,9 +337,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
         }
       });
 
-      popup.appendChild(label);
-      popup.appendChild(input);
-      button.appendChild(popup);
+      DomClient.appendElementToElement(label, popup);
+      DomClient.appendElementToElement(input, popup);
+      DomClient.appendElementToElement(popup, button);
       input.focus();
 
       const closePopupHandler = (event: MouseEvent): void => {
@@ -380,13 +380,13 @@ export class UniversalToggleDecorator implements FeatureInstance {
       );
     }
     path.setAttribute('fill', 'currentColor');
-    svg.appendChild(path);
-    button.appendChild(svg);
+    DomClient.appendElementToElement(path, svg);
+    DomClient.appendElementToElement(svg, button);
 
     const videoNotificationBubble = document.createElement('div');
     videoNotificationBubble.classList.add('notification-bubble', 'video-notification');
     videoNotificationBubble.textContent = `${this.state.videoAdCount}`;
-    button.appendChild(videoNotificationBubble);
+    DomClient.appendElementToElement(videoNotificationBubble, button);
 
     const updateVideoNotificationCount = (): void => {
       videoNotificationBubble.textContent = `${this.state.videoAdCount}`;
@@ -435,7 +435,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       if (oldPath) {
         svg.removeChild(oldPath);
       }
-      svg.appendChild(newPath);
+      DomClient.appendElementToElement(newPath, svg);
 
       button.title = this.state.hideVideoAds ? 'Hide Videos' : 'Show Videos';
     });
@@ -469,13 +469,13 @@ export class UniversalToggleDecorator implements FeatureInstance {
     }
     path.setAttribute('fill', 'currentColor');
 
-    svg.appendChild(path);
-    button.appendChild(svg);
+    DomClient.appendElementToElement(path, svg);
+    DomClient.appendElementToElement(svg, button);
 
     const notificationBubble = document.createElement('div');
     notificationBubble.classList.add('notification-bubble', 'sponsorship-notification');
     notificationBubble.textContent = '0';
-    button.appendChild(notificationBubble);
+    DomClient.appendElementToElement(notificationBubble, button);
 
     const updateNotificationCount = (): void => {
       const sponsorshipElements = document.querySelectorAll('div#sponsorship.flagged-sponsorship');
@@ -516,7 +516,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       if (oldPath) {
         svg.removeChild(oldPath);
       }
-      svg.appendChild(newPath);
+      DomClient.appendElementToElement(newPath, svg);
 
       button.title = button.classList.contains('active')
         ? 'Show Sponsorships'
