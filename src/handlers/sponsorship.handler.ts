@@ -29,13 +29,23 @@ export class SponsorshipHandler extends BaseHandler {
     });
   }
 
+  public visibilityUpdate(): void {
+    const flaggedSponsorships = this.getElements('div#sponsorship.flagged-sponsorship');
+
+    flaggedSponsorships.forEach((element) => {
+      this.toggleElementVisibility(element, !this.state.hideSponsorships);
+    });
+  }
+
   public toggleSponsorship(): void {
     this.state.hideSponsorships = !this.state.hideSponsorships;
     BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
 
-    this.getElements('div#sponsorship.flagged-sponsorship').forEach((element) =>
-      this.toggleVisibility(element),
-    );
+    this.getElements('div#sponsorship.flagged-sponsorship').forEach((element) => {
+      this.state.hideSponsorships
+        ? element.classList.add('display-none')
+        : element.classList.remove('display-none');
+    });
   }
 
   private toggleVisibility(element: Element): void {

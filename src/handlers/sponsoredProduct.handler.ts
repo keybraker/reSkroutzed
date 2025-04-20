@@ -2,7 +2,11 @@ import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
 import { BaseHandler } from './base.handler';
 
+// replaced
 export class SponsoredProductHandler extends BaseHandler {
+  private readonly productAdClass = ['labeled-item', 'labeled-product', 'flagged-list-title'];
+  private readonly flaggedProductAdClass = 'flagged-product';
+
   constructor(state: State) {
     super(state);
   }
@@ -10,7 +14,6 @@ export class SponsoredProductHandler extends BaseHandler {
   public flag(): void {
     this.updateSponsoredCount();
 
-    // Flag non-flagged product list items that are sponsored
     const nonFlaggedProductListItems = this.getElements('li:not(.flagged-product)');
 
     nonFlaggedProductListItems.filter(this.isSponsored.bind(this)).forEach((listItem) => {
@@ -26,7 +29,6 @@ export class SponsoredProductHandler extends BaseHandler {
       this.toggleElementVisibility(listItem, !this.state.hideProductAds);
     });
 
-    // Flag shop promoter elements
     const shopPromoterElements = this.getElements('.shop-promoter:not(.flagged-product)');
 
     shopPromoterElements.forEach((element) => {
@@ -39,7 +41,6 @@ export class SponsoredProductHandler extends BaseHandler {
       }
     });
 
-    // Flag card elements with shop promoters
     this.getElements('.card.tracking-img-container:not(.flagged-product)').forEach((card) => {
       const shopPromoter = card.querySelector('.shop-promoter');
       if (shopPromoter) {
@@ -56,18 +57,16 @@ export class SponsoredProductHandler extends BaseHandler {
     });
   }
 
-  private updateSponsoredCount(): void {
-    const flaggedProductLists = this.getElements('li.flagged-product');
-    const flaggedProductDivs = this.getElements('div.flagged-bought-together');
-    const flaggedCardElements = this.getElements('.card.flagged-product');
+  public visibilityUpdate(): void {
+    this.getElements(`.${this.flaggedProductAdClass}`).forEach((element) => {
+      DomClient.updateElementVisibility(element, !this.state.hideProductAds ? 'hide' : 'show');
+    });
+  }
 
-    if (
-      flaggedProductLists.length === 0 &&
-      flaggedProductDivs.length === 0 &&
-      flaggedCardElements.length === 0
-    ) {
-      this.state.productAdCount = 0;
-    }
+  private updateSponsoredCount(): void {
+    this.state.productAdCount = 0;
+    const allFlaggedProductElements = this.getElements(`.${this.flaggedProductAdClass}`);
+    this.state.productAdCount = allFlaggedProductElements.length;
   }
 
   public isSponsored(listItem: Element): boolean {

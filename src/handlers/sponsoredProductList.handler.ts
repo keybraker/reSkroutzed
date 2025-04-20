@@ -2,6 +2,8 @@ import { State } from '../common/types/State.type';
 import { BaseHandler } from './base.handler';
 
 export class SponsoredProductListHandler extends BaseHandler {
+  private readonly sponsoredProductListClasses = ['flagged-list-title'];
+
   constructor(state: State) {
     super(state);
   }
@@ -12,6 +14,14 @@ export class SponsoredProductListHandler extends BaseHandler {
     promotedBoxes
       .filter((element) => this.isSponsored(element))
       .forEach((element) => this.flagPromotedBox(element));
+  }
+
+  public visibilityUpdate(): void {
+    const promotedBoxes = this.getElements(this.sponsoredProductListClasses.join(', '));
+
+    promotedBoxes.forEach((promotedBox) => {
+      this.toggleElementVisibility(promotedBox, !this.state.hideProductAds);
+    });
   }
 
   private flagPromotedBox(promotedBox: Element): void {

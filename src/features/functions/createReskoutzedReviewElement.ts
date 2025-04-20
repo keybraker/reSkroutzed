@@ -3,7 +3,7 @@ import { createLogoElement } from './createLogoElement';
 
 export function createReskoutzedReviewElement(): HTMLDivElement {
   const reskoutzedReviewElement = document.createElement('div');
-  const reskoutzedLink = document.createElement('a');
+  const reskoutzedReviewLink = document.createElement('a');
 
   reskoutzedReviewElement.classList.add('reskroutzed-tag', 'icon-border', 'font-bold');
 
@@ -12,11 +12,13 @@ export function createReskoutzedReviewElement(): HTMLDivElement {
     ? 'https://addons.mozilla.org/en-US/firefox/addon/reskroutzed/reviews/'
     : 'https://chromewebstore.google.com/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl';
 
-  reskoutzedLink.href = storeUrl;
-  reskoutzedLink.textContent = 'by reSkroutzed';
-  reskoutzedLink.classList.add('icon-border', 'font-bold');
+  reskoutzedReviewLink.href = storeUrl;
+  reskoutzedReviewLink.target = '_blank';
+  reskoutzedReviewLink.rel = 'noopener noreferrer';
+  reskoutzedReviewLink.textContent = 'by reSkroutzed';
+  reskoutzedReviewLink.classList.add('icon-border', 'font-bold');
 
-  DomClient.appendElementToElement(reskoutzedLink, reskoutzedReviewElement);
+  DomClient.appendElementToElement(reskoutzedReviewLink, reskoutzedReviewElement);
   const icon = createLogoElement();
   DomClient.appendElementToElement(icon, reskoutzedReviewElement);
 

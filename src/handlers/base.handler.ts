@@ -15,6 +15,11 @@ export abstract class BaseHandler {
   public abstract flag(): void;
 
   /**
+   * Updates element visibility based on state
+   */
+  abstract visibilityUpdate(): void;
+
+  /**
    * Adds the specified classes to an element and marks it as flagged
    * @param element Element to flag
    * @param flagClasses Classes to add to the element
@@ -24,7 +29,8 @@ export abstract class BaseHandler {
   }
 
   /**
-   * Toggles element visibility based on state
+   * @deprecated
+   * Toggles element visibility based on condition
    * @param element Element to toggle visibility
    * @param hideCondition Property of state to check for hiding condition
    */

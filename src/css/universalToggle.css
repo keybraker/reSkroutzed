@@ -4,7 +4,7 @@
   align-items: center !important;
   justify-content: center !important;
   position: fixed !important;
-  bottom: 20px !important;
+  bottom: 32px !important;
   left: 20px !important;
   z-index: 9999 !important;
 }

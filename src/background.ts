@@ -1,17 +1,14 @@
 import { BrowserClient, StorageKey } from './clients/browser/client';
-import { DomClient } from './clients/dom/client';
 import { Language } from './common/enums/Language.enum';
 import { State } from './common/types/State.type';
-import { FinalPriceFixer } from './features/FinalPriceFixer.decorator';
+import { FinalPriceFixerDecorator } from './features/FinalPriceFixer.decorator';
 import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
 import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
 import { themeSync } from './features/functions/themeSync';
-import { PromotionalVideoHandler } from './handlers/promotionalVideo.handler';
-import { SponsoredFbtHandler } from './handlers/sponsoredFbt.handler';
-import { SponsoredProductHandler } from './handlers/sponsoredProduct.handler';
-import { SponsoredProductListHandler } from './handlers/sponsoredProductList.handler';
-import { SponsoredShelfHandler } from './handlers/sponsoredShelf.handler';
-import { SponsorshipHandler } from './handlers/sponsorship.handler';
+import { ListProductAdHandler } from './handlers/ListProductAd.handler';
+import { ShelfProductAdHandler } from './handlers/ShelfProductAd.handler';
+import { SponsorshipAdHandler } from './handlers/SponsorshipAd.handler';
+import { VideoAdHandler } from './handlers/VideoAd.handler';
 
 const state: State = {
   hideProductAds: false,
@@ -27,71 +24,60 @@ const state: State = {
 
 function loadStorage(): void {
   state.language = BrowserClient.getLanguage();
-
   state.hideProductAds = BrowserClient.getValue<boolean>(StorageKey.PRODUCT_AD_VISIBILITY);
   state.hideVideoAds = BrowserClient.getValue<boolean>(StorageKey.VIDEO_AD_VISIBILITY);
   state.hideSponsorships = BrowserClient.getValue<boolean>(StorageKey.SPONSORSHIP_VISIBILITY);
-
   state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
-  if (state.darkMode) {
-    themeSync(state);
-  }
-
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
   );
+
+  if (state.darkMode) {
+    themeSync(state);
+  }
 }
 
 loadStorage();
 
-const sponsoredShelfHandler = new SponsoredShelfHandler(state);
-const promotionalVideoHandler = new PromotionalVideoHandler(state);
-const sponsoredProductHandler = new SponsoredProductHandler(state);
-const sponsoredProductListHandler = new SponsoredProductListHandler(state);
-const sponsoredFbtHandler = new SponsoredFbtHandler(state);
-const sponsorshipHandler = new SponsorshipHandler(state);
+const videoAdHandler = new VideoAdHandler(state);
+const listProductAdHandler = new ListProductAdHandler(state);
+const shelfProductAdHandler = new ShelfProductAdHandler(state);
+const sponsorshipAdHandler = new SponsorshipAdHandler(state);
 // Decorators
 const priceCheckerIndicator = new PriceCheckerDecorator(state);
-const finalPriceFixer = new FinalPriceFixer(state);
-const universalToggleDecorator = new UniversalToggleDecorator(
-  state,
-  promotionalVideoHandler,
-  sponsorshipHandler,
-);
+const finalPriceFixerDecorator = new FinalPriceFixerDecorator(state);
+const universalToggleDecorator = new UniversalToggleDecorator(state);
 
 (function () {
   async function initializer(): Promise<void> {
     await priceCheckerIndicator.execute();
-    finalPriceFixer.execute();
-    document.body.appendChild(universalToggleDecorator.execute());
+    finalPriceFixerDecorator.execute();
+    universalToggleDecorator.execute();
 
     flagContent();
-
-    toggleVisibilityByClass('li.flagged-product', state);
-    toggleVisibilityByClass('div.flagged-shelf', state);
-    toggleVisibilityByClass('div.selected-product-cards', state);
-    toggleVisibilityByClass('div.flagged-bought-together', state);
-    toggleVisibilityByClass('div.flagged-sponsorship', state);
-  }
-
-  function toggleVisibilityByClass(selector: string, state: State): void {
-    const elements = document.querySelectorAll(selector);
-    elements?.forEach((element) => DomClient.toggleElementVisibility(element, state));
+    toggleVisibility();
   }
 
   function flagContent(): void {
-    promotionalVideoHandler.flag();
-    sponsoredShelfHandler.flag();
-    sponsoredProductHandler.flag();
-    sponsoredProductListHandler.flag();
-    sponsoredFbtHandler.flag();
-    sponsorshipHandler.flag();
+    videoAdHandler.flag();
+    listProductAdHandler.flag();
+    shelfProductAdHandler.flag();
+    sponsorshipAdHandler.flag();
+  }
+
+  function toggleVisibility(): void {
+    videoAdHandler.visibilityUpdate();
+    listProductAdHandler.visibilityUpdate();
+    shelfProductAdHandler.visibilityUpdate();
+    sponsorshipAdHandler.visibilityUpdate();
   }
 
   function observeMutations(): void {
-    const observer1 = new MutationObserver(() => flagContent());
-
-    observer1.observe(document.body, { childList: true, subtree: true });
+    const observer = new MutationObserver(() => flagContent());
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
   }
 
   window.onload = async function () {

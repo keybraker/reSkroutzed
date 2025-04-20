@@ -156,7 +156,8 @@ html.dark-mode {
 .dark-mode .country-picker-form,
 .dark-mode .modal-container-content,
 .dark-mode .sku-reviews-order,
-.dark-mode .sku-reviews-order.active {
+.dark-mode .sku-reviews-order.active,
+.dark-mode .pic {
   background-color: var(--color-background-base) !important;
   color: var(--color-text-primary) !important;
   border-bottom: 1px solid var(--color-border-primary) !important;
@@ -872,6 +873,7 @@ text-black {
 }
 
 .dark-mode .storefront-header,
+/* .dark-mode .timeline-card, */
 .dark-mode .countdown-timer,
 .dark-mode .rating-average {
   background-color: var(--color-border-primary) !important;

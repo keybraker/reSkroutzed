@@ -1,15 +1,16 @@
 import { Language } from '../../common/enums/Language.enum';
-import { State } from '../../common/types/State.type';
 
 export class DomClient {
   public static getDom(): Document {
     return document;
   }
 
-  public static toggleElementVisibility(element: Element, state: State): void {
-    state.hideProductAds
-      ? element.classList.remove('display-none')
-      : element.classList.add('display-none');
+  public static updateElementVisibility(element: Element, visibility: 'show' | 'hide'): void {
+    if (visibility === 'show') {
+      element.classList.remove('display-none');
+    } else {
+      element.classList.add('display-none');
+    }
   }
 
   public static isElementSponsored(element: Element | null): boolean {

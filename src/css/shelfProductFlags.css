@@ -1,0 +1,6 @@
+.flagged-shelf {
+  border-radius: 8px !important;
+  border: 1px solid var(--flagged-item-box-shadow, #ff0000) !important;
+  box-shadow: var(--flagged-item-box-shadow, 1px 1px 1px 1px) !important;
+  background-color: var(--flagged-item-background, #ffcccc) !important;
+}

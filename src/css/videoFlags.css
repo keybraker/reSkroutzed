@@ -5,11 +5,11 @@
   border-radius: 12px;
 }
 
-.promo-video-card {
+.flagged-video {
   position: relative !important;
 }
 
-.promo-video-card::after {
+.flagged-video::after {
   content: '' !important;
   position: absolute !important;
   top: 0 !important;
@@ -18,8 +18,4 @@
   height: 100% !important;
   pointer-events: none !important;
   z-index: 1 !important;
-}
-
-.display-none-promo-product {
-  display: none !important;
 }

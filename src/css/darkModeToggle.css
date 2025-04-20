@@ -37,7 +37,9 @@
   pointer-events: none !important;
 }
 
-.dark-mode .tl-shelf::after {
+.dark-mode .tl-shelf::after,
+.dark-mode .scroll-area::after,
+.dark-mode .scroll-area::before {
   opacity: 0 !important;
 }
 

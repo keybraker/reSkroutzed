@@ -2,29 +2,25 @@ import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { DomClient } from '../clients/dom/client';
 import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
-import { PromotionalVideoHandler } from '../handlers/promotionalVideo.handler';
-import { SponsorshipHandler } from '../handlers/sponsorship.handler';
+import { VideoAdHandler } from '../handlers/VideoAd.handler';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createLogoElement } from './functions/createLogoElement';
 import { themeSync } from './functions/themeSync';
 
 export class UniversalToggleDecorator implements FeatureInstance {
   private state: State;
-  private videoHandler: PromotionalVideoHandler;
-  private sponsorshipHandler: SponsorshipHandler;
+  private videoHandler: VideoAdHandler;
+  // private sponsorshipHandler: SponsorshipHandler;
   private isMenuOpen: boolean = false;
 
-  constructor(
-    state: State,
-    videoHandler: PromotionalVideoHandler,
-    sponsorshipHandler: SponsorshipHandler,
-  ) {
+  constructor(state: State) {
     this.state = state;
-    this.videoHandler = videoHandler;
-    this.sponsorshipHandler = sponsorshipHandler;
+
+    this.videoHandler = new VideoAdHandler(this.state);
+    // this.sponsorshipHandler = new ShelfProductAdHandler(this.state);
   }
 
-  public execute(): HTMLDivElement {
+  public execute(): void {
     const container = document.createElement('div');
     container.classList.add('universal-toggle-container');
 
@@ -61,7 +57,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     DomClient.appendElementToElement(buttonsContainer, container);
     DomClient.appendElementToElement(mainToggle, container);
 
-    return container;
+    DomClient.appendElementToElement(container, DomClient.getDom().body);
   }
 
   private toggleMenu(container: HTMLElement): void {
@@ -414,7 +410,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       // Add this line to persist the video visibility setting to storage
       BrowserClient.setValue(StorageKey.VIDEO_AD_VISIBILITY, this.state.hideVideoAds);
 
-      this.videoHandler.toggleVideoVisibility();
+      this.videoHandler.visibilityUpdate();
       button.classList.toggle('active');
 
       const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -426,7 +422,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       } else {
         newPath.setAttribute(
           'd',
-          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V7zm-2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
+          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
         );
       }
       newPath.setAttribute('fill', 'currentColor');
@@ -478,7 +474,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     DomClient.appendElementToElement(notificationBubble, button);
 
     const updateNotificationCount = (): void => {
-      const sponsorshipElements = document.querySelectorAll('div#sponsorship.flagged-sponsorship');
+      const sponsorshipElements = document.querySelectorAll('.flagged-sponsorship');
       notificationBubble.textContent = `${sponsorshipElements.length}`;
       notificationBubble.style.display = sponsorshipElements.length === 0 ? 'none' : 'flex';
     };
@@ -493,7 +489,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     button.addEventListener('click', (e) => {
       e.stopPropagation();
-      this.sponsorshipHandler.toggleSponsorship();
+      // this.sponsorshipHandler.toggleSponsorship();
       button.classList.toggle('active');
 
       const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
