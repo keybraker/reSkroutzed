@@ -2,7 +2,7 @@ import { Language } from '../../common/enums/Language.enum';
 import { State } from '../../common/types/State.type';
 
 export class DomClient {
-  public static toggleElementVisibility(element: Element, state: State) {
+  public static toggleElementVisibility(element: Element, state: State): void {
     state.hideProductAds
       ? element.classList.remove('display-none')
       : element.classList.add('display-none');
@@ -30,7 +30,7 @@ export class DomClient {
     return sponsoredTexts.includes(element.textContent.trim());
   }
 
-  public static updateSponsoredTextPlural(element: Element, language: Language) {
+  public static updateSponsoredTextPlural(element: Element, language: Language): void {
     if (DomClient.isElementSponsored(element)) {
       element.classList.add('sponsored-label');
       element.textContent = this.getSponsoredText(true, language);
@@ -45,7 +45,7 @@ export class DomClient {
     }
   }
 
-  public static updateSponsoredTextSingle(element: Element, language: Language) {
+  public static updateSponsoredTextSingle(element: Element, language: Language): void {
     if (DomClient.isElementSponsored(element)) {
       element.classList.add('sponsored-label');
       element.textContent = this.getSponsoredText(false, language);
@@ -60,7 +60,7 @@ export class DomClient {
     }
   }
 
-  public static isElementFlaggedAsSponsored(element: Element | null) {
+  public static isElementFlaggedAsSponsored(element: Element | null): boolean {
     if (!element || !element?.textContent) {
       return false;
     }
@@ -100,7 +100,7 @@ export class DomClient {
 
   // PRIVATE
 
-  private static getSponsoredText(isPlural = false, language: Language) {
+  private static getSponsoredText(isPlural = false, language: Language): string {
     return isPlural
       ? language === Language.ENGLISH
         ? 'Sponsored Stores'

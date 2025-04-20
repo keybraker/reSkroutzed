@@ -1,86 +1,78 @@
 import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
+import { BaseHandler } from './base.handler';
 
-export class SponsoredProductHandler {
-  private state: State;
-
+export class SponsoredProductHandler extends BaseHandler {
   constructor(state: State) {
-    this.state = state;
+    super(state);
   }
 
   public flag(): void {
     this.updateSponsoredCount();
 
-    const nonFlaggedProductListItems = document.querySelectorAll('li:not(.flagged-product)');
+    // Flag non-flagged product list items that are sponsored
+    const nonFlaggedProductListItems = this.getElements('li:not(.flagged-product)');
 
-    [...nonFlaggedProductListItems]?.filter(this.isSponsored)?.forEach((listItem) => {
+    nonFlaggedProductListItems.filter(this.isSponsored.bind(this)).forEach((listItem) => {
       DomClient.flagElementAsSponsored(listItem);
-      DomClient.updateSponsoredTextSingle(listItem, this.state.language);
+      this.updateSponsoredText(listItem, true);
       this.state.productAdCount++;
-      DomClient.toggleElementVisibility(listItem, this.state);
+      this.toggleElementVisibility(listItem, !this.state.hideProductAds);
     });
 
-    [...nonFlaggedProductListItems]?.filter(this.hasFlaggedLabelText)?.forEach((listItem) => {
+    nonFlaggedProductListItems.filter(this.hasFlaggedLabelText).forEach((listItem) => {
       DomClient.flagElementAsSponsored(listItem);
-      DomClient.updateSponsoredTextSingle(listItem, this.state.language);
-      DomClient.toggleElementVisibility(listItem, this.state);
+      this.updateSponsoredText(listItem, true);
+      this.toggleElementVisibility(listItem, !this.state.hideProductAds);
     });
 
-    const shopPromoterElements = document.querySelectorAll('.shop-promoter:not(.flagged-product)');
+    // Flag shop promoter elements
+    const shopPromoterElements = this.getElements('.shop-promoter:not(.flagged-product)');
 
-    shopPromoterElements?.forEach((element) => {
+    shopPromoterElements.forEach((element) => {
       const parentElement = this.findParentToFlag(element);
+
       if (parentElement) {
         DomClient.flagElementAsSponsored(parentElement);
         this.state.productAdCount++;
-        DomClient.toggleElementVisibility(parentElement, this.state);
+        this.toggleElementVisibility(parentElement, !this.state.hideProductAds);
       }
     });
 
-    document
-      .querySelectorAll('.card.tracking-img-container:not(.flagged-product)')
-      .forEach((card) => {
-        const shopPromoter = card.querySelector('.shop-promoter');
-        if (shopPromoter) {
-          card.classList.add('flagged-product');
+    // Flag card elements with shop promoters
+    this.getElements('.card.tracking-img-container:not(.flagged-product)').forEach((card) => {
+      const shopPromoter = card.querySelector('.shop-promoter');
+      if (shopPromoter) {
+        this.flagElement(card, 'flagged-product');
 
-          const labelText = shopPromoter.querySelector('.label-text');
-          if (labelText) {
-            labelText.classList.add('flagged-product-label');
-          }
-
-          this.state.productAdCount++;
-
-          if (!this.state.hideProductAds) {
-            card.classList.add('display-none');
-          } else {
-            card.classList.remove('display-none');
-          }
+        const labelText = shopPromoter.querySelector('.label-text');
+        if (labelText) {
+          this.flagElement(labelText, 'flagged-product-label');
         }
-      });
+
+        this.state.productAdCount++;
+        this.toggleElementVisibility(card, !this.state.hideProductAds);
+      }
+    });
   }
 
   private updateSponsoredCount(): void {
-    const flaggedProductLists = document.querySelectorAll('li.flagged-product');
-    const flaggedProductDivs = document.querySelectorAll('div.flagged-bought-together');
-    const flaggedCardElements = document.querySelectorAll('.card.flagged-product');
+    const flaggedProductLists = this.getElements('li.flagged-product');
+    const flaggedProductDivs = this.getElements('div.flagged-bought-together');
+    const flaggedCardElements = this.getElements('.card.flagged-product');
 
     if (
-      flaggedProductLists?.length === 0 &&
-      flaggedProductDivs?.length === 0 &&
-      flaggedCardElements?.length === 0
+      flaggedProductLists.length === 0 &&
+      flaggedProductDivs.length === 0 &&
+      flaggedCardElements.length === 0
     ) {
       this.state.productAdCount = 0;
     }
   }
 
-  private isSponsored(listItem: Element): boolean {
+  public isSponsored(listItem: Element): boolean {
     const labelTextElement = listItem.querySelector('.label-text');
-    if (DomClient.isElementSponsored(labelTextElement)) {
-      return true;
-    }
-
-    return false;
+    return DomClient.isElementSponsored(labelTextElement);
   }
 
   private hasFlaggedLabelText(listItem: Element): boolean {

@@ -4,10 +4,11 @@ import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
 import { PromotionalVideoHandler } from '../handlers/promotionalVideo.handler';
 import { SponsorshipHandler } from '../handlers/sponsorship.handler';
+import { FeatureInstance } from './common/FeatureInstance';
 import { createLogoElement } from './functions/createLogoElement';
 import { themeSync } from './functions/themeSync';
 
-export class UniversalToggleDecorator {
+export class UniversalToggleDecorator implements FeatureInstance {
   private state: State;
   private videoHandler: PromotionalVideoHandler;
   private sponsorshipHandler: SponsorshipHandler;
@@ -23,7 +24,7 @@ export class UniversalToggleDecorator {
     this.sponsorshipHandler = sponsorshipHandler;
   }
 
-  public createUniversalToggle(): HTMLDivElement {
+  public execute(): HTMLDivElement {
     const container = document.createElement('div');
     container.classList.add('universal-toggle-container');
 

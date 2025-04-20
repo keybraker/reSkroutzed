@@ -53,7 +53,7 @@ const sponsorshipHandler = new SponsorshipHandler(state);
 // Decorators
 const priceCheckerIndicator = new PriceCheckerDecorator(state);
 const finalPriceFixer = new FinalPriceFixer(state);
-const universalToggleHandler = new UniversalToggleDecorator(
+const universalToggleDecorator = new UniversalToggleDecorator(
   state,
   promotionalVideoHandler,
   sponsorshipHandler,
@@ -63,7 +63,7 @@ const universalToggleHandler = new UniversalToggleDecorator(
   async function initializer(): Promise<void> {
     await priceCheckerIndicator.execute();
     finalPriceFixer.execute();
-    document.body.appendChild(universalToggleHandler.createUniversalToggle());
+    document.body.appendChild(universalToggleDecorator.execute());
 
     flagContent();
 

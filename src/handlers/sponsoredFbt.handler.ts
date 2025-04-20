@@ -1,12 +1,11 @@
 import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
+import { BaseHandler } from './base.handler';
 
 // FBT: Frequently Bought Together
-export class SponsoredFbtHandler {
-  private state: State;
-
+export class SponsoredFbtHandler extends BaseHandler {
   constructor(state: State) {
-    this.state = state;
+    super(state);
   }
 
   public flag(): void {
@@ -28,7 +27,7 @@ export class SponsoredFbtHandler {
   private getSponsoredSpan(div: Element): Element | null {
     const sponsoredSpan = DomClient.getElementByClass('span.sp-tag', div);
 
-    if (!sponsoredSpan || !DomClient.isElementSponsored(sponsoredSpan)) {
+    if (!sponsoredSpan || !this.isSponsored(sponsoredSpan)) {
       return null;
     }
 
@@ -36,11 +35,11 @@ export class SponsoredFbtHandler {
   }
 
   private flagSponsoredSpan(element: Element): void {
-    element.classList.add('sponsored-label');
-    DomClient.updateSponsoredTextSingle(element, this.state.language);
+    this.flagElement(element, 'sponsored-label');
+    this.updateSponsoredText(element, true);
   }
 
   private flagSponsoredDiv(div: Element): void {
-    div.classList.add('flagged-bought-together');
+    this.flagElement(div, 'flagged-bought-together');
   }
 }

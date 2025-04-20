@@ -1,72 +1,36 @@
 import { State } from '../common/types/State.type';
+import { BaseHandler } from './base.handler';
 
-export class PromotionalVideoHandler {
-  private state: State;
-
+export class PromotionalVideoHandler extends BaseHandler {
   constructor(state: State) {
-    this.state = state;
+    super(state);
   }
 
   public flag(): void {
     this.state.videoAdCount = 0;
 
-    const allFlaggedVideoElements = document.querySelectorAll(
+    // First count all existing flagged videos
+    const allFlaggedVideoElements = this.getElements(
       'li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video',
     );
-    this.state.videoAdCount = allFlaggedVideoElements?.length ?? 0;
+    this.state.videoAdCount = allFlaggedVideoElements.length;
 
-    const liElements = document.querySelectorAll('li:not(.flagged-video)');
-    liElements?.forEach((element) => this.updateVideoCountAndVisibility(element));
-
-    const reelsShelfElements = document.querySelectorAll(
-      '.listing-reels-shelf:not(.flagged-video)',
+    // Flag new video elements by type
+    this.getElements('li:not(.flagged-video)').forEach((element) =>
+      this.updateVideoCountAndVisibility(element),
     );
-    reelsShelfElements?.forEach((element) => {
-      this.state.videoAdCount++;
-      element.classList.add('flagged-video', 'promo-video-card');
 
-      if (this.state) {
-        this.state.hideVideoAds
-          ? element.classList.remove('display-none-promo-product')
-          : element.classList.add('display-none-promo-product');
-      }
-    });
-
-    const videoPromoElements = document.querySelectorAll('.video-promo:not(.flagged-video)');
-    videoPromoElements?.forEach((element) => {
-      this.state.videoAdCount++;
-      element.classList.add('flagged-video', 'promo-video-card');
-
-      if (this.state) {
-        this.state.hideVideoAds
-          ? element.classList.remove('display-none-promo-product')
-          : element.classList.add('display-none-promo-product');
-      }
-    });
-
-    const tlReelsElements = document.querySelectorAll('.tl-reels:not(.flagged-video)');
-    tlReelsElements?.forEach((element) => {
-      this.state.videoAdCount++;
-      element.classList.add('flagged-video', 'promo-video-card');
-
-      if (this.state) {
-        this.state.hideVideoAds
-          ? element.classList.remove('display-none-promo-product')
-          : element.classList.add('display-none-promo-product');
-      }
-    });
+    this.flagElementsBySelector('.listing-reels-shelf:not(.flagged-video)');
+    this.flagElementsBySelector('.video-promo:not(.flagged-video)');
+    this.flagElementsBySelector('.tl-reels:not(.flagged-video)');
   }
 
   public toggleVideoVisibility(): void {
-    const videoElements = document.querySelectorAll(
+    const videoElements = this.getElements(
       'li.flagged-video, .listing-reels-shelf.flagged-video, .video-promo.flagged-video, .tl-reels.flagged-video',
     );
 
-    videoElements?.forEach((element) => {
-      this.state.hideVideoAds
-        ? element.classList.remove('display-none-promo-product')
-        : element.classList.add('display-none-promo-product');
-    });
+    videoElements.forEach((element) => this.toggleVideoElementVisibility(element));
   }
 
   private updateVideoCountAndVisibility(element: Element): void {
@@ -76,14 +40,24 @@ export class PromotionalVideoHandler {
       element?.classList.contains('tl-reels')
     ) {
       this.state.videoAdCount++;
+      this.flagElement(element, 'flagged-video');
+      this.toggleVideoElementVisibility(element);
+    }
+  }
 
-      element.classList.add('flagged-video');
+  private flagElementsBySelector(selector: string): void {
+    this.getElements(selector).forEach((element) => {
+      this.state.videoAdCount++;
+      this.flagElement(element, 'flagged-video', 'promo-video-card');
+      this.toggleVideoElementVisibility(element);
+    });
+  }
 
-      if (this.state) {
-        this.state.hideVideoAds
-          ? element.classList.remove('display-none-promo-product')
-          : element.classList.add('display-none-promo-product');
-      }
+  private toggleVideoElementVisibility(element: Element): void {
+    if (this.state) {
+      this.state.hideVideoAds
+        ? element.classList.remove('display-none-promo-product')
+        : element.classList.add('display-none-promo-product');
     }
   }
 }

@@ -1,24 +1,22 @@
 import { State } from '../common/types/State.type';
-import { DomClient } from '../clients/dom/client';
+import { BaseHandler } from './base.handler';
 
-export class SponsoredProductListHandler {
-  private state: State;
-
+export class SponsoredProductListHandler extends BaseHandler {
   constructor(state: State) {
-    this.state = state;
+    super(state);
   }
 
   public flag(): void {
-    const promotedBoxes = document.querySelectorAll('h2:not(.flagged-list-title)');
+    const promotedBoxes = this.getElements('h2:not(.flagged-list-title)');
 
-    [...promotedBoxes]
-      ?.filter(DomClient.isElementSponsored)
-      ?.forEach((element) => this.flagPromotedBox(element));
+    promotedBoxes
+      .filter((element) => this.isSponsored(element))
+      .forEach((element) => this.flagPromotedBox(element));
   }
 
   private flagPromotedBox(promotedBox: Element): void {
-    promotedBox.classList.add('flagged-list-title');
-    DomClient.updateSponsoredTextPlural(promotedBox, this.state.language);
-    DomClient.toggleElementVisibility(promotedBox, this.state);
+    this.flagElement(promotedBox, 'flagged-list-title');
+    this.updateSponsoredText(promotedBox, false); // Use plural text
+    this.toggleElementVisibility(promotedBox, !this.state.hideProductAds);
   }
 }

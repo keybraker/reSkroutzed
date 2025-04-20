@@ -25,7 +25,7 @@ type ProductCard = {
   sponsored: boolean;
   sponsored_by_merchant_tracking_url: string;
   merchant_funded_installments: boolean;
-  sponsored_by_merchant_follow_cookie_link_data_cart: Record<string, any>;
+  sponsored_by_merchant_follow_cookie_link_data_cart: Record<string, unknown>;
   discount_voucher_active: boolean;
   fbs_active: boolean;
   force_cargo_shipping_benefits: boolean;
@@ -46,7 +46,7 @@ type ProductCard = {
   payment_method_cost_supported: boolean | null;
   shipping_cost_formatted: string;
   untracked_redirect_supported: boolean;
-  coupon_info: any;
+  coupon_info: unknown;
   advertising_badge?: {
     text: string;
     tooltip: string;

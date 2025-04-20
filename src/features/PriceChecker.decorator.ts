@@ -1,8 +1,9 @@
-import { Language } from '../common/enums/Language.enum';
-import { ProductPriceData, SkroutzClient } from '../clients/skroutz/client';
-import { State } from '../common/types/State.type';
-import { createLogoElement } from './functions/createLogoElement';
 import { DomClient } from '../clients/dom/client';
+import { ProductPriceData, SkroutzClient } from '../clients/skroutz/client';
+import { Language } from '../common/enums/Language.enum';
+import { State } from '../common/types/State.type';
+import { FeatureInstance } from './common/FeatureInstance';
+import { createLogoElement } from './functions/createLogoElement';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
@@ -380,7 +381,7 @@ function createPriceIndicationElement(
 function addReskroutzedTagToElement(
   element: HTMLDivElement | HTMLButtonElement,
   language: Language,
-) {
+): void {
   const brand = document.createElement('div');
   const brandLink = document.createElement('a');
 
@@ -404,7 +405,7 @@ function addReskroutzedTagToElement(
   element.appendChild(brand);
 }
 
-export class PriceCheckerDecorator {
+export class PriceCheckerDecorator implements FeatureInstance {
   /* Configuration */
   private observer: MutationObserver | null = null;
   private isInitializing: boolean = false;
@@ -414,7 +415,7 @@ export class PriceCheckerDecorator {
 
   constructor(private readonly state: State) {}
 
-  public async execute() {
+  public async execute(): Promise<void> {
     await this.initializeProductView();
     this.setupNavigationHandlers();
   }

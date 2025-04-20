@@ -1,48 +1,44 @@
 import { BrowserClient, StorageKey } from '../clients/browser/client';
-import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
+import { BaseHandler } from './base.handler';
 
-export class SponsorshipHandler {
-  private state: State;
-
+export class SponsorshipHandler extends BaseHandler {
   constructor(state: State) {
-    this.state = state;
+    super(state);
   }
 
   public flag(): void {
-    const sponsorshipDivs = document.querySelectorAll('div#sponsorship:not(.flagged-sponsorship)');
+    const sponsorshipDivs = this.getElements('div#sponsorship:not(.flagged-sponsorship)');
 
-    sponsorshipDivs?.forEach((element) => {
-      element.classList.add('flagged-sponsorship', 'flagged-product');
-
+    sponsorshipDivs.forEach((element) => {
+      this.flagElement(element, 'flagged-sponsorship', 'flagged-product');
       this.state.productAdCount++;
 
       const shopPromoterSpan = element.querySelector('.shop-promoter:not(.flagged-product)');
       if (shopPromoterSpan) {
-        shopPromoterSpan.classList.add('flagged-product');
+        this.flagElement(shopPromoterSpan, 'flagged-product');
 
         const labelText = shopPromoterSpan.querySelector('.label-text');
         if (labelText) {
-          labelText.classList.add('flagged-product-label');
-          DomClient.updateSponsoredTextSingle(labelText, this.state.language);
+          this.flagElement(labelText, 'flagged-product-label');
+          this.updateSponsoredText(labelText, true);
         }
       }
 
-      this.toggleSponsorshipVisibility(element);
+      this.toggleVisibility(element);
     });
   }
 
   public toggleSponsorship(): void {
     this.state.hideSponsorships = !this.state.hideSponsorships;
-
     BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
 
-    document.querySelectorAll('div#sponsorship.flagged-sponsorship').forEach((element) => {
-      DomClient.toggleElementVisibility(element, this.state);
-    });
+    this.getElements('div#sponsorship.flagged-sponsorship').forEach((element) =>
+      this.toggleVisibility(element),
+    );
   }
 
-  private toggleSponsorshipVisibility(element: Element): void {
-    DomClient.toggleElementVisibility(element, this.state);
+  private toggleVisibility(element: Element): void {
+    this.toggleElementVisibility(element, !this.state.hideSponsorships);
   }
 }

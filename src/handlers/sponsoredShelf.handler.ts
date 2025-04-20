@@ -1,27 +1,26 @@
 import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
+import { BaseHandler } from './base.handler';
 
-export class SponsoredShelfHandler {
-  private state: State;
-
+export class SponsoredShelfHandler extends BaseHandler {
   constructor(state: State) {
-    this.state = state;
+    super(state);
   }
 
   public flag(): void {
     this.resetShelfCount();
 
-    const h4Elements = document.querySelectorAll('h4:not(.flagged-shelf)');
+    const h4Elements = this.getElements('h4:not(.flagged-shelf)');
 
-    [...h4Elements]
-      .filter(DomClient.isElementSponsored)
+    h4Elements
+      .filter(this.isSponsored)
       .forEach((element) => this.updateShelfCountAndVisibility(element));
   }
 
   private resetShelfCount(): void {
-    const flaggedShelf = document.querySelectorAll('h4.flagged-shelf');
+    const flaggedShelf = this.getElements('h4.flagged-shelf');
 
-    if (flaggedShelf?.length === 0) {
+    if (flaggedShelf.length === 0) {
       this.state.ShelfAdCount = 0;
     }
   }
@@ -29,25 +28,23 @@ export class SponsoredShelfHandler {
   private updateShelfCountAndVisibility(h4Element: Element): void {
     this.state.ShelfAdCount++;
 
-    h4Element.classList.add('sponsored-label');
-    DomClient.updateSponsoredTextPlural(h4Element, this.state.language);
+    this.flagElement(h4Element, 'sponsored-label');
+    this.updateSponsoredText(h4Element, false); // false for plural
 
     const h4ParentElement = h4Element.parentElement;
 
     if (h4ParentElement) {
-      h4ParentElement.classList.add('flagged-shelf');
-
-      DomClient.updateSponsoredTextSingle(h4Element, this.state.language);
-
-      DomClient.toggleElementVisibility(h4ParentElement, this.state);
+      this.flagElement(h4ParentElement, 'flagged-shelf');
+      this.updateSponsoredText(h4Element, true); // true for singular
+      this.toggleElementVisibility(h4ParentElement, !this.state.hideProductAds);
 
       const sponsoredItems = h4ParentElement?.children[2]?.children[0]?.children;
 
       if (sponsoredItems) {
-        [...sponsoredItems]?.forEach((element) => {
+        Array.from(sponsoredItems).forEach((element) => {
           this.state.productAdCount++;
           DomClient.flagElementAsSponsored(element);
-          DomClient.updateSponsoredTextSingle(element, this.state.language);
+          this.updateSponsoredText(element, true);
         });
       }
     }
