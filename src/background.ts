@@ -19,6 +19,7 @@ const state: State = {
   productAdCount: 0,
   ShelfAdCount: 0,
   videoAdCount: 0,
+  sponsorshipAdCount: 0,
   darkMode: false,
   minimumPriceDifference: 0,
 };

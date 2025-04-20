@@ -1,55 +1,51 @@
 import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
-import { BaseHandler } from './base.handler';
+import { AdHandlerInterface } from './common/interfaces/adHandler.interface';
 
-export class SponsorshipAdHandler extends BaseHandler {
+export class SponsorshipAdHandler implements AdHandlerInterface {
   private readonly sponsorshipAdSelectors = ['#sponsorship'];
   private readonly flaggedSponsorshipAdClass = 'flagged-sponsorship';
 
-  constructor(state: State) {
-    super(state);
-  }
+  constructor(private state: State) {}
 
   public flag(): void {
-    // Initialize a counter for sponsorships
-    let sponsorshipCount = 0;
+    this.state.sponsorshipAdCount = 0;
 
-    const allFlaggedSponsorshipElements = this.getElements(`.${this.flaggedSponsorshipAdClass}`);
-    sponsorshipCount = allFlaggedSponsorshipElements.length;
+    const allFlaggedSponsorshipElements = DomClient.getElementsByClass(
+      `.${this.flaggedSponsorshipAdClass}`,
+    );
+    this.state.sponsorshipAdCount = allFlaggedSponsorshipElements.length;
 
-    this.getElements(`li:not(.${this.flaggedSponsorshipAdClass})`).forEach((element) =>
-      this.updateCountAndVisibility(element, sponsorshipCount),
+    DomClient.getElementsByClass(`li:not(.${this.flaggedSponsorshipAdClass})`).forEach((element) =>
+      this.updateCountAndVisibility(element),
     );
 
     this.sponsorshipAdSelectors.forEach((selector) => {
-      this.flagElementsBySelector(
-        `${selector}:not(.${this.flaggedSponsorshipAdClass})`,
-        sponsorshipCount,
-      );
+      this.flagElementsBySelector(`${selector}:not(.${this.flaggedSponsorshipAdClass})`);
     });
   }
 
   public visibilityUpdate(): void {
-    this.getElements(`.${this.flaggedSponsorshipAdClass}`).forEach((element) => {
+    DomClient.getElementsByClass(`.${this.flaggedSponsorshipAdClass}`).forEach((element) => {
       DomClient.updateElementVisibility(element, !this.state.hideSponsorships ? 'hide' : 'show');
     });
   }
 
-  private updateCountAndVisibility(element: Element, count: number): void {
+  private updateCountAndVisibility(element: Element): void {
     if (
       this.sponsorshipAdSelectors.some((selector) => element.matches(selector)) &&
       !element.classList.contains(this.flaggedSponsorshipAdClass)
     ) {
-      count++;
-      this.flagElement(element, this.flaggedSponsorshipAdClass);
+      this.state.sponsorshipAdCount++;
+      DomClient.addClassesToElement(element, this.flaggedSponsorshipAdClass);
       DomClient.updateElementVisibility(element, !this.state.hideSponsorships ? 'hide' : 'show');
     }
   }
 
-  private flagElementsBySelector(selector: string, count: number): void {
-    this.getElements(selector).forEach((element) => {
-      count++;
-      this.flagElement(element, this.flaggedSponsorshipAdClass);
+  private flagElementsBySelector(selector: string): void {
+    DomClient.getElementsByClass(selector).forEach((element) => {
+      this.state.sponsorshipAdCount++;
+      DomClient.addClassesToElement(element, this.flaggedSponsorshipAdClass);
       DomClient.updateElementVisibility(element, !this.state.hideSponsorships ? 'hide' : 'show');
     });
   }

@@ -1,22 +1,20 @@
 import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
-import { BaseHandler } from './base.handler';
+import { AdHandlerInterface } from './common/interfaces/adHandler.interface';
 
-export class VideoAdHandler extends BaseHandler {
+export class VideoAdHandler implements AdHandlerInterface {
   private readonly videoAdClasses = ['listing-reels-shelf', 'video-promo', 'tl-reels'];
   private readonly flaggedVideoAdClass = 'flagged-video';
 
-  constructor(state: State) {
-    super(state);
-  }
+  constructor(private state: State) {}
 
   public flag(): void {
     this.state.videoAdCount = 0;
 
-    const allFlaggedVideoElements = this.getElements(`.${this.flaggedVideoAdClass}`);
+    const allFlaggedVideoElements = DomClient.getElementsByClass(`.${this.flaggedVideoAdClass}`);
     this.state.videoAdCount = allFlaggedVideoElements.length;
 
-    this.getElements(`li:not(.${this.flaggedVideoAdClass})`).forEach((element) =>
+    DomClient.getElementsByClass(`li:not(.${this.flaggedVideoAdClass})`).forEach((element) =>
       this.updateCountAndVisibility(element),
     );
 
@@ -26,7 +24,7 @@ export class VideoAdHandler extends BaseHandler {
   }
 
   public visibilityUpdate(): void {
-    this.getElements(`.${this.flaggedVideoAdClass}`).forEach((element) => {
+    DomClient.getElementsByClass(`.${this.flaggedVideoAdClass}`).forEach((element) => {
       DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
     });
   }
@@ -37,15 +35,15 @@ export class VideoAdHandler extends BaseHandler {
       !element.classList.contains(this.flaggedVideoAdClass)
     ) {
       this.state.videoAdCount++;
-      this.flagElement(element, this.flaggedVideoAdClass);
+      DomClient.addClassesToElement(element, this.flaggedVideoAdClass);
       DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
     }
   }
 
   private flagElementsBySelector(selector: string): void {
-    this.getElements(selector).forEach((element) => {
+    DomClient.getElementsByClass(selector).forEach((element) => {
       this.state.videoAdCount++;
-      this.flagElement(element, this.flaggedVideoAdClass);
+      DomClient.addClassesToElement(element, this.flaggedVideoAdClass);
       DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
     });
   }

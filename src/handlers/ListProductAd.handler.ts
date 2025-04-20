@@ -1,22 +1,20 @@
 import { DomClient } from '../clients/dom/client';
 import { State } from '../common/types/State.type';
-import { BaseHandler } from './base.handler';
+import { AdHandlerInterface } from './common/interfaces/adHandler.interface';
 
-export class ListProductAdHandler extends BaseHandler {
+export class ListProductAdHandler implements AdHandlerInterface {
   private readonly productAdClass = ['labeled-item', 'labeled-product'];
   private readonly flaggedProductAdClass = 'flagged-product';
 
-  constructor(state: State) {
-    super(state);
-  }
+  constructor(private state: State) {}
 
   public flag(): void {
     this.state.productAdCount = 0;
 
-    const allFlaggedVideoElements = this.getElements(`.${this.flaggedProductAdClass}`);
+    const allFlaggedVideoElements = DomClient.getElementsByClass(`.${this.flaggedProductAdClass}`);
     this.state.productAdCount = allFlaggedVideoElements.length;
 
-    this.getElements(`li:not(.${this.flaggedProductAdClass})`).forEach((element) =>
+    DomClient.getElementsByClass(`li:not(.${this.flaggedProductAdClass})`).forEach((element) =>
       this.updateCountAndVisibility(element),
     );
 
@@ -26,7 +24,7 @@ export class ListProductAdHandler extends BaseHandler {
   }
 
   public visibilityUpdate(): void {
-    this.getElements(`.${this.flaggedProductAdClass}`).forEach((element) => {
+    DomClient.getElementsByClass(`.${this.flaggedProductAdClass}`).forEach((element) => {
       DomClient.updateElementVisibility(element, !this.state.hideProductAds ? 'hide' : 'show');
     });
   }
@@ -37,16 +35,16 @@ export class ListProductAdHandler extends BaseHandler {
       !element.classList.contains(this.flaggedProductAdClass)
     ) {
       this.state.productAdCount++;
-      this.flagElement(element, this.flaggedProductAdClass);
-      DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
+      DomClient.addClassesToElement(element, this.flaggedProductAdClass);
+      DomClient.updateElementVisibility(element, !this.state.hideProductAds ? 'hide' : 'show');
     }
   }
 
   private flagElementsBySelector(selector: string): void {
-    this.getElements(selector).forEach((element) => {
+    DomClient.getElementsByClass(selector).forEach((element) => {
       this.state.productAdCount++;
-      this.flagElement(element, this.flaggedProductAdClass);
-      DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
+      DomClient.addClassesToElement(element, this.flaggedProductAdClass);
+      DomClient.updateElementVisibility(element, !this.state.hideProductAds ? 'hide' : 'show');
     });
   }
 }

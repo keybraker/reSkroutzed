@@ -10,6 +10,7 @@ export type State = {
   productAdCount: number;
   ShelfAdCount: number;
   videoAdCount: number;
+  sponsorshipAdCount: number;
   // config
   language: Language;
   darkMode: boolean;

@@ -80,13 +80,6 @@ export class DomClient {
     return sponsoredTexts.includes(element.textContent);
   }
 
-  public static flagElementAsSponsored(element: Element): void {
-    element.classList.add('flagged-product');
-
-    this.flagImageElement(element);
-    this.flagLabelElement(element);
-  }
-
   public static appendElementToElement(element: Element, parentElement: Element): void {
     parentElement.appendChild(element);
   }
@@ -114,6 +107,10 @@ export class DomClient {
     return element;
   }
 
+  public static addClassesToElement(element: Element, ...flagClasses: string[]): void {
+    element.classList.add(...flagClasses);
+  }
+
   // PRIVATE
 
   private static getSponsoredText(isPlural = false, language: Language): string {
@@ -124,21 +121,5 @@ export class DomClient {
       : language === Language.ENGLISH
         ? 'Sponsored Store'
         : 'Προωθούμενo Κατάστημα';
-  }
-
-  private static flagLabelElement(element: Element): void {
-    const labelText = element.querySelector('.label-text');
-
-    if (labelText) {
-      labelText.classList.add('flagged-product-label');
-    }
-  }
-
-  private static flagImageElement(element: Element): void {
-    const imageLink = element.querySelector('a.image');
-
-    if (imageLink) {
-      imageLink.classList.add('flagged-product-image');
-    }
   }
 }
