@@ -95,7 +95,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     });
 
     setTimeout(
-      () => {
+      (): void => {
         container.classList.remove('menu-open');
       },
       50 * buttons.length + 100,
@@ -195,7 +195,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     notificationBubble.textContent = `${this.state.productAdCount}`;
     button.appendChild(notificationBubble);
 
-    const updateNotificationCount = () => {
+    const updateNotificationCount = (): void => {
       const flaggedElements = document.querySelectorAll(
         'li.flagged-product, div.flagged-bought-together, .card.flagged-product, .card.tracking-img-container.flagged-product',
       );
@@ -307,7 +307,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       input.step = '0.5';
       input.value = this.state.minimumPriceDifference.toString();
 
-      const saveValue = () => {
+      const saveValue = (): void => {
         const newValue = parseFloat(input.value);
         if (!isNaN(newValue) && newValue >= 0) {
           this.state.minimumPriceDifference = newValue;
@@ -342,7 +342,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       button.appendChild(popup);
       input.focus();
 
-      const closePopupHandler = (event: MouseEvent) => {
+      const closePopupHandler = (event: MouseEvent): void => {
         if (!popup.contains(event.target as Node) && event.target !== button) {
           saveValue();
           document.removeEventListener('click', closePopupHandler);
@@ -388,7 +388,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     videoNotificationBubble.textContent = `${this.state.videoAdCount}`;
     button.appendChild(videoNotificationBubble);
 
-    const updateVideoNotificationCount = () => {
+    const updateVideoNotificationCount = (): void => {
       videoNotificationBubble.textContent = `${this.state.videoAdCount}`;
       if (this.state.videoAdCount === 0) {
         videoNotificationBubble.style.display = 'none';
@@ -477,7 +477,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     notificationBubble.textContent = '0';
     button.appendChild(notificationBubble);
 
-    const updateNotificationCount = () => {
+    const updateNotificationCount = (): void => {
       const sponsorshipElements = document.querySelectorAll('div#sponsorship.flagged-sponsorship');
       notificationBubble.textContent = `${sponsorshipElements.length}`;
       notificationBubble.style.display = sponsorshipElements.length === 0 ? 'none' : 'flex';

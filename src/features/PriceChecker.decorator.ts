@@ -200,12 +200,6 @@ function createCalculationComponent(
     )}€ <u>${cheaper}</u></strong> (${productPriceData.buyThroughStore.totalPrice.toFixed(
       2,
     )}€ - ${productPriceData.buyThroughSkroutz.totalPrice.toFixed(2)}€)`;
-
-    console.log(
-      `${differenceAbsolute} <= ${minimumPriceDifference} = ${
-        differenceAbsolute <= minimumPriceDifference
-      }`,
-    );
   } else {
     calculationContainer.classList.add('calculation-negative');
     const moreExpensive = language === Language.ENGLISH ? 'more expensive' : 'ακριβότερο';
@@ -255,7 +249,7 @@ function createShopButtonComponent(
   goToStoreButton.textContent =
     language === Language.ENGLISH ? 'Go to Shop' : 'Μετάβαση στο κατάστημα';
 
-  goToStoreButton.addEventListener('click', () => {
+  goToStoreButton.addEventListener('click', (): void => {
     const targetId = `shop-${productPriceData.buyThroughStore.shopId}`;
     const targetElements = document.querySelectorAll(`#${targetId}`);
 
@@ -420,17 +414,17 @@ export class PriceCheckerDecorator implements FeatureInstance {
     this.setupNavigationHandlers();
   }
 
-  private setupNavigationHandlers() {
+  private setupNavigationHandlers(): void {
     window.addEventListener('popstate', this.handleNavigation.bind(this));
 
     this.setupProductViewObserver();
   }
 
-  private async handleNavigation() {
+  private async handleNavigation(): Promise<void> {
     await this.initializeProductView();
   }
 
-  private setupProductViewObserver() {
+  private setupProductViewObserver(): void {
     if (this.observer) {
       this.observer.disconnect();
       this.observer = null;
@@ -452,7 +446,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
     });
   }
 
-  private checkForProductViewChange() {
+  private checkForProductViewChange(): void {
     const offeringCard = document.querySelector('article.offering-card');
     if (!offeringCard) return;
 
@@ -478,7 +472,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
     return window.location.href;
   }
 
-  private async initializeProductView() {
+  private async initializeProductView(): Promise<void> {
     if (this.isInitializing) {
       return;
     }
@@ -513,7 +507,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
     }
   }
 
-  private cleanup() {
+  private cleanup(): void {
     const existingIndicators = document.querySelectorAll('.price-checker-outline');
     const existingShippingTexts = document.querySelectorAll('.shipping-cost-text');
 
