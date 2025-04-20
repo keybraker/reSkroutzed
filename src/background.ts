@@ -14,6 +14,7 @@ const state: State = {
   hideProductAds: false,
   hideVideoAds: false,
   hideSponsorships: false,
+  hideShelfProductAds: false,
   language: Language.GREEK,
   productAdCount: 0,
   ShelfAdCount: 0,
@@ -27,6 +28,9 @@ function loadStorage(): void {
   state.hideProductAds = BrowserClient.getValue<boolean>(StorageKey.PRODUCT_AD_VISIBILITY);
   state.hideVideoAds = BrowserClient.getValue<boolean>(StorageKey.VIDEO_AD_VISIBILITY);
   state.hideSponsorships = BrowserClient.getValue<boolean>(StorageKey.SPONSORSHIP_VISIBILITY);
+  state.hideShelfProductAds = BrowserClient.getValue<boolean>(
+    StorageKey.SHELF_PRODUCT_AD_VISIBILITY,
+  );
   state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,

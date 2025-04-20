@@ -2,20 +2,6 @@
   opacity: 0.85 !important;
   padding: 16px !important;
   border: 2px solid rgba(255, 89, 89, 0.678) !important;
+  box-shadow: 0 0 0 2px rgba(255, 89, 89, 0.678) !important;
   border-radius: 12px;
-}
-
-.flagged-video {
-  position: relative !important;
-}
-
-.flagged-video::after {
-  content: '' !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  pointer-events: none !important;
-  z-index: 1 !important;
 }

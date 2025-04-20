@@ -2,22 +2,30 @@ import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { DomClient } from '../clients/dom/client';
 import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
+import { ListProductAdHandler } from '../handlers/ListProductAd.handler';
+import { ShelfProductAdHandler } from '../handlers/ShelfProductAd.handler';
+import { SponsorshipAdHandler } from '../handlers/SponsorshipAd.handler';
 import { VideoAdHandler } from '../handlers/VideoAd.handler';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createLogoElement } from './functions/createLogoElement';
 import { themeSync } from './functions/themeSync';
 
 export class UniversalToggleDecorator implements FeatureInstance {
-  private state: State;
-  private videoHandler: VideoAdHandler;
-  // private sponsorshipHandler: SponsorshipHandler;
   private isMenuOpen: boolean = false;
+  private state: State;
+
+  private readonly videoHandler: VideoAdHandler;
+  private readonly listProductAdHandler: ListProductAdHandler;
+  private readonly shelfProductAdHandler: ShelfProductAdHandler;
+  private readonly sponsorshipAdHandler: SponsorshipAdHandler;
 
   constructor(state: State) {
     this.state = state;
 
     this.videoHandler = new VideoAdHandler(this.state);
-    // this.sponsorshipHandler = new ShelfProductAdHandler(this.state);
+    this.listProductAdHandler = new ListProductAdHandler(this.state);
+    this.shelfProductAdHandler = new ShelfProductAdHandler(this.state);
+    this.sponsorshipAdHandler = new SponsorshipAdHandler(this.state);
   }
 
   public execute(): void {
@@ -39,12 +47,14 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const adToggleButton = this.createAdToggleButton();
     const videoToggleButton = this.createVideoToggleButton();
     const sponsorshipToggleButton = this.createSponsorshipToggleButton();
+    const shelfProductAdToggleButton = this.createShelfProductAdToggleButton();
 
     DomClient.appendElementToElement(priceDifferenceButton, buttonsContainer);
     DomClient.appendElementToElement(darkModeButton, buttonsContainer);
     DomClient.appendElementToElement(adToggleButton, buttonsContainer);
     DomClient.appendElementToElement(videoToggleButton, buttonsContainer);
     DomClient.appendElementToElement(sponsorshipToggleButton, buttonsContainer);
+    DomClient.appendElementToElement(shelfProductAdToggleButton, buttonsContainer);
 
     mainToggle.addEventListener('click', () => this.toggleMenu(container));
 
@@ -96,6 +106,110 @@ export class UniversalToggleDecorator implements FeatureInstance {
       },
       50 * buttons.length + 100,
     );
+  }
+
+  private createPriceDifferenceOption(): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.classList.add('toggle-option-button', 'price-difference-option');
+
+    const titleText =
+      this.state.language === Language.GREEK
+        ? `Ελάχιστη διαφορά τιμής: ${this.state.minimumPriceDifference}€`
+        : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
+    button.title = titleText;
+
+    const flexContainer = document.createElement('div');
+    flexContainer.style.display = 'flex';
+    flexContainer.style.alignItems = 'center';
+    flexContainer.style.justifyContent = 'center';
+
+    const valueDisplay = document.createElement('span');
+    valueDisplay.textContent = this.state.minimumPriceDifference.toString();
+    DomClient.appendElementToElement(valueDisplay, flexContainer);
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '16');
+    svg.style.marginLeft = '5px';
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute(
+      'd',
+      'M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936c0-.11 0-.219.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.617 6.617 0 0 0 10.341 2c-2.928 0-4.82 1.569-5.244 4.3H4v.928h1.01v1.265H4v.928z',
+    );
+    path.setAttribute('fill', 'currentColor');
+    DomClient.appendElementToElement(path, svg);
+    DomClient.appendElementToElement(svg, flexContainer);
+
+    DomClient.appendElementToElement(flexContainer, button);
+
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      const popup = document.createElement('div');
+      popup.classList.add('price-difference-popup');
+
+      const label = document.createElement('label');
+      label.textContent =
+        this.state.language === Language.GREEK
+          ? 'Ελάχιστη διαφορά τιμής (€):'
+          : 'Minimum price difference (€):';
+
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = '0';
+      input.step = '0.5';
+      input.value = this.state.minimumPriceDifference.toString();
+
+      const saveValue = (): void => {
+        const newValue = parseFloat(input.value);
+        if (!isNaN(newValue) && newValue >= 0) {
+          this.state.minimumPriceDifference = newValue;
+          valueDisplay.textContent = newValue.toString();
+
+          const updatedTitle =
+            this.state.language === Language.GREEK
+              ? `Ελάχιστη διαφορά τιμής: ${newValue}€`
+              : `Minimum Price Difference: ${newValue}€`;
+          button.title = updatedTitle;
+
+          BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);
+
+          const productPage = document.querySelector('article.offering-card');
+          if (productPage) {
+            const event = new Event('priceThresholdChange');
+            document.dispatchEvent(event);
+          }
+        }
+        popup.remove();
+      };
+
+      input.addEventListener('blur', saveValue);
+      input.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+          saveValue();
+        }
+      });
+
+      DomClient.appendElementToElement(label, popup);
+      DomClient.appendElementToElement(input, popup);
+      DomClient.appendElementToElement(popup, button);
+      input.focus();
+
+      const closePopupHandler = (event: MouseEvent): void => {
+        if (!popup.contains(event.target as Node) && event.target !== button) {
+          saveValue();
+          document.removeEventListener('click', closePopupHandler);
+        }
+      };
+
+      setTimeout(() => {
+        document.addEventListener('click', closePopupHandler);
+      }, 100);
+    });
+
+    return button;
   }
 
   private createDarkModeToggleButton(): HTMLButtonElement {
@@ -240,114 +354,13 @@ export class UniversalToggleDecorator implements FeatureInstance {
         }
       }
 
-      this.toggleContentVisibility();
+      // Use handlers to update visibility
+      this.listProductAdHandler.visibilityUpdate();
+      this.shelfProductAdHandler.visibilityUpdate();
+
       button.classList.toggle('active');
 
       button.title = this.state.hideProductAds ? 'Hide Ads' : 'Show Ads';
-    });
-
-    return button;
-  }
-
-  private createPriceDifferenceOption(): HTMLButtonElement {
-    const button = document.createElement('button');
-    button.classList.add('toggle-option-button', 'price-difference-option');
-
-    const titleText =
-      this.state.language === Language.GREEK
-        ? `Ελάχιστη διαφορά τιμής: ${this.state.minimumPriceDifference}€`
-        : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
-    button.title = titleText;
-
-    const flexContainer = document.createElement('div');
-    flexContainer.style.display = 'flex';
-    flexContainer.style.alignItems = 'center';
-    flexContainer.style.justifyContent = 'center';
-
-    const valueDisplay = document.createElement('span');
-    valueDisplay.textContent = this.state.minimumPriceDifference.toString();
-    DomClient.appendElementToElement(valueDisplay, flexContainer);
-
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 16 16');
-    svg.setAttribute('width', '16');
-    svg.setAttribute('height', '16');
-    svg.style.marginLeft = '5px';
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute(
-      'd',
-      'M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936c0-.11 0-.219.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.617 6.617 0 0 0 10.341 2c-2.928 0-4.82 1.569-5.244 4.3H4v.928h1.01v1.265H4v.928z',
-    );
-    path.setAttribute('fill', 'currentColor');
-    DomClient.appendElementToElement(path, svg);
-    DomClient.appendElementToElement(svg, flexContainer);
-
-    DomClient.appendElementToElement(flexContainer, button);
-
-    button.addEventListener('click', (e) => {
-      e.stopPropagation();
-
-      const popup = document.createElement('div');
-      popup.classList.add('price-difference-popup');
-
-      const label = document.createElement('label');
-      label.textContent =
-        this.state.language === Language.GREEK
-          ? 'Ελάχιστη διαφορά τιμής (€):'
-          : 'Minimum price difference (€):';
-
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.min = '0';
-      input.step = '0.5';
-      input.value = this.state.minimumPriceDifference.toString();
-
-      const saveValue = (): void => {
-        const newValue = parseFloat(input.value);
-        if (!isNaN(newValue) && newValue >= 0) {
-          this.state.minimumPriceDifference = newValue;
-          valueDisplay.textContent = newValue.toString();
-
-          const updatedTitle =
-            this.state.language === Language.GREEK
-              ? `Ελάχιστη διαφορά τιμής: ${newValue}€`
-              : `Minimum Price Difference: ${newValue}€`;
-          button.title = updatedTitle;
-
-          BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);
-
-          const productPage = document.querySelector('article.offering-card');
-          if (productPage) {
-            const event = new Event('priceThresholdChange');
-            document.dispatchEvent(event);
-          }
-        }
-        popup.remove();
-      };
-
-      input.addEventListener('blur', saveValue);
-      input.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') {
-          saveValue();
-        }
-      });
-
-      DomClient.appendElementToElement(label, popup);
-      DomClient.appendElementToElement(input, popup);
-      DomClient.appendElementToElement(popup, button);
-      input.focus();
-
-      const closePopupHandler = (event: MouseEvent): void => {
-        if (!popup.contains(event.target as Node) && event.target !== button) {
-          saveValue();
-          document.removeEventListener('click', closePopupHandler);
-        }
-      };
-
-      setTimeout(() => {
-        document.addEventListener('click', closePopupHandler);
-      }, 100);
     });
 
     return button;
@@ -489,7 +502,10 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     button.addEventListener('click', (e) => {
       e.stopPropagation();
-      // this.sponsorshipHandler.toggleSponsorship();
+      this.state.hideSponsorships = !this.state.hideSponsorships;
+      BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
+
+      this.sponsorshipAdHandler.visibilityUpdate();
       button.classList.toggle('active');
 
       const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -522,36 +538,101 @@ export class UniversalToggleDecorator implements FeatureInstance {
     return button;
   }
 
-  private toggleContentVisibility(): void {
-    const selectors = [
-      'li.flagged-product',
-      'div.flagged-shelf',
-      'div.selected-product-cards',
-      'div.flagged-bought-together',
-      '.card.tracking-img-container.flagged-product',
-      '.card.flagged-product',
-    ];
+  private createShelfProductAdToggleButton(): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.classList.add('toggle-option-button', 'shelf-ad-toggle-option');
+    button.title = this.state.hideShelfProductAds ? 'Hide Shelf Ads' : 'Show Shelf Ads';
 
-    selectors.forEach((selector) => {
-      const elements = document.querySelectorAll(selector);
-      elements?.forEach((element) => {
-        this.state.hideProductAds
-          ? element.classList.remove('display-none')
-          : element.classList.add('display-none');
-      });
-    });
+    // Create shelf icon (bookshelf-like icon)
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '16');
 
-    document.querySelectorAll('.card.tracking-img-container').forEach((card) => {
-      if (card.querySelector('.shop-promoter')) {
-        if (!card.classList.contains('flagged-product')) {
-          card.classList.add('flagged-product');
-          this.state.productAdCount++;
-        }
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    if (this.state.hideShelfProductAds) {
+      // Simple shelf icon
+      path.setAttribute(
+        'd',
+        'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z',
+      );
+    } else {
+      // Shelf icon with "Ad" text
+      path.setAttribute(
+        'd',
+        'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
+      );
+    }
+    path.setAttribute('fill', 'currentColor');
 
-        this.state.hideProductAds
-          ? card.classList.remove('display-none')
-          : card.classList.add('display-none');
+    DomClient.appendElementToElement(path, svg);
+    DomClient.appendElementToElement(svg, button);
+
+    // Add notification badge
+    const shelfNotificationBubble = document.createElement('div');
+    shelfNotificationBubble.classList.add('notification-bubble', 'shelf-notification');
+    shelfNotificationBubble.textContent = `${this.state.ShelfAdCount}`;
+    DomClient.appendElementToElement(shelfNotificationBubble, button);
+
+    const updateShelfNotificationCount = (): void => {
+      shelfNotificationBubble.textContent = `${this.state.ShelfAdCount}`;
+      if (this.state.ShelfAdCount === 0) {
+        shelfNotificationBubble.style.display = 'none';
+      } else {
+        shelfNotificationBubble.style.display = 'flex';
       }
+    };
+
+    updateShelfNotificationCount();
+
+    setInterval(() => {
+      updateShelfNotificationCount();
+    }, 2000);
+
+    if (!this.state.hideShelfProductAds) {
+      button.classList.add('active');
+    }
+
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.state.hideShelfProductAds = !this.state.hideShelfProductAds;
+
+      // Store the setting
+      BrowserClient.setValue(
+        StorageKey.SHELF_PRODUCT_AD_VISIBILITY,
+        this.state.hideShelfProductAds,
+      );
+
+      // Update visibility using the handler
+      this.shelfProductAdHandler.visibilityUpdate();
+      button.classList.toggle('active');
+
+      // Update SVG icon
+      const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      if (this.state.hideShelfProductAds) {
+        // Simple shelf icon
+        newPath.setAttribute(
+          'd',
+          'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z',
+        );
+      } else {
+        // Shelf icon with "Ad" text
+        newPath.setAttribute(
+          'd',
+          'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
+        );
+      }
+      newPath.setAttribute('fill', 'currentColor');
+
+      const oldPath = svg.querySelector('path');
+      if (oldPath) {
+        svg.removeChild(oldPath);
+      }
+      DomClient.appendElementToElement(newPath, svg);
+
+      button.title = this.state.hideShelfProductAds ? 'Hide Shelf Ads' : 'Show Shelf Ads';
     });
+
+    return button;
   }
 }

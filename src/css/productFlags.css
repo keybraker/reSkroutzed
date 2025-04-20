@@ -3,9 +3,14 @@
 .selected-product-cards, */
 /* .flagged-bought-together */
 .flagged-product {
-  border-radius: 8px !important;
+  /* border-radius: 8px !important;
   border: 1px solid var(--flagged-item-box-shadow, #ff0000) !important;
-  box-shadow: var(--flagged-item-box-shadow, 1px 1px 1px 1px) !important;
+  box-shadow: var(--flagged-item-box-shadow, 1px 1px 1px 1px) !important; */
+  opacity: 0.85 !important;
+  padding: 16px !important;
+  border: 2px solid rgba(255, 89, 89, 0.678) !important;
+  box-shadow: 0 0 0 2px rgba(255, 89, 89, 0.678) !important;
+  border-radius: 12px;
 }
 
 .flagged-product-image {
@@ -21,10 +26,18 @@
   background-color: var(--flagged-item-background, #ffcccc) !important;
 }
 
+.dark-mode .flagged-shelf {
+  background-color: var(--flagged-item-background, #946868) !important;
+}
+
 .flagged-sponsorship {
   padding: 24px !important;
   border-radius: 8px !important;
   border: 1px solid var(--flagged-item-box-shadow, #ff0000) !important;
   box-shadow: var(--flagged-item-box-shadow, 1px 1px 1px 1px) !important;
   background-color: var(#ffcccc) !important;
+}
+
+.dark-mode .flagged-sponsorship {
+  background-color: var(#e99292) !important;
 }

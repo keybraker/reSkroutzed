@@ -11,42 +11,46 @@ export class SponsorshipAdHandler extends BaseHandler {
   }
 
   public flag(): void {
-    this.state.videoAdCount = 0;
+    // Initialize a counter for sponsorships
+    let sponsorshipCount = 0;
 
-    const allFlaggedVideoElements = this.getElements(`.${this.flaggedSponsorshipAdClass}`);
-    this.state.videoAdCount = allFlaggedVideoElements.length;
+    const allFlaggedSponsorshipElements = this.getElements(`.${this.flaggedSponsorshipAdClass}`);
+    sponsorshipCount = allFlaggedSponsorshipElements.length;
 
     this.getElements(`li:not(.${this.flaggedSponsorshipAdClass})`).forEach((element) =>
-      this.updateCountAndVisibility(element),
+      this.updateCountAndVisibility(element, sponsorshipCount),
     );
 
     this.sponsorshipAdSelectors.forEach((selector) => {
-      this.flagElementsBySelector(`${selector}:not(.${this.flaggedSponsorshipAdClass})`);
+      this.flagElementsBySelector(
+        `${selector}:not(.${this.flaggedSponsorshipAdClass})`,
+        sponsorshipCount,
+      );
     });
   }
 
   public visibilityUpdate(): void {
     this.getElements(`.${this.flaggedSponsorshipAdClass}`).forEach((element) => {
-      DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
+      DomClient.updateElementVisibility(element, !this.state.hideSponsorships ? 'hide' : 'show');
     });
   }
 
-  private updateCountAndVisibility(element: Element): void {
+  private updateCountAndVisibility(element: Element, count: number): void {
     if (
       this.sponsorshipAdSelectors.some((selector) => element.matches(selector)) &&
       !element.classList.contains(this.flaggedSponsorshipAdClass)
     ) {
-      this.state.videoAdCount++;
+      count++;
       this.flagElement(element, this.flaggedSponsorshipAdClass);
-      DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
+      DomClient.updateElementVisibility(element, !this.state.hideSponsorships ? 'hide' : 'show');
     }
   }
 
-  private flagElementsBySelector(selector: string): void {
+  private flagElementsBySelector(selector: string, count: number): void {
     this.getElements(selector).forEach((element) => {
-      this.state.videoAdCount++;
+      count++;
       this.flagElement(element, this.flaggedSponsorshipAdClass);
-      DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
+      DomClient.updateElementVisibility(element, !this.state.hideSponsorships ? 'hide' : 'show');
     });
   }
 }

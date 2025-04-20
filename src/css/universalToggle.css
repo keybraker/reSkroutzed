@@ -226,7 +226,9 @@
 .dark-mode .video-toggle-option.active,
 .video-toggle-option.active,
 .dark-mode .ad-toggle-option.active,
-.ad-toggle-option.active {
+.ad-toggle-option.active,
+.dark-mode .shelf-ad-toggle-option.active,
+.shelf-ad-toggle-option.active {
   background: linear-gradient(145deg, #e66300, #d95500) !important;
 }
 .price-difference-option {

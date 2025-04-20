@@ -3,50 +3,56 @@ import { State } from '../common/types/State.type';
 import { BaseHandler } from './base.handler';
 
 export class ShelfProductAdHandler extends BaseHandler {
-  private readonly productAdClass = ['sponsored-product-cards', 'sponsored-shelf'];
-  private readonly flaggedProductAdClass = 'flagged-shelf';
+  private readonly shelfAdClass = ['sponsored-product-cards', 'sponsored-shelf'];
+  private readonly flaggedShelfAdClass = 'flagged-shelf';
 
   constructor(state: State) {
     super(state);
   }
 
   public flag(): void {
-    this.state.productAdCount = 0;
+    // Reset the shelf ad count
+    this.state.ShelfAdCount = 0;
 
-    const allFlaggedVideoElements = this.getElements(`.${this.flaggedProductAdClass}`);
-    this.state.productAdCount = allFlaggedVideoElements.length;
+    const allFlaggedShelfElements = this.getElements(`.${this.flaggedShelfAdClass}`);
+    // Update ShelfAdCount with the number of flagged shelf elements
+    this.state.ShelfAdCount = allFlaggedShelfElements.length;
 
-    this.getElements(`li:not(.${this.flaggedProductAdClass})`).forEach((element) =>
+    this.getElements(`li:not(.${this.flaggedShelfAdClass})`).forEach((element) =>
       this.updateCountAndVisibility(element),
     );
 
-    this.productAdClass.forEach((videoAdClass) => {
-      this.flagElementsBySelector(`.${videoAdClass}:not(.${this.flaggedProductAdClass})`);
+    this.shelfAdClass.forEach((videoAdClass) => {
+      this.flagElementsBySelector(`.${videoAdClass}:not(.${this.flaggedShelfAdClass})`);
     });
   }
 
   public visibilityUpdate(): void {
-    this.getElements(`.${this.flaggedProductAdClass}`).forEach((element) => {
-      DomClient.updateElementVisibility(element, !this.state.hideProductAds ? 'hide' : 'show');
+    this.getElements(`.${this.flaggedShelfAdClass}`).forEach((element) => {
+      DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
     });
   }
 
   private updateCountAndVisibility(element: Element): void {
     if (
-      this.productAdClass.some((videoAdClass) => element.classList.contains(videoAdClass)) &&
-      !element.classList.contains(this.flaggedProductAdClass)
+      this.shelfAdClass.some((videoAdClass) => element.classList.contains(videoAdClass)) &&
+      !element.classList.contains(this.flaggedShelfAdClass)
     ) {
       this.state.productAdCount++;
-      this.flagElement(element, this.flaggedProductAdClass);
-      DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
+      // Increment ShelfAdCount when a new shelf ad is found
+      this.state.ShelfAdCount++;
+      this.flagElement(element, this.flaggedShelfAdClass);
+      DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
     }
   }
 
   private flagElementsBySelector(selector: string): void {
     this.getElements(selector).forEach((element) => {
       this.state.productAdCount++;
-      this.flagElement(element, this.flaggedProductAdClass);
-      DomClient.updateElementVisibility(element, !this.state.hideVideoAds ? 'hide' : 'show');
+      // Increment ShelfAdCount when a new shelf ad is found
+      this.state.ShelfAdCount++;
+      this.flagElement(element, this.flaggedShelfAdClass);
+      DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
     });
   }
 }

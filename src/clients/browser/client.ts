@@ -14,6 +14,7 @@ export enum StorageKey {
   PRODUCT_AD_VISIBILITY = STORAGE_KEY_PREFIX + '-product-ad-visibility',
   VIDEO_AD_VISIBILITY = STORAGE_KEY_PREFIX + '-video-ad-visibility',
   SPONSORSHIP_VISIBILITY = STORAGE_KEY_PREFIX + '-sponsorship-visibility',
+  SHELF_PRODUCT_AD_VISIBILITY = STORAGE_KEY_PREFIX + '-shelf-product-ad-visibility',
   DARK_MODE = STORAGE_KEY_PREFIX + '-dark-mode',
   MINIMUM_PRICE_DIFFERENCE = STORAGE_KEY_PREFIX + '-minimum-difference',
 }
@@ -25,6 +26,7 @@ const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
   [StorageKey.PRODUCT_AD_VISIBILITY]: false,
   [StorageKey.VIDEO_AD_VISIBILITY]: false,
   [StorageKey.SPONSORSHIP_VISIBILITY]: false,
+  [StorageKey.SHELF_PRODUCT_AD_VISIBILITY]: false,
   [StorageKey.DARK_MODE]: false,
   [StorageKey.MINIMUM_PRICE_DIFFERENCE]: 0,
 };

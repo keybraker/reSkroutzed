@@ -36,10 +36,12 @@ html.dark-mode {
   --color-text-primary: #ffffff !important;
   --color-text-secondary: #cccccc !important;
   --color-card-background: #1f1f1f !important;
+  --color-card-background-secondary: #5a5a5a !important;
   --color-border-primary: #404040 !important;
 }
 
 .dark-mode .card {
+  padding-bottom: 10px !important;
   background-color: var(--color-card-background) !important;
   color: var(--color-text-primary) !important;
   border: 1px solid var(--color-border-primary) !important;
@@ -52,7 +54,12 @@ html.dark-mode {
 }
 
 .dark-mode .filter-indicator,
+.dark-mode .sku-pick-shelf,
+.dark-mode .timeline-card,
+.dark-mode .card-inner-container,
 .dark-mode .sidebar {
+  padding: 12px;
+  border-radius: 6px !important;
   background-color: var(--color-background-secondary) !important;
   color: var(--color-text-primary) !important;
   border: 1px solid var(--color-border-primary) !important;
