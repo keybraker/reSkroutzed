@@ -152,4 +152,25 @@ export class BrowserClient {
 
     return Language.ENGLISH;
   }
+
+  public static detectMobile(): boolean {
+    const userAgent = navigator.userAgent.toLowerCase();
+
+    const isMobileFirefox = userAgent.includes('android') && userAgent.includes('firefox');
+    if (isMobileFirefox) {
+      return true;
+    }
+
+    const isMobileDomain = window.location.hostname.startsWith('m.');
+    if (isMobileDomain) {
+      return true;
+    }
+
+    const isSmallScreen = window.innerWidth <= 768;
+    if (isSmallScreen) {
+      return true;
+    }
+
+    return false;
+  }
 }

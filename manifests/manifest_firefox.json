@@ -12,7 +12,8 @@
     "content_scripts": [
         {
             "matches": [
-                "https://www.skroutz.gr/*"
+                "https://www.skroutz.gr/*",
+                "https://m.skroutz.gr/*"
             ],
             "css": [
                 "css/flaggerToggle.css",
@@ -44,6 +45,9 @@
         "gecko": {
             "id": "skroutz-sponsored-flagger@itsiakkas.com",
             "strict_min_version": "109.0"
+        },
+        "gecko_android": {
+            "strict_min_version": "113.0"
         }
     }
 }

@@ -22,6 +22,7 @@ const state: State = {
   sponsorshipAdCount: 0,
   darkMode: false,
   minimumPriceDifference: 0,
+  isMobile: false,
 };
 
 function loadStorage(): void {
@@ -36,6 +37,7 @@ function loadStorage(): void {
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
   );
+  state.isMobile = BrowserClient.detectMobile();
 
   if (state.darkMode) {
     themeSync(state);
@@ -61,6 +63,10 @@ const universalToggleDecorator = new UniversalToggleDecorator(state);
 
     flagContent();
     toggleVisibility();
+
+    if (state.isMobile) {
+      applyMobileOptimizations();
+    }
   }
 
   function flagContent(): void {
@@ -77,6 +83,24 @@ const universalToggleDecorator = new UniversalToggleDecorator(state);
     sponsorshipAdHandler.visibilityUpdate();
   }
 
+  function applyMobileOptimizations(): void {
+    const style = document.createElement('style');
+    style.textContent = `
+      /* Mobile optimizations for Skroutz */
+      .reskroutzed-tag {
+        padding: 4px 6px !important;
+        font-size: 10px !important;
+      }
+
+      /* Ensure toggles have proper tap targets on mobile */
+      .reskroutzed-toggle-container {
+        transform: scale(1.2);
+        margin: 8px;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   function observeMutations(): void {
     const observer = new MutationObserver(() => flagContent());
     observer.observe(document.body, {
@@ -88,6 +112,15 @@ const universalToggleDecorator = new UniversalToggleDecorator(state);
   window.onload = async function () {
     await initializer();
     observeMutations();
+
+    if (state.isMobile) {
+      window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+          flagContent();
+          toggleVisibility();
+        }, 300);
+      });
+    }
   };
 })();
 
@@ -101,6 +134,7 @@ chrome.runtime.onMessage.addListener(
             sponsoredCount: number;
             sponsoredShelfCount: number;
             videoCount: number;
+            isMobile?: boolean;
           }
         | { success: boolean },
     ) => void,
@@ -110,6 +144,7 @@ chrome.runtime.onMessage.addListener(
         sponsoredCount: state.productAdCount,
         sponsoredShelfCount: state.ShelfAdCount,
         videoCount: state.videoAdCount,
+        isMobile: state.isMobile,
       });
     } else if (request.action === 'toggleDarkMode' && request.value !== undefined) {
       state.darkMode = request.value as boolean;

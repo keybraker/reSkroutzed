@@ -25,8 +25,9 @@
 
 .popup-body {
   font-family: 'Inter', sans-serif;
-  min-width: 320px;
-  max-width: 380px;
+  min-width: 300px;
+  max-width: 100%;
+  width: 100%;
   background-color: var(--background-color);
   color: var(--text-dark);
   box-shadow: var(--shadow);
@@ -161,6 +162,7 @@
   border-radius: 6px;
   padding: 12px;
   box-shadow: var(--shadow);
+  flex-wrap: wrap;
 }
 
 .price-input-container label {
@@ -172,7 +174,7 @@
 
 .price-input-container input {
   width: 60px;
-  padding: 6px 8px;
+  padding: 8px 10px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 14px;
@@ -185,7 +187,7 @@
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 6px 12px;
+  padding: 8px 12px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -317,4 +319,51 @@
 
 .dark-popup .store-icon {
   border-color: #333;
+}
+
+/* Mobile optimizations */
+@media (max-width: 360px) {
+  .popup-body {
+    min-width: 100%;
+  }
+
+  .settings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .price-input-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .price-input-container label,
+  .price-input-container input {
+    margin-bottom: 8px;
+  }
+
+  .action-button {
+    margin-top: 5px;
+    padding: 10px;
+    width: 100%;
+  }
+
+  .toggle-label {
+    height: 30px;
+  }
+
+  /* Increase tap target sizes for mobile */
+  .setting-item {
+    padding: 12px;
+  }
+
+  .toggle-switch {
+    --toggle-height: 28px;
+    --toggle-width: 52px;
+  }
+
+  .stat-box {
+    padding: 15px 8px;
+  }
 }

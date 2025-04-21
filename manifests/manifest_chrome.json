@@ -12,7 +12,8 @@
     "content_scripts": [
         {
             "matches": [
-                "https://www.skroutz.gr/*"
+                "https://www.skroutz.gr/*",
+                "https://m.skroutz.gr/*"
             ],
             "css": [
                 "css/flaggerToggle.css",

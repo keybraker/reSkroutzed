@@ -47,7 +47,10 @@ html.dark-mode {
   border: 1px solid var(--color-border-primary) !important;
 }
 
-.dark-mode .button {
+.dark-mode .button,
+.dark-mode .bottom-tabs,
+.dark-mode .add-to-cart-button-section,
+.dark-mode .navigation-bar {
   background-color: var(--color-background-secondary) !important;
   color: var(--dark-mode-button-text) !important;
   border: 1px solid var(--color-border-primary) !important;
@@ -153,7 +156,7 @@ html.dark-mode {
 .dark-mode .top-filter-dropdown,
 .dark-mode .size-selection-modal,
 .dark-mode .sku-card-favorite,
-.dark-mode .sku-reviews-order,
+.dark-mode .sku-reviews-order.active,
 .dark-mode .slider-btn,
 .dark-mode .suggestions-list-wrapper,
 .dark-mode .subcat-nav-sublist,
@@ -162,8 +165,6 @@ html.dark-mode {
 .dark-mode .remain-sticky,
 .dark-mode .country-picker-form,
 .dark-mode .modal-container-content,
-.dark-mode .sku-reviews-order,
-.dark-mode .sku-reviews-order.active,
 .dark-mode .pic {
   background-color: var(--color-background-base) !important;
   color: var(--color-text-primary) !important;

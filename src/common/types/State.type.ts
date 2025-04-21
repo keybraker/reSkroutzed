@@ -16,4 +16,6 @@ export type State = {
   darkMode: boolean;
   // price checker
   minimumPriceDifference: number;
+  // platform detection
+  isMobile?: boolean;
 };
