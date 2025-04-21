@@ -30,6 +30,17 @@
             "run_at": "document_end"
         }
     ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "icons/48.png"
+            ],
+            "matches": [
+                "https://www.skroutz.gr/*",
+                "https://m.skroutz.gr/*"
+            ]
+        }
+    ],
     "action": {
         "default_popup": "popup/popup.html",
         "default_icon": {

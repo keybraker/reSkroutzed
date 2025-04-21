@@ -97,7 +97,6 @@ export class BrowserClient {
     });
 
     if (!item) {
-      // If there's no saved value, store the default
       if (defaultValue !== undefined) {
         this.setValue(key, defaultValue);
       }
@@ -108,7 +107,6 @@ export class BrowserClient {
       return parseAs(item);
     }
 
-    // Default parsing based on the key's default value type
     if (typeof defaultValue === 'boolean') {
       return (item === 'true') as unknown as T;
     } else if (typeof defaultValue === 'number') {
@@ -126,7 +124,7 @@ export class BrowserClient {
   public static setValue<T extends StorageValueType>(key: StorageKey, value: T): void {
     localStorage.setItem(key, value.toString());
 
-    const data: { [key: string]: any } = {};
+    const data: { [key: string]: unknown } = {};
     data[key] = value;
     chrome.storage.local.set(data);
   }

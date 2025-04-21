@@ -2,6 +2,7 @@ import { BrowserClient, StorageKey } from './clients/browser/client';
 import { Language } from './common/enums/Language.enum';
 import { State } from './common/types/State.type';
 import { FinalPriceFixerDecorator } from './features/FinalPriceFixer.decorator';
+import { LogoHatDecorator } from './features/LogoHatDecorator';
 import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
 import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
 import { themeSync } from './features/functions/themeSync';
@@ -54,12 +55,14 @@ const sponsorshipAdHandler = new SponsorshipAdHandler(state);
 const priceCheckerIndicator = new PriceCheckerDecorator(state);
 const finalPriceFixerDecorator = new FinalPriceFixerDecorator(state);
 const universalToggleDecorator = new UniversalToggleDecorator(state);
+const logoHatDecorator = new LogoHatDecorator();
 
 (function () {
   async function initializer(): Promise<void> {
     await priceCheckerIndicator.execute();
     finalPriceFixerDecorator.execute();
     universalToggleDecorator.execute();
+    logoHatDecorator.execute();
 
     flagContent();
     toggleVisibility();
