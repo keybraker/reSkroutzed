@@ -11,7 +11,7 @@ const getBrowserName = (env) => {
   return browserName;
 };
 
-module.exports = (env) => {
+module.exports = (env, argv) => {
   const browserName = getBrowserName(env);
   if (!browserName) {
     const supportedBrowsersList = supportedBrowsersNames.join(", ");
@@ -21,12 +21,12 @@ module.exports = (env) => {
     );
   }
 
-  const config = require(`./webpack/webpack.${browserName}.config`);
+  const browserConfig = require(`./webpack/webpack.${browserName}.config`)(env, argv);
 
   // Add analyzer if requested
   if (env.analyze) {
-    return require("./webpack/analyzer.webpack.config")(env);
+    return require("./webpack/analyzer.webpack.config")(env, argv);
   }
 
-  return merge(commonConfig, config);
+  return merge(commonConfig, browserConfig);
 };
