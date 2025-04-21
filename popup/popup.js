@@ -50,17 +50,17 @@ function loadSettings() {
   });
 
   const adsToggle = document.getElementById('toggleAds');
-  getStorageValue(StorageKey.PRODUCT_AD_VISIBILITY, false, (value) => {
+  getStorageValue(StorageKey.PRODUCT_AD_VISIBILITY, true, (value) => {
     adsToggle.checked = !value;
   });
 
   const videosToggle = document.getElementById('toggleVideos');
-  getStorageValue(StorageKey.VIDEO_AD_VISIBILITY, false, (value) => {
+  getStorageValue(StorageKey.VIDEO_AD_VISIBILITY, true, (value) => {
     videosToggle.checked = !value;
   });
 
   const shelvesToggle = document.getElementById('toggleShelves');
-  getStorageValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, false, (value) => {
+  getStorageValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, true, (value) => {
     shelvesToggle.checked = !value;
   });
 

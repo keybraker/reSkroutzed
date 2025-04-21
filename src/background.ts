@@ -2,7 +2,7 @@ import { BrowserClient, StorageKey } from './clients/browser/client';
 import { Language } from './common/enums/Language.enum';
 import { State } from './common/types/State.type';
 import { FinalPriceFixerDecorator } from './features/FinalPriceFixer.decorator';
-import { LogoHatDecorator } from './features/LogoHatDecorator';
+import { LogoHatDecorator } from './features/LogoHat.decorator';
 import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
 import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
 import { themeSync } from './features/functions/themeSync';

@@ -1,7 +1,9 @@
 import { FeatureInstance } from './common/FeatureInstance';
 
-import '../css/logoHat.css';
-
+/**
+ * Decorator that adds a festive hat to the Skroutz logo
+ * All styling is included inline to eliminate the need for an external CSS file
+ */
 export class LogoHatDecorator implements FeatureInstance {
   constructor() {}
 
@@ -13,12 +15,21 @@ export class LogoHatDecorator implements FeatureInstance {
     }
 
     const wrapper = document.createElement('div');
-    wrapper.className = 'logo-hat-wrapper';
+    wrapper.style.position = 'relative';
+    wrapper.style.display = 'inline-block';
 
     const hat = document.createElement('img');
     hat.src = chrome.runtime.getURL('icons/48.png');
     hat.alt = 'reSkroutzed hat';
-    hat.className = 'logo-hat-image';
+
+    hat.style.position = 'absolute';
+    hat.style.top = '-6px';
+    hat.style.left = '-10px';
+    hat.style.width = '20px';
+    hat.style.height = '20px';
+    hat.style.transform = 'rotate(-15deg)';
+    hat.style.zIndex = '10';
+    hat.style.pointerEvents = 'none';
 
     const observer = new MutationObserver((_mutations, _obs) => {
       if (!document.contains(wrapper)) {
@@ -39,7 +50,6 @@ export class LogoHatDecorator implements FeatureInstance {
 
     logoParent.insertBefore(wrapper, logoLink);
     wrapper.appendChild(logoLink);
-
     wrapper.appendChild(hat);
   }
 }

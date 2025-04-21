@@ -23,10 +23,10 @@ export enum StorageKey {
  * Default values for storage items
  */
 const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
-  [StorageKey.PRODUCT_AD_VISIBILITY]: false,
-  [StorageKey.VIDEO_AD_VISIBILITY]: false,
-  [StorageKey.SPONSORSHIP_VISIBILITY]: false,
-  [StorageKey.SHELF_PRODUCT_AD_VISIBILITY]: false,
+  [StorageKey.PRODUCT_AD_VISIBILITY]: true,
+  [StorageKey.VIDEO_AD_VISIBILITY]: true,
+  [StorageKey.SPONSORSHIP_VISIBILITY]: true,
+  [StorageKey.SHELF_PRODUCT_AD_VISIBILITY]: true,
   [StorageKey.DARK_MODE]: false,
   [StorageKey.MINIMUM_PRICE_DIFFERENCE]: 0,
 };
