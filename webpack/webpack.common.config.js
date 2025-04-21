@@ -18,7 +18,7 @@ module.exports = {
     new ForkTsCheckerWebpackPlugin({
       async: true,
       typescript: {
-        memoryLimit: 4096, // Set to 4GB
+        memoryLimit: 4096,
         diagnosticOptions: {
           semantic: true,
           syntactic: true,
@@ -31,7 +31,6 @@ module.exports = {
   ],
   resolve: {
     extensions: [".ts", ".js"],
-    // Add module aliases for frequently used paths
     alias: {
       "@clients": __dirname + "/../src/clients",
       "@common": __dirname + "/../src/common",
@@ -47,7 +46,6 @@ module.exports = {
           {
             loader: "ts-loader",
             options: {
-              // Enable transpileOnly for faster builds
               transpileOnly: true,
               experimentalWatchApi: true,
             }
@@ -62,8 +60,6 @@ module.exports = {
           {
             loader: "css-loader",
             options: {
-              // CSS Loader version 7 doesn't support 'minimize' option
-              // It's handled by CssMinimizerPlugin instead
               sourceMap: true,
             }
           }
@@ -99,7 +95,6 @@ module.exports = {
         },
       }),
     ],
-    // Enhanced optimization settings
     usedExports: true,
     sideEffects: true,
     providedExports: true,
@@ -110,6 +105,5 @@ module.exports = {
       config: [__filename],
     },
   },
-  // Limit parallelism based on CPU cores
   parallelism: 4,
 }

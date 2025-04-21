@@ -34,7 +34,6 @@ module.exports = (env = {}, argv = {}) => {
     ],
   };
 
-  // Only create the zip file if not in watch mode
   if (!isWatchMode) {
     config.plugins.push(
       new ZipWebpackPlugin({

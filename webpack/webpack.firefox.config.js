@@ -15,13 +15,10 @@ module.exports = (env = {}, argv = {}) => {
     output: {
       path: buildDir,
     },
-    // Firefox-specific optimizations
     target: "web",
     optimization: {
       moduleIds: 'deterministic',
-      // Firefox-specific settings
       chunkIds: 'deterministic',
-      // Firefox usually has better memory management, so we can be more aggressive with optimizations
       removeAvailableModules: true,
       removeEmptyChunks: true,
     },
@@ -39,7 +36,6 @@ module.exports = (env = {}, argv = {}) => {
     ],
   };
 
-  // Only create the zip file if not in watch mode
   if (!isWatchMode) {
     config.plugins.push(
       new ZipWebpackPlugin({

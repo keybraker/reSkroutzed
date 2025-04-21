@@ -1,14 +1,35 @@
-# ![Alt Text](../icons/48.png) ReSkroutzed
+# ![Alt Text](../icons/48.png) reSkroutzed
 
 [![Run Tests](https://github.com/keybraker/reSkroutzed/actions/workflows/tests.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/tests.yml)
 
-### ReSkroutzed is a browser extension that enhances the shopping experience on [skroutz.gr](https://skroutz.gr).<br>
+<!-- [![Lint](https://github.com/keybraker/reSkroutzed/actions/workflows/lint.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/lint.yml)
+[![Build Chrome](https://github.com/keybraker/reSkroutzed/actions/workflows/build-chrome.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/build-chrome.yml)
+[![Build Firefox](https://github.com/keybraker/reSkroutzed/actions/workflows/build-firefox.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/build-firefox.yml) -->
 
-![Alt Text](../imagery/large_promo.png)
+### reSkroutzed is a browser extension that enhances the shopping experience on [skroutz.gr](https://skroutz.gr).<br>
+
+|                                                                      |                                                                      |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| ![Screenshot 1](../imagery/chrome/chrome_1280x800_screenshot_1.jpeg) | ![Screenshot 2](../imagery/chrome/chrome_1280x800_screenshot_2.jpeg) |
+| ![Screenshot 3](../imagery/chrome/chrome_1280x800_screenshot_3.jpeg) | ![Screenshot 4](../imagery/chrome/chrome_1280x800_screenshot_4.jpeg) |
 
 ## Why it was made?
 
-> Skroutz has been using dark patterns to mislead consumers into purchasing sponsored products (advertisements). The purpose of this extension is to make it easier for consumers to identify which products are sponsored and which are not, so they can make informed purchasing decisions. It also gives the consumer the ability to hide the sponsored products if they so wish to.
+Skroutz has been using dark patterns to mislead consumers into purchasing sponsored products (advertisements).
+The purpose of this extension is to make it easier for consumers to identify which products are sponsored and which are not, so they can make informed purchasing decisions.
+It also gives the consumer the ability to hide the sponsored products if they so wish to.
+
+## Where we are now?
+
+reSkroutzed, is a must-have enhancer for website skroutz.gr.
+
+It assists you by making clear what products are ads and giving you the means to remove them.
+
+The price checker makes sure the amount displayed on the product is actually the lowest. For those that "Buy through skroutz" is worth more than buying through a store directly, they can easily select a price difference threshold.
+
+Dark mode is now as easy as clicking one button.
+
+The all new universal selector on the bottom left side of the screen is always there to help you tailor make the experience browsing as you wish!
 
 ## Additional functionality
 
@@ -22,6 +43,7 @@
   - videos
   - sponsorships
   - banners
+- Available on mobile (Firefox only)
 
 ## Manual Installation (for contributing)
 
@@ -39,10 +61,12 @@ For development, you can use:
 ### Development Mode
 
 ```bash
-# For Chrome development with hot reload
+# run locally for development
+
 npm run dev:chrome
 
-# For Firefox development with hot reload
+# or
+
 npm run dev:firefox
 ```
 
@@ -87,13 +111,13 @@ If you have any suggestions for improvements or are facing a bug, feel free to s
 
 This extension is licensed under the GNU general public license. See the LICENSE file for more details.
 
-### Download ReSkroutzed
+### Download reSkroutzed
 
 <div style="display: flex; justify-content: center; gap: 20px;">
   <a href="https://addons.mozilla.org/en-US/firefox/addon/reskroutzed">
-    <img src="../assets/store_images/firefox.png" alt="Firefox" width="250">
+    <img src="../imagery/store_images/firefox.png" alt="Firefox" width="250">
   </a>
   <a href="https://chrome.google.com/webstore/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl">
-    <img src="../assets/store_images/chrome.png" alt="Chrome" width="250">
+    <img src="../imagery/store_images/chrome.png" alt="Chrome" width="250">
   </a>
 </div>

@@ -1,6 +1,6 @@
 {
     "name": "reSkroutzed",
-    "description": "Enhances Skroutz.gr by flagging sponsored products, price checker, and providing a dark mode toggle",
+    "description": "reSkroutzed, is a must-have enhancer for website skroutz.gr",
     "version": "1.9.0",
     "manifest_version": 3,
     "permissions": [
