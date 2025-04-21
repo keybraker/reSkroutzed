@@ -12,6 +12,11 @@ module.exports = {
   output: {
     path: buildDir,
   },
+  target: "web",
+  optimization: {
+    moduleIds: 'deterministic',
+    chunkIds: 'deterministic',
+  },
   plugins: [
     new CopyWebpackPlugin({
       patterns: [

@@ -1,5 +1,7 @@
 # ![Alt Text](../icons/48.png) ReSkroutzed
 
+[![Run Tests](https://github.com/keybraker/reSkroutzed/actions/workflows/tests.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/tests.yml)
+
 ### ReSkroutzed is a browser extension that enhances the shopping experience on [skroutz.gr](https://skroutz.gr).<br>
 
 ![Alt Text](../imagery/large_promo.png)

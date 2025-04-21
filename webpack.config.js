@@ -23,5 +23,10 @@ module.exports = (env) => {
 
   const config = require(`./webpack/webpack.${browserName}.config`);
 
+  // Add analyzer if requested
+  if (env.analyze) {
+    return require("./webpack/analyzer.webpack.config")(env);
+  }
+
   return merge(commonConfig, config);
 };

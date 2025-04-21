@@ -8,10 +8,18 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "removeComments": true,
+    "importsNotUsedAsValues": "remove",
+    "noEmitOnError": true,
+    "isolatedModules": true
   },
   "include": [
     "src",
-    "popup"
+    "popup",
+    "test",
+    "*.ts"
   ]
 }

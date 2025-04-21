@@ -89,7 +89,7 @@ export class DomClient {
   }
 
   public static getElementsByClass(className: string, searchElement?: Element): Element[] {
-    return [...(searchElement ?? document).querySelectorAll(className)];
+    return Array.from((searchElement ?? document).querySelectorAll(className));
   }
 
   public static createElement(
