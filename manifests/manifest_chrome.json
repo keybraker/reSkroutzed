@@ -3,7 +3,9 @@
     "description": "Enhances Skroutz.gr by flagging sponsored products, price checker, and providing a dark mode toggle",
     "version": "1.8.1",
     "manifest_version": 3,
-    "permissions": [],
+    "permissions": [
+        "storage"
+    ],
     "host_permissions": [
         "*://www.skroutz.gr/*"
     ],

@@ -29,18 +29,67 @@
     </header>
 
     <main class="content">
-      <div class="stats-container">
-        <div class="stat-card">
-          <div class="stat-label">Sponsored Products</div>
-          <div class="stat-value" id="sponsoredCount">...</div>
+      <!-- Quick Settings Section -->
+      <div class="settings-container">
+        <h2 class="section-title">Quick Settings</h2>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label class="setting-label" for="toggleAds">Ads</label>
+            <div class="toggle-switch">
+              <input type="checkbox" id="toggleAds" class="toggle-input" checked />
+              <label for="toggleAds" class="toggle-label"></label>
+            </div>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label" for="toggleShelves">Shelves</label>
+            <div class="toggle-switch">
+              <input type="checkbox" id="toggleShelves" class="toggle-input" checked />
+              <label for="toggleShelves" class="toggle-label"></label>
+            </div>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label" for="toggleVideos">Videos</label>
+            <div class="toggle-switch">
+              <input type="checkbox" id="toggleVideos" class="toggle-input" checked />
+              <label for="toggleVideos" class="toggle-label"></label>
+            </div>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label" for="toggleDarkMode">Dark Mode</label>
+            <div class="toggle-switch">
+              <input type="checkbox" id="toggleDarkMode" class="toggle-input" />
+              <label for="toggleDarkMode" class="toggle-label"></label>
+            </div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Sponsored Shelves</div>
-          <div class="stat-value" id="sponsoredShelfCount">...</div>
+      </div>
+
+      <!-- Price Difference Settings -->
+      <div class="price-settings">
+        <h2 class="section-title">Price Difference Alert</h2>
+        <div class="price-input-container">
+          <label for="priceDifference">Minimum difference (€):</label>
+          <input type="number" id="priceDifference" min="0" step="0.5" value="0" />
+          <button id="updatePriceBtn" class="action-button">Update</button>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Promotional Videos</div>
-          <div class="stat-value" id="videoCount">...</div>
+      </div>
+
+      <!-- All-time Stats Section -->
+      <div class="stats-section">
+        <h2 class="section-title">All-time Stats</h2>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-value" id="totalAdsBlocked">0</span>
+            <span class="stat-label">Ads Blocked</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value" id="totalShelvesBlocked">0</span>
+            <span class="stat-label">Shelves Hidden</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value" id="totalVideosBlocked">0</span>
+            <span class="stat-label">Videos Hidden</span>
+          </div>
         </div>
       </div>
     </main>
@@ -56,7 +105,7 @@
             class="store-link"
           >
             <img
-              src="https://raw.githubusercontent.com/keybraker/reskroutzed/main/assets/store_images/firefox.png"
+              src="https://raw.githubusercontent.com/keybraker/reskroutzed/main/imagery/store_images/firefox.png"
               alt="Firefox Add-ons"
               class="store-icon"
             />
@@ -68,7 +117,7 @@
             class="store-link"
           >
             <img
-              src="https://raw.githubusercontent.com/keybraker/reskroutzed/main/assets/store_images/chrome.png"
+              src="https://raw.githubusercontent.com/keybraker/reskroutzed/main/imagery/store_images/chrome.png"
               alt="Chrome Web Store"
               class="store-icon"
             />

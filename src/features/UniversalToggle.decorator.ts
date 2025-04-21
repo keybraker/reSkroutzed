@@ -74,7 +74,170 @@ export class UniversalToggleDecorator implements FeatureInstance {
     if (this.isMenuOpen) {
       this.closeMenu(container);
     } else {
-      this.openMenu(container);
+      this.refreshSettingsFromStorage().then(() => {
+        this.openMenu(container);
+      });
+    }
+  }
+
+  /**
+   * Refresh all settings from storage to ensure we have the latest values
+   */
+  private async refreshSettingsFromStorage(): Promise<void> {
+    // Use getValueAsync to get the latest values from Chrome storage
+    this.state.darkMode = (await BrowserClient.getValueAsync(StorageKey.DARK_MODE)) as boolean;
+    this.state.hideProductAds = (await BrowserClient.getValueAsync(
+      StorageKey.PRODUCT_AD_VISIBILITY,
+    )) as boolean;
+    this.state.hideVideoAds = (await BrowserClient.getValueAsync(
+      StorageKey.VIDEO_AD_VISIBILITY,
+    )) as boolean;
+    this.state.hideShelfProductAds = (await BrowserClient.getValueAsync(
+      StorageKey.SHELF_PRODUCT_AD_VISIBILITY,
+    )) as boolean;
+    this.state.hideSponsorships = (await BrowserClient.getValueAsync(
+      StorageKey.SPONSORSHIP_VISIBILITY,
+    )) as boolean;
+    this.state.minimumPriceDifference = (await BrowserClient.getValueAsync(
+      StorageKey.MINIMUM_PRICE_DIFFERENCE,
+    )) as number;
+
+    // Update UI to reflect the refreshed values
+    this.updateUIFromState();
+  }
+
+  /**
+   * Update UI elements to match the current state
+   */
+  private updateUIFromState(): void {
+    const container = document.querySelector('.universal-toggle-container');
+    if (!container) return;
+
+    // Update dark mode button
+    const darkModeButton = container.querySelector('.dark-mode-option') as HTMLButtonElement;
+    if (darkModeButton) {
+      darkModeButton.classList.toggle('active', this.state.darkMode);
+      darkModeButton.title = this.state.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+
+      const darkModePath = darkModeButton.querySelector('path');
+      if (darkModePath) {
+        if (this.state.darkMode) {
+          // Moon icon
+          darkModePath.setAttribute(
+            'd',
+            'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z',
+          );
+        } else {
+          // Sun icon
+          darkModePath.setAttribute(
+            'd',
+            'M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z',
+          );
+        }
+      }
+    }
+
+    // Update product ads button
+    const adToggleButton = container.querySelector('.ad-toggle-option') as HTMLButtonElement;
+    if (adToggleButton) {
+      adToggleButton.classList.toggle('active', !this.state.hideProductAds);
+      adToggleButton.title = this.state.hideProductAds ? 'Hide Ads' : 'Show Ads';
+
+      const adText = adToggleButton.querySelector('.ad-text-icon');
+      if (adText) {
+        adText.classList.toggle('ad-text-disabled', !this.state.hideProductAds);
+      }
+    }
+
+    // Update video ads button
+    const videoToggleButton = container.querySelector('.video-toggle-option') as HTMLButtonElement;
+    if (videoToggleButton) {
+      videoToggleButton.classList.toggle('active', !this.state.hideVideoAds);
+      videoToggleButton.title = this.state.hideVideoAds ? 'Hide Videos' : 'Show Videos';
+
+      const videoPath = videoToggleButton.querySelector('path');
+      if (videoPath) {
+        if (this.state.hideVideoAds) {
+          videoPath.setAttribute(
+            'd',
+            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z',
+          );
+        } else {
+          videoPath.setAttribute(
+            'd',
+            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
+          );
+        }
+      }
+    }
+
+    // Update sponsorship button
+    const sponsorshipToggleButton = container.querySelector(
+      '.sponsorship-toggle-option',
+    ) as HTMLButtonElement;
+    if (sponsorshipToggleButton) {
+      sponsorshipToggleButton.classList.toggle('active', !this.state.hideSponsorships);
+      sponsorshipToggleButton.title = this.state.hideSponsorships
+        ? 'Hide Sponsorships'
+        : 'Show Sponsorships';
+
+      const sponsorshipPath = sponsorshipToggleButton.querySelector('path');
+      if (sponsorshipPath) {
+        if (this.state.hideSponsorships) {
+          sponsorshipPath.setAttribute(
+            'd',
+            'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
+          );
+        } else {
+          sponsorshipPath.setAttribute(
+            'd',
+            'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z M13.354 3.354a.5.5 0 0 0-.708-.708L2.646 12.646a.5.5 0 0 0 .708.708L13.354 3.354z',
+          );
+        }
+      }
+    }
+
+    // Update shelf ads button
+    const shelfToggleButton = container.querySelector(
+      '.shelf-ad-toggle-option',
+    ) as HTMLButtonElement;
+    if (shelfToggleButton) {
+      shelfToggleButton.classList.toggle('active', !this.state.hideShelfProductAds);
+      shelfToggleButton.title = this.state.hideShelfProductAds
+        ? 'Hide Shelf Ads'
+        : 'Show Shelf Ads';
+
+      const shelfPath = shelfToggleButton.querySelector('path');
+      if (shelfPath) {
+        if (this.state.hideShelfProductAds) {
+          shelfPath.setAttribute(
+            'd',
+            'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z',
+          );
+        } else {
+          shelfPath.setAttribute(
+            'd',
+            'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
+          );
+        }
+      }
+    }
+
+    // Update minimum price difference display
+    const priceDifferenceButton = container.querySelector(
+      '.price-difference-option',
+    ) as HTMLButtonElement;
+    if (priceDifferenceButton) {
+      const valueDisplay = priceDifferenceButton.querySelector('span');
+      if (valueDisplay) {
+        valueDisplay.textContent = this.state.minimumPriceDifference.toString();
+      }
+
+      const updatedTitle =
+        this.state.language === Language.GREEK
+          ? `Ελάχιστη διαφορά τιμής: ${this.state.minimumPriceDifference}€`
+          : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
+      priceDifferenceButton.title = updatedTitle;
     }
   }
 

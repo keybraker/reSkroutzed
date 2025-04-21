@@ -39,6 +39,48 @@ export class BrowserClient {
    * Get a value from storage
    * @param key The key to retrieve
    * @param parseAs Optional function to parse the value
+   * @returns Promise that resolves to the value from storage, or the default if not found
+   */
+  public static async getValueAsync<T extends StorageValueType>(
+    key: StorageKey,
+    parseAs?: (value: string) => T,
+  ): Promise<T> {
+    return new Promise((resolve) => {
+      chrome.storage.local.get([key], (result) => {
+        const item = result[key];
+
+        if (item === undefined) {
+          const defaultValue = STORAGE_DEFAULTS[key] as T;
+
+          if (defaultValue !== undefined) {
+            this.setValue(key, defaultValue);
+          }
+
+          resolve(defaultValue as T);
+          return;
+        }
+
+        if (parseAs) {
+          resolve(parseAs(item));
+          return;
+        }
+
+        const defaultValue = STORAGE_DEFAULTS[key];
+        if (typeof defaultValue === 'boolean') {
+          resolve((item === true) as unknown as T);
+        } else if (typeof defaultValue === 'number') {
+          resolve(Number(item) as unknown as T);
+        } else {
+          resolve(item as T);
+        }
+      });
+    });
+  }
+
+  /**
+   * Get a value from storage synchronously (with cached fallback)
+   * @param key The key to retrieve
+   * @param parseAs Optional function to parse the value
    * @returns The value from storage, or the default if not found
    */
   public static getValue<T extends StorageValueType>(
@@ -46,15 +88,19 @@ export class BrowserClient {
     parseAs?: (value: string) => T,
   ): T {
     const item = localStorage.getItem(key);
+    const defaultValue = STORAGE_DEFAULTS[key] as T;
+
+    this.getValueAsync(key).then((chromeValue) => {
+      if (item !== chromeValue?.toString()) {
+        localStorage.setItem(key, chromeValue?.toString() || '');
+      }
+    });
 
     if (!item) {
-      const defaultValue = STORAGE_DEFAULTS[key] as T;
-
       // If there's no saved value, store the default
       if (defaultValue !== undefined) {
         this.setValue(key, defaultValue);
       }
-
       return defaultValue as T;
     }
 
@@ -63,7 +109,6 @@ export class BrowserClient {
     }
 
     // Default parsing based on the key's default value type
-    const defaultValue = STORAGE_DEFAULTS[key];
     if (typeof defaultValue === 'boolean') {
       return (item === 'true') as unknown as T;
     } else if (typeof defaultValue === 'number') {
@@ -80,6 +125,10 @@ export class BrowserClient {
    */
   public static setValue<T extends StorageValueType>(key: StorageKey, value: T): void {
     localStorage.setItem(key, value.toString());
+
+    const data: { [key: string]: any } = {};
+    data[key] = value;
+    chrome.storage.local.set(data);
   }
 
   /**

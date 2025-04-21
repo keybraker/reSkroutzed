@@ -1,27 +1,223 @@
-function updateCounts(sponsored, sponsoredShelf, video) {
-  document.getElementById('sponsoredCount').textContent = sponsored || 0;
-  document.getElementById('sponsoredShelfCount').textContent = sponsoredShelf || 0;
-  document.getElementById('videoCount').textContent = video || 0;
+const STORAGE_KEY_PREFIX = 'RESKROUTZED';
+const StorageKey = {
+  DARK_MODE: STORAGE_KEY_PREFIX + '-dark-mode',
+  PRODUCT_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-product-ad-visibility',
+  VIDEO_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-video-ad-visibility',
+  SHELF_PRODUCT_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-shelf-product-ad-visibility',
+  MINIMUM_PRICE_DIFFERENCE: STORAGE_KEY_PREFIX + '-minimum-difference',
+  TOTAL_ADS_BLOCKED: STORAGE_KEY_PREFIX + '-total-ads-blocked',
+  TOTAL_SHELVES_BLOCKED: STORAGE_KEY_PREFIX + '-total-shelves-blocked',
+  TOTAL_VIDEOS_BLOCKED: STORAGE_KEY_PREFIX + '-total-videos-blocked'
+};
+
+function getStorageValue(key, defaultValue, callback) {
+  chrome.storage.local.get(key, (result) => {
+    const value = result[key];
+    if (value === undefined) {
+      callback(defaultValue);
+    } else {
+      callback(value);
+    }
+  });
 }
 
-chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  if (!tabs || tabs.length === 0) {
-    updateCounts();
-    return;
-  }
+function setStorageValue(key, value) {
+  const data = {};
+  data[key] = value;
+  chrome.storage.local.set(data);
+}
 
-  chrome.tabs.sendMessage(tabs[0].id, { action: 'getCount' }, (response) => {
-    if (chrome.runtime.lastError) {
-      console.error('Communication error:', chrome.runtime.lastError.message);
-      updateCounts();
+function initializeStatsCounters() {
+  getStorageValue(StorageKey.TOTAL_ADS_BLOCKED, 0, (totalAds) => {
+    getStorageValue(StorageKey.TOTAL_SHELVES_BLOCKED, 0, (totalShelves) => {
+      getStorageValue(StorageKey.TOTAL_VIDEOS_BLOCKED, 0, (totalVideos) => {
+        updateStatsDisplay(totalAds, totalShelves, totalVideos);
+      });
+    });
+  });
+}
+
+function updateStatsDisplay(adsBlocked, shelvesBlocked, videosBlocked) {
+  document.getElementById('totalAdsBlocked').textContent = adsBlocked;
+  document.getElementById('totalShelvesBlocked').textContent = shelvesBlocked;
+  document.getElementById('totalVideosBlocked').textContent = videosBlocked;
+}
+
+function loadSettings() {
+  const darkModeToggle = document.getElementById('toggleDarkMode');
+  getStorageValue(StorageKey.DARK_MODE, false, (value) => {
+    darkModeToggle.checked = value;
+  });
+
+  const adsToggle = document.getElementById('toggleAds');
+  getStorageValue(StorageKey.PRODUCT_AD_VISIBILITY, false, (value) => {
+    adsToggle.checked = !value;
+  });
+
+  const videosToggle = document.getElementById('toggleVideos');
+  getStorageValue(StorageKey.VIDEO_AD_VISIBILITY, false, (value) => {
+    videosToggle.checked = !value;
+  });
+
+  const shelvesToggle = document.getElementById('toggleShelves');
+  getStorageValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, false, (value) => {
+    shelvesToggle.checked = !value;
+  });
+
+  const priceDifference = document.getElementById('priceDifference');
+  getStorageValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, 0, (value) => {
+    priceDifference.value = value;
+  });
+}
+
+function updateCounts(sponsored, sponsoredShelf, video) {
+  getStorageValue(StorageKey.TOTAL_ADS_BLOCKED, 0, (totalAds) => {
+    getStorageValue(StorageKey.TOTAL_SHELVES_BLOCKED, 0, (totalShelves) => {
+      getStorageValue(StorageKey.TOTAL_VIDEOS_BLOCKED, 0, (totalVideos) => {
+        if (sponsored !== undefined) totalAds += sponsored;
+        if (sponsoredShelf !== undefined) totalShelves += sponsoredShelf;
+        if (video !== undefined) totalVideos += video;
+
+        setStorageValue(StorageKey.TOTAL_ADS_BLOCKED, totalAds);
+        setStorageValue(StorageKey.TOTAL_SHELVES_BLOCKED, totalShelves);
+        setStorageValue(StorageKey.TOTAL_VIDEOS_BLOCKED, totalVideos);
+
+        updateStatsDisplay(totalAds, totalShelves, totalVideos);
+      });
+    });
+  });
+}
+
+function setupEventListeners() {
+  document.getElementById('toggleDarkMode').addEventListener('change', (e) => {
+    const isDarkMode = e.target.checked;
+    setStorageValue(StorageKey.DARK_MODE, isDarkMode);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'toggleDarkMode',
+          value: isDarkMode
+        }, function (response) {
+          console.log('Dark mode response:', response);
+        });
+      }
+    });
+
+    if (isDarkMode) {
+      document.body.classList.add('dark-popup');
+    } else {
+      document.body.classList.remove('dark-popup');
+    }
+  });
+
+  document.getElementById('toggleAds').addEventListener('change', (e) => {
+    const hideAds = !e.target.checked;
+    setStorageValue(StorageKey.PRODUCT_AD_VISIBILITY, hideAds);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'toggleProductAds',
+          value: hideAds
+        }, function (response) {
+          console.log('Product ads response:', response);
+        });
+      }
+    });
+  });
+
+  document.getElementById('toggleVideos').addEventListener('change', (e) => {
+    const hideVideos = !e.target.checked;
+    setStorageValue(StorageKey.VIDEO_AD_VISIBILITY, hideVideos);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'toggleVideoAds',
+          value: hideVideos
+        }, function (response) {
+          console.log('Video ads response:', response);
+        });
+      }
+    });
+  });
+
+  document.getElementById('toggleShelves').addEventListener('change', (e) => {
+    const hideShelves = !e.target.checked;
+    setStorageValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, hideShelves);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'toggleShelfProductAds',
+          value: hideShelves
+        }, function (response) {
+          console.log('Shelf ads response:', response);
+        });
+      }
+    });
+  });
+
+  document.getElementById('updatePriceBtn').addEventListener('click', () => {
+    const priceDifference = parseFloat(document.getElementById('priceDifference').value);
+    if (!isNaN(priceDifference) && priceDifference >= 0) {
+      setStorageValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, priceDifference);
+
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs && tabs.length > 0) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            action: 'updatePriceDifference',
+            value: priceDifference
+          }, function (response) {
+            console.log('Price difference response:', response);
+          });
+        }
+      });
+
+      const button = document.getElementById('updatePriceBtn');
+      const originalText = button.textContent;
+      button.textContent = "Updated!";
+      button.classList.add('action-success');
+
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove('action-success');
+      }, 1500);
+    }
+  });
+}
+
+function getCurrentPageCounts() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (!tabs || tabs.length === 0) {
       return;
     }
 
-    if (response) {
-      const { sponsoredCount, sponsoredShelfCount, videoCount } = response;
-      updateCounts(sponsoredCount, sponsoredShelfCount, videoCount);
-    } else {
-      updateCounts();
+    chrome.tabs.sendMessage(tabs[0].id, { action: 'getCount' }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.log('Communication error:', chrome.runtime.lastError.message);
+        return;
+      }
+
+      if (response) {
+        const { sponsoredCount, sponsoredShelfCount, videoCount } = response;
+
+        updateCounts(sponsoredCount, sponsoredShelfCount, videoCount);
+      }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initializeStatsCounters();
+  loadSettings();
+  setupEventListeners();
+  getCurrentPageCounts();
+
+  getStorageValue(StorageKey.DARK_MODE, false, (value) => {
+    if (value) {
+      document.body.classList.add('dark-popup');
     }
   });
 });

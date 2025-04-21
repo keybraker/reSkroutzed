@@ -93,13 +93,17 @@ const universalToggleDecorator = new UniversalToggleDecorator(state);
 
 chrome.runtime.onMessage.addListener(
   (
-    request: { action: string },
+    request: { action: string; value?: boolean | number },
     sender: chrome.runtime.MessageSender,
-    sendResponse: (response: {
-      sponsoredCount: number;
-      sponsoredShelfCount: number;
-      videoCount: number;
-    }) => void,
+    sendResponse: (
+      response:
+        | {
+            sponsoredCount: number;
+            sponsoredShelfCount: number;
+            videoCount: number;
+          }
+        | { success: boolean },
+    ) => void,
   ) => {
     if (request.action === 'getCount') {
       sendResponse({
@@ -107,6 +111,34 @@ chrome.runtime.onMessage.addListener(
         sponsoredShelfCount: state.ShelfAdCount,
         videoCount: state.videoAdCount,
       });
+    } else if (request.action === 'toggleDarkMode' && request.value !== undefined) {
+      state.darkMode = request.value as boolean;
+      BrowserClient.setValue(StorageKey.DARK_MODE, state.darkMode);
+      themeSync(state);
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleProductAds' && request.value !== undefined) {
+      state.hideProductAds = request.value as boolean;
+      BrowserClient.setValue(StorageKey.PRODUCT_AD_VISIBILITY, state.hideProductAds);
+      listProductAdHandler.visibilityUpdate();
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleVideoAds' && request.value !== undefined) {
+      state.hideVideoAds = request.value as boolean;
+      BrowserClient.setValue(StorageKey.VIDEO_AD_VISIBILITY, state.hideVideoAds);
+      videoAdHandler.visibilityUpdate();
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleShelfProductAds' && request.value !== undefined) {
+      state.hideShelfProductAds = request.value as boolean;
+      BrowserClient.setValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, state.hideShelfProductAds);
+      shelfProductAdHandler.visibilityUpdate();
+      sendResponse({ success: true });
+    } else if (request.action === 'updatePriceDifference' && request.value !== undefined) {
+      state.minimumPriceDifference = request.value as number;
+      BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
+      // Trigger price difference update if on a product page
+      const event = new Event('priceThresholdChange');
+      document.dispatchEvent(event);
+      sendResponse({ success: true });
     }
+    return true; // Keep the message channel open for asynchronous responses
   },
 );
