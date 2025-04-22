@@ -166,8 +166,7 @@ html.dark-mode {
 .dark-mode .remain-sticky,
 .dark-mode .country-picker-form,
 .dark-mode .modal-container-content,
-.dark-mode .js-global-skrp-messages,
-.dark-mode .pic {
+.dark-mode .js-global-skrp-messages {
   background-color: var(--color-background-base) !important;
   color: var(--color-text-primary) !important;
   border-bottom: 1px solid var(--color-border-primary) !important;
@@ -883,9 +882,7 @@ text-black {
 }
 
 .dark-mode .storefront-header,
-/* .dark-mode .timeline-card, */
-.dark-mode .countdown-timer,
-.dark-mode .rating-average {
+.dark-mode .countdown-timer {
   background-color: var(--color-border-primary) !important;
   color: var(--color-text-primary) !important;
   border-radius: 4px !important;

@@ -228,16 +228,29 @@ export class UniversalToggleDecorator implements FeatureInstance {
       '.price-difference-option',
     ) as HTMLButtonElement;
     if (priceDifferenceButton) {
-      const valueDisplay = priceDifferenceButton.querySelector('span');
-      if (valueDisplay) {
-        valueDisplay.textContent = this.state.minimumPriceDifference.toString();
-      }
+      // Update data-value attribute for mobile display
+      priceDifferenceButton.setAttribute(
+        'data-value',
+        this.state.minimumPriceDifference.toString(),
+      );
 
       const updatedTitle =
         this.state.language === Language.GREEK
           ? `Ελάχιστη διαφορά τιμής: ${this.state.minimumPriceDifference}€`
           : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
       priceDifferenceButton.title = updatedTitle;
+
+      // Update for mobile view
+      const valueText = priceDifferenceButton.querySelector('.price-value-mobile');
+      if (valueText) {
+        valueText.textContent = this.state.minimumPriceDifference.toString();
+      } else {
+        // Update for desktop view
+        const valueDisplay = priceDifferenceButton.querySelector('span');
+        if (valueDisplay) {
+          valueDisplay.textContent = this.state.minimumPriceDifference.toString();
+        }
+      }
     }
   }
 
@@ -281,98 +294,156 @@ export class UniversalToggleDecorator implements FeatureInstance {
         : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
     button.title = titleText;
 
-    const flexContainer = document.createElement('div');
-    flexContainer.style.display = 'flex';
-    flexContainer.style.alignItems = 'center';
-    flexContainer.style.justifyContent = 'center';
+    // Set data-value attribute for mobile display
+    button.setAttribute('data-value', this.state.minimumPriceDifference.toString());
 
-    const valueDisplay = document.createElement('span');
-    valueDisplay.textContent = this.state.minimumPriceDifference.toString();
-    DomClient.appendElementToElement(valueDisplay, flexContainer);
+    const isMobile = BrowserClient.detectMobile();
 
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 16 16');
-    svg.setAttribute('width', '16');
-    svg.setAttribute('height', '16');
-    svg.style.marginLeft = '5px';
+    // Create the internal structure based on device type
+    if (isMobile) {
+      // Mobile: Just show the plain number
+      const valueText = document.createElement('span');
+      valueText.classList.add('price-value-mobile');
+      valueText.textContent = this.state.minimumPriceDifference.toString();
+      DomClient.appendElementToElement(valueText, button);
+    } else {
+      // Desktop: Show the full display with icon and value
+      const flexContainer = document.createElement('div');
+      flexContainer.style.display = 'flex';
+      flexContainer.style.alignItems = 'center';
+      flexContainer.style.justifyContent = 'center';
 
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute(
-      'd',
-      'M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936c0-.11 0-.219.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.617 6.617 0 0 0 10.341 2c-2.928 0-4.82 1.569-5.244 4.3H4v.928h1.01v1.265H4v.928z',
-    );
-    path.setAttribute('fill', 'currentColor');
-    DomClient.appendElementToElement(path, svg);
-    DomClient.appendElementToElement(svg, flexContainer);
+      const valueDisplay = document.createElement('span');
+      valueDisplay.textContent = this.state.minimumPriceDifference.toString();
+      DomClient.appendElementToElement(valueDisplay, flexContainer);
 
-    DomClient.appendElementToElement(flexContainer, button);
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 16 16');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      svg.style.marginLeft = '5px';
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute(
+        'd',
+        'M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936c0-.11 0-.219.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.617 6.617 0 0 0 10.341 2c-2.973 0-4.96 1.714-5.277 4.734H4V7.66h1.01V8.595H4z',
+      );
+      path.setAttribute('fill', 'currentColor');
+      DomClient.appendElementToElement(path, svg);
+      DomClient.appendElementToElement(svg, flexContainer);
+
+      DomClient.appendElementToElement(flexContainer, button);
+    }
 
     button.addEventListener('click', (e) => {
       e.stopPropagation();
 
-      const popup = document.createElement('div');
-      popup.classList.add('price-difference-popup');
+      if (isMobile) {
+        // On mobile, show a simple input dialog
+        const inputValue = prompt(
+          this.state.language === Language.GREEK
+            ? 'Ελάχιστη διαφορά τιμής (€):'
+            : 'Minimum price difference (€):',
+          this.state.minimumPriceDifference.toString(),
+        );
 
-      const label = document.createElement('label');
-      label.textContent =
-        this.state.language === Language.GREEK
-          ? 'Ελάχιστη διαφορά τιμής (€):'
-          : 'Minimum price difference (€):';
-
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.min = '0';
-      input.step = '0.5';
-      input.value = this.state.minimumPriceDifference.toString();
-
-      const saveValue = (): void => {
-        const newValue = parseFloat(input.value);
-        if (!isNaN(newValue) && newValue >= 0) {
-          this.state.minimumPriceDifference = newValue;
-          valueDisplay.textContent = newValue.toString();
-
-          const updatedTitle =
-            this.state.language === Language.GREEK
-              ? `Ελάχιστη διαφορά τιμής: ${newValue}€`
-              : `Minimum Price Difference: ${newValue}€`;
-          button.title = updatedTitle;
-
-          BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);
-
-          const productPage = document.querySelector('article.offering-card');
-          if (productPage) {
-            const event = new Event('priceThresholdChange');
-            document.dispatchEvent(event);
+        if (inputValue !== null) {
+          const newValue = parseFloat(inputValue);
+          if (!isNaN(newValue) && newValue >= 0) {
+            this.updatePriceDifferenceValue(newValue, button);
           }
         }
-        popup.remove();
-      };
+      } else {
+        // On desktop, show the popup
+        const popup = document.createElement('div');
+        popup.classList.add('price-difference-popup');
 
-      input.addEventListener('blur', saveValue);
-      input.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') {
-          saveValue();
-        }
-      });
+        const label = document.createElement('label');
+        label.textContent =
+          this.state.language === Language.GREEK
+            ? 'Ελάχιστη διαφορά τιμής (€):'
+            : 'Minimum price difference (€):';
 
-      DomClient.appendElementToElement(label, popup);
-      DomClient.appendElementToElement(input, popup);
-      DomClient.appendElementToElement(popup, button);
-      input.focus();
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '0';
+        input.step = '0.5';
+        input.value = this.state.minimumPriceDifference.toString();
 
-      const closePopupHandler = (event: MouseEvent): void => {
-        if (!popup.contains(event.target as Node) && event.target !== button) {
-          saveValue();
-          document.removeEventListener('click', closePopupHandler);
-        }
-      };
+        const saveValue = (): void => {
+          const newValue = parseFloat(input.value);
+          if (!isNaN(newValue) && newValue >= 0) {
+            this.updatePriceDifferenceValue(newValue, button);
+          }
+          popup.remove();
+        };
 
-      setTimeout(() => {
-        document.addEventListener('click', closePopupHandler);
-      }, 100);
+        input.addEventListener('blur', saveValue);
+        input.addEventListener('keyup', (event) => {
+          if (event.key === 'Enter') {
+            saveValue();
+          }
+        });
+
+        DomClient.appendElementToElement(label, popup);
+        DomClient.appendElementToElement(input, popup);
+        DomClient.appendElementToElement(popup, button);
+        input.focus();
+
+        const closePopupHandler = (event: MouseEvent): void => {
+          if (!popup.contains(event.target as Node) && event.target !== button) {
+            saveValue();
+            document.removeEventListener('click', closePopupHandler);
+          }
+        };
+
+        setTimeout(() => {
+          document.addEventListener('click', closePopupHandler);
+        }, 100);
+      }
     });
 
     return button;
+  }
+
+  /**
+   * Updates the price difference value in the state and UI
+   */
+  private updatePriceDifferenceValue(newValue: number, button?: HTMLButtonElement): void {
+    this.state.minimumPriceDifference = newValue;
+
+    // Update data-value attribute for mobile display
+    if (button) {
+      button.setAttribute('data-value', newValue.toString());
+
+      const updatedTitle =
+        this.state.language === Language.GREEK
+          ? `Ελάχιστη διαφορά τιμής: ${newValue}€`
+          : `Minimum Price Difference: ${newValue}€`;
+      button.title = updatedTitle;
+
+      // Update text content if it's a mobile view
+      const valueText = button.querySelector('.price-value-mobile');
+      if (valueText) {
+        valueText.textContent = newValue.toString();
+      } else {
+        // Update for desktop view
+        const valueDisplay = button.querySelector('span');
+        if (valueDisplay) {
+          valueDisplay.textContent = newValue.toString();
+        }
+      }
+    }
+
+    // Store the setting
+    BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);
+
+    // Trigger price difference update if on a product page
+    const productPage = document.querySelector('article.offering-card');
+    if (productPage) {
+      const event = new Event('priceThresholdChange');
+      document.dispatchEvent(event);
+    }
   }
 
   private createDarkModeToggleButton(): HTMLButtonElement {
@@ -543,12 +614,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     if (this.state.hideVideoAds) {
       path.setAttribute(
         'd',
-        'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z',
+        'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
       );
     } else {
       path.setAttribute(
         'd',
-        'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
+        'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
       );
     }
     path.setAttribute('fill', 'currentColor');
@@ -593,12 +664,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
       if (this.state.hideVideoAds) {
         newPath.setAttribute(
           'd',
-          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z',
+          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
         );
       } else {
         newPath.setAttribute(
           'd',
-          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
+          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
         );
       }
       newPath.setAttribute('fill', 'currentColor');

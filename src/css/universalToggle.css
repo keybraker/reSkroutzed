@@ -102,72 +102,7 @@
   transform: translateX(0) !important;
 }
 
-/* Mobile-specific styles to open toggle upwards */
-@media (max-width: 768px) {
-  .toggle-buttons-container {
-    flex-direction: column !important;
-    left: 0 !important;
-    bottom: 25px !important;
-    transform: translateY(20px) !important;
-  }
-
-  .menu-open .toggle-buttons-container {
-    left: 5px !important;
-    bottom: 70px !important;
-    transform: translateY(0) !important;
-  }
-
-  .toggle-option-button {
-    margin-right: 0 !important;
-    margin-bottom: 10px !important;
-    transform: scale(0) translateX(10px) !important;
-  }
-
-  .menu-open .toggle-buttons-container::before {
-    border-radius: 25px 25px 10px 10px !important;
-  }
-
-  /* Dark mode button separator position adjustment */
-  .dark-mode-option::after {
-    right: 50% !important;
-    bottom: -15px !important;
-    top: auto !important;
-    transform: translateX(50%) !important;
-    width: 24px !important;
-    height: 1px !important;
-  }
-
-  /* Adjust the animation for the toggle buttons */
-  .menu-open .toggle-option-button.button-active {
-    transform: scale(1) translateX(0) !important;
-  }
-
-  /* Adjust hover animation */
-  .toggle-option-button:hover {
-    transform: scale(1.15) translateX(3px) !important;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
-  }
-
-  /* Mobile style for displaying just number without euro sign */
-  .price-difference-option::after {
-    content: attr(data-value) !important;
-    position: absolute !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    font-size: 9px !important;
-    font-weight: bold !important;
-    background-color: rgba(0, 0, 0, 0.6) !important;
-    color: white !important;
-    padding: 2px 4px !important;
-    border-radius: 0 0 7px 0 !important;
-  }
-
-  .dark-mode .price-difference-option::after {
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    color: #333 !important;
-  }
-}
-
+/* Toggle option buttons common styles */
 .toggle-option-button {
   display: flex !important;
   align-items: center !important;
@@ -189,30 +124,6 @@
   transform: scale(0) translateY(10px) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
   opacity: 0 !important;
-}
-
-/* Notification bubble */
-.notification-bubble {
-  position: absolute !important;
-  top: -5px !important;
-  right: -5px !important;
-  background-color: #ff3b30 !important;
-  color: white !important;
-  border-radius: 50% !important;
-  width: 18px !important;
-  height: 18px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 10px !important;
-  font-weight: bold !important;
-  border: 2px solid white !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-  transition: opacity 0.3s ease !important;
-}
-
-.notification-bubble.video-notification {
-  background-color: #5856d6 !important; /* Purple for video notifications */
 }
 
 /* Animation for submenu buttons */
@@ -253,24 +164,12 @@
   background: #4a4a4a !important;
 }
 
-/* AD text icon styling */
-.ad-text-icon {
-  font-size: 12px !important;
-  font-weight: bold !important;
-  color: white !important;
-  letter-spacing: 0.5px !important;
-}
-
-.ad-text-disabled {
-  text-decoration: line-through !important;
-  opacity: 0.8 !important;
-}
-
 /* Video toggle button styling */
 .video-toggle-option {
   background: #4a4a4a !important;
 }
 
+/* Active state for all toggle options */
 .dark-mode .dark-mode-option.active,
 .dark-mode-option.active,
 .dark-mode .sponsorship-toggle-option.active,
@@ -284,114 +183,73 @@
   background: linear-gradient(145deg, #e66300, #d95500) !important;
 }
 
-/* Price difference option button */
+/* AD text icon styling */
+.ad-text-icon {
+  font-size: 12px !important;
+  font-weight: bold !important;
+  color: white !important;
+  letter-spacing: 0.5px !important;
+}
+
+.ad-text-disabled {
+  text-decoration: line-through !important;
+  opacity: 0.8 !important;
+}
+
+/* Notification bubble */
+.notification-bubble {
+  position: absolute !important;
+  top: -5px !important;
+  right: -5px !important;
+  background-color: #ff3b30 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  border: 2px solid white !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.notification-bubble.video-notification {
+  background-color: #5856d6 !important; /* Purple for video notifications */
+}
+
+/* Price difference option button - Desktop & common styles */
 .price-difference-option {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-direction: column !important;
+  overflow: hidden !important;
   width: 80px !important;
   height: 40px !important;
   padding: 4px !important;
   border: 2px solid #000000 !important;
-  border-radius: 8px !important;
-  background-color: linear-gradient(145deg, #e66300, #d95500) !important;
+  border-radius: 4px !important;
+  background: linear-gradient(145deg, #e66300, #d95500) !important;
   color: white !important;
   cursor: pointer !important;
   transition: background-color 0.2s ease !important;
 }
 
 .price-difference-option svg {
-  width: 20px !important;
-  height: 20px !important;
-  margin-bottom: 2px !important;
-  color: white !important;
+  display: none !important;
 }
 
 .price-difference-option span {
-  font-size: 14px !important;
+  font-size: 18px !important;
   font-weight: bold !important;
   color: white !important;
+  text-align: center !important;
 }
 
-/* Mobile styles for price difference option */
-@media (max-width: 768px) {
-  .price-difference-option {
-    width: 40px !important;
-    height: 40px !important;
-    flex-direction: row !important;
-    margin-bottom: 10px !important;
-    border-radius: 50% !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .price-difference-option svg {
-    width: 18px !important;
-    height: 18px !important;
-    margin-bottom: 0 !important;
-  }
-
-  .price-difference-option span {
-    display: none !important; /* Hide text on mobile to save space */
-  }
-
-  .price-difference-value {
-    right: -2px !important;
-    bottom: -2px !important;
-    font-size: 7px !important;
-    padding: 1px 3px !important;
-  }
-
-  /* Position popup to the right side */
-  .price-difference-popup {
-    width: 120px !important;
-    left: 65px !important; /* Position to the right */
-    bottom: 0 !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    margin-bottom: 0 !important;
-  }
-
-  /* Triangle pointer for popup pointing left */
-  .price-difference-popup::after {
-    top: 50% !important;
-    left: -8px !important; /* Position arrow on left side */
-    transform: translateY(-50%) !important;
-    border-width: 8px 8px 8px 0 !important; /* Adjust border for left pointing */
-    border-color: transparent #fff transparent transparent !important;
-  }
-
-  .dark-mode .price-difference-popup::after {
-    border-color: transparent #333 transparent transparent !important;
-  }
-
-  /* Adjust hover animation to be consistent with desktop but in horizontal direction */
-  .toggle-option-button:hover {
-    transform: scale(1.15) translateX(3px) !important;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
-  }
-
-  /* Mobile style for displaying just number without euro sign */
-  .price-difference-option::after {
-    content: attr(data-value) !important;
-    position: absolute !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    font-size: 9px !important;
-    font-weight: bold !important;
-    background-color: rgba(0, 0, 0, 0.6) !important;
-    color: white !important;
-    padding: 2px 4px !important;
-    border-radius: 0 0 7px 0 !important;
-  }
-
-  .dark-mode .price-difference-option::after {
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    color: #333 !important;
-  }
-}
-
+/* Price difference popup */
 .price-difference-popup {
   position: absolute !important;
   left: 50% !important;
@@ -400,7 +258,7 @@
   transform: translateX(-50%) !important;
   width: 150px !important;
   padding: 10px !important;
-  background-color: #ffffff !important; /* White background for light mode */
+  background-color: #ffffff !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
   border-radius: 8px !important;
   z-index: 10001 !important;
@@ -445,4 +303,130 @@
   background-color: #444 !important;
   color: #fff !important;
   border: 1px solid #555 !important;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  /* Toggle container and buttons */
+  .toggle-buttons-container {
+    flex-direction: column !important;
+    left: 0 !important;
+    bottom: 25px !important;
+    transform: translateY(20px) !important;
+  }
+
+  .menu-open .toggle-buttons-container {
+    left: 5px !important;
+    bottom: 70px !important;
+    transform: translateY(0) !important;
+  }
+
+  .menu-open .toggle-buttons-container::before {
+    border-radius: 25px 25px 10px 10px !important;
+  }
+
+  .toggle-option-button {
+    margin-right: 0 !important;
+    margin-bottom: 10px !important;
+    transform: scale(0) translateX(10px) !important;
+  }
+
+  /* Mobile animation adjustments */
+  .menu-open .toggle-option-button.button-active {
+    transform: scale(1) translateX(0) !important;
+  }
+
+  .toggle-option-button:hover {
+    transform: scale(1.15) translateX(3px) !important;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Dark mode button separator position adjustment */
+  .dark-mode-option::after {
+    right: 50% !important;
+    bottom: -15px !important;
+    top: auto !important;
+    transform: translateX(50%) !important;
+    width: 24px !important;
+    height: 1px !important;
+  }
+
+  /* Mobile optimizations for price difference option */
+  .price-value-mobile {
+    font-size: 22px !important;
+    font-weight: bold !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    text-align: center !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Mobile price difference button styles */
+  .price-difference-option {
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    flex-direction: row !important;
+    margin-bottom: 10px !important;
+    border-radius: 4px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    position: relative !important;
+    border: 2px solid #000000 !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Hide unnecessary elements in mobile view */
+  .price-difference-option::after,
+  .price-difference-option span:not(.price-value-mobile),
+  .price-difference-option svg {
+    display: none !important;
+  }
+
+  /* Active state for better feedback */
+  .price-difference-option:active {
+    transform: scale(0.95) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Price values mobile display */
+  .price-difference-value {
+    right: -2px !important;
+    bottom: -2px !important;
+    font-size: 7px !important;
+    padding: 1px 3px !important;
+  }
+
+  /* Position popup to the right side on mobile */
+  .price-difference-popup {
+    width: 120px !important;
+    left: 65px !important;
+    bottom: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Triangle pointer for popup pointing left on mobile */
+  .price-difference-popup::after {
+    top: 50% !important;
+    left: -8px !important;
+    transform: translateY(-50%) !important;
+    border-width: 8px 8px 8px 0 !important;
+    border-color: transparent #fff transparent transparent !important;
+  }
+
+  .dark-mode .price-difference-popup::after {
+    border-color: transparent #333 transparent transparent !important;
+  }
 }
