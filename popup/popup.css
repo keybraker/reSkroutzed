@@ -1,6 +1,6 @@
-/* Modern Corporate Popup Styling */
+/* ---------- CSS VARIABLES ---------- */
 :root {
-  --primary-color: #ff6e00; /* Skroutz orange */
+  --primary-color: #ff6e00;
   --primary-dark: #d95700;
   --secondary-color: #3498db;
   --accent-color: #58a054;
@@ -17,12 +17,29 @@
   --toggle-padding: 2px;
 }
 
+.dark-popup {
+  --primary-color: #e86400;
+  --primary-dark: #c75800;
+  --secondary-color: #2980b9;
+  --accent-color: #3d8b3d;
+  --success-color: #27ae60;
+  --background-color: #121212;
+  --card-background: #1e1e1e;
+  --text-dark: #e0e0e0;
+  --text-medium: #a0a0a0;
+  --text-light: #707070;
+  --border-color: #333333;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- RESET ---------- */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* ---------- LAYOUT ---------- */
 .popup-body {
   font-family: 'Inter', sans-serif;
   min-width: 300px;
@@ -34,7 +51,6 @@
   overflow: hidden;
 }
 
-/* Header Section */
 .header {
   padding: 16px;
   background-color: var(--primary-color);
@@ -42,6 +58,17 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+.content {
+  padding: 16px;
+}
+
+.footer {
+  padding: 16px;
+  background-color: white;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ---------- LOGO & BRANDING ---------- */
 .logo-container {
   display: flex;
   align-items: center;
@@ -60,11 +87,7 @@
   letter-spacing: 0.3px;
 }
 
-/* Content Section */
-.content {
-  padding: 16px;
-}
-
+/* ---------- SECTION HEADERS ---------- */
 .section-title {
   font-size: 16px;
   font-weight: 600;
@@ -74,7 +97,7 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-/* Settings Grid */
+/* ---------- SETTINGS COMPONENTS ---------- */
 .settings-container {
   margin-bottom: 20px;
 }
@@ -101,7 +124,7 @@
   color: var(--text-medium);
 }
 
-/* Toggle Switch Styling */
+/* ---------- TOGGLE SWITCHES ---------- */
 .toggle-switch {
   position: relative;
   width: var(--toggle-width);
@@ -150,7 +173,7 @@
   transform: translateX(calc(var(--toggle-width) - var(--toggle-height)));
 }
 
-/* Price Settings */
+/* ---------- PRICE SETTINGS ---------- */
 .price-settings {
   margin-bottom: 20px;
 }
@@ -181,6 +204,7 @@
   margin-right: 10px;
 }
 
+/* ---------- BUTTONS ---------- */
 .action-button {
   min-width: 80px;
   background-color: var(--primary-color);
@@ -208,7 +232,7 @@
   background-color: var(--success-color) !important;
 }
 
-/* Stats Section */
+/* ---------- STATS SECTION ---------- */
 .stats-section {
   margin-bottom: 20px;
 }
@@ -242,13 +266,7 @@
   text-align: center;
 }
 
-/* Footer Section */
-.footer {
-  padding: 16px;
-  background-color: white;
-  border-top: 1px solid var(--border-color);
-}
-
+/* ---------- RATING SECTION ---------- */
 .rate-section {
   display: flex;
   flex-direction: column;
@@ -261,6 +279,7 @@
   margin-bottom: 12px;
 }
 
+/* ---------- STORE LINKS ---------- */
 .store-links {
   display: flex;
   justify-content: center;
@@ -287,22 +306,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Dark mode for popup */
-.dark-popup {
-  --primary-color: #e86400;
-  --primary-dark: #c75800;
-  --secondary-color: #2980b9;
-  --accent-color: #3d8b3d;
-  --success-color: #27ae60;
-  --background-color: #121212;
-  --card-background: #1e1e1e;
-  --text-dark: #e0e0e0;
-  --text-medium: #a0a0a0;
-  --text-light: #707070;
-  --border-color: #333333;
-  --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
+/* ---------- DARK MODE OVERRIDES ---------- */
 .dark-popup .footer {
   background-color: #1a1a1a;
 }
@@ -321,7 +325,7 @@
   border-color: #333;
 }
 
-/* Mobile optimizations */
+/* ---------- MEDIA QUERIES ---------- */
 @media (max-width: 360px) {
   .popup-body {
     min-width: 100%;
@@ -353,7 +357,6 @@
     height: 30px;
   }
 
-  /* Increase tap target sizes for mobile */
   .setting-item {
     padding: 12px;
   }

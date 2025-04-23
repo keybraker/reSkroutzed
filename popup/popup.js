@@ -4,6 +4,7 @@ const StorageKey = {
   PRODUCT_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-product-ad-visibility',
   VIDEO_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-video-ad-visibility',
   SHELF_PRODUCT_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-shelf-product-ad-visibility',
+  SPONSORSHIP_VISIBILITY: STORAGE_KEY_PREFIX + '-sponsorship-visibility',
   MINIMUM_PRICE_DIFFERENCE: STORAGE_KEY_PREFIX + '-minimum-difference',
   TOTAL_ADS_BLOCKED: STORAGE_KEY_PREFIX + '-total-ads-blocked',
   TOTAL_SHELVES_BLOCKED: STORAGE_KEY_PREFIX + '-total-shelves-blocked',
@@ -62,6 +63,11 @@ function loadSettings() {
   const shelvesToggle = document.getElementById('toggleShelves');
   getStorageValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, true, (value) => {
     shelvesToggle.checked = !value;
+  });
+
+  const sponsorshipsToggle = document.getElementById('toggleSponsorships');
+  getStorageValue(StorageKey.SPONSORSHIP_VISIBILITY, true, (value) => {
+    sponsorshipsToggle.checked = !value;
   });
 
   const priceDifference = document.getElementById('priceDifference');
@@ -154,6 +160,22 @@ function setupEventListeners() {
           value: hideShelves
         }, function (response) {
           console.log('Shelf ads response:', response);
+        });
+      }
+    });
+  });
+
+  document.getElementById('toggleSponsorships').addEventListener('change', (e) => {
+    const hideSponsorships = !e.target.checked;
+    setStorageValue(StorageKey.SPONSORSHIP_VISIBILITY, hideSponsorships);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'toggleSponsorships',
+          value: hideSponsorships
+        }, function (response) {
+          console.log('Sponsorships response:', response);
         });
       }
     });

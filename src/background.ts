@@ -169,6 +169,11 @@ chrome.runtime.onMessage.addListener(
       BrowserClient.setValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, state.hideShelfProductAds);
       shelfProductAdHandler.visibilityUpdate();
       sendResponse({ success: true });
+    } else if (request.action === 'toggleSponsorships' && request.value !== undefined) {
+      state.hideSponsorships = request.value as boolean;
+      BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, state.hideSponsorships);
+      sponsorshipAdHandler.visibilityUpdate();
+      sendResponse({ success: true });
     } else if (request.action === 'updatePriceDifference' && request.value !== undefined) {
       state.minimumPriceDifference = request.value as number;
       BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
