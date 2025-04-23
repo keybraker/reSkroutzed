@@ -40,13 +40,6 @@ html.dark-mode {
   --color-border-primary: #404040 !important;
 }
 
-.dark-mode .card {
-  padding-bottom: 10px !important;
-  background-color: var(--color-card-background) !important;
-  color: var(--color-text-primary) !important;
-  border: 1px solid var(--color-border-primary) !important;
-}
-
 .dark-mode .button,
 .dark-mode .bottom-tabs,
 .dark-mode .add-to-cart-button-section,
@@ -56,12 +49,17 @@ html.dark-mode {
   border: 1px solid var(--color-border-primary) !important;
 }
 
+.dark-mode .highlight-review-badge {
+  background-color: #ffc115 !important;
+  color: #242424 !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-weight: bold !important;
+}
+
 .dark-mode .filter-indicator,
-.dark-mode .sku-pick-shelf,
-.dark-mode .timeline-card,
 .dark-mode .card-inner-container,
 .dark-mode .sidebar {
-  padding: 12px;
   border-radius: 6px !important;
   background-color: var(--color-background-secondary) !important;
   color: var(--color-text-primary) !important;
@@ -191,20 +189,25 @@ html.dark-mode {
 }
 
 /* Heart button dark mode styling */
-.dark-mode .rc-icon-btn.icon.heart {
+.dark-mode .rc-icon-btn.icon.heart,
+.dark-mode .rc-icon-btn.icon.compare-me {
   background-color: var(--dark-mode-border) !important;
   color: var(--dark-mode-text) !important;
   transition: all 0.3s ease !important;
 }
 
-.dark-mode .rc-icon-btn.icon.heart:hover {
+.dark-mode .rc-icon-btn.icon.heart:hover,
+.dark-mode .rc-icon-btn.icon.compare-me:hover {
+  color: var(--dark-mode-text) !important;
   background-color: var(--dark-mode-hover) !important;
   transform: scale(1.05) !important;
 }
 
 .dark-mode .rc-icon-btn.icon.heart[data-active='true'],
-.dark-mode .rc-icon-btn.icon.heart.active {
-  color: var(--custom-light-red) !important;
+.dark-mode .rc-icon-btn.icon.heart.active,
+.dark-mode .rc-icon-btn.icon.compare-me[data-active='true'],
+.dark-mode .rc-icon-btn.icon.compare-me.active {
+  color: var(--dark-mode-text) !important;
 }
 
 .dark-mode .button-success {
@@ -319,21 +322,30 @@ text-black {
   z-index: 5 !important;
 }
 
-.buy-me-coffee {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
 .coffee-icon {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 18px !important;
   line-height: 1 !important;
+}
+
+.buy-me-coffee {
+  position: static !important;
+  color: #000000 !important;
+  background-color: rgb(255, 166, 84) !important;
+  border: 2px solid rgb(255, 255, 255) !important;
+  padding: 8px 12px !important;
+  border-radius: 10% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+.buy-me-coffee:hover {
+  background-color: rgb(255, 209, 169) !important;
+  transition: background-color 0.2s ease-in-out !important;
 }
 
 .dark-mode .buy-me-coffee {
@@ -875,7 +887,6 @@ text-black {
 }
 
 .dark-mode .sku-card-pic,
-.dark-mode .js-sku-link,
 .dark-mode .featured-links li {
   background-color: var(--color-card-background) !important;
   color: var(--color-text-primary) !important;

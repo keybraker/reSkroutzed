@@ -4,7 +4,7 @@ export function createBuyMeCoffeeElement(): HTMLDivElement {
   const buyMeCoffeeElement = document.createElement('div');
   const buyMeCoffeeLink = document.createElement('a');
 
-  buyMeCoffeeElement.classList.add('reskroutzed-tag', 'buy-me-coffee');
+  buyMeCoffeeElement.classList.add('buy-me-coffee');
 
   buyMeCoffeeLink.href = 'https://paypal.me/tsiakkas';
   buyMeCoffeeLink.target = '_blank';
@@ -13,7 +13,7 @@ export function createBuyMeCoffeeElement(): HTMLDivElement {
 
   const coffeeIcon = document.createElement('span');
   coffeeIcon.classList.add('coffee-icon');
-  coffeeIcon.innerHTML = '☕'; // Coffee cup emoji
+  coffeeIcon.innerHTML = '☕';
 
   DomClient.appendElementToElement(coffeeIcon, buyMeCoffeeLink);
   DomClient.appendElementToElement(buyMeCoffeeLink, buyMeCoffeeElement);
