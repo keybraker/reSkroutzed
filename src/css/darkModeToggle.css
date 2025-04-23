@@ -36,6 +36,8 @@
   pointer-events: none !important;
 }
 
+.dark-mode .bottom-drawer-content::before,
+.dark-mode .bottom-drawer-content::after,
 .dark-mode .tl-shelf::before,
 .dark-mode .tl-shelf::after,
 .dark-mode .scroll-area::after,
