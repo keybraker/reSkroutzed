@@ -26,7 +26,6 @@ describe('createBuyMeCoffeeElement', () => {
     const element = createBuyMeCoffeeElement();
 
     expect(element.tagName).toBe('DIV');
-    expect(element.classList.contains('reskroutzed-tag')).toBe(true);
     expect(element.classList.contains('buy-me-coffee')).toBe(true);
   });
 

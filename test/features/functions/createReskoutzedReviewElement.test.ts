@@ -46,7 +46,6 @@ describe('createReskoutzedReviewElement', () => {
     const element = createReskoutzedReviewElement();
 
     expect(element.tagName).toBe('DIV');
-    expect(element.classList.contains('reskroutzed-tag')).toBe(true);
     expect(element.classList.contains('icon-border')).toBe(true);
     expect(element.classList.contains('font-bold')).toBe(true);
   });

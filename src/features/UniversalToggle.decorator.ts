@@ -297,7 +297,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     // Set data-value attribute for mobile display
     button.setAttribute('data-value', this.state.minimumPriceDifference.toString());
 
-    const isMobile = BrowserClient.detectMobile();
+    let isMobile = false;
+    try {
+      isMobile = BrowserClient.detectMobile();
+    } catch (error) {
+      console.warn('Failed to detect mobile status:', error);
+    }
 
     // Create the internal structure based on device type
     if (isMobile) {

@@ -29,7 +29,6 @@ export class DomClient {
       'Sponsored Store',
       'Ad',
       'Advertisement',
-      'Advertisement',
     ];
 
     return sponsoredTexts.includes(element.textContent.trim());
