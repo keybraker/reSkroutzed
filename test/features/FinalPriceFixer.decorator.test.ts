@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
 import { FinalPriceFixerDecorator } from '../../src/features/FinalPriceFixer.decorator';
 import { Language } from '../../src/common/enums/Language.enum';
 import { State } from '../../src/common/types/State.type';

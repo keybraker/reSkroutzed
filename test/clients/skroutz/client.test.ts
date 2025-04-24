@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+
 import { SkroutzClient, ProductPriceData } from '../../../src/clients/skroutz/client';
 import { ProductData } from '../../../src/clients/skroutz/types';
 

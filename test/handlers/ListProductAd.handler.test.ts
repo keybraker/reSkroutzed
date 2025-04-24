@@ -1,5 +1,6 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\handlers\ListProductAd.handler.test.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { ListProductAdHandler } from '../../src/handlers/ListProductAd.handler';
 import { DomClient } from '../../src/clients/dom/client';
 import { State } from '../../src/common/types/State.type';
@@ -140,6 +141,7 @@ describe('ListProductAdHandler', () => {
   describe('updateCountAndVisibility', () => {
     it('should increment count and update visibility when element matches criteria', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (listProductAdHandler as any).updateCountAndVisibility.bind(
         listProductAdHandler,
       );
@@ -172,6 +174,7 @@ describe('ListProductAdHandler', () => {
 
     it('should not update count or visibility when element does not match criteria', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (listProductAdHandler as any).updateCountAndVisibility.bind(
         listProductAdHandler,
       );
@@ -189,6 +192,7 @@ describe('ListProductAdHandler', () => {
 
     it('should not update already flagged elements', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (listProductAdHandler as any).updateCountAndVisibility.bind(
         listProductAdHandler,
       );
@@ -209,6 +213,7 @@ describe('ListProductAdHandler', () => {
   describe('flagElementsBySelector', () => {
     it('should flag all elements matching the selector', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flagElementsBySelector = (listProductAdHandler as any).flagElementsBySelector.bind(
         listProductAdHandler,
       );

@@ -12,6 +12,7 @@ global.chrome = {
       set: vi.fn(),
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 // Mock localStorage
@@ -22,6 +23,7 @@ global.localStorage = {
   clear: vi.fn(),
   length: 0,
   key: vi.fn(),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 // Mock window properties that might not be available in jsdom

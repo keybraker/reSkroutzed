@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+
 import { BrowserClient, StorageKey } from '../../../src/clients/browser/client';
 import { Language } from '../../../src/common/enums/Language.enum';
 
@@ -37,7 +38,7 @@ describe('BrowserClient', (): void => {
 
     it('should set default value when storage returns undefined', async () => {
       // Setup
-      chrome.storage.local.get = vi.fn().mockImplementation((keys, callback): void => {
+      chrome.storage.local.get = vi.fn().mockImplementation((_keys, callback): void => {
         callback({});
       });
 

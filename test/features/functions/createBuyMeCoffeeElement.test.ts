@@ -1,5 +1,6 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\features\functions\createBuyMeCoffeeElement.test.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { createBuyMeCoffeeElement } from '../../../src/features/functions/createBuyMeCoffeeElement';
 import { DomClient } from '../../../src/clients/dom/client';
 

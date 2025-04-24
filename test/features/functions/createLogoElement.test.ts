@@ -1,5 +1,6 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\features\functions\createLogoElement.test.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { createLogoElement } from '../../../src/features/functions/createLogoElement';
 import { DomClient } from '../../../src/clients/dom/client';
 

@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { DomClient } from '../../../src/clients/dom/client';
 import { Language } from '../../../src/common/enums/Language.enum';
 

@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { UniversalToggleDecorator } from '../../src/features/UniversalToggle.decorator';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { BrowserClient } from '../../src/clients/browser/client';
 import { Language } from '../../src/common/enums/Language.enum';
 import { State } from '../../src/common/types/State.type';
-import { BrowserClient, StorageKey } from '../../src/clients/browser/client';
+import { UniversalToggleDecorator } from '../../src/features/UniversalToggle.decorator';
 
 // Mock browser client
 vi.mock('../../src/clients/browser/client', () => ({
@@ -171,8 +172,6 @@ describe('UniversalToggleDecorator', () => {
       universalToggleDecorator.execute();
 
       // Assert
-      // Main toggle button should have event listener
-      const mainToggle = document.querySelector('.universal-toggle-button');
       expect(mockAddEventListener).toHaveBeenCalledWith('click', expect.any(Function));
 
       // Document should have event listener for closing menu when clicking outside
@@ -193,6 +192,7 @@ describe('UniversalToggleDecorator', () => {
 
       universalToggleDecorator.execute();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const darkModeToggleHandler = (universalToggleDecorator as any).toggleDarkMode;
 
       if (darkModeToggleHandler) {
@@ -212,6 +212,7 @@ describe('UniversalToggleDecorator', () => {
 
       universalToggleDecorator.execute();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const productAdsToggleHandler = (universalToggleDecorator as any).toggleProductAdsVisibility;
 
       if (productAdsToggleHandler) {
@@ -231,6 +232,7 @@ describe('UniversalToggleDecorator', () => {
 
       universalToggleDecorator.execute();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const videoAdsToggleHandler = (universalToggleDecorator as any).toggleVideoAdsVisibility;
 
       if (videoAdsToggleHandler) {
@@ -250,6 +252,7 @@ describe('UniversalToggleDecorator', () => {
 
       universalToggleDecorator.execute();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sponsorshipToggleHandler = (universalToggleDecorator as any)
         .toggleSponsorshipsVisibility;
 
@@ -270,6 +273,7 @@ describe('UniversalToggleDecorator', () => {
 
       universalToggleDecorator.execute();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const shelfToggleHandler = (universalToggleDecorator as any).toggleShelfProductAdsVisibility;
 
       if (shelfToggleHandler) {

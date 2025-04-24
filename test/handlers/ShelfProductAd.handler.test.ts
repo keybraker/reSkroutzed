@@ -1,5 +1,6 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\handlers\ShelfProductAd.handler.test.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { ShelfProductAdHandler } from '../../src/handlers/ShelfProductAd.handler';
 import { DomClient } from '../../src/clients/dom/client';
 import { State } from '../../src/common/types/State.type';
@@ -140,6 +141,7 @@ describe('ShelfProductAdHandler', () => {
   describe('updateCountAndVisibility', () => {
     it('should increment count and update visibility when element matches criteria', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (shelfProductAdHandler as any).updateCountAndVisibility.bind(
         shelfProductAdHandler,
       );
@@ -172,6 +174,7 @@ describe('ShelfProductAdHandler', () => {
 
     it('should not update count or visibility when element does not match criteria', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (shelfProductAdHandler as any).updateCountAndVisibility.bind(
         shelfProductAdHandler,
       );
@@ -189,6 +192,7 @@ describe('ShelfProductAdHandler', () => {
 
     it('should not update already flagged elements', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (shelfProductAdHandler as any).updateCountAndVisibility.bind(
         shelfProductAdHandler,
       );
@@ -209,6 +213,7 @@ describe('ShelfProductAdHandler', () => {
   describe('flagElementsBySelector', () => {
     it('should flag all elements matching the selector', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flagElementsBySelector = (shelfProductAdHandler as any).flagElementsBySelector.bind(
         shelfProductAdHandler,
       );

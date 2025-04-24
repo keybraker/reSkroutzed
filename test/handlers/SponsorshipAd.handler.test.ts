@@ -1,5 +1,6 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\handlers\SponsorshipAd.handler.test.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { SponsorshipAdHandler } from '../../src/handlers/SponsorshipAd.handler';
 import { DomClient } from '../../src/clients/dom/client';
 import { State } from '../../src/common/types/State.type';
@@ -142,6 +143,7 @@ describe('SponsorshipAdHandler', () => {
   describe('updateCountAndVisibility', () => {
     it('should increment count and update visibility when element matches criteria', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (sponsorshipAdHandler as any).updateCountAndVisibility.bind(
         sponsorshipAdHandler,
       );
@@ -177,6 +179,7 @@ describe('SponsorshipAdHandler', () => {
 
     it('should not update count or visibility when element does not match criteria', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (sponsorshipAdHandler as any).updateCountAndVisibility.bind(
         sponsorshipAdHandler,
       );
@@ -186,7 +189,7 @@ describe('SponsorshipAdHandler', () => {
       element.id = 'not-sponsorship';
 
       // Add the matches method to the element for selector testing
-      element.matches = (selector: string) => false;
+      element.matches = (_selector: string) => false;
 
       updateCountAndVisibility(element);
 
@@ -197,6 +200,7 @@ describe('SponsorshipAdHandler', () => {
 
     it('should not update already flagged elements', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (sponsorshipAdHandler as any).updateCountAndVisibility.bind(
         sponsorshipAdHandler,
       );
@@ -220,6 +224,7 @@ describe('SponsorshipAdHandler', () => {
   describe('flagElementsBySelector', () => {
     it('should flag all elements matching the selector', () => {
       // Create private method test helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flagElementsBySelector = (sponsorshipAdHandler as any).flagElementsBySelector.bind(
         sponsorshipAdHandler,
       );

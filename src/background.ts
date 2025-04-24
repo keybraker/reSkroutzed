@@ -177,11 +177,11 @@ chrome.runtime.onMessage.addListener(
     } else if (request.action === 'updatePriceDifference' && request.value !== undefined) {
       state.minimumPriceDifference = request.value as number;
       BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
-      // Trigger price difference update if on a product page
       const event = new Event('priceThresholdChange');
       document.dispatchEvent(event);
       sendResponse({ success: true });
     }
-    return true; // Keep the message channel open for asynchronous responses
+
+    return true;
   },
 );

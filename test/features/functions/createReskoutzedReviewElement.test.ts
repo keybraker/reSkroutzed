@@ -1,5 +1,6 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\features\functions\createReskoutzedReviewElement.test.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { createReskoutzedReviewElement } from '../../../src/features/functions/createReskoutzedReviewElement';
 import { DomClient } from '../../../src/clients/dom/client';
 import { createLogoElement } from '../../../src/features/functions/createLogoElement';
