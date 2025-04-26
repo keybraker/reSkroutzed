@@ -11,7 +11,6 @@
   --dark-mode-button: #2d2d2d !important;
   --dark-mode-button-text: #d0d0d0 !important;
   --dark-mode-shadow: rgba(0, 0, 0, 0.5) !important;
-
   --price-checker-light-bg: #f5f5f7;
   --price-checker-dark-bg: #1c1c1e;
   --price-cheaper-color: #fd1530;
@@ -59,6 +58,7 @@ html.dark-mode {
 
 .dark-mode .filter-indicator,
 .dark-mode .card-inner-container,
+.dark-mode .card,
 .dark-mode .sidebar {
   border-radius: 6px !important;
   background-color: var(--color-background-secondary) !important;
@@ -188,7 +188,6 @@ html.dark-mode {
   color: var(--color-text-primary) !important;
 }
 
-/* Heart button dark mode styling */
 .dark-mode .rc-icon-btn.icon.heart,
 .dark-mode .rc-icon-btn.icon.compare-me {
   background-color: var(--dark-mode-border) !important;
@@ -221,7 +220,6 @@ html.dark-mode {
   transition: background-color 0.3s ease !important;
 }
 
-/* Button dark mode styling for View at store and Add to cart */
 .dark-mode .js-product-link.btn-blue.redirection-btn {
   background-color: #0e4377 !important;
   color: var(--dark-mode-text) !important;
@@ -333,10 +331,11 @@ text-black {
 .buy-me-coffee {
   position: static !important;
   color: #000000 !important;
-  background-color: rgb(255, 166, 84) !important;
-  border: 2px solid rgb(255, 255, 255) !important;
-  padding: 8px 12px !important;
-  border-radius: 10% !important;
+  background-color: rgba(255, 255, 255, 0.493) !important;
+  border: 2px solid rgba(0, 0, 0, 0.568) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  padding: 8px 8px !important;
+  border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -344,20 +343,22 @@ text-black {
 }
 
 .buy-me-coffee:hover {
-  background-color: rgb(255, 209, 169) !important;
+  background-color: rgba(216, 148, 0, 0.425) !important;
   transition: background-color 0.2s ease-in-out !important;
 }
 
 .dark-mode .buy-me-coffee {
   color: #222222 !important;
-  border: 2px solid rgb(71, 71, 71) !important;
+  border-color: rgb(255, 255, 255, 0.568) !important;
 }
 
 .reskroutzed-tag {
   position: static !important;
   color: #000000 !important;
-  background-color: rgb(233, 233, 233) !important;
-  border: 2px solid rgb(255, 255, 255) !important;
+  background-color: rgba(255, 255, 255, 0.493) !important;
+  border: 2px solid rgba(0, 0, 0, 0.568) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  padding: 8px 8px !important;
   border-radius: 24px !important;
   font-size: 8px !important;
   font-weight: 600 !important;
@@ -373,7 +374,8 @@ text-black {
 }
 
 .reskroutzed-tag:hover {
-  background-color: rgb(255, 209, 169) !important;
+  background-color: rgba(216, 148, 0, 0.425) !important;
+  transition: background-color 0.2s ease-in-out !important;
 }
 
 .reskroutzed-tag img {
@@ -385,7 +387,7 @@ text-black {
 .dark-mode .reskroutzed-tag {
   color: #ffffff !important;
   background-color: rgb(128, 125, 122) !important;
-  border: 2px solid rgb(71, 71, 71) !important;
+  border-color: rgb(255, 255, 255, 0.568) !important;
 }
 
 .dark-mode .reskroutzed-tag:hover {
@@ -399,7 +401,7 @@ text-black {
 .go-to-shop-button-positive {
   border: none !important;
   border-radius: 24px !important;
-  padding: 8px 12px !important; /* Reduced padding to make button thinner */
+  padding: 8px 12px !important;
   font-weight: 500 !important;
   background-color: #3a8c3a !important;
   color: #ffffff !important;
@@ -418,7 +420,7 @@ text-black {
 .go-to-shop-button-negative {
   border: none !important;
   border-radius: 24px !important;
-  padding: 8px 12px !important; /* Reduced padding to make button thinner */
+  padding: 8px 12px !important;
   font-weight: 500 !important;
   background-color: #a93331 !important;
   color: #ffffff !important;
@@ -472,12 +474,10 @@ text-black {
   margin-bottom: 12px !important;
   font-style: normal !important;
   line-height: 1.4 !important;
-  /* Removed background and border styling */
 }
 
 .dark-mode .price-info-description {
   color: #b0b0b0 !important;
-  /* Removed background and border styling */
 }
 
 .shipping-info {
@@ -538,19 +538,18 @@ text-black {
 
 .price-indicator-currency {
   margin-left: 2px !important;
-  font-size: 28px !important; /* Increased size 10x from 18px */
+  font-size: 28px !important;
 }
 
 .price-indicator-decimal {
-  font-size: 28px !important; /* Increased size 10x from 18px */
+  font-size: 28px !important;
 }
 
 .price-indicator-comma {
-  font-size: 28px !important; /* Increased size 10x from 18px */
+  font-size: 28px !important;
   margin-right: 1px !important;
 }
 
-/* New container for price and calculation */
 .price-calculation-container {
   display: flex !important;
   gap: 8px !important;
@@ -560,7 +559,6 @@ text-black {
   margin-bottom: 16px !important;
 }
 
-/* Styling for calculation container */
 .calculation-container {
   text-align: center !important;
   width: 100% !important;
@@ -700,12 +698,10 @@ text-black {
   padding-left: 8px;
 }
 
-/* Add dark mode override for shipping cost */
 .dark-mode .shipping-cost {
   color: white !important;
 }
 
-/* Badge styling */
 .badge {
   display: inline-flex !important;
   align-items: center !important;
@@ -718,20 +714,17 @@ text-black {
   letter-spacing: 0.5px !important;
 }
 
-/* Dark mode badge styling */
 .dark-mode .badge {
   color: var(--dark-mode-text) !important;
   border: 1px solid var(--dark-mode-border) !important;
   box-shadow: 0 1px 3px var(--dark-mode-shadow) !important;
 }
 
-/* Preserve badge background colors in dark mode */
 .dark-mode .badge[style*='background-color'] {
   background-color: attr(style background-color) !important;
   filter: brightness(0.85) !important;
 }
 
-/* Badge specific dark mode color adjustments */
 .dark-mode .badge[style*='background-color:#0971C8'] {
   background-color: #075fa1 !important;
 }
@@ -740,7 +733,6 @@ text-black {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Dark mode styles for personalization settings toggle */
 .dark-mode .personalization-settings {
   background-color: var(--color-background-secondary) !important;
   color: var(--color-text-primary) !important;
@@ -789,7 +781,6 @@ text-black {
   transition: background-color 0.3s ease !important;
 }
 
-/* Dark mode styles for tooltip/info popup */
 .dark-mode #tooltip-wrapper,
 .dark-mode .tooltip-wrapper {
   background-color: var(--color-background-secondary) !important;
@@ -812,7 +803,6 @@ text-black {
   text-decoration: underline !important;
 }
 
-/* Dark mode styles for cart items count */
 .dark-mode .js-cart-items-count {
   background-color: #3a8c3a !important;
   color: #ffffff !important;
@@ -830,9 +820,7 @@ text-black {
 }
 
 .dark-mode .rating .rating-wrapper {
-  /* background-color: #333333 !important; */
   border-radius: 4px !important;
-  /* box-shadow: 0 1px 3px var(--dark-mode-shadow) !important; */
 }
 
 .dark-mode .rating-wrapper span[data-testid='star-rating-value'] {
@@ -903,7 +891,6 @@ text-black {
   color: var(--color-text-primary) !important;
 }
 
-/* Merchant coupon offering styles for dark mode */
 .dark-mode .merchant-coupon-offering-label {
   background-color: rgba(255, 184, 0, 0.15) !important;
   border: 1px solid rgba(255, 184, 0, 0.3) !important;
@@ -915,10 +902,7 @@ text-black {
   background-color: #ffb800 !important;
 }
 
-.dark-mode .merchant-coupon-offering-label-title strong {
-  color: #000000 !important;
-}
-
+.dark-mode .merchant-coupon-offering-label-title strong,
 .dark-mode .merchant-coupon-offering-label-content {
   color: #000000 !important;
 }
@@ -934,4 +918,9 @@ text-black {
 
 .dark-mode .merchant-coupon-offering-label-expiration {
   color: #999999 !important;
+}
+
+.dark-mode .reviews-count,
+.dark-mode .fbs-review-text {
+  color: #000000 !important;
 }

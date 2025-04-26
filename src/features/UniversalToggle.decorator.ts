@@ -160,12 +160,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
         if (this.state.hideVideoAds) {
           videoPath.setAttribute(
             'd',
-            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z',
+            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
           );
         } else {
           videoPath.setAttribute(
             'd',
-            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
+            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
           );
         }
       }
@@ -306,36 +306,51 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     // Create the internal structure based on device type
     if (isMobile) {
-      // Mobile: Just show the plain number
+      // Mobile: Create a container to ensure visibility of the value and euro symbol
+      const mobileContainer = document.createElement('div');
+      mobileContainer.classList.add('price-difference-mobile-container');
+      mobileContainer.style.display = 'flex';
+      mobileContainer.style.alignItems = 'center';
+      mobileContainer.style.justifyContent = 'center';
+      mobileContainer.style.width = '100%';
+      mobileContainer.style.height = '100%';
+
       const valueText = document.createElement('span');
       valueText.classList.add('price-value-mobile');
       valueText.textContent = this.state.minimumPriceDifference.toString();
-      DomClient.appendElementToElement(valueText, button);
+      valueText.style.fontSize = '14px';
+      valueText.style.fontWeight = 'bold';
+      DomClient.appendElementToElement(valueText, mobileContainer);
+
+      const euroSymbol = document.createElement('span');
+      euroSymbol.classList.add('price-currency-symbol-mobile');
+      euroSymbol.textContent = '€';
+      euroSymbol.style.marginLeft = '2px';
+      euroSymbol.style.fontSize = '14px';
+      euroSymbol.style.fontWeight = 'bold';
+      DomClient.appendElementToElement(euroSymbol, mobileContainer);
+
+      DomClient.appendElementToElement(mobileContainer, button);
     } else {
-      // Desktop: Show the full display with icon and value
+      // Desktop: Show the full display with value
       const flexContainer = document.createElement('div');
+      flexContainer.classList.add('price-difference-container');
       flexContainer.style.display = 'flex';
       flexContainer.style.alignItems = 'center';
       flexContainer.style.justifyContent = 'center';
+      flexContainer.style.width = '100%';
+      flexContainer.style.height = '100%';
 
       const valueDisplay = document.createElement('span');
+      valueDisplay.classList.add('price-value-display');
       valueDisplay.textContent = this.state.minimumPriceDifference.toString();
       DomClient.appendElementToElement(valueDisplay, flexContainer);
 
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('viewBox', '0 0 16 16');
-      svg.setAttribute('width', '16');
-      svg.setAttribute('height', '16');
-      svg.style.marginLeft = '5px';
-
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute(
-        'd',
-        'M4 9.42h1.063C5.4 12.323 7.317 14 10.34 14c.622 0 1.167-.068 1.659-.185v-1.3c-.484.119-1.045.17-1.659.17-2.1 0-3.455-1.198-3.775-3.264h4.017v-.928H6.497v-.936c0-.11 0-.219.008-.329h4.078v-.927H6.618c.388-1.898 1.719-2.985 3.723-2.985.614 0 1.175.05 1.659.177V2.194A6.617 6.617 0 0 0 10.341 2c-2.973 0-4.96 1.714-5.277 4.734H4V7.66h1.01V8.595H4z',
-      );
-      path.setAttribute('fill', 'currentColor');
-      DomClient.appendElementToElement(path, svg);
-      DomClient.appendElementToElement(svg, flexContainer);
+      const euroSymbol = document.createElement('span');
+      euroSymbol.classList.add('price-currency-symbol');
+      euroSymbol.textContent = '€';
+      euroSymbol.style.marginLeft = '2px';
+      DomClient.appendElementToElement(euroSymbol, flexContainer);
 
       DomClient.appendElementToElement(flexContainer, button);
     }
@@ -344,7 +359,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       e.stopPropagation();
 
       if (isMobile) {
-        // On mobile, show a simple input dialog
         const inputValue = prompt(
           this.state.language === Language.GREEK
             ? 'Ελάχιστη διαφορά τιμής (€):'
@@ -359,52 +373,78 @@ export class UniversalToggleDecorator implements FeatureInstance {
           }
         }
       } else {
-        // On desktop, show the popup
-        const popup = document.createElement('div');
-        popup.classList.add('price-difference-popup');
+        // On desktop, create an in-place edit instead of a popup
+        const container = button.querySelector('.price-difference-container');
+        if (!container) return;
 
-        const label = document.createElement('label');
-        label.textContent =
-          this.state.language === Language.GREEK
-            ? 'Ελάχιστη διαφορά τιμής (€):'
-            : 'Minimum price difference (€):';
+        // Hide the value display and euro symbol
+        const valueDisplay = container.querySelector('.price-value-display') as HTMLElement;
+        const euroSymbol = container.querySelector('.price-currency-symbol') as HTMLElement;
+        if (valueDisplay && euroSymbol) {
+          valueDisplay.style.display = 'none';
+          euroSymbol.style.display = 'none';
+        }
 
+        // Create the input field
         const input = document.createElement('input');
         input.type = 'number';
         input.min = '0';
         input.step = '0.5';
         input.value = this.state.minimumPriceDifference.toString();
+        input.classList.add('price-inline-input');
+        input.style.width = '70%';
+        input.style.height = '60%';
+        input.style.textAlign = 'center';
+        input.style.padding = '0px';
+        input.style.border = '1px solid white';
+        input.style.borderRadius = '2px';
+        input.style.background = 'rgba(255, 255, 255, 0.2)';
+        input.style.color = 'white';
+        input.style.font = 'inherit';
+        input.style.fontSize = '16px';
+        input.style.fontWeight = 'bold';
+
+        // Append the input to the container
+        DomClient.appendElementToElement(input, container);
+        input.focus();
+        input.select();
 
         const saveValue = (): void => {
           const newValue = parseFloat(input.value);
           if (!isNaN(newValue) && newValue >= 0) {
             this.updatePriceDifferenceValue(newValue, button);
           }
-          popup.remove();
+
+          // Restore the original display
+          if (valueDisplay && euroSymbol) {
+            valueDisplay.style.display = '';
+            euroSymbol.style.display = '';
+          }
+
+          // Remove the input
+          if (input.parentNode) {
+            input.parentNode.removeChild(input);
+          }
         };
 
+        // Save on blur
         input.addEventListener('blur', saveValue);
+
+        // Save on Enter key press
         input.addEventListener('keyup', (event) => {
           if (event.key === 'Enter') {
             saveValue();
+          } else if (event.key === 'Escape') {
+            // Just restore original display without saving on Escape
+            if (valueDisplay && euroSymbol) {
+              valueDisplay.style.display = '';
+              euroSymbol.style.display = '';
+            }
+            if (input.parentNode) {
+              input.parentNode.removeChild(input);
+            }
           }
         });
-
-        DomClient.appendElementToElement(label, popup);
-        DomClient.appendElementToElement(input, popup);
-        DomClient.appendElementToElement(popup, button);
-        input.focus();
-
-        const closePopupHandler = (event: MouseEvent): void => {
-          if (!popup.contains(event.target as Node) && event.target !== button) {
-            saveValue();
-            document.removeEventListener('click', closePopupHandler);
-          }
-        };
-
-        setTimeout(() => {
-          document.addEventListener('click', closePopupHandler);
-        }, 100);
       }
     });
 
