@@ -1,11 +1,5 @@
 # ![Alt Text](../icons/48.png) reSkroutzed
 
-[![Run Tests](https://github.com/keybraker/reSkroutzed/actions/workflows/tests.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/tests.yml)
-
-<!-- [![Lint](https://github.com/keybraker/reSkroutzed/actions/workflows/lint.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/lint.yml)
-[![Build Chrome](https://github.com/keybraker/reSkroutzed/actions/workflows/build-chrome.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/build-chrome.yml)
-[![Build Firefox](https://github.com/keybraker/reSkroutzed/actions/workflows/build-firefox.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/build-firefox.yml) -->
-
 ### reSkroutzed is a browser extension that enhances the shopping experience on [skroutz.gr](https://skroutz.gr).<br>
 
 |                                                                      |                                                                      |
@@ -13,10 +7,12 @@
 | ![Screenshot 1](../imagery/chrome/chrome_1280x800_screenshot_1.jpeg) | ![Screenshot 2](../imagery/chrome/chrome_1280x800_screenshot_2.jpeg) |
 | ![Screenshot 3](../imagery/chrome/chrome_1280x800_screenshot_3.jpeg) | ![Screenshot 4](../imagery/chrome/chrome_1280x800_screenshot_4.jpeg) |
 
-### Download reSkroutzed
-
-[![Firefox](../imagery/store_images/firefox.png)](https://addons.mozilla.org/en-US/firefox/addon/reskroutzed)
-[![Chrome](../imagery/store_images/chrome.png)](https://chrome.google.com/webstore/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl)
+|              | Firefox                                                                                                       | Chrome                                                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Users**    | ![Firefox Add-on Users](https://img.shields.io/amo/users/reskroutzed)                                         | ![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/amglnkndjeoojnjjeepeheobhneeogcl)                               |
+| **Version**  | ![Firefox Version](https://img.shields.io/amo/v/reskroutzed)                                                  | ![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/amglnkndjeoojnjjeepeheobhneeogcl)                                 |
+| **Rating**   | ![Firefox Rating](https://img.shields.io/amo/stars/reskroutzed)                                               | ![Chrome Rating](https://img.shields.io/chrome-web-store/rating/amglnkndjeoojnjjeepeheobhneeogcl)                                       |
+| **Download** | [![Firefox](../imagery/store_images/firefox.png)](https://addons.mozilla.org/en-US/firefox/addon/reskroutzed) | [![Chrome](../imagery/store_images/chrome.png)](https://chrome.google.com/webstore/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl) |
 
 ## Why it was made?
 
@@ -115,3 +111,5 @@ If you have any suggestions for improvements or are facing a bug, feel free to s
 ## License
 
 This extension is licensed under the GNU general public license. See the LICENSE file for more details.
+
+[![Run Tests](https://github.com/keybraker/reSkroutzed/actions/workflows/tests.yml/badge.svg)](https://github.com/keybraker/reSkroutzed/actions/workflows/tests.yml)
