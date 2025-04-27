@@ -72,7 +72,7 @@ npm run dev:firefox
 
 These commands will start the extension in development mode with hot reload enabled, making it easier to see your changes in real-time while developing.
 
-### Production Build
+### Build
 
 #### Build for Chrome
 
