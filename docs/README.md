@@ -13,20 +13,10 @@
 | ![Screenshot 1](../imagery/chrome/chrome_1280x800_screenshot_1.jpeg) | ![Screenshot 2](../imagery/chrome/chrome_1280x800_screenshot_2.jpeg) |
 | ![Screenshot 3](../imagery/chrome/chrome_1280x800_screenshot_3.jpeg) | ![Screenshot 4](../imagery/chrome/chrome_1280x800_screenshot_4.jpeg) |
 
-<div style="display: flex; justify-content: center; gap: 20px; font-size: 24px;">
-  Download reSkroutzed
-</div>
-<br>
-<div style="display: flex; justify-content: center; gap: 20px;">
-  <a href="https://addons.mozilla.org/en-US/firefox/addon/reskroutzed">
-    <img src="../imagery/store_images/firefox.png" alt="Firefox" width="250">
-  </a>
-  <a href="https://chrome.google.com/webstore/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl">
-    <img src="../imagery/store_images/chrome.png" alt="Chrome" width="250">
-  </a>
-</div>
-<br>
-<br>
+### Download reSkroutzed
+
+[![Firefox](../imagery/store_images/firefox.png)](https://addons.mozilla.org/en-US/firefox/addon/reskroutzed)
+[![Chrome](../imagery/store_images/chrome.png)](https://chrome.google.com/webstore/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl)
 
 ## Why it was made?
 
