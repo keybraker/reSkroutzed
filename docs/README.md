@@ -2,11 +2,6 @@
 
 ### reSkroutzed is a browser extension that enhances the shopping experience on [skroutz.gr](https://skroutz.gr).<br>
 
-|                                                                      |                                                                      |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| ![Screenshot 1](../imagery/chrome/chrome_1280x800_screenshot_1.jpeg) | ![Screenshot 2](../imagery/chrome/chrome_1280x800_screenshot_2.jpeg) |
-| ![Screenshot 3](../imagery/chrome/chrome_1280x800_screenshot_3.jpeg) | ![Screenshot 4](../imagery/chrome/chrome_1280x800_screenshot_4.jpeg) |
-
 |              | Firefox                                                                                                       | Chrome                                                                                                                                  |
 | ------------ | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | **Users**    | ![Firefox Add-on Users](https://img.shields.io/amo/users/reskroutzed)                                         | ![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/amglnkndjeoojnjjeepeheobhneeogcl)                               |
@@ -32,6 +27,10 @@ Dark mode is now as easy as clicking one button.
 
 The all new universal selector on the bottom left side of the screen is always there to help you tailor make the experience browsing as you wish!
 
+| ![Screenshot 1](../imagery/chrome/chrome_1280x800_screenshot_1.jpeg) | ![Screenshot 2](../imagery/chrome/chrome_1280x800_screenshot_2.jpeg) |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| ![Screenshot 3](../imagery/chrome/chrome_1280x800_screenshot_3.jpeg) | ![Screenshot 4](../imagery/chrome/chrome_1280x800_screenshot_4.jpeg) |
+
 ## Additional functionality
 
 - Lowest price checker outside of _"Buy through Skroutz"_
@@ -46,7 +45,7 @@ The all new universal selector on the bottom left side of the screen is always t
   - banners
 - Available on mobile (Firefox only)
 
-## Manual Installation (for contributing)
+## Development guide (for contributing)
 
 To install the extension via GitHub, simply download the source code from this repository, and follow the instructions based on the browser you wish to load it on.
 
