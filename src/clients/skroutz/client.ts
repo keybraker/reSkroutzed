@@ -38,16 +38,9 @@ export class SkroutzClient {
       throw new Error('Failed to fetch price');
     }
 
-    // Get the integer part (including thousand separators)
     const integerPart = priceElement.firstChild?.textContent?.trim() || ''; // "1.028"
-
-    // Get the decimal part that comes after the comma
     const decimalPart = priceElement.querySelector('span.comma + span')?.textContent?.trim() || ''; // "89"
-
-    // Combine parts, removing thousand separators (dots)
     const priceText = integerPart.replace(/\./g, '') + '.' + decimalPart;
-
-    // Convert to a number and return
     const price = parseFloat(priceText);
 
     if (isNaN(price)) {

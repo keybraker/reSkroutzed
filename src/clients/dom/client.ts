@@ -110,8 +110,6 @@ export class DomClient {
     element.classList.add(...flagClasses);
   }
 
-  // PRIVATE
-
   private static getSponsoredText(isPlural = false, language: Language): string {
     return isPlural
       ? language === Language.ENGLISH

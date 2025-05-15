@@ -84,7 +84,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
    * Refresh all settings from storage to ensure we have the latest values
    */
   private async refreshSettingsFromStorage(): Promise<void> {
-    // Use getValueAsync to get the latest values from Chrome storage
     this.state.darkMode = (await BrowserClient.getValueAsync(StorageKey.DARK_MODE)) as boolean;
     this.state.hideProductAds = (await BrowserClient.getValueAsync(
       StorageKey.PRODUCT_AD_VISIBILITY,
@@ -102,7 +101,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       StorageKey.MINIMUM_PRICE_DIFFERENCE,
     )) as number;
 
-    // Update UI to reflect the refreshed values
     this.updateUIFromState();
   }
 
@@ -113,7 +111,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const container = document.querySelector('.universal-toggle-container');
     if (!container) return;
 
-    // Update dark mode button
     const darkModeButton = container.querySelector('.dark-mode-option') as HTMLButtonElement;
     if (darkModeButton) {
       darkModeButton.classList.toggle('active', this.state.darkMode);
@@ -137,7 +134,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       }
     }
 
-    // Update product ads button
     const adToggleButton = container.querySelector('.ad-toggle-option') as HTMLButtonElement;
     if (adToggleButton) {
       adToggleButton.classList.toggle('active', !this.state.hideProductAds);
@@ -149,7 +145,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       }
     }
 
-    // Update video ads button
     const videoToggleButton = container.querySelector('.video-toggle-option') as HTMLButtonElement;
     if (videoToggleButton) {
       videoToggleButton.classList.toggle('active', !this.state.hideVideoAds);
@@ -171,7 +166,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       }
     }
 
-    // Update sponsorship button
     const sponsorshipToggleButton = container.querySelector(
       '.sponsorship-toggle-option',
     ) as HTMLButtonElement;
@@ -197,7 +191,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       }
     }
 
-    // Update shelf ads button
     const shelfToggleButton = container.querySelector(
       '.shelf-ad-toggle-option',
     ) as HTMLButtonElement;
@@ -223,12 +216,10 @@ export class UniversalToggleDecorator implements FeatureInstance {
       }
     }
 
-    // Update minimum price difference display
     const priceDifferenceButton = container.querySelector(
       '.price-difference-option',
     ) as HTMLButtonElement;
     if (priceDifferenceButton) {
-      // Update data-value attribute for mobile display
       priceDifferenceButton.setAttribute(
         'data-value',
         this.state.minimumPriceDifference.toString(),
@@ -240,12 +231,10 @@ export class UniversalToggleDecorator implements FeatureInstance {
           : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
       priceDifferenceButton.title = updatedTitle;
 
-      // Update for mobile view
       const valueText = priceDifferenceButton.querySelector('.price-value-mobile');
       if (valueText) {
         valueText.textContent = this.state.minimumPriceDifference.toString();
       } else {
-        // Update for desktop view
         const valueDisplay = priceDifferenceButton.querySelector('span');
         if (valueDisplay) {
           valueDisplay.textContent = this.state.minimumPriceDifference.toString();
@@ -262,7 +251,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     buttons.forEach((button, index) => {
       setTimeout(() => {
         button.classList.add('button-active');
-      }, 80 * index); // More pronounced staggering (start from first button)
+      }, 80 * index);
     });
   }
 
@@ -294,7 +283,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
     button.title = titleText;
 
-    // Set data-value attribute for mobile display
     button.setAttribute('data-value', this.state.minimumPriceDifference.toString());
 
     let isMobile = false;
@@ -304,9 +292,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       console.warn('Failed to detect mobile status:', error);
     }
 
-    // Create the internal structure based on device type
     if (isMobile) {
-      // Mobile: Create a container to ensure visibility of the value and euro symbol
       const mobileContainer = document.createElement('div');
       mobileContainer.classList.add('price-difference-mobile-container');
       mobileContainer.style.display = 'flex';
@@ -332,7 +318,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       DomClient.appendElementToElement(mobileContainer, button);
     } else {
-      // Desktop: Show the full display with value
       const flexContainer = document.createElement('div');
       flexContainer.classList.add('price-difference-container');
       flexContainer.style.display = 'flex';
@@ -373,11 +358,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
           }
         }
       } else {
-        // On desktop, create an in-place edit instead of a popup
         const container = button.querySelector('.price-difference-container');
         if (!container) return;
 
-        // Hide the value display and euro symbol
         const valueDisplay = container.querySelector('.price-value-display') as HTMLElement;
         const euroSymbol = container.querySelector('.price-currency-symbol') as HTMLElement;
         if (valueDisplay && euroSymbol) {
@@ -385,7 +368,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
           euroSymbol.style.display = 'none';
         }
 
-        // Create the input field
         const input = document.createElement('input');
         input.type = 'number';
         input.min = '0';
@@ -404,7 +386,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         input.style.fontSize = '16px';
         input.style.fontWeight = 'bold';
 
-        // Append the input to the container
         DomClient.appendElementToElement(input, container);
         input.focus();
         input.select();
@@ -415,27 +396,22 @@ export class UniversalToggleDecorator implements FeatureInstance {
             this.updatePriceDifferenceValue(newValue, button);
           }
 
-          // Restore the original display
           if (valueDisplay && euroSymbol) {
             valueDisplay.style.display = '';
             euroSymbol.style.display = '';
           }
 
-          // Remove the input
           if (input.parentNode) {
             input.parentNode.removeChild(input);
           }
         };
 
-        // Save on blur
         input.addEventListener('blur', saveValue);
 
-        // Save on Enter key press
         input.addEventListener('keyup', (event) => {
           if (event.key === 'Enter') {
             saveValue();
           } else if (event.key === 'Escape') {
-            // Just restore original display without saving on Escape
             if (valueDisplay && euroSymbol) {
               valueDisplay.style.display = '';
               euroSymbol.style.display = '';
@@ -457,7 +433,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
   private updatePriceDifferenceValue(newValue: number, button?: HTMLButtonElement): void {
     this.state.minimumPriceDifference = newValue;
 
-    // Update data-value attribute for mobile display
     if (button) {
       button.setAttribute('data-value', newValue.toString());
 
@@ -467,12 +442,10 @@ export class UniversalToggleDecorator implements FeatureInstance {
           : `Minimum Price Difference: ${newValue}€`;
       button.title = updatedTitle;
 
-      // Update text content if it's a mobile view
       const valueText = button.querySelector('.price-value-mobile');
       if (valueText) {
         valueText.textContent = newValue.toString();
       } else {
-        // Update for desktop view
         const valueDisplay = button.querySelector('span');
         if (valueDisplay) {
           valueDisplay.textContent = newValue.toString();
@@ -480,10 +453,8 @@ export class UniversalToggleDecorator implements FeatureInstance {
       }
     }
 
-    // Store the setting
     BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);
 
-    // Trigger price difference update if on a product page
     const productPage = document.querySelector('article.offering-card');
     if (productPage) {
       const event = new Event('priceThresholdChange');
@@ -504,13 +475,11 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
     if (this.state.darkMode) {
-      // Moon icon
       path.setAttribute(
         'd',
         'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z',
       );
     } else {
-      // Sun icon
       path.setAttribute(
         'd',
         'M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z',
@@ -537,13 +506,11 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       if (this.state.darkMode) {
-        // Moon icon
         newPath.setAttribute(
           'd',
           'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z',
         );
       } else {
-        // Sun icon
         newPath.setAttribute(
           'd',
           'M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z',
@@ -633,7 +600,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         }
       }
 
-      // Use handlers to update visibility
       this.listProductAdHandler.visibilityUpdate();
       this.shelfProductAdHandler.visibilityUpdate();
 
@@ -699,7 +665,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       e.stopPropagation();
       this.state.hideVideoAds = !this.state.hideVideoAds;
 
-      // Add this line to persist the video visibility setting to storage
       BrowserClient.setValue(StorageKey.VIDEO_AD_VISIBILITY, this.state.hideVideoAds);
 
       this.videoHandler.visibilityUpdate();
@@ -743,13 +708,11 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     if (this.state.hideSponsorships) {
-      // Megaphone icon for visible state
       path.setAttribute(
         'd',
         'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
       );
     } else {
-      // Blocked megaphone icon for hidden state
       path.setAttribute(
         'd',
         'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z M13.354 3.354a.5.5 0 0 0-.708-.708L2.646 12.646a.5.5 0 0 0 .708.708L13.354 3.354z',
@@ -789,13 +752,11 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       if (!button.classList.contains('active')) {
-        // Megaphone icon for visible state
         newPath.setAttribute(
           'd',
           'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
         );
       } else {
-        // Blocked megaphone icon for hidden state
         newPath.setAttribute(
           'd',
           'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z M13.354 3.354a.5.5 0 0 0-.708-.708L2.646 12.646a.5.5 0 0 0 .708.708L13.354 3.354z',
@@ -822,7 +783,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
     button.classList.add('toggle-option-button', 'shelf-ad-toggle-option');
     button.title = this.state.hideShelfProductAds ? 'Hide Shelf Ads' : 'Show Shelf Ads';
 
-    // Create shelf icon (bookshelf-like icon)
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 16 16');
     svg.setAttribute('width', '16');
@@ -830,13 +790,11 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     if (this.state.hideShelfProductAds) {
-      // Simple shelf icon
       path.setAttribute(
         'd',
         'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z',
       );
     } else {
-      // Shelf icon with "Ad" text
       path.setAttribute(
         'd',
         'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
@@ -847,7 +805,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
     DomClient.appendElementToElement(path, svg);
     DomClient.appendElementToElement(svg, button);
 
-    // Add notification badge
     const shelfNotificationBubble = document.createElement('div');
     shelfNotificationBubble.classList.add('notification-bubble', 'shelf-notification');
     shelfNotificationBubble.textContent = `${this.state.ShelfAdCount}`;
@@ -876,26 +833,21 @@ export class UniversalToggleDecorator implements FeatureInstance {
       e.stopPropagation();
       this.state.hideShelfProductAds = !this.state.hideShelfProductAds;
 
-      // Store the setting
       BrowserClient.setValue(
         StorageKey.SHELF_PRODUCT_AD_VISIBILITY,
         this.state.hideShelfProductAds,
       );
 
-      // Update visibility using the handler
       this.shelfProductAdHandler.visibilityUpdate();
       button.classList.toggle('active');
 
-      // Update SVG icon
       const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       if (this.state.hideShelfProductAds) {
-        // Simple shelf icon
         newPath.setAttribute(
           'd',
           'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z',
         );
       } else {
-        // Shelf icon with "Ad" text
         newPath.setAttribute(
           'd',
           'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',

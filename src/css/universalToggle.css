@@ -1,4 +1,3 @@
-/* Universal Toggle Menu */
 .universal-toggle-container {
   display: flex !important;
   align-items: center !important;
@@ -98,7 +97,6 @@
   transform: translateX(0) !important;
 }
 
-/* Toggle option buttons common styles */
 .toggle-option-button {
   display: flex !important;
   align-items: center !important;
@@ -122,13 +120,11 @@
   opacity: 0 !important;
 }
 
-/* Animation for submenu buttons */
 .menu-open .toggle-option-button.button-active {
   transform: scale(1) translateY(0) !important;
   opacity: 1 !important;
 }
 
-/* Add bounce effect to buttons on hover */
 .toggle-option-button:hover {
   transform: scale(1.15) translateY(-3px) !important;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
@@ -137,7 +133,6 @@
     box-shadow 0.3s ease !important;
 }
 
-/* Ensure smooth transition for active state changes */
 .toggle-option-button.active {
   background: linear-gradient(145deg, #e66300, #d95500) !important;
   transition:
@@ -145,27 +140,22 @@
     transform 0.3s ease !important;
 }
 
-/* Dark mode button styling */
 .dark-mode-option {
-  background: #333333 !important; /* Darker in light mode */
+  background: #333333 !important;
 }
 
-/* Dark mode adjustments */
 .dark-mode .toggle-option-button {
-  background: #4d4d4d !important; /* Lighter in dark mode */
+  background: #4d4d4d !important;
 }
 
-/* Ad toggle button styling */
 .ad-toggle-option {
   background: #4a4a4a !important;
 }
 
-/* Video toggle button styling */
 .video-toggle-option {
   background: #4a4a4a !important;
 }
 
-/* Active state for all toggle options */
 .dark-mode .dark-mode-option.active,
 .dark-mode-option.active,
 .dark-mode .sponsorship-toggle-option.active,
@@ -179,7 +169,6 @@
   background: linear-gradient(145deg, #e66300, #d95500) !important;
 }
 
-/* AD text icon styling */
 .ad-text-icon {
   font-size: 12px !important;
   font-weight: bold !important;
@@ -192,7 +181,6 @@
   opacity: 0.8 !important;
 }
 
-/* Notification bubble */
 .notification-bubble {
   position: absolute !important;
   top: -5px !important;
@@ -213,10 +201,9 @@
 }
 
 .notification-bubble.video-notification {
-  background-color: #5856d6 !important; /* Purple for video notifications */
+  background-color: #5856d6 !important;
 }
 
-/* Price difference option button - Desktop & common styles */
 .price-difference-option {
   display: flex !important;
   align-items: center !important;
@@ -245,7 +232,6 @@
   text-align: center !important;
 }
 
-/* Price difference popup */
 .price-difference-popup {
   position: absolute !important;
   left: 50% !important;
@@ -301,9 +287,7 @@
   border: 1px solid #555 !important;
 }
 
-/* Mobile-specific styles */
 @media (max-width: 768px) {
-  /* Toggle container and buttons */
   .toggle-buttons-container {
     flex-direction: column !important;
     left: 0 !important;
@@ -327,7 +311,6 @@
     transform: scale(0) translateX(10px) !important;
   }
 
-  /* Mobile animation adjustments */
   .menu-open .toggle-option-button.button-active {
     transform: scale(1) translateX(0) !important;
   }
@@ -337,7 +320,6 @@
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
   }
 
-  /* Dark mode button separator position adjustment */
   .dark-mode-option::after {
     right: 50% !important;
     bottom: -15px !important;
@@ -347,7 +329,6 @@
     height: 1px !important;
   }
 
-  /* Mobile optimizations for price difference option */
   .price-value-mobile {
     font-size: 22px !important;
     font-weight: bold !important;
@@ -367,7 +348,6 @@
     padding: 0 !important;
   }
 
-  /* Mobile price difference button styles */
   .price-difference-option {
     width: 40px !important;
     min-width: 40px !important;
@@ -382,20 +362,17 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
   }
 
-  /* Hide unnecessary elements in mobile view */
   .price-difference-option::after,
   .price-difference-option span:not(.price-value-mobile),
   .price-difference-option svg {
     display: none !important;
   }
 
-  /* Active state for better feedback */
   .price-difference-option:active {
     transform: scale(0.95) !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
   }
 
-  /* Price values mobile display */
   .price-difference-value {
     right: -2px !important;
     bottom: -2px !important;
@@ -403,7 +380,6 @@
     padding: 1px 3px !important;
   }
 
-  /* Position popup to the right side on mobile */
   .price-difference-popup {
     width: 120px !important;
     left: 65px !important;
@@ -413,7 +389,6 @@
     margin-bottom: 0 !important;
   }
 
-  /* Triangle pointer for popup pointing left on mobile */
   .price-difference-popup::after {
     top: 50% !important;
     left: -8px !important;

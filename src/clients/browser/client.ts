@@ -2,14 +2,8 @@ import { Language } from '../../common/enums/Language.enum';
 
 export type StorageValueType = boolean | Language | number | string;
 
-/**
- * Prefix for all storage keys
- */
 const STORAGE_KEY_PREFIX = 'RESKROUTZED';
 
-/**
- * Keys for all storage items in the application
- */
 export enum StorageKey {
   PRODUCT_AD_VISIBILITY = STORAGE_KEY_PREFIX + '-product-ad-visibility',
   VIDEO_AD_VISIBILITY = STORAGE_KEY_PREFIX + '-video-ad-visibility',
@@ -19,9 +13,6 @@ export enum StorageKey {
   MINIMUM_PRICE_DIFFERENCE = STORAGE_KEY_PREFIX + '-minimum-difference',
 }
 
-/**
- * Default values for storage items
- */
 const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
   [StorageKey.PRODUCT_AD_VISIBILITY]: true,
   [StorageKey.VIDEO_AD_VISIBILITY]: true,
@@ -31,9 +22,6 @@ const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
   [StorageKey.MINIMUM_PRICE_DIFFERENCE]: 0,
 };
 
-/**
- * A centralized service for handling all storage operations
- */
 export class BrowserClient {
   /**
    * Get a value from storage
