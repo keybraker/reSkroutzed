@@ -51,6 +51,7 @@ function createPriceDisplayComponent(
 
 function createPriceComparisonBreakdownComponent(
   productPriceData: ProductPriceData,
+  productPriceHistory: ProductPriceHistory | undefined,
   language: Language,
 ): HTMLElement {
   const transportationBreakdown = DomClient.createElement('div', {
@@ -80,7 +81,18 @@ function createPriceComparisonBreakdownComponent(
   DomClient.appendElementToElement(skroutzLabel, skroutzContainer);
   DomClient.appendElementToElement(skroutzValue, skroutzContainer);
 
-  // Store price breakdown
+  if (productPriceHistory) {
+    const priceHistoryBreakdown = createPriceHistoryComparisonComponent(
+      productPriceHistory,
+      productPriceData.buyThroughSkroutz.totalPrice,
+      language,
+    );
+    const priceHistoryContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
+
+    DomClient.appendElementToElement(priceHistoryBreakdown, priceHistoryContainer);
+    DomClient.appendElementToElement(priceHistoryContainer, skroutzContainer);
+  }
+
   const storeContainer = DomClient.createElement('div', { className: 'price-breakdown-item' });
   const storeLabel = DomClient.createElement('div', { className: 'breakdown-label' });
   storeLabel.textContent = getLabel('Buy through Store', 'Αγορά μέσω καταστήματος');
@@ -94,6 +106,18 @@ function createPriceComparisonBreakdownComponent(
 
   DomClient.appendElementToElement(storeLabel, storeContainer);
   DomClient.appendElementToElement(storeValue, storeContainer);
+
+  if (productPriceHistory) {
+    const priceHistoryBreakdown = createPriceHistoryComparisonComponent(
+      productPriceHistory,
+      productPriceData.buyThroughStore.totalPrice,
+      language,
+    );
+    const priceHistoryContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
+
+    DomClient.appendElementToElement(priceHistoryBreakdown, priceHistoryContainer);
+    DomClient.appendElementToElement(priceHistoryContainer, storeContainer);
+  }
 
   DomClient.appendElementToElement(skroutzContainer, transportationBreakdown);
   DomClient.appendElementToElement(storeContainer, transportationBreakdown);
@@ -233,7 +257,7 @@ function isPositiveStyling(
 
 function createPriceIndicationElement(
   productPriceData: ProductPriceData,
-  productPriceHistory: ProductPriceHistory | undefined,
+  productPriceHistory: ProductPriceHistory,
   language: Language,
   minimumPriceDifference: number,
 ): HTMLDivElement {
@@ -262,7 +286,6 @@ function createPriceIndicationElement(
     className: 'price-calculation-container',
   });
   const infoContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
-  const priceHistoryContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
   const actionContainer = DomClient.createElement('div', { className: 'inline-flex-row' });
 
   const priceDisplay = createPriceDisplayComponent(
@@ -292,21 +315,12 @@ function createPriceIndicationElement(
 
   const transportationBreakdown = createPriceComparisonBreakdownComponent(
     productPriceData,
+    productPriceHistory,
     language,
   );
   DomClient.appendElementToElement(transportationBreakdown, infoContainer);
 
   DomClient.appendElementToElement(infoContainer, contentContainer);
-
-  if (productPriceHistory) {
-    const priceHistoryBreakdown = createPriceHistoryComparisonComponent(
-      productPriceHistory,
-      productPriceData.buyThroughStore.totalPrice,
-      language,
-    );
-    DomClient.appendElementToElement(priceHistoryBreakdown, priceHistoryContainer);
-    DomClient.appendElementToElement(priceHistoryContainer, contentContainer);
-  }
 
   const goToStoreButton = createShopButtonComponent(
     productPriceData,
@@ -315,11 +329,13 @@ function createPriceIndicationElement(
   );
   DomClient.appendElementToElement(goToStoreButton, actionContainer);
 
+  const priceHistoryBreakdown = createPriceHistoryComponent(productPriceHistory, language);
+  DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
+
   DomClient.appendElementToElement(actionContainer, contentContainer);
 
   priceIndication.title =
     language === Language.ENGLISH ? 'Delivered to you by reSkroutzed' : 'Από το reSkroutzed';
-
   DomClient.appendElementToElement(contentContainer, priceIndication);
 
   return priceIndication;
@@ -346,37 +362,186 @@ function createPriceHistoryComparisonComponent(
   priceHistoryBreakdown.style.gap = '8px';
   priceHistoryBreakdown.style.fontWeight = 'bold';
 
-  // Calculate price assessment
   const priceRange = productPriceHistory.maximumPrice - productPriceHistory.minimumPrice;
   const pricePosition = (currentPrice - productPriceHistory.minimumPrice) / priceRange;
 
   let priceAssessment: string;
   if (pricePosition <= 0.3) {
     priceAssessment = getLabel(
-      'Good price compared to historical price',
-      'Καλή τιμή σε σχέση με τα ιστορικά δεδομένα',
+      `Good price compared to historical price`,
+      `Καλή τιμή σε σχέση με τα ιστορικά δεδομένα`,
     );
   } else if (pricePosition <= 0.7) {
     priceAssessment = getLabel(
-      'Average price compared to historical price',
-      'Κανονική τιμή σε σχέση με τα ιστορικά δεδομένα',
+      `Average price compared to historical price`,
+      `Κανονική τιμή σε σχέση με τα ιστορικά δεδομένα`,
     );
   } else {
     priceAssessment = getLabel(
-      'High price compared to historical price',
-      'Υψηλή τιμή σε σχέση με τα ιστορικά δεδομένα',
+      `High price compared to historical price`,
+      `Υψηλή τιμή σε σχέση με τα ιστορικά δεδομένα`,
     );
   }
 
   const textContent = DomClient.createElement('span', {});
-  textContent.textContent =
-    `${priceAssessment} - ${getLabel('Min', 'Ελάχ')} ` +
-    `(${productPriceHistory.minimumPrice.toFixed(2)}€, ` +
-    `${getLabel('Max', 'Μέγ')} ${productPriceHistory.maximumPrice.toFixed(2)}€)`;
+  textContent.textContent = priceAssessment;
 
   DomClient.appendElementToElement(textContent, priceHistoryBreakdown);
 
   return priceHistoryBreakdown;
+}
+
+function createPriceHistoryComponent(
+  productPriceHistory: ProductPriceHistory,
+  language: Language,
+): HTMLElement {
+  const priceHistoryContainer = DomClient.createElement('div', {
+    className: 'price-history-container',
+  });
+
+  const getLabel = (english: string, greek: string): string =>
+    language === Language.ENGLISH ? english : greek;
+
+  priceHistoryContainer.style.marginTop = '0px';
+  priceHistoryContainer.style.marginBottom = '16px';
+  priceHistoryContainer.style.padding = '6px 8px';
+  priceHistoryContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.03)';
+  priceHistoryContainer.style.borderRadius = '4px';
+  priceHistoryContainer.style.border = '1px solid rgba(0, 0, 0, 0.08)';
+
+  const titleElement = DomClient.createElement('div', {
+    className: 'price-history-title',
+  });
+
+  titleElement.style.fontSize = '0.75em';
+  titleElement.style.fontWeight = '600';
+  titleElement.style.marginBottom = '4px';
+  titleElement.style.color = '#666';
+  titleElement.style.opacity = '0.8';
+
+  const priceRangeContainer = DomClient.createElement('div', {
+    className: 'price-range-container',
+  });
+  priceRangeContainer.style.display = 'flex';
+  priceRangeContainer.style.justifyContent = 'space-between';
+  priceRangeContainer.style.alignItems = 'center';
+  priceRangeContainer.style.fontSize = '0.7em';
+
+  const minPriceElement = DomClient.createElement('span', {
+    className: 'min-price',
+  });
+  minPriceElement.innerHTML = `<strong>${getLabel('Min', 'Ελάχ')}:</strong> ${productPriceHistory.minimumPrice.toFixed(2)}€`;
+  minPriceElement.style.color = '#4caf50';
+  minPriceElement.style.opacity = '0.9';
+
+  const maxPriceElement = DomClient.createElement('span', {
+    className: 'max-price',
+  });
+  maxPriceElement.innerHTML = `<strong>${getLabel('Max', 'Μέγ')}:</strong> ${productPriceHistory.maximumPrice.toFixed(2)}€`;
+  maxPriceElement.style.color = '#f44336';
+  maxPriceElement.style.opacity = '0.9';
+
+  const priceBarContainer = DomClient.createElement('div', {
+    className: 'price-bar-container',
+  });
+  priceBarContainer.style.width = '100%';
+  priceBarContainer.style.height = '8px';
+  priceBarContainer.style.backgroundColor = '#f0f0f0';
+  priceBarContainer.style.borderRadius = '4px';
+  priceBarContainer.style.marginTop = '4px';
+  priceBarContainer.style.position = 'relative';
+  priceBarContainer.style.cursor = 'pointer';
+
+  const priceRange = productPriceHistory.maximumPrice - productPriceHistory.minimumPrice;
+
+  productPriceHistory.allPricesOrdered.forEach((price, index) => {
+    const segment = DomClient.createElement('div', {
+      className: 'price-segment',
+    });
+
+    const segmentWidth = 100 / productPriceHistory.allPricesOrdered.length;
+    const position = (price - productPriceHistory.minimumPrice) / priceRange;
+
+    let color: string;
+    if (position <= 0.3) {
+      color = '#4caf50';
+    } else if (position <= 0.7) {
+      color = '#ff9800';
+    } else {
+      color = '#f44336';
+    }
+
+    segment.style.position = 'absolute';
+    segment.style.left = `${index * segmentWidth}%`;
+    segment.style.width = `${segmentWidth}%`;
+    segment.style.height = '100%';
+    segment.style.backgroundColor = color;
+    segment.style.opacity = '0.7';
+    segment.style.transition = 'opacity 0.2s ease';
+    segment.style.borderRadius =
+      index === 0
+        ? '4px 0 0 4px'
+        : index === productPriceHistory.allPricesOrdered.length - 1
+          ? '0 4px 4px 0'
+          : '0';
+
+    const tooltip = DomClient.createElement('div', {
+      className: 'price-tooltip',
+    });
+    tooltip.textContent = `${price.toFixed(2)}€`;
+    tooltip.style.position = 'absolute';
+    tooltip.style.bottom = '120%';
+    tooltip.style.left = '50%';
+    tooltip.style.transform = 'translateX(-50%)';
+    tooltip.style.backgroundColor = '#333';
+    tooltip.style.color = 'white';
+    tooltip.style.padding = '4px 8px';
+    tooltip.style.borderRadius = '4px';
+    tooltip.style.fontSize = '0.65em';
+    tooltip.style.whiteSpace = 'nowrap';
+    tooltip.style.opacity = '0';
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.transition = 'opacity 0.2s ease, visibility 0.2s ease';
+    tooltip.style.zIndex = '1000';
+
+    const arrow = DomClient.createElement('div', {
+      className: 'tooltip-arrow',
+    });
+    arrow.style.position = 'absolute';
+    arrow.style.top = '100%';
+    arrow.style.left = '50%';
+    arrow.style.transform = 'translateX(-50%)';
+    arrow.style.width = '0';
+    arrow.style.height = '0';
+    arrow.style.borderLeft = '4px solid transparent';
+    arrow.style.borderRight = '4px solid transparent';
+    arrow.style.borderTop = '4px solid #333';
+
+    DomClient.appendElementToElement(arrow, tooltip);
+    DomClient.appendElementToElement(tooltip, segment);
+
+    segment.addEventListener('mouseenter', () => {
+      segment.style.opacity = '1';
+      tooltip.style.opacity = '1';
+      tooltip.style.visibility = 'visible';
+    });
+
+    segment.addEventListener('mouseleave', () => {
+      segment.style.opacity = '0.7';
+      tooltip.style.opacity = '0';
+      tooltip.style.visibility = 'hidden';
+    });
+
+    DomClient.appendElementToElement(segment, priceBarContainer);
+  });
+
+  DomClient.appendElementToElement(minPriceElement, priceRangeContainer);
+  DomClient.appendElementToElement(maxPriceElement, priceRangeContainer);
+  DomClient.appendElementToElement(titleElement, priceHistoryContainer);
+  DomClient.appendElementToElement(priceRangeContainer, priceHistoryContainer);
+  DomClient.appendElementToElement(priceBarContainer, priceHistoryContainer);
+
+  return priceHistoryContainer;
 }
 
 export class PriceCheckerDecorator implements FeatureInstance {
@@ -515,5 +680,46 @@ export class PriceCheckerDecorator implements FeatureInstance {
     })`;
 
     price.insertAdjacentElement('afterend', shippingText);
+
+    this.addPriceComparisonToOptions();
+  }
+
+  private addPriceComparisonToOptions(): void {
+    if (!this.productPriceData) {
+      return;
+    }
+
+    const findBuyOption = (searchText: string): Element | undefined => {
+      const elements = Array.from(
+        document.querySelectorAll('.buy-section h3, .buy-section .heading'),
+      );
+      return elements.find((el) => el.textContent?.includes(searchText));
+    };
+    const skroutzText = 'Skroutz';
+    const storeText =
+      this.state.language === Language.ENGLISH ? 'Buy through Store' : 'Αγορά μέσω καταστήματος';
+
+    const skroutzBuyOption = findBuyOption(skroutzText);
+    const storeBuyOption = findBuyOption(storeText);
+
+    const addBreakdown = (element: Element | undefined, className: string): void => {
+      if (!element || !this.productPriceData) return;
+
+      const parent = element.closest('.buy-section') || element.parentElement;
+      if (!parent) return;
+
+      const breakdown = createPriceComparisonBreakdownComponent(
+        this.productPriceData,
+        this.productPriceHistory,
+        this.state.language,
+      );
+
+      breakdown.classList.add(className);
+      breakdown.style.marginTop = '10px';
+      parent.appendChild(breakdown);
+    };
+
+    addBreakdown(skroutzBuyOption, 'skroutz-breakdown-inline');
+    addBreakdown(storeBuyOption, 'store-breakdown-inline');
   }
 }

@@ -15,6 +15,7 @@ export type ProductPriceData = {
 export type ProductPriceHistory = {
   minimumPrice: number;
   maximumPrice: number;
+  allPricesOrdered: number[];
 };
 
 export class SkroutzClient {
@@ -48,6 +49,9 @@ export class SkroutzClient {
       return {
         minimumPrice: priceGraphData.min_price.min,
         maximumPrice: priceGraphData.min_price.max,
+        allPricesOrdered: priceGraphData.min_price.graphData.all.values
+          .map((value) => value.value)
+          .filter((value) => value > 0),
       };
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
