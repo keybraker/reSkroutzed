@@ -1,5 +1,5 @@
 import { DomClient } from '../clients/dom/client';
-import { ProductPriceData, SkroutzClient } from '../clients/skroutz/client';
+import { ProductPriceData, ProductPriceHistory, SkroutzClient } from '../clients/skroutz/client';
 import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
@@ -233,6 +233,7 @@ function isPositiveStyling(
 
 function createPriceIndicationElement(
   productPriceData: ProductPriceData,
+  productPriceHistory: ProductPriceHistory | undefined,
   language: Language,
   minimumPriceDifference: number,
 ): HTMLDivElement {
@@ -261,6 +262,7 @@ function createPriceIndicationElement(
     className: 'price-calculation-container',
   });
   const infoContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
+  const priceHistoryContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
   const actionContainer = DomClient.createElement('div', { className: 'inline-flex-row' });
 
   const priceDisplay = createPriceDisplayComponent(
@@ -296,6 +298,16 @@ function createPriceIndicationElement(
 
   DomClient.appendElementToElement(infoContainer, contentContainer);
 
+  if (productPriceHistory) {
+    const priceHistoryBreakdown = createPriceHistoryComparisonComponent(
+      productPriceHistory,
+      productPriceData.buyThroughStore.totalPrice,
+      language,
+    );
+    DomClient.appendElementToElement(priceHistoryBreakdown, priceHistoryContainer);
+    DomClient.appendElementToElement(priceHistoryContainer, contentContainer);
+  }
+
   const goToStoreButton = createShopButtonComponent(
     productPriceData,
     minimumPriceDifference,
@@ -313,6 +325,60 @@ function createPriceIndicationElement(
   return priceIndication;
 }
 
+function createPriceHistoryComparisonComponent(
+  productPriceHistory: ProductPriceHistory,
+  currentPrice: number,
+  language: Language,
+): HTMLElement {
+  const priceHistoryBreakdown = DomClient.createElement('div', {
+    className: 'price-history-breakdown',
+  });
+
+  const getLabel = (english: string, greek: string): string =>
+    language === Language.ENGLISH ? english : greek;
+
+  priceHistoryBreakdown.style.fontSize = '0.85em';
+  priceHistoryBreakdown.style.opacity = '0.7';
+  priceHistoryBreakdown.style.marginBottom = '5px';
+  priceHistoryBreakdown.style.display = 'flex';
+  priceHistoryBreakdown.style.alignItems = 'center';
+  priceHistoryBreakdown.style.justifyContent = 'center';
+  priceHistoryBreakdown.style.gap = '8px';
+  priceHistoryBreakdown.style.fontWeight = 'bold';
+
+  // Calculate price assessment
+  const priceRange = productPriceHistory.maximumPrice - productPriceHistory.minimumPrice;
+  const pricePosition = (currentPrice - productPriceHistory.minimumPrice) / priceRange;
+
+  let priceAssessment: string;
+  if (pricePosition <= 0.3) {
+    priceAssessment = getLabel(
+      'Good price compared to historical price',
+      'Καλή τιμή σε σχέση με τα ιστορικά δεδομένα',
+    );
+  } else if (pricePosition <= 0.7) {
+    priceAssessment = getLabel(
+      'Average price compared to historical price',
+      'Κανονική τιμή σε σχέση με τα ιστορικά δεδομένα',
+    );
+  } else {
+    priceAssessment = getLabel(
+      'High price compared to historical price',
+      'Υψηλή τιμή σε σχέση με τα ιστορικά δεδομένα',
+    );
+  }
+
+  const textContent = DomClient.createElement('span', {});
+  textContent.textContent =
+    `${priceAssessment} - ${getLabel('Min', 'Ελάχ')} ` +
+    `(${productPriceHistory.minimumPrice.toFixed(2)}€, ` +
+    `${getLabel('Max', 'Μέγ')} ${productPriceHistory.maximumPrice.toFixed(2)}€)`;
+
+  DomClient.appendElementToElement(textContent, priceHistoryBreakdown);
+
+  return priceHistoryBreakdown;
+}
+
 export class PriceCheckerDecorator implements FeatureInstance {
   /* Configuration */
   private observer: MutationObserver | null = null;
@@ -320,6 +386,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
   private lastProductId: string | null = null;
   /* Data */
   private productPriceData: ProductPriceData | undefined = undefined;
+  private productPriceHistory: ProductPriceHistory | undefined = undefined;
 
   constructor(private readonly state: State) {}
 
@@ -402,6 +469,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
 
       this.cleanup();
       this.productPriceData = await SkroutzClient.getCurrentProductData();
+      this.productPriceHistory = await SkroutzClient.getPriceHistory();
 
       if (!this.productPriceData) {
         this.isInitializing = false;
@@ -411,6 +479,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
       this.adjustSiteData(offeringCard);
       const priceIndication = createPriceIndicationElement(
         this.productPriceData!,
+        this.productPriceHistory,
         this.state.language,
         this.state.minimumPriceDifference,
       );

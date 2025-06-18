@@ -1,4 +1,4 @@
-import { ProductData } from './types';
+import { PriceChart, ProductData, Store } from './types';
 
 type PriceData = {
   price: number;
@@ -12,17 +12,42 @@ export type ProductPriceData = {
   buyThroughStore: PriceData;
 };
 
+export type ProductPriceHistory = {
+  minimumPrice: number;
+  maximumPrice: number;
+};
+
 export class SkroutzClient {
-  static async getCurrentProductData(): Promise<ProductPriceData> {
+  public static async getCurrentProductData(): Promise<ProductPriceData> {
     try {
       const productCode = this.getSku();
       const skroutzRawPrice = this.getSkroutzRawPrice();
 
       const productData = await this.getProductData(productCode);
+      // const storeIds = Object.values(productData.product_cards)
+      //   .map((card) => card.shop_id)
+      //   .filter((id) => id > 0)
+      //   .sort((a, b) => a - b);
 
       return {
         buyThroughSkroutz: this.getSkroutzPriceData(productData, skroutzRawPrice),
         buyThroughStore: this.getStorePriceData(productData),
+      };
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+      throw error;
+    }
+  }
+
+  public static async getPriceHistory(): Promise<ProductPriceHistory> {
+    try {
+      const productCode = this.getSku();
+
+      const priceGraphData = await this.getPriceGraphData(productCode);
+
+      return {
+        minimumPrice: priceGraphData.min_price.min,
+        maximumPrice: priceGraphData.min_price.max,
       };
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
@@ -75,6 +100,44 @@ export class SkroutzClient {
     }
 
     return (await response.json()) as ProductData;
+  }
+
+  private static async getPriceGraphData(productCode: string): Promise<PriceChart> {
+    const response = await fetch(
+      `https://www.skroutz.gr/s/${productCode}/reskroutz/price_graph.json?shipping_country=GR&currency=EUR`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch (HTTP: ${response.status}) price data for product with SKU ${productCode}`,
+      );
+    }
+
+    return (await response.json()) as PriceChart;
+  }
+
+  private static async getStoreData(storeIds: number[]): Promise<Store[]> {
+    const response = await fetch('https://www.skroutz.gr/s/product_cards_nearest_location.json', {
+      body: JSON.stringify({ store_ids: storeIds.map((id) => id.toString()) }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch (HTTP: ${response.status}) store data for store IDs: ${storeIds.join(', ')}`,
+      );
+    }
+
+    return (await response.json()) as Store[];
   }
 
   private static getSkroutzPriceData(productData: ProductData, skroutzRawPrice: number): PriceData {
