@@ -1,4 +1,5 @@
-import { PriceChart, ProductData, Store } from './types';
+import { removeOutliers } from '../../common/functions/removeOutliers';
+import { PriceChart, PriceChartValue, ProductData, Store } from './types';
 
 type PriceData = {
   price: number;
@@ -15,7 +16,7 @@ export type ProductPriceData = {
 export type ProductPriceHistory = {
   minimumPrice: number;
   maximumPrice: number;
-  allPricesOrdered: number[];
+  allPrices: PriceChartValue[];
 };
 
 export class SkroutzClient {
@@ -46,12 +47,20 @@ export class SkroutzClient {
 
       const priceGraphData = await this.getPriceGraphData(productCode);
 
+      const allPrices = priceGraphData.min_price.graphData['6_months'].values.filter(
+        (value) => value.value > 0,
+      );
+
+      const filteredPrices = removeOutliers(allPrices);
+      const allPriceAmounts = filteredPrices.map((v) => v.value);
+
       return {
-        minimumPrice: priceGraphData.min_price.min,
-        maximumPrice: priceGraphData.min_price.max,
-        allPricesOrdered: priceGraphData.min_price.graphData.all.values
-          .map((value) => value.value)
-          .filter((value) => value > 0),
+        minimumPrice: Math.min(...allPriceAmounts),
+        maximumPrice: Math.max(...allPriceAmounts),
+        allPrices: filteredPrices.map((v) => ({
+          ...v,
+          timestamp: v.timestamp * 1000,
+        })),
       };
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);

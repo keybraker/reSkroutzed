@@ -82,7 +82,7 @@ export type Store = {
   show_added_delay_message: boolean;
 };
 
-type PriceChartValue = {
+export type PriceChartValue = {
   shop_name?: string;
   timestamp: number;
   value: number;
