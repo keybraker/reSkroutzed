@@ -2,24 +2,19 @@ import { DomClient } from '../../clients/dom/client';
 import { ProductPriceHistory } from '../../clients/skroutz/client';
 import { Language } from '../enums/Language.enum';
 
-function applyDarkModeStyles(
-  wrapper: HTMLElement,
-  header: HTMLElement,
-  toggleIcon: HTMLElement,
-  priceHistoryContainer: HTMLElement,
-): void {
-  if (document.body.classList.contains('dark-mode')) {
-    wrapper.style.border = '1px dashed rgba(255, 255, 255, 0.2)';
-    wrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.025)';
-    header.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-    header.style.color = '#ffffff';
-    header.style.borderBottomColor = 'rgba(255, 255, 255, 0.1)';
-    toggleIcon.style.border = '1px dashed rgba(255, 255, 255, 0.3)';
-    toggleIcon.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-    toggleIcon.style.color = '#ffffff';
-    toggleIcon.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.3)';
-    priceHistoryContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-  }
+function getCanvasStyles(): {
+  gridColor: string;
+  textColor: string;
+  textSecondary: string;
+  lineColor: string;
+} {
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  return {
+    gridColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : '#eee',
+    textColor: isDarkMode ? '#ffffff' : '#222',
+    textSecondary: isDarkMode ? '#cccccc' : '#888',
+    lineColor: isDarkMode ? '#ffb347' : '#ff9800',
+  };
 }
 
 export function PriceHistoryComponent(
@@ -30,27 +25,10 @@ export function PriceHistoryComponent(
   const wrapper = DomClient.createElement('div', {
     className: 'price-history-wrapper',
   });
-  wrapper.style.border = '1px dashed rgba(0, 0, 0, 0.2)';
-  wrapper.style.borderRadius = '6px';
-  wrapper.style.margin = '8px 0';
-  wrapper.style.overflow = 'hidden';
-  wrapper.style.backgroundColor = 'rgba(0, 0, 0, 0.015)';
-  wrapper.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.05)';
 
   const header = DomClient.createElement('div', {
     className: 'price-history-header',
   });
-  header.style.display = 'flex';
-  header.style.justifyContent = 'space-between';
-  header.style.alignItems = 'center';
-  header.style.padding = '12px 15px';
-  header.style.backgroundColor = 'rgba(248, 248, 248, 0.8)';
-  header.style.cursor = 'pointer';
-  header.style.fontWeight = 'bold';
-  header.style.fontSize = '14px';
-  header.style.color = '#000';
-  header.style.borderBottom = '1px dashed rgba(0, 0, 0, 0.1)';
-  header.style.transition = 'background-color 0.2s ease, border-color 0.2s ease';
 
   const getLabel = (english: string, greek: string): string =>
     language === Language.ENGLISH ? english : greek;
@@ -67,37 +45,19 @@ export function PriceHistoryComponent(
         ? 'Κανονική τιμή σε σχέση με τα το τελευταίο εξάμηνο'
         : 'Υψηλή τιμή σε σχέση με τα το τελευταίο εξάμηνο',
   );
-
-  const toggleIcon = DomClient.createElement('span', {});
+  const toggleIcon = DomClient.createElement('span', {
+    className: 'toggle-icon',
+  });
   toggleIcon.textContent = '▼';
-  toggleIcon.style.marginLeft = '8px';
-  toggleIcon.style.fontSize = '12px';
-  toggleIcon.style.transition = 'transform 0.2s ease';
-  toggleIcon.style.color = '#000';
-  toggleIcon.style.border = '1px solid rgba(0, 0, 0, 0.77)';
-  toggleIcon.style.borderRadius = '50%';
-  toggleIcon.style.width = '24px';
-  toggleIcon.style.height = '24px';
-  toggleIcon.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-  toggleIcon.style.display = 'flex';
-  toggleIcon.style.alignItems = 'center';
-  toggleIcon.style.justifyContent = 'center';
-  toggleIcon.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
   DomClient.appendElementToElement(toggleIcon, header);
 
   const priceHistoryContainer = DomClient.createElement('div', {
     className: 'price-history-container',
   });
-  priceHistoryContainer.style.padding = '15px';
-  priceHistoryContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-  priceHistoryContainer.style.display = 'none';
-
   const canvas = document.createElement('canvas') as HTMLCanvasElement;
+  canvas.className = 'price-history-canvas';
   canvas.width = 700;
   canvas.height = 200;
-  canvas.style.width = '100%';
-  canvas.style.height = '200px';
-
   const ctx = canvas.getContext('2d')!;
   const padding = 50;
   const width = canvas.width;
@@ -110,8 +70,11 @@ export function PriceHistoryComponent(
   const stepValue = (maxPrice - minPrice) / (priceSteps - 1);
   const xStep = (width - 2 * padding) / (productPriceHistory.allPrices.length - 1);
 
-  ctx.strokeStyle = '#eee';
-  ctx.fillStyle = '#222';
+  // Get dynamic colors based on dark mode
+  const styles = getCanvasStyles();
+
+  ctx.strokeStyle = styles.gridColor;
+  ctx.fillStyle = styles.textColor;
   ctx.font = '14px sans-serif';
 
   for (let i = 0; i < priceSteps; i++) {
@@ -124,8 +87,7 @@ export function PriceHistoryComponent(
     ctx.stroke();
     ctx.fillText(`${price.toFixed(2)}€`, 5, y + 5);
   }
-
-  ctx.fillStyle = '#888';
+  ctx.fillStyle = styles.textSecondary;
   ctx.font = '12px sans-serif';
 
   productPriceHistory.allPrices.forEach((p, i) => {
@@ -138,7 +100,7 @@ export function PriceHistoryComponent(
     }
   });
 
-  ctx.strokeStyle = '#ff9800';
+  ctx.strokeStyle = styles.lineColor;
   ctx.lineWidth = 3;
   ctx.beginPath();
 
@@ -151,19 +113,11 @@ export function PriceHistoryComponent(
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-
   ctx.stroke();
 
-  const tooltip = DomClient.createElement('div', { className: 'tooltip' });
-  tooltip.style.position = 'absolute';
-  tooltip.style.background = '#333';
-  tooltip.style.color = '#fff';
-  tooltip.style.padding = '6px 10px';
-  tooltip.style.borderRadius = '4px';
-  tooltip.style.fontSize = '0.75em';
-  tooltip.style.pointerEvents = 'none';
-  tooltip.style.opacity = '0';
-  tooltip.style.transition = 'opacity 0.2s ease';
+  const tooltip = DomClient.createElement('div', {
+    className: 'price-history-tooltip',
+  });
   DomClient.appendElementToElement(tooltip, priceHistoryContainer);
 
   canvas.addEventListener('mousemove', (e) => {
@@ -182,42 +136,25 @@ export function PriceHistoryComponent(
     tooltip.textContent = `${date}: ${closestPoint.price.toFixed(2)}€, ${closestPoint.store}`;
     tooltip.style.left = `${mouseX + 10}px`;
     tooltip.style.top = `${mouseY - 30}px`;
-    tooltip.style.opacity = '1';
+    tooltip.classList.add('visible');
   });
-
   canvas.addEventListener('mouseleave', () => {
-    tooltip.style.opacity = '0';
+    tooltip.classList.remove('visible');
   });
 
   DomClient.appendElementToElement(canvas, priceHistoryContainer);
-
   header.addEventListener('click', () => {
-    const isVisible = priceHistoryContainer.style.display !== 'none';
-    priceHistoryContainer.style.display = isVisible ? 'none' : 'block';
-    toggleIcon.textContent = isVisible ? '▼' : '▲';
+    const isVisible = priceHistoryContainer.classList.contains('visible');
+    if (isVisible) {
+      priceHistoryContainer.classList.remove('visible');
+      toggleIcon.textContent = '▼';
+    } else {
+      priceHistoryContainer.classList.add('visible');
+      toggleIcon.textContent = '▲';
+    }
   });
-
-  header.addEventListener('mouseenter', () => {
-    header.style.backgroundColor = document.body.classList.contains('dark-mode')
-      ? 'rgba(255, 255, 255, 0.15)'
-      : 'rgba(248, 248, 248, 0.9)';
-    header.style.borderBottomColor = document.body.classList.contains('dark-mode')
-      ? 'rgba(255, 255, 255, 0.2)'
-      : 'rgba(0, 0, 0, 0.15)';
-  });
-
-  header.addEventListener('mouseleave', () => {
-    header.style.backgroundColor = document.body.classList.contains('dark-mode')
-      ? 'rgba(255, 255, 255, 0.1)'
-      : 'rgba(248, 248, 248, 0.8)';
-    header.style.borderBottomColor = document.body.classList.contains('dark-mode')
-      ? 'rgba(255, 255, 255, 0.1)'
-      : 'rgba(0, 0, 0, 0.1)';
-  });
-
   DomClient.appendElementToElement(header, wrapper);
   DomClient.appendElementToElement(priceHistoryContainer, wrapper);
-  applyDarkModeStyles(wrapper, header, toggleIcon, priceHistoryContainer);
 
   return wrapper;
 }
