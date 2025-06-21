@@ -18,8 +18,8 @@ export class VideoAdHandler implements AdHandlerInterface {
       this.updateCountAndVisibility(element),
     );
 
-    this.videoAdClasses.forEach((videoAdClass) => {
-      this.flagElementsBySelector(`.${videoAdClass}:not(.${this.flaggedVideoAdClass})`);
+    this.videoAdClasses.forEach((adClass) => {
+      this.flagElementsBySelector(`.${adClass}:not(.${this.flaggedVideoAdClass})`);
     });
   }
 
@@ -31,7 +31,7 @@ export class VideoAdHandler implements AdHandlerInterface {
 
   private updateCountAndVisibility(element: Element): void {
     if (
-      this.videoAdClasses.some((videoAdClass) => element.classList.contains(videoAdClass)) &&
+      this.videoAdClasses.some((adClass) => element.classList.contains(adClass)) &&
       !element.classList.contains(this.flaggedVideoAdClass)
     ) {
       this.state.videoAdCount++;

@@ -2,6 +2,7 @@ import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { DomClient } from '../clients/dom/client';
 import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
+import { CampaignAdHandler } from '../handlers/Campaign.handler';
 import { ListProductAdHandler } from '../handlers/ListProductAd.handler';
 import { ShelfProductAdHandler } from '../handlers/ShelfProductAd.handler';
 import { SponsorshipAdHandler } from '../handlers/SponsorshipAd.handler';
@@ -18,6 +19,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
   private readonly listProductAdHandler: ListProductAdHandler;
   private readonly shelfProductAdHandler: ShelfProductAdHandler;
   private readonly sponsorshipAdHandler: SponsorshipAdHandler;
+  private readonly campaignAdHandler: CampaignAdHandler;
 
   constructor(state: State) {
     this.state = state;
@@ -26,6 +28,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     this.listProductAdHandler = new ListProductAdHandler(this.state);
     this.shelfProductAdHandler = new ShelfProductAdHandler(this.state);
     this.sponsorshipAdHandler = new SponsorshipAdHandler(this.state);
+    this.campaignAdHandler = new CampaignAdHandler(this.state);
   }
 
   public execute(): void {
@@ -748,6 +751,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, this.state.hideSponsorships);
 
       this.sponsorshipAdHandler.visibilityUpdate();
+      this.campaignAdHandler.visibilityUpdate();
       button.classList.toggle('active');
 
       const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');

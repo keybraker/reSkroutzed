@@ -6,6 +6,7 @@ import { LogoHatDecorator } from './features/LogoHat.decorator';
 import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
 import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
 import { themeSync } from './features/functions/themeSync';
+import { CampaignAdHandler } from './handlers/Campaign.handler';
 import { ListProductAdHandler } from './handlers/ListProductAd.handler';
 import { ShelfProductAdHandler } from './handlers/ShelfProductAd.handler';
 import { SponsorshipAdHandler } from './handlers/SponsorshipAd.handler';
@@ -51,6 +52,7 @@ const videoAdHandler = new VideoAdHandler(state);
 const listProductAdHandler = new ListProductAdHandler(state);
 const shelfProductAdHandler = new ShelfProductAdHandler(state);
 const sponsorshipAdHandler = new SponsorshipAdHandler(state);
+const campaignAdHandler = new CampaignAdHandler(state);
 // Decorators
 const priceCheckerIndicator = new PriceCheckerDecorator(state);
 const finalPriceFixerDecorator = new FinalPriceFixerDecorator(state);
@@ -77,6 +79,7 @@ const logoHatDecorator = new LogoHatDecorator();
     listProductAdHandler.flag();
     shelfProductAdHandler.flag();
     sponsorshipAdHandler.flag();
+    campaignAdHandler.flag();
   }
 
   function toggleVisibility(): void {
@@ -84,6 +87,7 @@ const logoHatDecorator = new LogoHatDecorator();
     listProductAdHandler.visibilityUpdate();
     shelfProductAdHandler.visibilityUpdate();
     sponsorshipAdHandler.visibilityUpdate();
+    campaignAdHandler.visibilityUpdate();
   }
 
   function applyMobileOptimizations(): void {
@@ -173,6 +177,7 @@ chrome.runtime.onMessage.addListener(
       state.hideSponsorships = request.value as boolean;
       BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, state.hideSponsorships);
       sponsorshipAdHandler.visibilityUpdate();
+      campaignAdHandler.visibilityUpdate();
       sendResponse({ success: true });
     } else if (request.action === 'updatePriceDifference' && request.value !== undefined) {
       state.minimumPriceDifference = request.value as number;
