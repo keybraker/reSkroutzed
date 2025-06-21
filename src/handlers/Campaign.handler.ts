@@ -19,7 +19,7 @@ export class CampaignAdHandler implements AdHandlerInterface {
     );
 
     this.shelfAdClass.forEach((adClass) => {
-      this.flagElementsBySelector(`.${adClass}:not(.${this.flaggedShelfAdClass})`);
+      this.flagElementsBySelector(`.timeline-card .${adClass}:not(.${this.flaggedShelfAdClass})`);
     });
   }
 
