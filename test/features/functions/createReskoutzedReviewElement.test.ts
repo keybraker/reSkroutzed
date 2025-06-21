@@ -1,7 +1,7 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\features\functions\createReskoutzedReviewElement.test.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
-import { createReskoutzedReviewElement } from '../../../src/features/functions/createReskoutzedReviewElement';
+import { createReSkoutzedReviewElement } from '../../../src/features/functions/createReskoutzedReviewElement';
 import { DomClient } from '../../../src/clients/dom/client';
 import { createLogoElement } from '../../../src/features/functions/createLogoElement';
 
@@ -43,7 +43,7 @@ describe('createReskoutzedReviewElement', () => {
   });
 
   it('should create a review element with correct classes', () => {
-    const element = createReskoutzedReviewElement();
+    const element = createReSkoutzedReviewElement();
 
     expect(element.tagName).toBe('DIV');
     expect(element.classList.contains('icon-border')).toBe(true);
@@ -58,7 +58,7 @@ describe('createReskoutzedReviewElement', () => {
       configurable: true,
     });
 
-    const element = createReskoutzedReviewElement();
+    const element = createReSkoutzedReviewElement();
     const link = element.querySelector('a');
 
     expect(link).not.toBeNull();
@@ -79,7 +79,7 @@ describe('createReskoutzedReviewElement', () => {
       configurable: true,
     });
 
-    const element = createReskoutzedReviewElement();
+    const element = createReSkoutzedReviewElement();
     const link = element.querySelector('a');
 
     expect(link).not.toBeNull();
@@ -90,7 +90,7 @@ describe('createReskoutzedReviewElement', () => {
   });
 
   it('should append the link to the main element', () => {
-    const element = createReskoutzedReviewElement();
+    const element = createReSkoutzedReviewElement();
 
     // First call to appendElementToElement should be appending the link to the main element
     expect(DomClient.appendElementToElement).toHaveBeenCalledTimes(2);
@@ -102,7 +102,7 @@ describe('createReskoutzedReviewElement', () => {
   });
 
   it('should create and append a logo element', () => {
-    const element = createReskoutzedReviewElement();
+    const element = createReSkoutzedReviewElement();
 
     // The createLogoElement function should be called once
     expect(createLogoElement).toHaveBeenCalledTimes(1);

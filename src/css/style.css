@@ -336,8 +336,8 @@ text-black {
   box-shadow:
     0 4px 12px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-  padding: 10px !important;
-  border-radius: 50% !important;
+  padding: 6px !important;
+  border-radius: 12px !important;
   font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: 0.8px !important;
@@ -412,15 +412,15 @@ text-black {
   box-shadow:
     0 4px 12px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-  padding: 10px 16px !important;
-  border-radius: 20px !important;
+  padding: 12px 12px !important;
+  border-radius: 12px !important;
   font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: 0.8px !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 4px !important;
   z-index: 5 !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   cursor: pointer !important;
@@ -761,11 +761,10 @@ text-black {
 
 .icon-border {
   display: inline-block !important;
-  padding: 2px 4px !important;
-  color: var(--color-text-neutral-default) !important;
+  padding: 2px 10px !important;
+  color: var(--color-text-neutral-default, #000000) !important;
   font-size: 11px !important;
   font-style: italic !important;
-  font-family: Arial, sans-serif !important;
   text-align: end !important;
   vertical-align: middle !important;
 }
@@ -1036,7 +1035,7 @@ text-black {
   justify-content: space-between !important;
   align-items: center !important;
   padding: 12px 15px !important;
-  background-color: rgba(248, 248, 248, 0.8) !important;
+  background-color: rgba(248, 248, 248, 0.1) !important;
   cursor: pointer !important;
   font-weight: bold !important;
   font-size: 14px !important;
@@ -1054,7 +1053,7 @@ text-black {
 }
 
 .price-history-header:hover {
-  background-color: rgba(248, 248, 248, 0.9) !important;
+  background-color: rgba(248, 248, 248, 0.15) !important;
   border-bottom-color: rgba(0, 0, 0, 0.15) !important;
 }
 

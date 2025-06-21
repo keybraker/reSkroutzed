@@ -5,7 +5,7 @@ import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createBuyMeCoffeeElement } from './functions/createBuyMeCoffeeElement';
-import { createReskoutzedReviewElement } from './functions/createReskoutzedReviewElement';
+import { createReSkoutzedReviewElement } from './functions/createReskoutzedReviewElement';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
@@ -249,7 +249,7 @@ function createPriceIndicationElement(
 
   const tagsContainer = DomClient.createElement('div', { className: 'tags-container' });
 
-  const reSkroutzedReview = createReskoutzedReviewElement();
+  const reSkroutzedReview = createReSkoutzedReviewElement();
   DomClient.appendElementToElement(reSkroutzedReview, tagsContainer);
 
   const buyMeCoffeeElement = createBuyMeCoffeeElement();

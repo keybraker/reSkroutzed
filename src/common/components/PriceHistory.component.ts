@@ -2,21 +2,6 @@ import { DomClient } from '../../clients/dom/client';
 import { ProductPriceHistory } from '../../clients/skroutz/client';
 import { Language } from '../enums/Language.enum';
 
-function getCanvasStyles(): {
-  gridColor: string;
-  textColor: string;
-  textSecondary: string;
-  lineColor: string;
-} {
-  const isDarkMode = document.body.classList.contains('dark-mode');
-  return {
-    gridColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : '#eee',
-    textColor: isDarkMode ? '#ffffff' : '#222',
-    textSecondary: isDarkMode ? '#cccccc' : '#888',
-    lineColor: isDarkMode ? '#ffb347' : '#ff9800',
-  };
-}
-
 export function PriceHistoryComponent(
   currentPriceState: 'expensive' | 'cheap' | 'normal',
   productPriceHistory: ProductPriceHistory,
@@ -40,10 +25,10 @@ export function PriceHistoryComponent(
         ? 'Average price compared to historical price'
         : 'High price compared to historical price',
     currentPriceState === 'cheap'
-      ? 'Καλή τιμή σε σχέση με τα το τελευταίο εξάμηνο'
+      ? 'Καλή τιμή σε σχέση με το τελευταίο εξάμηνο'
       : currentPriceState === 'normal'
-        ? 'Κανονική τιμή σε σχέση με τα το τελευταίο εξάμηνο'
-        : 'Υψηλή τιμή σε σχέση με τα το τελευταίο εξάμηνο',
+        ? 'Κανονική τιμή σε σχέση με το τελευταίο εξάμηνο'
+        : 'Υψηλή τιμή σε σχέση με το τελευταίο εξάμηνο',
   );
   const toggleIcon = DomClient.createElement('span', {
     className: 'toggle-icon',
@@ -65,18 +50,19 @@ export function PriceHistoryComponent(
 
   const minPrice = Math.min(...productPriceHistory.allPrices.map((p) => p.value));
   const maxPrice = Math.max(...productPriceHistory.allPrices.map((p) => p.value));
-
   const priceSteps = 5;
   const stepValue = (maxPrice - minPrice) / (priceSteps - 1);
   const xStep = (width - 2 * padding) / (productPriceHistory.allPrices.length - 1);
 
-  // Get dynamic colors based on dark mode
-  const styles = getCanvasStyles();
+  const computedStyle = getComputedStyle(document.documentElement);
+  const gridColor = computedStyle.getPropertyValue('--price-history-grid-color').trim();
+  const textColor = computedStyle.getPropertyValue('--price-history-text-color').trim();
+  const textSecondary = computedStyle.getPropertyValue('--price-history-text-secondary').trim();
+  const lineColor = computedStyle.getPropertyValue('--price-history-line-color').trim();
 
-  ctx.strokeStyle = styles.gridColor;
-  ctx.fillStyle = styles.textColor;
+  ctx.strokeStyle = gridColor;
+  ctx.fillStyle = textColor;
   ctx.font = '14px sans-serif';
-
   for (let i = 0; i < priceSteps; i++) {
     const price = minPrice + stepValue * i;
     const y =
@@ -87,7 +73,7 @@ export function PriceHistoryComponent(
     ctx.stroke();
     ctx.fillText(`${price.toFixed(2)}€`, 5, y + 5);
   }
-  ctx.fillStyle = styles.textSecondary;
+  ctx.fillStyle = textSecondary;
   ctx.font = '12px sans-serif';
 
   productPriceHistory.allPrices.forEach((p, i) => {
@@ -100,8 +86,7 @@ export function PriceHistoryComponent(
     }
   });
 
-  ctx.strokeStyle = styles.lineColor;
-  ctx.lineWidth = 3;
+  ctx.strokeStyle = lineColor;
   ctx.beginPath();
 
   const points: { x: number; y: number; price: number; store: string; timestamp: number }[] = [];
