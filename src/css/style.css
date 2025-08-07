@@ -413,7 +413,7 @@ text-black {
     0 4px 12px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   padding: 12px 12px !important;
-  border-radius: 12px !important;
+  border-radius: 24px !important;
   font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: 0.8px !important;
