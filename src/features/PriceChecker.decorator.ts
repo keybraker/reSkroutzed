@@ -233,7 +233,7 @@ function isPositiveStyling(
 
 function createPriceIndicationElement(
   productPriceData: ProductPriceData,
-  productPriceHistory: ProductPriceHistory,
+  productPriceHistory: ProductPriceHistory | undefined,
   language: Language,
   minimumPriceDifference: number,
 ): HTMLDivElement {
@@ -246,6 +246,8 @@ function createPriceIndicationElement(
       showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
     ],
   }) as HTMLDivElement;
+  // Add a bit more space from elements above (requested)
+  (priceIndication as HTMLDivElement).style.marginTop = '14px';
 
   const tagsContainer = DomClient.createElement('div', { className: 'tags-container' });
 
@@ -304,15 +306,17 @@ function createPriceIndicationElement(
   );
   DomClient.appendElementToElement(goToStoreButton, actionContainer);
 
-  const priceHistoryBreakdown = PriceHistoryComponent(
-    getPriceHistoryComparisonOutcome(
+  if (productPriceHistory) {
+    const priceHistoryBreakdown = PriceHistoryComponent(
+      getPriceHistoryComparisonOutcome(
+        productPriceHistory,
+        productPriceData.buyThroughStore.totalPrice,
+      ),
       productPriceHistory,
-      productPriceData.buyThroughStore.totalPrice,
-    ),
-    productPriceHistory,
-    language,
-  );
-  DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
+      language,
+    );
+    DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
+  }
 
   DomClient.appendElementToElement(actionContainer, contentContainer);
 
@@ -327,8 +331,12 @@ function getPriceHistoryComparisonOutcome(
   productPriceHistory: ProductPriceHistory,
   currentPrice: number,
 ): 'expensive' | 'cheap' | 'normal' {
-  const priceRange = productPriceHistory.maximumPrice - productPriceHistory.minimumPrice;
-  const pricePosition = (currentPrice - productPriceHistory.minimumPrice) / priceRange;
+  const min = Number(productPriceHistory.minimumPrice);
+  const max = Number(productPriceHistory.maximumPrice);
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return 'normal';
+  const priceRange = max - min;
+  if (priceRange <= 0) return 'normal';
+  const pricePosition = (currentPrice - min) / priceRange;
 
   if (pricePosition <= 0.3) {
     return 'cheap';
@@ -388,13 +396,20 @@ export class PriceCheckerDecorator implements FeatureInstance {
   }
 
   private checkForProductViewChange(): void {
-    const offeringCard = document.querySelector('article.offering-card');
-    if (!offeringCard) return;
+    const host = this.getPriceHostElement();
+    if (!host) return;
 
     const currentProductId = this.getProductId();
 
     if (currentProductId && currentProductId !== this.lastProductId) {
       this.lastProductId = currentProductId;
+      this.initializeProductView();
+      return;
+    }
+
+    // If product didn't change but our indicator was removed by a re-render, re-initialize
+    const hasIndicator = !!host.querySelector('.price-checker-outline');
+    if (!hasIndicator) {
       this.initializeProductView();
     }
   }
@@ -421,22 +436,29 @@ export class PriceCheckerDecorator implements FeatureInstance {
     try {
       this.isInitializing = true;
 
-      const offeringCard = document.querySelector('article.offering-card');
-      if (!offeringCard) {
+      const host = this.getPriceHostElement();
+      if (!host) {
         this.isInitializing = false;
         return;
       }
 
       this.cleanup();
       this.productPriceData = await SkroutzClient.getCurrentProductData();
-      this.productPriceHistory = await SkroutzClient.getPriceHistory();
+      // Swallow errors in history retrieval to avoid breaking the feature
+      try {
+        this.productPriceHistory = await SkroutzClient.getPriceHistory();
+      } catch (e) {
+        this.productPriceHistory = undefined;
+        // eslint-disable-next-line no-console
+        console.warn('PriceChecker: failed to fetch price history', e);
+      }
 
       if (!this.productPriceData) {
         this.isInitializing = false;
         return;
       }
 
-      this.adjustSiteData(offeringCard);
+      this.adjustSiteData(host);
       const priceIndication = createPriceIndicationElement(
         this.productPriceData!,
         this.productPriceHistory,
@@ -444,7 +466,10 @@ export class PriceCheckerDecorator implements FeatureInstance {
         this.state.minimumPriceDifference,
       );
 
-      offeringCard.insertBefore(priceIndication, offeringCard.children[1]);
+      this.insertPriceIndicationIntoHost(host, priceIndication);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('PriceChecker: initializeProductView failed', e);
     } finally {
       this.isInitializing = false;
     }
@@ -459,13 +484,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
   }
 
   private adjustSiteData(element: Element): void {
-    const offeringHeading = element.querySelector('div.offering-heading');
-    const price = offeringHeading?.querySelector('div.price');
-
-    if (!offeringHeading || !price) {
-      return;
-    }
-
+    // Create the shipping text once and insert depending on DOM structure
     const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
     const formattedShipping = (this.productPriceData?.buyThroughSkroutz.shippingCost ?? 0)
       .toFixed(2)
@@ -474,9 +493,70 @@ export class PriceCheckerDecorator implements FeatureInstance {
       this.state.language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
     })`;
 
-    price.insertAdjacentElement('afterend', shippingText);
+    if (element.matches('article.offering-card')) {
+      const offeringHeading = element.querySelector('div.offering-heading');
+      const price = offeringHeading?.querySelector('div.price');
+      if (offeringHeading && price) {
+        price.insertAdjacentElement('afterend', shippingText);
+      }
+    } else if (element.matches('article.buybox')) {
+      // New DOM structure: place shipping directly under the left-side price only
+      const priceBox = element.querySelector('div.price-box');
+      const finalPrice = priceBox?.querySelector('div.final-price');
+      if (finalPrice) {
+        // Append inside the final-price container so it stays under the price on the left
+        (shippingText as HTMLDivElement).style.marginTop = '6px';
+        (shippingText as HTMLDivElement).style.display = 'block';
+        (shippingText as HTMLDivElement).style.width = '100%';
+        (shippingText as HTMLDivElement).style.flexBasis = '100%';
+        (shippingText as HTMLDivElement).style.whiteSpace = 'nowrap';
+        // Ensure the container allows wrapping so shipping moves to the next line
+        (finalPrice as HTMLElement).style.flexWrap = 'wrap';
+        (finalPrice as HTMLElement).style.alignItems = 'flex-start';
+        (finalPrice as Element).appendChild(shippingText);
+      } else if (priceBox) {
+        (priceBox as Element).insertAdjacentElement('beforeend', shippingText);
+      }
+    }
 
     this.addPriceComparisonToOptions();
+  }
+
+  private getPriceHostElement(): Element | null {
+    return (
+      document.querySelector('article.buybox') || document.querySelector('article.offering-card')
+    );
+  }
+
+  private insertPriceIndicationIntoHost(host: Element, priceIndication: HTMLDivElement): void {
+    if (host.matches('article.offering-card')) {
+      // Keep legacy placement behavior
+      host.insertBefore(priceIndication, host.children[1] ?? host.firstChild);
+      return;
+    }
+
+    if (host.matches('article.buybox')) {
+      // Prefer inserting right after the price-and-installments, otherwise after final-price, otherwise after price-box
+      const priceAndInstallments = host.querySelector('.price-box .price-and-installments');
+      if (priceAndInstallments) {
+        (priceAndInstallments as Element).insertAdjacentElement('afterend', priceIndication);
+        return;
+      }
+
+      const finalPrice = host.querySelector('.price-box .final-price');
+      if (finalPrice) {
+        (finalPrice as Element).insertAdjacentElement('afterend', priceIndication);
+        return;
+      }
+
+      const priceBox = host.querySelector('.price-box');
+      if (priceBox) {
+        (priceBox as Element).insertAdjacentElement('afterend', priceIndication);
+        return;
+      }
+
+      host.insertBefore(priceIndication, host.firstChild);
+    }
   }
 
   private addPriceComparisonToOptions(): void {
