@@ -69,23 +69,50 @@ export class SkroutzClient {
   }
 
   private static getSkroutzRawPrice(): number {
-    const offeringCard = document.querySelector('article.offering-card')!;
-    const priceElement = offeringCard.querySelector('div.price')!;
+    // Try new buybox structure first
+    const buybox = document.querySelector('article.buybox');
+    if (buybox) {
+      const finalPrice = buybox.querySelector('.final-price');
+      const intEl = finalPrice?.querySelector('.integer-part');
+      const decEl = finalPrice?.querySelector('.decimal-part');
+      let integerPart = intEl?.textContent?.trim() ?? '';
+      let decimalPart = decEl?.textContent?.trim() ?? '';
 
-    if (!priceElement) {
-      throw new Error('Failed to fetch price');
+      // Normalize: keep only digits, remove thousands separators/spaces
+      integerPart = integerPart.replace(/[^\d]/g, '');
+      decimalPart = decimalPart.replace(/[^\d]/g, '');
+      if (!decimalPart) decimalPart = '00';
+
+      if (integerPart) {
+        const priceText = `${integerPart}.${decimalPart}`;
+        const price = parseFloat(priceText);
+        if (!Number.isNaN(price)) {
+          return price;
+        }
+      }
+      // As a fallback, try to parse the whole final-price text content
+      const whole = finalPrice?.textContent?.replace(/[^\d,.]/g, '') ?? '';
+      // Replace comma with dot for decimal
+      const normalized = whole.replace(/\./g, '').replace(/,(\d{2})$/, '.$1');
+      const fallback = parseFloat(normalized);
+      if (!Number.isNaN(fallback)) return fallback;
     }
 
-    const integerPart = priceElement.firstChild?.textContent?.trim() || ''; // "1.028"
-    const decimalPart = priceElement.querySelector('span.comma + span')?.textContent?.trim() || ''; // "89"
-    const priceText = integerPart.replace(/\./g, '') + '.' + decimalPart;
-    const price = parseFloat(priceText);
-
-    if (isNaN(price)) {
-      throw new Error('Failed to parse price');
+    // Fallback to legacy offering-card structure
+    const offeringCard = document.querySelector('article.offering-card');
+    const priceElement = offeringCard?.querySelector('div.price');
+    if (priceElement) {
+      const integerPart = priceElement.firstChild?.textContent?.trim() || '';
+      const decimalPart =
+        priceElement.querySelector('span.comma + span')?.textContent?.trim() || '00';
+      const priceText = integerPart.replace(/\./g, '') + '.' + decimalPart.replace(/[^\d]/g, '');
+      const price = parseFloat(priceText);
+      if (!Number.isNaN(price)) {
+        return price;
+      }
     }
 
-    return price;
+    throw new Error('Failed to fetch/parse current product price');
   }
 
   private static getSku(): string {
