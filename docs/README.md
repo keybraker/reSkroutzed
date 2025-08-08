@@ -61,6 +61,12 @@ For development, you can use:
 ### Development Mode
 
 ```bash
+# Install web-ext to deploy the live browser
+
+npm install --save-dev web-ext
+```
+
+```bash
 # run locally for development
 
 npm run dev:chrome
