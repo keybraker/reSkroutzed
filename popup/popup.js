@@ -5,6 +5,7 @@ const StorageKey = {
   VIDEO_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-video-ad-visibility',
   SHELF_PRODUCT_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-shelf-product-ad-visibility',
   SPONSORSHIP_VISIBILITY: STORAGE_KEY_PREFIX + '-sponsorship-visibility',
+  UNIVERSAL_TOGGLE_VISIBILITY: STORAGE_KEY_PREFIX + '-universal-toggle-visibility',
   MINIMUM_PRICE_DIFFERENCE: STORAGE_KEY_PREFIX + '-minimum-difference',
   TOTAL_ADS_BLOCKED: STORAGE_KEY_PREFIX + '-total-ads-blocked',
   TOTAL_SHELVES_BLOCKED: STORAGE_KEY_PREFIX + '-total-shelves-blocked',
@@ -53,6 +54,12 @@ function loadSettings() {
   const adsToggle = document.getElementById('toggleAds');
   getStorageValue(StorageKey.PRODUCT_AD_VISIBILITY, true, (value) => {
     adsToggle.checked = !value;
+  });
+
+  const universalToggle = document.getElementById('toggleUniversalToggle');
+  getStorageValue(StorageKey.UNIVERSAL_TOGGLE_VISIBILITY, false, (value) => {
+    // storage value means hide flag; checkbox checked means show
+    universalToggle.checked = !value;
   });
 
   const videosToggle = document.getElementById('toggleVideos');
@@ -115,6 +122,23 @@ function setupEventListeners() {
     } else {
       document.body.classList.remove('dark-popup');
     }
+  });
+
+  document.getElementById('toggleUniversalToggle').addEventListener('change', (e) => {
+    const showUniversal = e.target.checked;
+    const hideUniversal = !showUniversal;
+    setStorageValue(StorageKey.UNIVERSAL_TOGGLE_VISIBILITY, hideUniversal);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'toggleUniversalToggle',
+          value: hideUniversal
+        }, function (response) {
+          console.log('Universal toggle visibility response:', response);
+        });
+      }
+    });
   });
 
   document.getElementById('toggleAds').addEventListener('change', (e) => {

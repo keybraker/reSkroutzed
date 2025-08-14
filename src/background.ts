@@ -17,6 +17,7 @@ const state: State = {
   hideVideoAds: false,
   hideSponsorships: false,
   hideShelfProductAds: false,
+  hideUniversalToggle: false,
   language: Language.GREEK,
   productAdCount: 0,
   ShelfAdCount: 0,
@@ -38,6 +39,9 @@ function loadStorage(): void {
   state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
+  );
+  state.hideUniversalToggle = BrowserClient.getValue<boolean>(
+    StorageKey.UNIVERSAL_TOGGLE_VISIBILITY,
   );
   state.isMobile = BrowserClient.detectMobile();
 
@@ -63,7 +67,9 @@ const logoHatDecorator = new LogoHatDecorator();
   async function initializer(): Promise<void> {
     await priceCheckerIndicator.execute();
     finalPriceFixerDecorator.execute();
-    universalToggleDecorator.execute();
+    if (!state.hideUniversalToggle) {
+      universalToggleDecorator.execute();
+    }
     logoHatDecorator.execute();
 
     flagContent();
@@ -184,6 +190,23 @@ chrome.runtime.onMessage.addListener(
       BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
       const event = new Event('priceThresholdChange');
       document.dispatchEvent(event);
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleUniversalToggle' && request.value !== undefined) {
+      state.hideUniversalToggle = request.value as boolean;
+      BrowserClient.setValue(StorageKey.UNIVERSAL_TOGGLE_VISIBILITY, state.hideUniversalToggle);
+
+      // Hide/show the toggle widget
+      const existing = document.querySelector('.universal-toggle-container');
+      if (state.hideUniversalToggle) {
+        if (existing && existing.parentElement) {
+          existing.parentElement.removeChild(existing);
+        }
+      } else {
+        if (!existing) {
+          const universalToggleDecorator = new UniversalToggleDecorator(state);
+          universalToggleDecorator.execute();
+        }
+      }
       sendResponse({ success: true });
     }
 

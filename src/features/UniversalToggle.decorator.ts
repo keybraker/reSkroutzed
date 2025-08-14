@@ -32,6 +32,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
   }
 
   public execute(): void {
+    if (this.state.hideUniversalToggle) {
+      return;
+    }
     const container = document.createElement('div');
     container.classList.add('universal-toggle-container');
 

@@ -6,6 +6,8 @@ export type State = {
   hideVideoAds: boolean;
   hideSponsorships: boolean;
   hideShelfProductAds: boolean; // New property for shelf product ads
+  // ui
+  hideUniversalToggle?: boolean;
   // counters
   productAdCount: number;
   ShelfAdCount: number;
