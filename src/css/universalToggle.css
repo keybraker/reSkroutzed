@@ -24,7 +24,7 @@
   padding: 8px !important;
   border: 2px solid #ffffff !important;
   border-radius: 50% !important;
-  background: linear-gradient(145deg, #e66300, #d95500) !important;
+  background: linear-gradient(145deg, rgba(230, 99, 0, 0.5), rgba(217, 85, 0, 0.75)) !important;
   color: #ffffff !important;
   cursor: pointer !important;
   z-index: 10000 !important;
