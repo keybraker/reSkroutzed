@@ -233,8 +233,8 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       const updatedTitle =
         this.state.language === Language.GREEK
-          ? `Ελάχιστη διαφορά τιμής: ${this.state.minimumPriceDifference}€`
-          : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
+          ? `Ελάχιστη ποσοστιαία διαφορά: ${this.state.minimumPriceDifference}%`
+          : `Minimum Percentage Difference: ${this.state.minimumPriceDifference}%`;
       priceDifferenceButton.title = updatedTitle;
 
       const valueText = priceDifferenceButton.querySelector('.price-value-mobile');
@@ -246,6 +246,15 @@ export class UniversalToggleDecorator implements FeatureInstance {
           valueDisplay.textContent = this.state.minimumPriceDifference.toString();
         }
       }
+
+      const mobileSymbol = priceDifferenceButton.querySelector(
+        '.price-currency-symbol-mobile',
+      ) as HTMLElement | null;
+      if (mobileSymbol) mobileSymbol.textContent = '%';
+      const desktopSymbol = priceDifferenceButton.querySelector(
+        '.price-currency-symbol',
+      ) as HTMLElement | null;
+      if (desktopSymbol) desktopSymbol.textContent = '%';
     }
   }
 
@@ -285,8 +294,8 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     const titleText =
       this.state.language === Language.GREEK
-        ? `Ελάχιστη διαφορά τιμής: ${this.state.minimumPriceDifference}€`
-        : `Minimum Price Difference: ${this.state.minimumPriceDifference}€`;
+        ? `Ελάχιστη ποσοστιαία διαφορά: ${this.state.minimumPriceDifference}%`
+        : `Minimum Percentage Difference: ${this.state.minimumPriceDifference}%`;
     button.title = titleText;
 
     button.setAttribute('data-value', this.state.minimumPriceDifference.toString());
@@ -314,13 +323,13 @@ export class UniversalToggleDecorator implements FeatureInstance {
       valueText.style.fontWeight = 'bold';
       DomClient.appendElementToElement(valueText, mobileContainer);
 
-      const euroSymbol = document.createElement('span');
-      euroSymbol.classList.add('price-currency-symbol-mobile');
-      euroSymbol.textContent = '€';
-      euroSymbol.style.marginLeft = '2px';
-      euroSymbol.style.fontSize = '14px';
-      euroSymbol.style.fontWeight = 'bold';
-      DomClient.appendElementToElement(euroSymbol, mobileContainer);
+      const percentSymbol = document.createElement('span');
+      percentSymbol.classList.add('price-currency-symbol-mobile');
+      percentSymbol.textContent = '%';
+      percentSymbol.style.marginLeft = '2px';
+      percentSymbol.style.fontSize = '14px';
+      percentSymbol.style.fontWeight = 'bold';
+      DomClient.appendElementToElement(percentSymbol, mobileContainer);
 
       DomClient.appendElementToElement(mobileContainer, button);
     } else {
@@ -337,11 +346,11 @@ export class UniversalToggleDecorator implements FeatureInstance {
       valueDisplay.textContent = this.state.minimumPriceDifference.toString();
       DomClient.appendElementToElement(valueDisplay, flexContainer);
 
-      const euroSymbol = document.createElement('span');
-      euroSymbol.classList.add('price-currency-symbol');
-      euroSymbol.textContent = '€';
-      euroSymbol.style.marginLeft = '2px';
-      DomClient.appendElementToElement(euroSymbol, flexContainer);
+      const percentSymbol = document.createElement('span');
+      percentSymbol.classList.add('price-currency-symbol');
+      percentSymbol.textContent = '%';
+      percentSymbol.style.marginLeft = '2px';
+      DomClient.appendElementToElement(percentSymbol, flexContainer);
 
       DomClient.appendElementToElement(flexContainer, button);
     }
@@ -352,8 +361,8 @@ export class UniversalToggleDecorator implements FeatureInstance {
       if (isMobile) {
         const inputValue = prompt(
           this.state.language === Language.GREEK
-            ? 'Ελάχιστη διαφορά τιμής (€):'
-            : 'Minimum price difference (€):',
+            ? 'Ελάχιστη ποσοστιαία διαφορά (%):'
+            : 'Minimum percentage difference (%):',
           this.state.minimumPriceDifference.toString(),
         );
 
@@ -368,16 +377,16 @@ export class UniversalToggleDecorator implements FeatureInstance {
         if (!container) return;
 
         const valueDisplay = container.querySelector('.price-value-display') as HTMLElement;
-        const euroSymbol = container.querySelector('.price-currency-symbol') as HTMLElement;
-        if (valueDisplay && euroSymbol) {
+        const percentSymbol = container.querySelector('.price-currency-symbol') as HTMLElement;
+        if (valueDisplay && percentSymbol) {
           valueDisplay.style.display = 'none';
-          euroSymbol.style.display = 'none';
+          percentSymbol.style.display = 'none';
         }
 
         const input = document.createElement('input');
         input.type = 'number';
         input.min = '0';
-        input.step = '0.5';
+        input.step = '0.1';
         input.value = this.state.minimumPriceDifference.toString();
         input.classList.add('price-inline-input');
         input.style.width = '70%';
@@ -402,9 +411,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
             this.updatePriceDifferenceValue(newValue, button);
           }
 
-          if (valueDisplay && euroSymbol) {
+          if (valueDisplay && percentSymbol) {
             valueDisplay.style.display = '';
-            euroSymbol.style.display = '';
+            percentSymbol.style.display = '';
           }
 
           if (input.parentNode) {
@@ -418,9 +427,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
           if (event.key === 'Enter') {
             saveValue();
           } else if (event.key === 'Escape') {
-            if (valueDisplay && euroSymbol) {
+            if (valueDisplay && percentSymbol) {
               valueDisplay.style.display = '';
-              euroSymbol.style.display = '';
+              percentSymbol.style.display = '';
             }
             if (input.parentNode) {
               input.parentNode.removeChild(input);
@@ -444,8 +453,8 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       const updatedTitle =
         this.state.language === Language.GREEK
-          ? `Ελάχιστη διαφορά τιμής: ${newValue}€`
-          : `Minimum Price Difference: ${newValue}€`;
+          ? `Ελάχιστη ποσοστιαία διαφορά: ${newValue}%`
+          : `Minimum Percentage Difference: ${newValue}%`;
       button.title = updatedTitle;
 
       const valueText = button.querySelector('.price-value-mobile');
@@ -457,6 +466,14 @@ export class UniversalToggleDecorator implements FeatureInstance {
           valueDisplay.textContent = newValue.toString();
         }
       }
+
+      // Ensure symbols are % after update
+      const mobileSymbol = button.querySelector(
+        '.price-currency-symbol-mobile',
+      ) as HTMLElement | null;
+      if (mobileSymbol) mobileSymbol.textContent = '%';
+      const desktopSymbol = button.querySelector('.price-currency-symbol') as HTMLElement | null;
+      if (desktopSymbol) desktopSymbol.textContent = '%';
     }
 
     BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, newValue);

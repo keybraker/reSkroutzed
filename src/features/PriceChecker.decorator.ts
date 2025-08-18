@@ -131,6 +131,8 @@ function createCalculationComponent(
   }
 
   const differenceAbsolute = Math.abs(priceDifference);
+  const base = productPriceData.buyThroughStore.totalPrice;
+  const percentDiff = base > 0 ? (differenceAbsolute / base) * 100 : 0;
   const buyingThroughSkroutz =
     language === Language.ENGLISH
       ? 'Buying through Skroutz is'
@@ -154,15 +156,19 @@ function createCalculationComponent(
   }
 
   if (minimumPriceDifference > 0) {
-    const isBelow = differenceAbsolute <= minimumPriceDifference;
+    const isBelow = percentDiff <= minimumPriceDifference;
     const message =
       language === Language.ENGLISH
         ? `${
             isBelow ? 'Below' : 'Exceeds'
-          } the minimum price difference threshold of ${minimumPriceDifference.toFixed(2)}€`
+          } the minimum percentage difference threshold of ${minimumPriceDifference.toFixed(1)}% (Δ=${percentDiff.toFixed(
+            1,
+          )}%)`
         : `${
             isBelow ? 'Κάτω από' : 'Υπερβαίνει'
-          } την ελάχιστη διαφορά τιμής των ${minimumPriceDifference.toFixed(2)}€`;
+          } την ελάχιστη ποσοστιαία διαφορά ${minimumPriceDifference.toFixed(1)}% (Δ=${percentDiff.toFixed(
+            1,
+          )}%)`;
 
     const span = document.createElement('span');
     span.className = 'minimum-price-difference-text';
@@ -225,7 +231,9 @@ function isPositiveStyling(
     const priceDifference =
       productPriceData.buyThroughSkroutz.totalPrice - productPriceData.buyThroughStore.totalPrice;
 
-    return Math.abs(priceDifference) <= minimumPriceDifference;
+    const base = productPriceData.buyThroughStore.totalPrice;
+    const percentDiff = base > 0 ? (Math.abs(priceDifference) / base) * 100 : Infinity;
+    return percentDiff <= minimumPriceDifference;
   }
 
   return true;
