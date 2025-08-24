@@ -1,6 +1,7 @@
 import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { DomClient } from '../clients/dom/client';
 import { Language } from '../common/enums/Language.enum';
+import { getConditionalTranslation, getTranslation } from '../common/functions/translations';
 import { State } from '../common/types/State.type';
 import { CampaignAdHandler } from '../handlers/Campaign.handler';
 import { ListProductAdHandler } from '../handlers/ListProductAd.handler';
@@ -125,7 +126,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const darkModeButton = container.querySelector('.dark-mode-option') as HTMLButtonElement;
     if (darkModeButton) {
       darkModeButton.classList.toggle('active', this.state.darkMode);
-      darkModeButton.title = this.state.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+      darkModeButton.title = getConditionalTranslation(
+        this.state.language,
+        this.state.darkMode,
+        'darkModeOn',
+        'darkModeOff',
+      );
 
       const darkModePath = darkModeButton.querySelector('path');
       if (darkModePath) {
@@ -148,7 +154,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const adToggleButton = container.querySelector('.ad-toggle-option') as HTMLButtonElement;
     if (adToggleButton) {
       adToggleButton.classList.toggle('active', !this.state.hideProductAds);
-      adToggleButton.title = this.state.hideProductAds ? 'Hide Ads' : 'Show Ads';
+      adToggleButton.title = getConditionalTranslation(
+        this.state.language,
+        this.state.hideProductAds,
+        'adHide',
+        'adShow',
+      );
 
       const adText = adToggleButton.querySelector('.ad-text-icon');
       if (adText) {
@@ -159,7 +170,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const videoToggleButton = container.querySelector('.video-toggle-option') as HTMLButtonElement;
     if (videoToggleButton) {
       videoToggleButton.classList.toggle('active', !this.state.hideVideoAds);
-      videoToggleButton.title = this.state.hideVideoAds ? 'Hide Videos' : 'Show Videos';
+      videoToggleButton.title = getConditionalTranslation(
+        this.state.language,
+        this.state.hideVideoAds,
+        'videoHide',
+        'videoShow',
+      );
 
       const videoPath = videoToggleButton.querySelector('path');
       if (videoPath) {
@@ -182,9 +198,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     ) as HTMLButtonElement;
     if (sponsorshipToggleButton) {
       sponsorshipToggleButton.classList.toggle('active', !this.state.hideSponsorships);
-      sponsorshipToggleButton.title = this.state.hideSponsorships
-        ? 'Hide Sponsorships'
-        : 'Show Sponsorships';
+      sponsorshipToggleButton.title = getConditionalTranslation(
+        this.state.language,
+        this.state.hideSponsorships,
+        'sponsorshipHide',
+        'sponsorshipShow',
+      );
 
       const sponsorshipPath = sponsorshipToggleButton.querySelector('path');
       if (sponsorshipPath) {
@@ -207,9 +226,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     ) as HTMLButtonElement;
     if (shelfToggleButton) {
       shelfToggleButton.classList.toggle('active', !this.state.hideShelfProductAds);
-      shelfToggleButton.title = this.state.hideShelfProductAds
-        ? 'Hide Shelf Ads'
-        : 'Show Shelf Ads';
+      shelfToggleButton.title = getConditionalTranslation(
+        this.state.language,
+        this.state.hideShelfProductAds,
+        'shelfAdHide',
+        'shelfAdShow',
+      );
 
       const shelfPath = shelfToggleButton.querySelector('path');
       if (shelfPath) {
@@ -232,8 +254,13 @@ export class UniversalToggleDecorator implements FeatureInstance {
     ) as HTMLButtonElement;
     if (aiSlopToggleButton) {
       // Active (orange) when hiding AI slop; inactive (black) by default when showing
-      aiSlopToggleButton.classList.toggle('active', this.state.hideAISlop);
-      aiSlopToggleButton.title = this.state.hideAISlop ? 'Hide AI Slop' : 'Show AI Slop';
+      aiSlopToggleButton.classList.toggle('active', this.state.hideAISlop || false);
+      aiSlopToggleButton.title = getConditionalTranslation(
+        this.state.language,
+        this.state.hideAISlop || false,
+        'aiSlopHide',
+        'aiSlopShow',
+      );
       const aiText = aiSlopToggleButton.querySelector('.ai-text-icon');
       if (aiText) {
         aiText.classList.toggle('ad-text-disabled', !this.state.hideAISlop);
@@ -378,9 +405,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       if (isMobile) {
         const inputValue = prompt(
-          this.state.language === Language.GREEK
-            ? 'Ελάχιστη ποσοστιαία διαφορά (%):'
-            : 'Minimum percentage difference (%):',
+          getTranslation(this.state.language, 'minimumPriceDifferencePrompt'),
           this.state.minimumPriceDifference.toString(),
         );
 
