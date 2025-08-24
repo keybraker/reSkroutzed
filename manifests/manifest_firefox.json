@@ -1,19 +1,26 @@
 {
     "name": "reSkroutzed",
     "description": "reSkroutzed, is a must-have enhancer for website skroutz.gr",
-    "version": "1.9.4",
+    "version": "1.9.5",
     "manifest_version": 3,
     "permissions": [
         "storage"
     ],
     "host_permissions": [
-        "*://www.skroutz.gr/*"
+        "*://www.skroutz.gr/*",
+        "*://www.skroutz.ro/*",
+        "*://www.skroutz.cy/*",
+        "*://www.skroutz.de/*",
+        "*://www.skroutz.eu/*"
     ],
     "content_scripts": [
         {
             "matches": [
                 "https://www.skroutz.gr/*",
-                "https://m.skroutz.gr/*"
+                "https://www.skroutz.ro/*",
+                "https://www.skroutz.cy/*",
+                "https://www.skroutz.de/*",
+                "https://www.skroutz.eu/*"
             ],
             "css": [
                 "css/flaggerToggle.css",
@@ -37,7 +44,10 @@
             ],
             "matches": [
                 "https://www.skroutz.gr/*",
-                "https://m.skroutz.gr/*"
+                "https://www.skroutz.ro/*",
+                "https://www.skroutz.cy/*",
+                "https://www.skroutz.de/*",
+                "https://www.skroutz.eu/*"
             ]
         }
     ],

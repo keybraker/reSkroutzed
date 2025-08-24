@@ -54,6 +54,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const videoToggleButton = this.createVideoToggleButton();
     const sponsorshipToggleButton = this.createSponsorshipToggleButton();
     const shelfProductAdToggleButton = this.createShelfProductAdToggleButton();
+    const aiSlopToggleButton = this.createAISlopToggleButton();
 
     DomClient.appendElementToElement(priceDifferenceButton, buttonsContainer);
     DomClient.appendElementToElement(darkModeButton, buttonsContainer);
@@ -61,6 +62,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     DomClient.appendElementToElement(videoToggleButton, buttonsContainer);
     DomClient.appendElementToElement(sponsorshipToggleButton, buttonsContainer);
     DomClient.appendElementToElement(shelfProductAdToggleButton, buttonsContainer);
+    DomClient.appendElementToElement(aiSlopToggleButton, buttonsContainer);
 
     mainToggle.addEventListener('click', () => this.toggleMenu(container));
 
@@ -102,6 +104,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
     )) as boolean;
     this.state.hideSponsorships = (await BrowserClient.getValueAsync(
       StorageKey.SPONSORSHIP_VISIBILITY,
+    )) as boolean;
+    this.state.hideAISlop = (await BrowserClient.getValueAsync(
+      StorageKey.AI_SLOP_VISIBILITY,
     )) as boolean;
     this.state.minimumPriceDifference = (await BrowserClient.getValueAsync(
       StorageKey.MINIMUM_PRICE_DIFFERENCE,
@@ -219,6 +224,19 @@ export class UniversalToggleDecorator implements FeatureInstance {
             'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
           );
         }
+      }
+    }
+
+    const aiSlopToggleButton = container.querySelector(
+      '.ai-slop-toggle-option',
+    ) as HTMLButtonElement;
+    if (aiSlopToggleButton) {
+      // Active (orange) when hiding AI slop; inactive (black) by default when showing
+      aiSlopToggleButton.classList.toggle('active', this.state.hideAISlop);
+      aiSlopToggleButton.title = this.state.hideAISlop ? 'Hide AI Slop' : 'Show AI Slop';
+      const aiText = aiSlopToggleButton.querySelector('.ai-text-icon');
+      if (aiText) {
+        aiText.classList.toggle('ad-text-disabled', !this.state.hideAISlop);
       }
     }
 
@@ -886,6 +904,94 @@ export class UniversalToggleDecorator implements FeatureInstance {
       DomClient.appendElementToElement(newPath, svg);
 
       button.title = this.state.hideShelfProductAds ? 'Hide Shelf Ads' : 'Show Shelf Ads';
+    });
+
+    return button;
+  }
+
+  private createAISlopToggleButton(): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.classList.add('toggle-option-button', 'ai-slop-toggle-option');
+    button.title = this.state.hideAISlop ? 'Hide AI Slop' : 'Show AI Slop';
+
+    const aiTextSpan = document.createElement('span');
+    aiTextSpan.classList.add('ai-text-icon');
+    aiTextSpan.textContent = 'AI';
+
+    if (!this.state.hideAISlop) {
+      aiTextSpan.classList.add('ad-text-disabled');
+    } else {
+      button.classList.add('active');
+    }
+
+    DomClient.appendElementToElement(aiTextSpan, button);
+
+    const notificationBubble = document.createElement('div');
+    notificationBubble.classList.add('notification-bubble', 'ai-notification');
+    notificationBubble.textContent = '0';
+    DomClient.appendElementToElement(notificationBubble, button);
+
+    const ensureStyle = (): void => {
+      if (document.getElementById('resk-ai-hide-style')) return;
+      const style = document.createElement('style');
+      style.id = 'resk-ai-hide-style';
+      style.textContent = `.resk-hide-ai { display: none !important; }`;
+      document.head.appendChild(style);
+    };
+
+    const queryNodes = (): NodeListOf<HTMLElement> => {
+      const selector = [
+        '[class*="sofos"]',
+        '.sofos-entrypoint',
+        '.sofos-listing-shelf',
+        '.sofos-chat-button-wrapper',
+        '.sofos-chat-button',
+      ].join(',');
+      return document.querySelectorAll(selector) as NodeListOf<HTMLElement>;
+    };
+
+    const apply = (): void => {
+      ensureStyle();
+      const nodes = queryNodes();
+      let count = 0;
+      nodes.forEach((el) => {
+        const element = el as HTMLElement;
+        if (this.state.hideAISlop) {
+          element.classList.add('resk-hide-ai');
+        } else {
+          element.classList.remove('resk-hide-ai');
+        }
+        count += 1;
+      });
+      notificationBubble.textContent = `${count}`;
+      notificationBubble.style.display = count === 0 ? 'none' : 'flex';
+    };
+
+    // initial apply and count
+    setTimeout(apply, 0);
+
+    // keep the counter fresh
+    const counterInterval = window.setInterval(apply, 2000);
+    button.addEventListener('remove', () => window.clearInterval(counterInterval));
+
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.state.hideAISlop = !this.state.hideAISlop;
+
+      BrowserClient.setValue(StorageKey.AI_SLOP_VISIBILITY, this.state.hideAISlop);
+
+      const aiText = button.querySelector('.ai-text-icon');
+      if (aiText) {
+        if (this.state.hideAISlop) {
+          aiText.classList.remove('ad-text-disabled');
+        } else {
+          aiText.classList.add('ad-text-disabled');
+        }
+      }
+
+      apply();
+      button.classList.toggle('active');
+      button.title = this.state.hideAISlop ? 'Hide AI Slop' : 'Show AI Slop';
     });
 
     return button;

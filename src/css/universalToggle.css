@@ -165,8 +165,14 @@
 .dark-mode .ad-toggle-option.active,
 .ad-toggle-option.active,
 .dark-mode .shelf-ad-toggle-option.active,
-.shelf-ad-toggle-option.active {
+.shelf-ad-toggle-option.active,
+.ai-slop-toggle-option.active {
   background: linear-gradient(145deg, #e66300, #d95500) !important;
+}
+
+/* AI button default (inactive) state should be black like others */
+.ai-slop-toggle-option {
+  background: #4a4a4a !important;
 }
 
 .ad-text-icon {

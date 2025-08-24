@@ -12,6 +12,7 @@ export enum StorageKey {
   UNIVERSAL_TOGGLE_VISIBILITY = STORAGE_KEY_PREFIX + '-universal-toggle-visibility',
   DARK_MODE = STORAGE_KEY_PREFIX + '-dark-mode',
   MINIMUM_PRICE_DIFFERENCE = STORAGE_KEY_PREFIX + '-minimum-difference',
+  AI_SLOP_VISIBILITY = STORAGE_KEY_PREFIX + '-ai-slop-visibility',
 }
 
 const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
@@ -23,6 +24,8 @@ const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
   [StorageKey.UNIVERSAL_TOGGLE_VISIBILITY]: false,
   [StorageKey.DARK_MODE]: false,
   [StorageKey.MINIMUM_PRICE_DIFFERENCE]: 0,
+  // false means AI content (sofos*) is visible by default
+  [StorageKey.AI_SLOP_VISIBILITY]: false,
 };
 
 export class BrowserClient {

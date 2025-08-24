@@ -17,6 +17,7 @@ const state: State = {
   hideVideoAds: false,
   hideSponsorships: false,
   hideShelfProductAds: false,
+  hideAISlop: false,
   hideUniversalToggle: false,
   language: Language.GREEK,
   productAdCount: 0,
@@ -27,6 +28,40 @@ const state: State = {
   minimumPriceDifference: 0,
   isMobile: false,
 };
+
+function ensureAISlopStyleInjected(): void {
+  if (document.getElementById('resk-ai-hide-style')) return;
+  const style = document.createElement('style');
+  style.id = 'resk-ai-hide-style';
+  style.textContent = `.resk-hide-ai { display: none !important; }`;
+  document.head.appendChild(style);
+}
+
+function queryAISlopNodes(): NodeListOf<HTMLElement> {
+  const selector = [
+    '[class*="sofos"]',
+    '.sofos-entrypoint',
+    '.sofos-listing-shelf',
+    '.sofos-chat-button-wrapper',
+    '.sofos-chat-button',
+  ].join(',');
+  return document.querySelectorAll(selector) as NodeListOf<HTMLElement>;
+}
+
+function applyAISlopVisibility(): void {
+  ensureAISlopStyleInjected();
+  const nodes = queryAISlopNodes();
+  nodes.forEach((element) => {
+    if (state.hideAISlop) {
+      element.classList.add('resk-hide-ai');
+    } else {
+      element.classList.remove('resk-hide-ai');
+      if ((element as HTMLElement).style && (element as HTMLElement).style.display === 'none') {
+        (element as HTMLElement).style.display = '';
+      }
+    }
+  });
+}
 
 function loadStorage(): void {
   state.language = BrowserClient.getLanguage();
@@ -43,6 +78,7 @@ function loadStorage(): void {
   state.hideUniversalToggle = BrowserClient.getValue<boolean>(
     StorageKey.UNIVERSAL_TOGGLE_VISIBILITY,
   );
+  state.hideAISlop = BrowserClient.getValue<boolean>(StorageKey.AI_SLOP_VISIBILITY);
   state.isMobile = BrowserClient.detectMobile();
 
   if (state.darkMode) {
@@ -94,6 +130,7 @@ const logoHatDecorator = new LogoHatDecorator();
     shelfProductAdHandler.visibilityUpdate();
     sponsorshipAdHandler.visibilityUpdate();
     campaignAdHandler.visibilityUpdate();
+    applyAISlopVisibility();
   }
 
   function applyMobileOptimizations(): void {
@@ -115,11 +152,16 @@ const logoHatDecorator = new LogoHatDecorator();
   }
 
   function observeMutations(): void {
-    const observer = new MutationObserver(() => flagContent());
+    const observer = new MutationObserver(() => {
+      flagContent();
+      applyAISlopVisibility();
+    });
     observer.observe(document.body, {
       childList: true,
       subtree: true,
     });
+    // Initial apply for any existing nodes
+    applyAISlopVisibility();
   }
 
   window.onload = async function () {
@@ -207,6 +249,16 @@ chrome.runtime.onMessage.addListener(
           universalToggleDecorator.execute();
         }
       }
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleAISlop' && request.value !== undefined) {
+      state.hideAISlop = request.value as boolean;
+      BrowserClient.setValue(StorageKey.AI_SLOP_VISIBILITY, state.hideAISlop);
+      // Apply immediately
+      (function runTwice() {
+        applyAISlopVisibility();
+        // Schedule a follow-up to catch late inserts
+        setTimeout(applyAISlopVisibility, 300);
+      })();
       sendResponse({ success: true });
     }
 
