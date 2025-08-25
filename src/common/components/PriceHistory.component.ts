@@ -1,6 +1,7 @@
 import { DomClient } from '../../clients/dom/client';
 import { ProductPriceHistory } from '../../clients/skroutz/client';
 import { Language } from '../enums/Language.enum';
+import { getLocaleForLanguage, translate } from '../utils/translations';
 
 export function PriceHistoryComponent(
   currentPriceState: 'expensive' | 'cheap' | 'normal',
@@ -15,21 +16,7 @@ export function PriceHistoryComponent(
     className: 'price-history-header',
   });
 
-  const getLabel = (english: string, greek: string): string =>
-    language === Language.ENGLISH ? english : greek;
-
-  header.textContent = getLabel(
-    currentPriceState === 'cheap'
-      ? 'Good price compared to historical price'
-      : currentPriceState === 'normal'
-        ? 'Average price compared to historical price'
-        : 'High price compared to historical price',
-    currentPriceState === 'cheap'
-      ? 'Καλή τιμή σε σχέση με το τελευταίο εξάμηνο'
-      : currentPriceState === 'normal'
-        ? 'Κανονική τιμή σε σχέση με το τελευταίο εξάμηνο'
-        : 'Υψηλή τιμή σε σχέση με το τελευταίο εξάμηνο',
-  );
+  header.textContent = translate(`priceHistory.${currentPriceState}`, language);
   const toggleIcon = DomClient.createElement('span', {
     className: 'toggle-icon',
   });
@@ -79,9 +66,7 @@ export function PriceHistoryComponent(
   productPriceHistory.allPrices.forEach((p, i) => {
     if (i % 15 === 0 || i === productPriceHistory.allPrices.length - 1) {
       const x = padding + i * xStep;
-      const date = new Date(p.timestamp).toLocaleDateString(
-        language === Language.ENGLISH ? 'en-GB' : 'el-GR',
-      );
+      const date = new Date(p.timestamp).toLocaleDateString(getLocaleForLanguage(language));
       ctx.fillText(date, x - 20, height - padding + 20);
     }
   });
@@ -113,11 +98,14 @@ export function PriceHistoryComponent(
       Math.abs(curr.x - mouseX) < Math.abs(prev.x - mouseX) ? curr : prev,
     );
 
-    const date = new Date(closestPoint.timestamp).toLocaleDateString('el-GR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-    });
+    const date = new Date(closestPoint.timestamp).toLocaleDateString(
+      getLocaleForLanguage(language),
+      {
+        day: '2-digit',
+        month: '2-digit',
+        year: '2-digit',
+      },
+    );
     tooltip.textContent = `${date}: ${closestPoint.price.toFixed(2)}€, ${closestPoint.store}`;
     tooltip.style.left = `${mouseX + 10}px`;
     tooltip.style.top = `${mouseY - 30}px`;
