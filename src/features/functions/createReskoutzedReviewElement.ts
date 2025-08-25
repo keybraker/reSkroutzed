@@ -1,7 +1,8 @@
 import { DomClient } from '../../clients/dom/client';
+import { Language } from '../../common/enums/Language.enum';
 import { createLogoElement } from './createLogoElement';
 
-export function createReSkoutzedReviewElement(): HTMLDivElement {
+export function createReSkoutzedReviewElement(language: Language): HTMLDivElement {
   const reSkoutzedReviewElement = document.createElement('div');
   const reSkoutzedReviewLink = document.createElement('a');
 
@@ -15,7 +16,8 @@ export function createReSkoutzedReviewElement(): HTMLDivElement {
   reSkoutzedReviewLink.href = storeUrl;
   reSkoutzedReviewLink.target = '_blank';
   reSkoutzedReviewLink.rel = 'noopener noreferrer';
-  reSkoutzedReviewLink.textContent = 'By reSkroutzed';
+  reSkoutzedReviewLink.textContent =
+    language === Language.ENGLISH ? 'Βy reSkroutzed' : 'Από το reSkroutzed';
   reSkoutzedReviewLink.classList.add('icon-border', 'font-bold');
 
   DomClient.appendElementToElement(reSkoutzedReviewLink, reSkoutzedReviewElement);

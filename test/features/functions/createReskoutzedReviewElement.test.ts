@@ -1,9 +1,10 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\features\functions\createReskoutzedReviewElement.test.ts
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createReSkoutzedReviewElement } from '../../../src/features/functions/createReskoutzedReviewElement';
 import { DomClient } from '../../../src/clients/dom/client';
+import { Language } from '../../../src/common/enums/Language.enum';
 import { createLogoElement } from '../../../src/features/functions/createLogoElement';
+import { createReSkoutzedReviewElement } from '../../../src/features/functions/createReskoutzedReviewElement';
 
 // Mock dependencies
 vi.mock('../../../src/clients/dom/client');
@@ -43,7 +44,7 @@ describe('createReskoutzedReviewElement', () => {
   });
 
   it('should create a review element with correct classes', () => {
-    const element = createReSkoutzedReviewElement();
+    const element = createReSkoutzedReviewElement(Language.ENGLISH);
 
     expect(element.tagName).toBe('DIV');
     expect(element.classList.contains('icon-border')).toBe(true);
@@ -58,7 +59,7 @@ describe('createReskoutzedReviewElement', () => {
       configurable: true,
     });
 
-    const element = createReSkoutzedReviewElement();
+    const element = createReSkoutzedReviewElement(Language.ENGLISH);
     const link = element.querySelector('a');
 
     expect(link).not.toBeNull();
@@ -79,7 +80,7 @@ describe('createReskoutzedReviewElement', () => {
       configurable: true,
     });
 
-    const element = createReSkoutzedReviewElement();
+    const element = createReSkoutzedReviewElement(Language.ENGLISH);
     const link = element.querySelector('a');
 
     expect(link).not.toBeNull();
@@ -90,7 +91,7 @@ describe('createReskoutzedReviewElement', () => {
   });
 
   it('should append the link to the main element', () => {
-    const element = createReSkoutzedReviewElement();
+    const element = createReSkoutzedReviewElement(Language.ENGLISH);
 
     // First call to appendElementToElement should be appending the link to the main element
     expect(DomClient.appendElementToElement).toHaveBeenCalledTimes(2);
@@ -102,7 +103,7 @@ describe('createReskoutzedReviewElement', () => {
   });
 
   it('should create and append a logo element', () => {
-    const element = createReSkoutzedReviewElement();
+    const element = createReSkoutzedReviewElement(Language.ENGLISH);
 
     // The createLogoElement function should be called once
     expect(createLogoElement).toHaveBeenCalledTimes(1);

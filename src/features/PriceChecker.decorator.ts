@@ -259,7 +259,7 @@ function createPriceIndicationElement(
 
   const tagsContainer = DomClient.createElement('div', { className: 'tags-container' });
 
-  const reSkroutzedReview = createReSkoutzedReviewElement();
+  const reSkroutzedReview = createReSkoutzedReviewElement(language);
   DomClient.appendElementToElement(reSkroutzedReview, tagsContainer);
 
   const buyMeCoffeeElement = createBuyMeCoffeeElement();
@@ -328,8 +328,7 @@ function createPriceIndicationElement(
 
   DomClient.appendElementToElement(actionContainer, contentContainer);
 
-  priceIndication.title =
-    language === Language.ENGLISH ? 'Delivered to you by reSkroutzed' : 'Από το reSkroutzed';
+  priceIndication.title = language === Language.ENGLISH ? 'Βy reSkroutzed' : 'Από το reSkroutzed';
   DomClient.appendElementToElement(contentContainer, priceIndication);
 
   return priceIndication;
