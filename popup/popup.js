@@ -75,7 +75,7 @@ function loadSettings() {
 
   const aiSlopToggle = document.getElementById('toggleAISlop');
   getStorageValue(StorageKey.AI_SLOP_VISIBILITY, false, (value) => {
-    aiSlopToggle.checked = !value;
+    aiSlopToggle.checked = value;
   });
 
   const sponsorshipsToggle = document.getElementById('toggleSponsorships');
@@ -196,7 +196,7 @@ function setupEventListeners() {
   });
 
   document.getElementById('toggleAISlop').addEventListener('change', (e) => {
-    const hideAISlop = !e.target.checked;
+    const hideAISlop = e.target.checked;
     setStorageValue(StorageKey.AI_SLOP_VISIBILITY, hideAISlop);
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -282,11 +282,13 @@ function getCurrentPageCounts() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize the UI based on stored preferences
   initializeStatsCounters();
   loadSettings();
   setupEventListeners();
   getCurrentPageCounts();
 
+  // Apply dark mode if needed
   getStorageValue(StorageKey.DARK_MODE, false, (value) => {
     if (value) {
       document.body.classList.add('dark-popup');
