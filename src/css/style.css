@@ -1021,12 +1021,11 @@ text-black {
 }
 /* Price History Component Styles */
 .price-history-wrapper {
-  border: 1px solid rgba(0, 0, 0, 0.2) !important;
-  border-radius: 6px !important;
-  margin: 8px 0 !important;
+  margin: 6px 0 !important;
+  padding: 6px 0 !important;
   overflow: hidden !important;
   background-color: rgba(248, 248, 248, 0.1) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 16px !important;
 }
 
 .dark-mode .price-history-wrapper {
@@ -1099,6 +1098,11 @@ text-black {
 }
 
 .price-history-container {
+  margin-top: 8px !important;
+  border: 2px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+
   padding: 15px !important;
   background-color: rgba(248, 248, 248, 0.1) !important;
   color: #000000 !important;
@@ -1122,6 +1126,8 @@ text-black {
 }
 
 .price-history-canvas {
+  border: 2px solid rgba(0, 0, 0, 0.1) !important;
+
   width: 100% !important;
   height: 200px !important;
   border-radius: 4px !important;
@@ -1233,6 +1239,97 @@ text-black {
 .dark-mode .analysis-toggle-button.expanded .analysis-icon {
   background: #2b65d9 !important;
   color: #ffffff !important;
+}
+
+/* Price History (reuses analysis button styling) */
+.price-history-wrapper {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  margin-top: 8px !important;
+}
+
+.price-history-row .price-history-label {
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  font-weight: 500 !important;
+  color: #222 !important;
+}
+
+.dark-mode .price-history-row .price-history-label {
+  color: #ffffff !important;
+}
+
+.price-history-container {
+  display: none !important;
+  width: 100% !important;
+  padding: 6px 6px 6px 6px !important;
+}
+
+.price-history-container.visible {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  animation: fade-in-analysis 0.2s ease-in; /* reuse animation */
+}
+
+.price-history-canvas {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 6px !important;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0)) !important;
+}
+
+.dark-mode .price-history-canvas {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0)) !important;
+}
+
+.price-history-tooltip {
+  position: absolute !important;
+  background: #222 !important;
+  color: #fff !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transform: translateY(-4px) !important;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease !important;
+  white-space: nowrap !important;
+  z-index: 10 !important;
+}
+
+.price-history-tooltip.visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.price-history-container {
+  position: relative !important;
+}
+
+.price-history-toggle-button .analysis-icon {
+  background: #ffe9d1 !important;
+  color: #ff9800 !important;
+}
+
+.price-history-toggle-button.expanded .analysis-icon {
+  background: #ff9800 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .price-history-toggle-button .analysis-icon {
+  background: rgba(255, 152, 0, 0.2) !important;
+  color: #ffb347 !important;
+}
+
+.dark-mode .price-history-toggle-button.expanded .analysis-icon {
+  background: #ffb347 !important;
+  color: #222 !important;
 }
 
 .info-with-analysis-row {

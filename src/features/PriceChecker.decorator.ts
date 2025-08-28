@@ -286,22 +286,19 @@ function createPriceIndicationElement(
       language === Language.ENGLISH
         ? 'This is the lowest price with shipping apart from "Buy through Skroutz"'
         : 'Αυτή είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"';
-    // Row container so we can place analysis toggle button to the right of the info text
+
     const infoWithAnalysisRow = DomClient.createElement('div', {
       className: 'info-with-analysis-row',
     });
     DomClient.appendElementToElement(infoText, infoWithAnalysisRow);
 
-    // Prepare hidden analysis container early so handler has reference
     const analysisContainer = DomClient.createElement('div', {
       className: ['analysis-container'],
     }) as HTMLDivElement;
     analysisContainer.style.display = 'none';
-    // Give it an id for accessibility (unique-ish using product id if available)
     const analysisId = `analysis-${productPriceData.buyThroughStore.shopId}`;
     analysisContainer.id = analysisId;
 
-    // Create analysis toggle button (moved next to infoText)
     const analysisButton = DomClient.createElement('button', {
       className: ['analysis-toggle-button'],
     }) as HTMLButtonElement;
@@ -335,16 +332,12 @@ function createPriceIndicationElement(
 
     DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
 
-    // Append calculation and breakdown into analysisContainer
     const calcElem = createCalculationComponent(productPriceData, minimumPriceDifference, language);
     if (calcElem) DomClient.appendElementToElement(calcElem, analysisContainer);
     const breakdownElem = createPriceComparisonBreakdownComponent(productPriceData, language);
     DomClient.appendElementToElement(breakdownElem, analysisContainer);
 
-    // Append analysisContainer into contentContainer
     DomClient.appendElementToElement(analysisContainer, contentContainer);
-
-    // (analysis button now lives next to info text)
 
     DomClient.appendElementToElement(infoContainer, contentContainer);
 
@@ -374,7 +367,6 @@ function createPriceIndicationElement(
 
     return priceIndication;
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('PriceChecker: failed to build indication element', err);
     const fallback = document.createElement('div');
     fallback.className = 'price-checker-outline info-label-negative';
@@ -390,11 +382,17 @@ function getPriceHistoryComparisonOutcome(
 ): 'expensive' | 'cheap' | 'normal' {
   const min = Number(productPriceHistory.minimumPrice);
   const max = Number(productPriceHistory.maximumPrice);
-  if (!Number.isFinite(min) || !Number.isFinite(max)) return 'normal';
-  const priceRange = max - min;
-  if (priceRange <= 0) return 'normal';
-  const pricePosition = (currentPrice - min) / priceRange;
 
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    return 'normal';
+  }
+
+  const priceRange = max - min;
+  if (priceRange <= 0) {
+    return 'normal';
+  }
+
+  const pricePosition = (currentPrice - min) / priceRange; //
   if (pricePosition <= 0.3) {
     return 'cheap';
   } else if (pricePosition <= 0.7) {
@@ -464,7 +462,6 @@ export class PriceCheckerDecorator implements FeatureInstance {
       return;
     }
 
-    // If product didn't change but our indicator was removed by a re-render, re-initialize
     const hasIndicator = !!host.querySelector('.price-checker-outline');
     if (!hasIndicator) {
       this.initializeProductView();
@@ -501,12 +498,12 @@ export class PriceCheckerDecorator implements FeatureInstance {
 
       this.cleanup();
       this.productPriceData = await SkroutzClient.getCurrentProductData();
-      // Swallow errors in history retrieval to avoid breaking the feature
+
       try {
         this.productPriceHistory = await SkroutzClient.getPriceHistory();
       } catch (e) {
         this.productPriceHistory = undefined;
-        // eslint-disable-next-line no-console
+
         console.warn('PriceChecker: failed to fetch price history', e);
       }
 
@@ -525,7 +522,6 @@ export class PriceCheckerDecorator implements FeatureInstance {
 
       this.insertPriceIndicationIntoHost(host, priceIndication);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('PriceChecker: initializeProductView failed', e);
     } finally {
       this.isInitializing = false;
@@ -541,7 +537,6 @@ export class PriceCheckerDecorator implements FeatureInstance {
   }
 
   private adjustSiteData(element: Element): void {
-    // Create the shipping text once and insert depending on DOM structure
     const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
     const formattedShipping = (this.productPriceData?.buyThroughSkroutz.shippingCost ?? 0)
       .toFixed(2)
@@ -557,17 +552,15 @@ export class PriceCheckerDecorator implements FeatureInstance {
         price.insertAdjacentElement('afterend', shippingText);
       }
     } else if (element.matches('article.buybox')) {
-      // New DOM structure: place shipping directly under the left-side price only
       const priceBox = element.querySelector('div.price-box');
       const finalPrice = priceBox?.querySelector('div.final-price');
       if (finalPrice) {
-        // Append inside the final-price container so it stays under the price on the left
         (shippingText as HTMLDivElement).style.marginTop = '6px';
         (shippingText as HTMLDivElement).style.display = 'block';
         (shippingText as HTMLDivElement).style.width = '100%';
         (shippingText as HTMLDivElement).style.flexBasis = '100%';
         (shippingText as HTMLDivElement).style.whiteSpace = 'nowrap';
-        // Ensure the container allows wrapping so shipping moves to the next line
+
         (finalPrice as HTMLElement).style.flexWrap = 'wrap';
         (finalPrice as HTMLElement).style.alignItems = 'flex-start';
         (finalPrice as Element).appendChild(shippingText);
@@ -587,13 +580,11 @@ export class PriceCheckerDecorator implements FeatureInstance {
 
   private insertPriceIndicationIntoHost(host: Element, priceIndication: HTMLDivElement): void {
     if (host.matches('article.offering-card')) {
-      // Keep legacy placement behavior
       host.insertBefore(priceIndication, host.children[1] ?? host.firstChild);
       return;
     }
 
     if (host.matches('article.buybox')) {
-      // Prefer inserting right after the price-and-installments, otherwise after final-price, otherwise after price-box
       const priceAndInstallments = host.querySelector('.price-box .price-and-installments');
       if (priceAndInstallments) {
         (priceAndInstallments as Element).insertAdjacentElement('afterend', priceIndication);
