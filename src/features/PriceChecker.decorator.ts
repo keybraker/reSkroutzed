@@ -254,7 +254,7 @@ function createPriceIndicationElement(
       showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
     ],
   }) as HTMLDivElement;
-  // Add a bit more space from elements above (requested)
+
   (priceIndication as HTMLDivElement).style.marginTop = '14px';
 
   const tagsContainer = DomClient.createElement('div', { className: 'tags-container' });
@@ -290,20 +290,27 @@ function createPriceIndicationElement(
 
   DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
 
+  // #region Analysis Container
+  const analysisContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
+
   const calculationContainer = createCalculationComponent(
     productPriceData,
     minimumPriceDifference,
     language,
   );
   if (calculationContainer) {
-    DomClient.appendElementToElement(calculationContainer, contentContainer);
+    DomClient.appendElementToElement(calculationContainer, analysisContainer);
   }
 
   const transportationBreakdown = createPriceComparisonBreakdownComponent(
     productPriceData,
     language,
   );
-  DomClient.appendElementToElement(transportationBreakdown, infoContainer);
+  DomClient.appendElementToElement(transportationBreakdown, analysisContainer);
+
+  DomClient.appendElementToElement(analysisContainer, contentContainer);
+
+  // #endregion
 
   DomClient.appendElementToElement(infoContainer, contentContainer);
 

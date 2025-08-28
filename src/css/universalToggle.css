@@ -142,6 +142,7 @@
 
 .dark-mode-option {
   background: #333333 !important;
+  border-radius: 35% !important;
 }
 
 .dark-mode .toggle-option-button {

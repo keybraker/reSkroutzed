@@ -6,7 +6,7 @@ export class ListProductAdHandler implements AdHandlerInterface {
   private readonly productAdClass = [
     'labeled-item',
     'labeled-product',
-    'card tracking-img-container', // is the card needed?
+    'card.tracking-img-container',
   ];
   private readonly flaggedProductAdClass = 'flagged-product';
 
