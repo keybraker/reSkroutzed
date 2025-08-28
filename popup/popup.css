@@ -39,16 +39,37 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
 /* ---------- LAYOUT ---------- */
 .popup-body {
   font-family: 'Inter', sans-serif;
-  min-width: 300px;
-  max-width: 100%;
-  width: 100%;
+  width: 100%; /* fixed base width */
+  min-width: 600px;
+  max-width: 600px; /* ensure browser doesn't shrink it */
+  min-height: 460px; /* a bit taller for content breathing room */
   background-color: var(--background-color);
   color: var(--text-dark);
   box-shadow: var(--shadow);
-  overflow: hidden;
+  overflow-y: auto; /* allow scroll if content exceeds height */
+  overflow-x: hidden;
+}
+
+/* Ensure root element doesn't clamp popup width */
+html,
+body {
+  width: 500px;
+  min-width: 500px;
+}
+
+/* Override any user-agent / extension defaults */
+:root,
+body.popup-body {
+  display: block !important;
 }
 
 .header {
@@ -66,6 +87,18 @@
   padding: 16px;
   background-color: white;
   border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.version-info {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-medium);
+  letter-spacing: 0.5px;
 }
 
 /* ---------- LOGO & BRANDING ---------- */
@@ -178,6 +211,11 @@
   margin-bottom: 20px;
 }
 
+.price-settings.compact {
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
 .price-input-container {
   display: flex;
   align-items: center;
@@ -188,6 +226,17 @@
   flex-wrap: wrap;
 }
 
+.price-input-container.compact {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* increased horizontal breathing room */
+  padding: 12px 16px; /* more generous padding */
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px; /* slightly softer corner */
+  box-shadow: none;
+}
+
 .price-input-container label {
   font-size: 14px;
   color: var(--text-medium);
@@ -195,13 +244,35 @@
   flex-shrink: 0;
 }
 
-.price-input-container input {
-  width: 60px;
-  padding: 8px 10px;
+.price-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-medium);
+  min-width: 60px; /* keeps alignment tidy */
+}
+
+.price-input {
+  width: 72px; /* a bit wider for clarity */
+  padding: 6px 8px; /* improved touch target */
+  font-size: 12px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  font-size: 14px;
-  margin-right: 10px;
+  background: var(--background-color);
+}
+
+.price-update {
+  min-width: 70px;
+  padding: 8px 14px; /* balanced with input height */
+  font-size: 12px;
+  line-height: 1.1;
+  margin-left: auto; /* push to far right */
+}
+
+.price-hint {
+  margin-top: 8px; /* a little more separation */
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.35;
 }
 
 /* ---------- BUTTONS ---------- */
@@ -315,20 +386,26 @@
   background-color: #444;
 }
 
-.dark-popup .price-input-container input {
-  background-color: #333;
-  color: #e0e0e0;
-  border-color: #444;
+.dark-popup .price-input-container.compact {
+  background: #222;
+  border-color: #333;
 }
 
-.dark-popup .store-icon {
+.dark-popup .price-input {
+  background: #1a1a1a;
+  color: #e0e0e0;
+  border-color: #333;
+}
+
+.dark-popup .price-input-container {
+  background: #222;
   border-color: #333;
 }
 
 /* ---------- MEDIA QUERIES ---------- */
 @media (max-width: 360px) {
   .popup-body {
-    min-width: 100%;
+    min-width: 320px;
   }
 
   .settings-grid {
@@ -368,5 +445,15 @@
 
   .stat-box {
     padding: 15px 8px;
+  }
+}
+
+@media (max-width: 520px) {
+  html,
+  body,
+  .popup-body {
+    width: 100% !important;
+    min-width: 360px; /* keep usability on very small displays */
+    max-width: 500px;
   }
 }

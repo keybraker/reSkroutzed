@@ -3,7 +3,11 @@ import { State } from '../common/types/State.type';
 import { AdHandlerInterface } from './common/interfaces/adHandler.interface';
 
 export class ShelfProductAdHandler implements AdHandlerInterface {
-  private readonly shelfAdClass = ['selected-product-cards', 'sponsored-shelf'];
+  private readonly shelfAdClass = [
+    'selected-product-cards',
+    'sponsored-shelf',
+    'js-recently-viewed-skus-shelf',
+  ];
   private readonly flaggedShelfAdClass = 'flagged-shelf';
 
   constructor(private state: State) {}

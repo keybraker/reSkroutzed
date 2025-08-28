@@ -3,7 +3,11 @@ import { State } from '../common/types/State.type';
 import { AdHandlerInterface } from './common/interfaces/adHandler.interface';
 
 export class ListProductAdHandler implements AdHandlerInterface {
-  private readonly productAdClass = ['labeled-item', 'labeled-product'];
+  private readonly productAdClass = [
+    'labeled-item',
+    'labeled-product',
+    'card tracking-img-container', // is the card needed?
+  ];
   private readonly flaggedProductAdClass = 'flagged-product';
 
   constructor(private state: State) {}

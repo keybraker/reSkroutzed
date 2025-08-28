@@ -36,7 +36,7 @@
         <h2 class="section-title">Quick Settings</h2>
         <div class="settings-grid">
           <div class="setting-item">
-            <label class="setting-label" for="toggleUniversalToggle">Universal Toggle</label>
+            <label class="setting-label" for="toggleUniversalToggle">Toggle</label>
             <div class="toggle-switch">
               <input type="checkbox" id="toggleUniversalToggle" class="toggle-input" checked />
               <label for="toggleUniversalToggle" class="toggle-label"></label>
@@ -88,32 +88,14 @@
       </div>
 
       <!-- Price Difference Settings -->
-      <div class="price-settings">
-        <h2 class="section-title">Price Difference Alert</h2>
-        <div class="price-input-container">
-          <label for="priceDifference">Min. difference (€):</label>
-          <input type="number" id="priceDifference" min="0" step="0.5" value="0" style="width: 80px;" />
-          <button id="updatePriceBtn" class="action-button">Update</button>
+      <div class="price-settings compact">
+        <h2 class="section-title compact">Price Difference Alert</h2>
+        <div class="price-input-container compact">
+          <label for="priceDifference" class="price-label">Min (€)</label>
+          <input type="number" id="priceDifference" min="0" step="0.5" value="0" class="price-input" />
+          <button id="updatePriceBtn" class="action-button price-update">Save</button>
         </div>
-      </div>
-
-      <!-- All-time Stats Section -->
-      <div class="stats-section">
-        <h2 class="section-title">All-time Stats</h2>
-        <div class="stats-grid">
-          <div class="stat-box">
-            <span class="stat-value" id="totalAdsBlocked">0</span>
-            <span class="stat-label">Ads Blocked</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-value" id="totalShelvesBlocked">0</span>
-            <span class="stat-label">Shelves Hidden</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-value" id="totalVideosBlocked">0</span>
-            <span class="stat-label">Videos Hidden</span>
-          </div>
-        </div>
+        <p class="price-hint">Only alert when the alternative price differs at least this amount.</p>
       </div>
     </main>
 
@@ -147,6 +129,7 @@
           </a>
         </div>
       </div>
+      <span class="version-info">Version 1.9.5</span>
     </footer>
     <script src="../popup.js"></script>
   </body>
