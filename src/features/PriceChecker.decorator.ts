@@ -245,100 +245,143 @@ function createPriceIndicationElement(
   language: Language,
   minimumPriceDifference: number,
 ): HTMLDivElement {
-  const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
+  try {
+    const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
+    const priceIndication = DomClient.createElement('div', {
+      className: [
+        'display-padding',
+        'price-checker-outline',
+        showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
+      ],
+    }) as HTMLDivElement;
 
-  const priceIndication = DomClient.createElement('div', {
-    className: [
-      'display-padding',
-      'price-checker-outline',
-      showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
-    ],
-  }) as HTMLDivElement;
+    (priceIndication as HTMLDivElement).style.marginTop = '14px';
 
-  (priceIndication as HTMLDivElement).style.marginTop = '14px';
+    const tagsContainer = DomClient.createElement('div', { className: 'tags-container' });
 
-  const tagsContainer = DomClient.createElement('div', { className: 'tags-container' });
+    const reSkroutzedReview = createReSkoutzedReviewElement(language);
+    DomClient.appendElementToElement(reSkroutzedReview, tagsContainer);
 
-  const reSkroutzedReview = createReSkoutzedReviewElement(language);
-  DomClient.appendElementToElement(reSkroutzedReview, tagsContainer);
+    const buyMeCoffeeElement = createBuyMeCoffeeElement();
+    DomClient.appendElementToElement(buyMeCoffeeElement, tagsContainer);
 
-  const buyMeCoffeeElement = createBuyMeCoffeeElement();
-  DomClient.appendElementToElement(buyMeCoffeeElement, tagsContainer);
+    DomClient.appendElementToElement(tagsContainer, priceIndication);
 
-  DomClient.appendElementToElement(tagsContainer, priceIndication);
+    const contentContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
+    const priceCalculationContainer = DomClient.createElement('div', {
+      className: 'price-calculation-container',
+    });
+    const infoContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
+    const actionContainer = DomClient.createElement('div', { className: 'inline-flex-row' });
 
-  const contentContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
-  const priceCalculationContainer = DomClient.createElement('div', {
-    className: 'price-calculation-container',
-  });
-  const infoContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
-  const actionContainer = DomClient.createElement('div', { className: 'inline-flex-row' });
-
-  const priceDisplay = createPriceDisplayComponent(
-    productPriceData.buyThroughStore.price,
-    productPriceData.buyThroughStore.shippingCost,
-    language,
-  );
-  DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
-
-  const infoText = document.createElement('span');
-  infoText.textContent =
-    language === Language.ENGLISH
-      ? 'This is the lowest price with shipping apart from "Buy through Skroutz"'
-      : 'Αυτή είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"';
-  DomClient.appendElementToElement(infoText, priceCalculationContainer);
-
-  DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
-
-  // #region Analysis Container
-  const analysisContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
-
-  const calculationContainer = createCalculationComponent(
-    productPriceData,
-    minimumPriceDifference,
-    language,
-  );
-  if (calculationContainer) {
-    DomClient.appendElementToElement(calculationContainer, analysisContainer);
-  }
-
-  const transportationBreakdown = createPriceComparisonBreakdownComponent(
-    productPriceData,
-    language,
-  );
-  DomClient.appendElementToElement(transportationBreakdown, analysisContainer);
-
-  DomClient.appendElementToElement(analysisContainer, contentContainer);
-
-  // #endregion
-
-  DomClient.appendElementToElement(infoContainer, contentContainer);
-
-  const goToStoreButton = createShopButtonComponent(
-    productPriceData,
-    minimumPriceDifference,
-    language,
-  );
-  DomClient.appendElementToElement(goToStoreButton, actionContainer);
-
-  if (productPriceHistory) {
-    const priceHistoryBreakdown = PriceHistoryComponent(
-      getPriceHistoryComparisonOutcome(
-        productPriceHistory,
-        productPriceData.buyThroughStore.totalPrice,
-      ),
-      productPriceHistory,
+    const priceDisplay = createPriceDisplayComponent(
+      productPriceData.buyThroughStore.price,
+      productPriceData.buyThroughStore.shippingCost,
       language,
     );
-    DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
+    DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
+
+    const infoText = document.createElement('span');
+    infoText.textContent =
+      language === Language.ENGLISH
+        ? 'This is the lowest price with shipping apart from "Buy through Skroutz"'
+        : 'Αυτή είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"';
+    // Row container so we can place analysis toggle button to the right of the info text
+    const infoWithAnalysisRow = DomClient.createElement('div', {
+      className: 'info-with-analysis-row',
+    });
+    DomClient.appendElementToElement(infoText, infoWithAnalysisRow);
+
+    // Prepare hidden analysis container early so handler has reference
+    const analysisContainer = DomClient.createElement('div', {
+      className: ['analysis-container'],
+    }) as HTMLDivElement;
+    analysisContainer.style.display = 'none';
+    // Give it an id for accessibility (unique-ish using product id if available)
+    const analysisId = `analysis-${productPriceData.buyThroughStore.shopId}`;
+    analysisContainer.id = analysisId;
+
+    // Create analysis toggle button (moved next to infoText)
+    const analysisButton = DomClient.createElement('button', {
+      className: ['analysis-toggle-button'],
+    }) as HTMLButtonElement;
+    analysisButton.type = 'button';
+    analysisButton.setAttribute('aria-expanded', 'false');
+    analysisButton.setAttribute('aria-controls', analysisId);
+    const analysisLabel = language === Language.ENGLISH ? 'Analysis' : 'Ανάλυση';
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = analysisLabel;
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'analysis-icon';
+    iconSpan.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+    analysisButton.appendChild(labelSpan);
+    analysisButton.appendChild(iconSpan);
+    analysisButton.addEventListener('click', () => {
+      const willShow = analysisContainer.style.display === 'none';
+      if (willShow) {
+        analysisContainer.style.display = 'flex';
+        analysisContainer.classList.add('visible');
+      } else {
+        analysisContainer.style.display = 'none';
+        analysisContainer.classList.remove('visible');
+      }
+      analysisButton.setAttribute('aria-expanded', String(willShow));
+      analysisButton.classList.toggle('expanded', willShow);
+    });
+    DomClient.appendElementToElement(analysisButton, infoWithAnalysisRow);
+
+    DomClient.appendElementToElement(infoWithAnalysisRow, priceCalculationContainer);
+
+    DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
+
+    // Append calculation and breakdown into analysisContainer
+    const calcElem = createCalculationComponent(productPriceData, minimumPriceDifference, language);
+    if (calcElem) DomClient.appendElementToElement(calcElem, analysisContainer);
+    const breakdownElem = createPriceComparisonBreakdownComponent(productPriceData, language);
+    DomClient.appendElementToElement(breakdownElem, analysisContainer);
+
+    // Append analysisContainer into contentContainer
+    DomClient.appendElementToElement(analysisContainer, contentContainer);
+
+    // (analysis button now lives next to info text)
+
+    DomClient.appendElementToElement(infoContainer, contentContainer);
+
+    const goToStoreButton = createShopButtonComponent(
+      productPriceData,
+      minimumPriceDifference,
+      language,
+    );
+    DomClient.appendElementToElement(goToStoreButton, actionContainer);
+
+    if (productPriceHistory) {
+      const priceHistoryBreakdown = PriceHistoryComponent(
+        getPriceHistoryComparisonOutcome(
+          productPriceHistory,
+          productPriceData.buyThroughStore.totalPrice,
+        ),
+        productPriceHistory,
+        language,
+      );
+      DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
+    }
+
+    DomClient.appendElementToElement(actionContainer, contentContainer);
+
+    priceIndication.title = language === Language.ENGLISH ? 'Βy reSkroutzed' : 'Από το reSkroutzed';
+    DomClient.appendElementToElement(contentContainer, priceIndication);
+
+    return priceIndication;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('PriceChecker: failed to build indication element', err);
+    const fallback = document.createElement('div');
+    fallback.className = 'price-checker-outline info-label-negative';
+    fallback.textContent =
+      language === Language.ENGLISH ? 'Price info unavailable' : 'Μη διαθέσιμη πληροφορία τιμής';
+    return fallback as HTMLDivElement;
   }
-
-  DomClient.appendElementToElement(actionContainer, contentContainer);
-
-  priceIndication.title = language === Language.ENGLISH ? 'Βy reSkroutzed' : 'Από το reSkroutzed';
-  DomClient.appendElementToElement(contentContainer, priceIndication);
-
-  return priceIndication;
 }
 
 function getPriceHistoryComparisonOutcome(

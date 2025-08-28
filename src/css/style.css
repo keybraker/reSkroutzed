@@ -644,8 +644,8 @@ text-black {
 
 .price-calculation-container {
   display: flex !important;
-  gap: 8px !important;
   flex-direction: column !important;
+  gap: 8px !important;
   align-items: left !important;
   justify-content: space-between !important;
   margin-bottom: 0px !important;
@@ -662,6 +662,10 @@ text-black {
   color: var(--text-light) !important;
   font-size: 16px !important;
   font-weight: 500 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .dark-mode .calculation-container {
@@ -1161,4 +1165,142 @@ text-black {
   --price-history-text-color: #ffffff;
   --price-history-text-secondary: #cccccc;
   --price-history-line-color: #ffb347;
+}
+
+.analysis-toggle-button {
+  border: none !important;
+  background: #ffffff !important;
+  color: #444 !important;
+  border-radius: 999px !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease !important;
+  line-height: 1 !important;
+  letter-spacing: 0.4px !important;
+}
+
+.analysis-toggle-button:hover {
+  background: #f2f2f2 !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12) !important;
+}
+
+.analysis-toggle-button:active {
+  transform: translateY(1px) !important;
+}
+
+.analysis-toggle-button .analysis-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 18px !important;
+  height: 18px !important;
+  background: #eef3ff !important;
+  color: #3366cc !important;
+  border-radius: 50% !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+}
+
+.analysis-toggle-button.expanded .analysis-icon {
+  background: #3366cc !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .analysis-toggle-button {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ddd !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-mode .analysis-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark-mode .analysis-toggle-button .analysis-icon {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #8fb4ff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark-mode .analysis-toggle-button.expanded .analysis-icon {
+  background: #2b65d9 !important;
+  color: #ffffff !important;
+}
+
+.info-with-analysis-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+}
+
+.info-with-analysis-row span:first-child {
+  flex: 1 1 auto !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+
+.analysis-container {
+  display: none !important; /* hidden by default */
+  width: 100% !important;
+}
+
+.analysis-container.visible {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 8px !important;
+  padding-top: 4px !important;
+  animation: fade-in-analysis 0.2s ease-in;
+}
+
+@keyframes fade-in-analysis {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tighten layout inside calculation-container */
+.calculation-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.calculation-container .minimum-price-difference-text {
+  align-self: center !important;
+}
+
+/* Ensure breakdown items stack correctly in analysis context */
+.analysis-container .transportation-breakdown {
+  flex-wrap: wrap !important;
+}
+
+.analysis-container .price-breakdown-item {
+  width: calc(50% - 8px) !important;
+}
+
+@media (max-width: 640px) {
+  .analysis-container .price-breakdown-item {
+    width: 100% !important;
+  }
+  .analysis-container .transportation-breakdown {
+    flex-direction: column !important;
+  }
 }
