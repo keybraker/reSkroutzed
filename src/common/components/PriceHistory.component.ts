@@ -186,6 +186,14 @@ export function PriceHistoryComponent(
     toggleButton.setAttribute('aria-expanded', String(willShow));
   });
 
+  const line = document.createElement('hr');
+  line.className = 'price-history-separator';
+  line.style.border = 'none';
+  line.style.borderTop = '1px solid currentColor';
+  line.style.opacity = '0.2';
+  line.style.margin = '8px 0 24px';
+  DomClient.appendElementToElement(line, wrapper);
+
   DomClient.appendElementToElement(row, wrapper);
   DomClient.appendElementToElement(priceHistoryContainer, wrapper);
 

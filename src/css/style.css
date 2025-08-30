@@ -1021,11 +1021,9 @@ text-black {
 }
 /* Price History Component Styles */
 .price-history-wrapper {
-  margin: 6px 0 !important;
-  padding: 6px 0 !important;
   overflow: hidden !important;
   background-color: rgba(248, 248, 248, 0.1) !important;
-  margin-bottom: 16px !important;
+  padding-bottom: 16px !important;
 }
 
 .dark-mode .price-history-wrapper {
@@ -1099,7 +1097,7 @@ text-black {
 
 .price-history-container {
   margin-top: 8px !important;
-  border: 2px solid rgba(0, 0, 0, 0.1) !important;
+  border: 1px dashed rgba(0, 0, 0, 0.1) !important;
   border-radius: 6px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
 
@@ -1126,11 +1124,8 @@ text-black {
 }
 
 .price-history-canvas {
-  border: 2px solid rgba(0, 0, 0, 0.1) !important;
-
   width: 100% !important;
   height: 200px !important;
-  border-radius: 4px !important;
 }
 
 .price-history-tooltip {
@@ -1247,7 +1242,6 @@ text-black {
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
-  margin-top: 8px !important;
 }
 
 .price-history-row .price-history-label {
@@ -1264,7 +1258,7 @@ text-black {
 .price-history-container {
   display: none !important;
   width: 100% !important;
-  padding: 6px 6px 6px 6px !important;
+  padding: 0px 0px 0px 0px !important;
 }
 
 .price-history-container.visible {
