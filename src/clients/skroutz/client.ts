@@ -1,4 +1,4 @@
-import { removeOutliers } from '../../common/functions/removeOutliers';
+// import { removeOutliers } from '../../common/functions/removeOutliers';
 import { PriceChart, PriceChartValue, ProductData, Store } from './types';
 
 type PriceData = {
@@ -17,6 +17,7 @@ export type ProductPriceHistory = {
   minimumPrice: number;
   maximumPrice: number;
   allPrices: PriceChartValue[];
+  sixMonthPrices: PriceChartValue[];
 };
 
 export class SkroutzClient {
@@ -44,23 +45,25 @@ export class SkroutzClient {
   public static async getPriceHistory(): Promise<ProductPriceHistory> {
     try {
       const productCode = this.getSku();
-
       const priceGraphData = await this.getPriceGraphData(productCode);
 
-      const allPrices = priceGraphData.min_price.graphData['6_months'].values.filter(
-        (value) => value.value > 0,
-      );
+      const allPrices = priceGraphData.min_price.graphData['all'].values
+        .filter((value) => value.value > 0)
+        .map((v) => ({ ...v, timestamp: v.timestamp * 1000 }));
+      const sixMonthPrices = priceGraphData.min_price.graphData['6_months'].values
+        .filter((value) => value.value > 0)
+        .map((v) => ({ ...v, timestamp: v.timestamp * 1000 }));
 
-      const filteredPrices = removeOutliers(allPrices);
-      const allPriceAmounts = filteredPrices.map((v) => v.value);
+      const allFilteredPrices = allPrices; //removeOutliers(allPrices);
+      const sixFilteredPrices = sixMonthPrices; //removeOutliers(sixMonthPrices);
+
+      const allPriceAmounts = allFilteredPrices.map((v) => v.value);
 
       return {
         minimumPrice: Math.min(...allPriceAmounts),
         maximumPrice: Math.max(...allPriceAmounts),
-        allPrices: filteredPrices.map((v) => ({
-          ...v,
-          timestamp: v.timestamp * 1000,
-        })),
+        allPrices: allFilteredPrices,
+        sixMonthPrices: sixFilteredPrices,
       };
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);

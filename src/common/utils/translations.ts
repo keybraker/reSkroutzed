@@ -1,6 +1,13 @@
 import { Language } from '../enums/Language.enum';
 
-type TranslationKey = 'priceHistory.cheap' | 'priceHistory.normal' | 'priceHistory.expensive';
+type TranslationKey =
+  | 'priceHistory.cheap'
+  | 'priceHistory.normal'
+  | 'priceHistory.expensive'
+  | 'priceHistory.lifetimeCheap'
+  | 'priceHistory.lifetimeNormal'
+  | 'priceHistory.lifetimeExpensive'
+  | 'priceHistory.lifetimeLabel';
 
 const translations: Record<TranslationKey, Partial<Record<Language, string>>> = {
   'priceHistory.cheap': {
@@ -14,6 +21,22 @@ const translations: Record<TranslationKey, Partial<Record<Language, string>>> = 
   'priceHistory.expensive': {
     [Language.ENGLISH]: 'High price compared to historical price',
     [Language.GREEK]: 'Υψηλή τιμή σε σχέση με το τελευταίο εξάμηνο',
+  },
+  'priceHistory.lifetimeCheap': {
+    [Language.ENGLISH]: 'Good price compared to entire sales period',
+    [Language.GREEK]: 'Καλή τιμή σε σχέση με όλη τη διάρκεια πώλησης',
+  },
+  'priceHistory.lifetimeNormal': {
+    [Language.ENGLISH]: 'Average price compared to entire sales period',
+    [Language.GREEK]: 'Μέση τιμή σε σχέση με όλη τη διάρκεια πώλησης',
+  },
+  'priceHistory.lifetimeExpensive': {
+    [Language.ENGLISH]: 'High price compared to entire sales period',
+    [Language.GREEK]: 'Υψηλή τιμή σε σχέση με όλη τη διάρκεια πώλησης',
+  },
+  'priceHistory.lifetimeLabel': {
+    [Language.ENGLISH]: 'Lifetime assessment:',
+    [Language.GREEK]: 'Αξιολόγηση διάρκειας ζωής:',
   },
 };
 
@@ -38,3 +61,5 @@ export function getLocaleForLanguage(language: Language): string {
 export function translate(key: TranslationKey, language: Language): string {
   return translations[key][language] || translations[key][Language.ENGLISH] || '';
 }
+
+export type { TranslationKey };

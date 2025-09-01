@@ -356,6 +356,7 @@ function createPriceIndicationElement(
         ),
         productPriceHistory,
         language,
+        productPriceData.buyThroughStore.totalPrice,
       );
       DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
     }

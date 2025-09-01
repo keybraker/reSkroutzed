@@ -1,7 +1,13 @@
 import { DomClient } from '../../clients/dom/client';
 import { ProductPriceHistory } from '../../clients/skroutz/client';
 import { Language } from '../enums/Language.enum';
-import { getLocaleForLanguage, translate } from '../utils/translations';
+import { getLocaleForLanguage, translate, TranslationKey } from '../utils/translations';
+
+interface PriceData {
+  value: number;
+  timestamp: number;
+  shop_name?: string;
+}
 
 interface PricePoint {
   x: number;
@@ -14,10 +20,42 @@ interface PriceHistoryCanvas extends HTMLCanvasElement {
   _points?: PricePoint[];
 }
 
+function getLifetimePriceAssessment(
+  productPriceHistory: ProductPriceHistory,
+  currentPrice: number,
+  language: Language,
+): string | null {
+  const min = Number(productPriceHistory.minimumPrice);
+  const max = Number(productPriceHistory.maximumPrice);
+
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    return null;
+  }
+
+  const priceRange = max - min;
+  if (priceRange <= 0) {
+    return null;
+  }
+
+  const pricePosition = (currentPrice - min) / priceRange;
+  let key: TranslationKey;
+
+  if (pricePosition <= 0.3) {
+    key = 'priceHistory.lifetimeCheap';
+  } else if (pricePosition <= 0.7) {
+    key = 'priceHistory.lifetimeNormal';
+  } else {
+    key = 'priceHistory.lifetimeExpensive';
+  }
+
+  return translate(key, language);
+}
+
 export function PriceHistoryComponent(
   currentPriceState: 'expensive' | 'cheap' | 'normal',
   productPriceHistory: ProductPriceHistory,
   language: Language,
+  currentPrice: number,
 ): HTMLElement {
   const wrapper = DomClient.createElement('div', {
     className: 'price-history-wrapper',
@@ -26,11 +64,43 @@ export function PriceHistoryComponent(
   const row = DomClient.createElement('div', {
     className: ['price-history-row', 'info-with-analysis-row'],
   });
+  row.style.display = 'flex';
+  row.style.flexDirection = 'column';
+
+  const assessmentsContainer = DomClient.createElement('div', {
+    className: 'price-history-assessments',
+  });
+  assessmentsContainer.style.display = 'flex';
+  assessmentsContainer.style.flexDirection = 'column';
+  assessmentsContainer.style.gap = '4px';
 
   const labelSpan = document.createElement('span');
   labelSpan.className = 'price-history-label';
   labelSpan.textContent = translate(`priceHistory.${currentPriceState}`, language);
-  DomClient.appendElementToElement(labelSpan, row);
+  DomClient.appendElementToElement(labelSpan, assessmentsContainer);
+
+  const lifetimeAssessment = getLifetimePriceAssessment(
+    productPriceHistory,
+    currentPrice,
+    language,
+  );
+  if (lifetimeAssessment) {
+    const lifetimeSpan = document.createElement('span');
+    lifetimeSpan.className = 'price-history-label';
+    lifetimeSpan.textContent = lifetimeAssessment;
+    DomClient.appendElementToElement(lifetimeSpan, assessmentsContainer);
+  }
+
+  const topRow = DomClient.createElement('div', {
+    className: 'info-with-analysis-row',
+  });
+  topRow.style.display = 'flex';
+  topRow.style.flexDirection = 'row';
+  topRow.style.alignItems = 'center';
+  topRow.style.gap = '16px';
+
+  DomClient.appendElementToElement(assessmentsContainer, topRow);
+  DomClient.appendElementToElement(topRow, row);
 
   const containerId = `price-history-container-${Math.random().toString(36).slice(2, 8)}`;
   const toggleButton = DomClient.createElement('button', {
@@ -50,7 +120,7 @@ export function PriceHistoryComponent(
   toggleButton.appendChild(btnText);
   toggleButton.appendChild(iconSpan);
 
-  DomClient.appendElementToElement(toggleButton, row);
+  DomClient.appendElementToElement(toggleButton, topRow);
 
   const priceHistoryContainer = DomClient.createElement('div', {
     className: 'price-history-container',
@@ -65,21 +135,36 @@ export function PriceHistoryComponent(
   const padding = 50;
   const width = canvas.width;
   const height = canvas.height;
+  const selectedPeriod: 'all' | '6_months' = 'all';
 
-  const prices = productPriceHistory.allPrices || [];
-  if (!prices.length) {
-    ctx.fillStyle = '#999';
-    ctx.font = '14px sans-serif';
-    const noDataMsg = language === Language.GREEK ? 'Δεν υπάρχουν δεδομένα' : 'No price data';
-    ctx.fillText(noDataMsg, 20, height / 2);
-  } else {
-    const minPrice = Math.min(...prices.map((p) => p.value));
-    const maxPrice = Math.max(...prices.map((p) => p.value));
+  function filterPrices(prices: PriceData[], period: 'all' | '6_months'): PriceData[] {
+    if (period === 'all') return prices;
+    const now = new Date();
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
+    return prices.filter((p) => new Date(p.timestamp) >= sixMonthsAgo);
+  }
+
+  function drawPriceHistory(
+    ctx: CanvasRenderingContext2D,
+    filteredPrices: PriceData[],
+    language: Language,
+    canvas: PriceHistoryCanvas,
+  ): void {
+    if (!filteredPrices.length) {
+      ctx.fillStyle = '#999';
+      ctx.font = '14px sans-serif';
+      const noDataMsg = language === Language.GREEK ? 'Δεν υπάρχουν δεδομένα' : 'No price data';
+      ctx.fillText(noDataMsg, 20, height / 2);
+      canvas._points = [];
+      return;
+    }
+    const minPrice = Math.min(...filteredPrices.map((p) => p.value));
+    const maxPrice = Math.max(...filteredPrices.map((p) => p.value));
     const priceRange = maxPrice - minPrice || 1;
     const priceSteps = 5;
     const stepValue = priceRange / (priceSteps - 1);
-    const xStep = prices.length > 1 ? (width - 2 * padding) / (prices.length - 1) : 0;
-
+    const xStep =
+      filteredPrices.length > 1 ? (width - 2 * padding) / (filteredPrices.length - 1) : 0;
     const rootStyle = getComputedStyle(document.documentElement);
     const fallback = (v: string, fb: string): string => (v && v.trim().length ? v.trim() : fb);
     const gridColor = fallback(rootStyle.getPropertyValue('--price-history-grid-color'), '#333');
@@ -89,7 +174,6 @@ export function PriceHistoryComponent(
       '#bbb',
     );
     const lineColor = fallback(rootStyle.getPropertyValue('--price-history-line-color'), '#0af');
-
     ctx.strokeStyle = gridColor;
     ctx.fillStyle = textColor;
     ctx.lineWidth = 1;
@@ -103,22 +187,23 @@ export function PriceHistoryComponent(
       ctx.stroke();
       ctx.fillText(`${price.toFixed(2)}€`, 5, y + 5);
     }
-
     ctx.fillStyle = textSecondary;
     ctx.font = '12px sans-serif';
-    prices.forEach((p, i) => {
-      if (i % Math.max(1, Math.floor(prices.length / 6)) === 0 || i === prices.length - 1) {
+    filteredPrices.forEach((p, i) => {
+      if (
+        i % Math.max(1, Math.floor(filteredPrices.length / 6)) === 0 ||
+        i === filteredPrices.length - 1
+      ) {
         const x = padding + i * xStep;
         const date = new Date(p.timestamp).toLocaleDateString(getLocaleForLanguage(language));
         ctx.fillText(date, x - 30, height - padding + 20);
       }
     });
-
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
     const points: PricePoint[] = [];
-    prices.forEach((p, i) => {
+    filteredPrices.forEach((p, i) => {
       const x = padding + i * xStep;
       const y = height - padding - ((p.value - minPrice) / priceRange) * (height - padding * 2);
       points.push({ x, y, price: p.value, store: p.shop_name ?? '', timestamp: p.timestamp });
@@ -126,16 +211,18 @@ export function PriceHistoryComponent(
       else ctx.lineTo(x, y);
     });
     ctx.stroke();
-
     ctx.fillStyle = lineColor;
     points.forEach((pt) => {
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
       ctx.fill();
     });
-
     canvas._points = points;
   }
+
+  const prices = productPriceHistory.allPrices || [];
+  const filteredPrices = filterPrices(prices, selectedPeriod);
+  drawPriceHistory(ctx, filteredPrices, language, canvas);
 
   const tooltip = DomClient.createElement('div', { className: 'price-history-tooltip' });
   DomClient.appendElementToElement(tooltip, priceHistoryContainer);
@@ -179,6 +266,7 @@ export function PriceHistoryComponent(
   });
 
   DomClient.appendElementToElement(canvas, priceHistoryContainer);
+
   toggleButton.addEventListener('click', () => {
     const willShow = !priceHistoryContainer.classList.contains('visible');
     priceHistoryContainer.classList.toggle('visible', willShow);
