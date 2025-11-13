@@ -198,23 +198,33 @@ function createShopButtonComponent(
     language === Language.ENGLISH ? 'Go to Shop' : 'Μετάβαση στο κατάστημα';
 
   goToStoreButton.addEventListener('click', (): void => {
-    const targetId = `shop-${productPriceData.buyThroughStore.shopId}`;
-    const targetElements = document.querySelectorAll(`#${targetId}`);
+    const sliderToggleButton = document.querySelector(
+      '.alternative-option-wrapper.btn-reset',
+    ) as HTMLButtonElement | null;
 
-    if (targetElements.length > 0) {
-      const targetElement = targetElements.length > 1 ? targetElements[1] : targetElements[0];
-
-      targetElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'center',
-      });
-      targetElement.classList.add('lowest-price-store-highlight');
-
-      setTimeout(() => {
-        targetElement.classList.remove('lowest-price-store-highlight');
-      }, 3000);
+    if (sliderToggleButton) {
+      sliderToggleButton.click();
     }
+
+    setTimeout(() => {
+      const targetId = `shop-${productPriceData.buyThroughStore.shopId}`;
+      const targetElements = document.querySelectorAll(`#${targetId}`);
+
+      if (targetElements.length > 0) {
+        const targetElement = targetElements.length > 1 ? targetElements[1] : targetElements[0];
+
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        });
+        targetElement.classList.add('lowest-price-store-highlight');
+
+        setTimeout(() => {
+          targetElement.classList.remove('lowest-price-store-highlight');
+        }, 3000);
+      }
+    }, 300);
   });
 
   return goToStoreButton;
