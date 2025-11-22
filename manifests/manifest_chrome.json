@@ -1,7 +1,7 @@
 {
     "name": "reSkroutzed",
     "description": "reSkroutzed, is a must-have enhancer for website skroutz.gr",
-    "version": "1.9.8",
+    "version": "1.9.9",
     "manifest_version": 3,
     "permissions": [
         "storage"
