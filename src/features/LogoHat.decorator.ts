@@ -23,8 +23,8 @@ export class LogoHatDecorator implements FeatureInstance {
     hat.alt = 'reSkroutzed hat';
 
     hat.style.position = 'absolute';
-    hat.style.top = '-6px';
-    hat.style.left = '-10px';
+    hat.style.top = '0px';
+    hat.style.left = '12px';
     hat.style.width = '20px';
     hat.style.height = '20px';
     hat.style.transform = 'rotate(-15deg)';
