@@ -55,11 +55,16 @@ jobs:
           refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
           publish: true
 
+      - name: Install web-ext
+        run: npm install --global web-ext
+
       - name: Publish to Firefox Add-ons
-        uses: wdzraly/web-ext-submit@v1
-        with:
-          extension-id: ${{ secrets.FIREFOX_EXTENSION_ID }}
-          jwt-issuer: ${{ secrets.FIREFOX_JWT_ISSUER }}
-          jwt-secret: ${{ secrets.FIREFOX_JWT_SECRET }}
-          file-name: build/firefox_build.zip
-          channel: listed
+        run: |
+          web-ext sign --channel=listed \
+            --api-key="${{ secrets.FIREFOX_JWT_ISSUER }}" \
+            --api-secret="${{ secrets.FIREFOX_JWT_SECRET }}" \
+            --source-dir=build/firefox_build \
+            --artifacts-dir=build/web-ext-artifacts
+        env:
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
