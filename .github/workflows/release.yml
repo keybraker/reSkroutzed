@@ -28,18 +28,44 @@ jobs:
             echo "ref=${{ github.ref }}" >> $GITHUB_OUTPUT
           fi
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ steps.tag.outputs.ref }}
 
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Verify Version (Chrome)
+        run: |
+          TAG_VERSION=${{ steps.tag.outputs.tag }}
+          # Remove 'v' prefix if present for comparison
+          CLEAN_VERSION=${TAG_VERSION#v}
+          MANIFEST_VERSION=$(node -p "require('./manifests/manifest_chrome.json').version")
+
+          if [ "$CLEAN_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "::error::Tag version ($CLEAN_VERSION) does not match manifest_chrome.json version ($MANIFEST_VERSION)"
+            exit 1
+          fi
+          echo "Chrome version verified: $CLEAN_VERSION"
+
+      - name: Verify Version (Firefox)
+        run: |
+          TAG_VERSION=${{ steps.tag.outputs.tag }}
+          # Remove 'v' prefix if present for comparison
+          CLEAN_VERSION=${TAG_VERSION#v}
+          MANIFEST_VERSION=$(node -p "require('./manifests/manifest_firefox.json').version")
+
+          if [ "$CLEAN_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "::error::Tag version ($CLEAN_VERSION) does not match manifest_firefox.json version ($MANIFEST_VERSION)"
+            exit 1
+          fi
+          echo "Firefox version verified: $CLEAN_VERSION"
 
       - name: Build Chrome Extension
         run: npm run build:chrome
@@ -49,7 +75,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: ReSkroutzed ${{ steps.tag.outputs.tag }}
@@ -58,24 +84,4 @@ jobs:
           files: |
             build/chrome_build.zip
             build/firefox_build.zip
-          body: |
-            # ReSkroutzed ${{ steps.tag.outputs.tag }}
-
-            ## Release Notes
-
-            <!-- Add release notes here or edit after release creation -->
-
-            ## Installation
-
-            ### Chrome
-            - Download the chrome_build.zip file
-            - Unzip the file
-            - Go to chrome://extensions/
-            - Enable "Developer mode"
-            - Click "Load unpacked" and select the unzipped folder
-
-            ### Firefox
-            - Download the firefox_build.zip file
-            - Go to about:debugging#/runtime/this-firefox
-            - Click "Load Temporary Add-on"
-            - Select the downloaded zip file
+          generate_release_notes: true
