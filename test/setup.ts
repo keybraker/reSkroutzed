@@ -1,5 +1,12 @@
 // Setup global mocks and environment for tests
 import { vi } from 'vitest';
+import * as crypto from 'crypto';
+
+// Polyfill crypto for Node environments that don't have it globally (like Node 18)
+if (typeof globalThis.crypto === 'undefined') {
+  // @ts-ignore - assigning to read-only but works in Node
+  globalThis.crypto = crypto.webcrypto;
+}
 
 // Set up document body
 document.body.innerHTML = '';
