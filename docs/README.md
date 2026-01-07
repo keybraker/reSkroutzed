@@ -106,6 +106,12 @@ The extension will be packaged as `build/firefox_build.zip`. To load it in Firef
 3. Select the `build/firefox_build.zip` file
 4. The extension should now be loaded and active
 
+### Releasing
+
+This project uses automated workflows for publishing updates to the Chrome Web Store and Firefox Add-ons.
+
+Detailed instructions on how to prepare and trigger a new release can be found in the [Releasing Guide](RELEASING.md).
+
 ## Contributing
 
 Contributions are always welcome!
