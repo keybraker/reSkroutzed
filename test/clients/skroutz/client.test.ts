@@ -228,7 +228,9 @@ describe('SkroutzClient', () => {
       `;
 
       // Act & Assert
-      await expect(SkroutzClient.getCurrentProductData()).rejects.toThrow('Failed to fetch price');
+      await expect(SkroutzClient.getCurrentProductData()).rejects.toThrow(
+        'Failed to fetch/parse current product price',
+      );
     });
 
     it('should handle invalid price format', async () => {
@@ -241,7 +243,9 @@ describe('SkroutzClient', () => {
       `;
 
       // Act & Assert
-      await expect(SkroutzClient.getCurrentProductData()).rejects.toThrow('Failed to parse price');
+      await expect(SkroutzClient.getCurrentProductData()).rejects.toThrow(
+        'Failed to fetch/parse current product price',
+      );
     });
 
     it('should handle fetch rejected promises', async () => {

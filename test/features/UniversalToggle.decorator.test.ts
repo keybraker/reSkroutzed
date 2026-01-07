@@ -10,6 +10,7 @@ vi.mock('../../src/clients/browser/client', () => ({
   BrowserClient: {
     setValue: vi.fn(),
     getValueAsync: vi.fn().mockResolvedValue(false),
+    detectMobile: vi.fn().mockReturnValue(false),
   },
   StorageKey: {
     DARK_MODE: 'darkMode',

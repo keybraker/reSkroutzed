@@ -68,7 +68,7 @@ describe('createReskoutzedReviewElement', () => {
     );
     expect(link?.target).toBe('_blank');
     expect(link?.rel).toBe('noopener noreferrer');
-    expect(link?.textContent).toBe('by reSkroutzed');
+    expect(link?.textContent).toBe('By reSkroutzed');
     expect(link?.classList.contains('icon-border')).toBe(true);
     expect(link?.classList.contains('font-bold')).toBe(true);
   });
@@ -87,7 +87,7 @@ describe('createReskoutzedReviewElement', () => {
     expect(link?.href).toBe('https://addons.mozilla.org/en-US/firefox/addon/reskroutzed/reviews/');
     expect(link?.target).toBe('_blank');
     expect(link?.rel).toBe('noopener noreferrer');
-    expect(link?.textContent).toBe('by reSkroutzed');
+    expect(link?.textContent).toBe('By reSkroutzed');
   });
 
   it('should append the link to the main element', () => {

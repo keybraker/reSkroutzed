@@ -17,7 +17,7 @@ export function createReSkoutzedReviewElement(language: Language): HTMLDivElemen
   reSkoutzedReviewLink.target = '_blank';
   reSkoutzedReviewLink.rel = 'noopener noreferrer';
   reSkoutzedReviewLink.textContent =
-    language === Language.ENGLISH ? 'Βy reSkroutzed' : 'Από το reSkroutzed';
+    language === Language.ENGLISH ? 'By reSkroutzed' : 'Από το reSkroutzed';
   reSkoutzedReviewLink.classList.add('icon-border', 'font-bold');
 
   DomClient.appendElementToElement(reSkoutzedReviewLink, reSkoutzedReviewElement);
