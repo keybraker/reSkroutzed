@@ -40,17 +40,16 @@ git push origin v1.9.12
 
 Wait for the **Release** action to finish. Go to the **Releases** page on GitHub.
 
-- A new draft named `ReSkroutzed v1.9.12` will appear.
+- A new draft named `v1.9.12` will appear.
 - Check that `chrome_build.zip` and `firefox_build.zip` are present in the assets.
 
 ### 4. Publish to Stores
 
 When you are ready to go live:
 
-1.  Edit the Draft release on GitHub.
-2.  Add release notes if desired.
-3.  Click **Publish release**.
-4.  The **Publish to Stores** action will trigger automatically. You can monitor its progress in the "Actions" tab.
+1.  Edit the Draft release on GitHub if you wish to add extra information (Installation instructions and changelog are added automatically).
+2.  Click **Publish release**.
+3.  The **Publish to Stores** action will trigger automatically. You can monitor its progress in the "Actions" tab.
 
 ---
 
