@@ -220,6 +220,37 @@ describe('SkroutzClient', () => {
       );
     });
 
+    it('should extract SKU from URL if meta tag is missing', async () => {
+      const originalLocation = window.location;
+      // Setup URL to contain SKU
+      Object.defineProperty(window, 'location', {
+        value: {
+          pathname: '/s/12345678/product-name.html',
+        },
+        writable: true,
+      });
+
+      // Remove meta tag, keep price valid
+      document.body.innerHTML = `
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+      `;
+
+      const result = await SkroutzClient.getCurrentProductData();
+      expect(result).toBeDefined();
+      expect(fetch).toHaveBeenCalledWith(
+        'https://www.skroutz.gr/s/12345678/filter_products.json',
+        expect.any(Object),
+      );
+
+      // Cleanup
+      Object.defineProperty(window, 'location', {
+        value: originalLocation,
+        writable: true,
+      });
+    });
+
     it('should throw an error if price element is missing', async () => {
       // Remove the price element
       document.body.innerHTML = `

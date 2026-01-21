@@ -485,6 +485,11 @@ export class PriceCheckerDecorator implements FeatureInstance {
       return urlMatch[1];
     }
 
+    const sMatch = window.location.pathname.match(/\/s\/(\d+)/);
+    if (sMatch && sMatch[1]) {
+      return sMatch[1];
+    }
+
     const productElement = document.querySelector('[data-product-id]');
     if (productElement) {
       return productElement.getAttribute('data-product-id');

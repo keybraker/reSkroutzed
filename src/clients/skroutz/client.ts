@@ -121,11 +121,16 @@ export class SkroutzClient {
   private static getSku(): string {
     const metaTag = document.querySelector('meta[itemprop="sku"]') as HTMLMetaElement | null;
 
-    if (!metaTag) {
-      throw new Error('Failed to fetch product SKU');
+    if (metaTag) {
+      return metaTag.content;
     }
 
-    return metaTag.content;
+    const urlMatch = window.location.pathname.match(/\/s\/(\d+)/);
+    if (urlMatch && urlMatch[1]) {
+      return urlMatch[1];
+    }
+
+    throw new Error('Failed to fetch product SKU');
   }
 
   private static async getProductData(productCode: string): Promise<ProductData> {
