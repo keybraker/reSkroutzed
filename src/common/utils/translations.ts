@@ -7,7 +7,10 @@ type TranslationKey =
   | 'priceHistory.lifetimeCheap'
   | 'priceHistory.lifetimeNormal'
   | 'priceHistory.lifetimeExpensive'
-  | 'priceHistory.lifetimeLabel';
+  | 'priceHistory.lifetimeLabel'
+  | 'priceHistory.combinedCheap'
+  | 'priceHistory.combinedNormal'
+  | 'priceHistory.combinedExpensive';
 
 const translations: Record<TranslationKey, Partial<Record<Language, string>>> = {
   'priceHistory.cheap': {
@@ -37,6 +40,19 @@ const translations: Record<TranslationKey, Partial<Record<Language, string>>> = 
   'priceHistory.lifetimeLabel': {
     [Language.ENGLISH]: 'Lifetime assessment:',
     [Language.GREEK]: 'Αξιολόγηση διάρκειας ζωής:',
+  },
+  'priceHistory.combinedCheap': {
+    [Language.ENGLISH]: 'Good price compared to both the last 6 months and the entire sales period',
+    [Language.GREEK]: 'Καλή τιμή σε σχέση με το τελευταίο εξάμηνο και όλη τη διάρκεια πώλησης',
+  },
+  'priceHistory.combinedNormal': {
+    [Language.ENGLISH]:
+      'Average price compared to both the last 6 months and the entire sales period',
+    [Language.GREEK]: 'Μέση τιμή σε σχέση με το τελευταίο εξάμηνο και όλη τη διάρκεια πώλησης',
+  },
+  'priceHistory.combinedExpensive': {
+    [Language.ENGLISH]: 'High price compared to both the last 6 months and the entire sales period',
+    [Language.GREEK]: 'Υψηλή τιμή σε σχέση με το τελευταίο εξάμηνο και όλη τη διάρκεια πώλησης',
   },
 };
 

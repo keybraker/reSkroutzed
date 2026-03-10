@@ -3,11 +3,10 @@ import { ProductPriceHistory } from '../../clients/skroutz/client';
 import { Language } from '../enums/Language.enum';
 import { translate, TranslationKey } from '../utils/translations';
 
-function getLifetimePriceAssessment(
+function getLifetimePriceLevel(
   productPriceHistory: ProductPriceHistory,
   currentPrice: number,
-  language: Language,
-): string | null {
+): 'cheap' | 'normal' | 'expensive' | null {
   const min = Number(productPriceHistory.minimumPrice);
   const max = Number(productPriceHistory.maximumPrice);
 
@@ -21,17 +20,10 @@ function getLifetimePriceAssessment(
   }
 
   const pricePosition = (currentPrice - min) / priceRange;
-  let key: TranslationKey;
 
-  if (pricePosition <= 0.3) {
-    key = 'priceHistory.lifetimeCheap';
-  } else if (pricePosition <= 0.7) {
-    key = 'priceHistory.lifetimeNormal';
-  } else {
-    key = 'priceHistory.lifetimeExpensive';
-  }
-
-  return translate(key, language);
+  if (pricePosition <= 0.3) return 'cheap';
+  if (pricePosition <= 0.7) return 'normal';
+  return 'expensive';
 }
 
 export function PriceHistoryComponent(
@@ -59,19 +51,26 @@ export function PriceHistoryComponent(
 
   const labelSpan = document.createElement('span');
   labelSpan.className = 'price-history-label';
-  labelSpan.textContent = translate(`priceHistory.${currentPriceState}`, language);
-  DomClient.appendElementToElement(labelSpan, assessmentsContainer);
 
-  const lifetimeAssessment = getLifetimePriceAssessment(
-    productPriceHistory,
-    currentPrice,
-    language,
-  );
-  if (lifetimeAssessment) {
-    const lifetimeSpan = document.createElement('span');
-    lifetimeSpan.className = 'price-history-label';
-    lifetimeSpan.textContent = lifetimeAssessment;
-    DomClient.appendElementToElement(lifetimeSpan, assessmentsContainer);
+  const lifetimeLevel = getLifetimePriceLevel(productPriceHistory, currentPrice);
+
+  if (lifetimeLevel && lifetimeLevel === currentPriceState) {
+    const combinedKey: TranslationKey =
+      `priceHistory.combined${currentPriceState.charAt(0).toUpperCase() + currentPriceState.slice(1)}` as TranslationKey;
+    labelSpan.textContent = translate(combinedKey, language);
+    DomClient.appendElementToElement(labelSpan, assessmentsContainer);
+  } else {
+    labelSpan.textContent = translate(`priceHistory.${currentPriceState}`, language);
+    DomClient.appendElementToElement(labelSpan, assessmentsContainer);
+
+    if (lifetimeLevel) {
+      const lifetimeKey: TranslationKey =
+        `priceHistory.lifetime${lifetimeLevel.charAt(0).toUpperCase() + lifetimeLevel.slice(1)}` as TranslationKey;
+      const lifetimeSpan = document.createElement('span');
+      lifetimeSpan.className = 'price-history-label';
+      lifetimeSpan.textContent = translate(lifetimeKey, language);
+      DomClient.appendElementToElement(lifetimeSpan, assessmentsContainer);
+    }
   }
 
   const topRow = DomClient.createElement('div', {

@@ -1142,6 +1142,8 @@ text-black {
   align-items: center !important;
   gap: 6px !important;
   cursor: pointer !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
   transition:
     background 0.2s ease,
