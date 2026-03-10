@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SkroutzClient, ProductPriceData } from '../../../src/clients/skroutz/client';
+import { ProductPriceData, SkroutzClient } from '../../../src/clients/skroutz/client';
 import { ProductData } from '../../../src/clients/skroutz/types';
 
 describe('SkroutzClient', () => {
@@ -136,26 +136,110 @@ describe('SkroutzClient', () => {
     price_drop_percentage: null,
   };
 
+  const mockStoreData = [
+    {
+      stores_count: 1,
+      store_location_id: 10,
+      store_location_address: {
+        city: 'Αθήνα',
+        country: 'GR',
+        region: 'Αττική',
+        street: 'Κηφισίας 1',
+        postcode: '11523',
+        full: 'Κηφισίας 1, Αθήνα 11523',
+      },
+      display_full_store_address: true,
+      show_added_delay_message: false,
+    },
+    {
+      stores_count: 1,
+      store_location_id: 11,
+      store_location_address: {
+        city: 'Ηράκλειο',
+        country: 'GR',
+        region: 'Κρήτη',
+        street: '25ης Αυγούστου 10',
+        postcode: '71202',
+        full: '25ης Αυγούστου 10, Ηράκλειο 71202',
+      },
+      display_full_store_address: true,
+      show_added_delay_message: false,
+    },
+    {
+      stores_count: 1,
+      store_location_id: 12,
+      store_location_address: {
+        city: 'Πάτρα',
+        country: 'GR',
+        region: 'Αχαΐα',
+        street: 'Μαιζώνος 4',
+        postcode: '26221',
+        full: 'Μαιζώνος 4, Πάτρα 26221',
+      },
+      display_full_store_address: true,
+      show_added_delay_message: false,
+    },
+  ];
+
+  const createFetchMock = (): ReturnType<typeof vi.fn> =>
+    vi.fn().mockImplementation((input: RequestInfo | URL) => {
+      const url = String(input);
+
+      if (url.includes('filter_products.json')) {
+        return Promise.resolve({
+          ok: true,
+          json: vi.fn().mockResolvedValue(mockProductData),
+        });
+      }
+
+      if (url.includes('product_cards_nearest_location.json')) {
+        return Promise.resolve({
+          ok: true,
+          json: vi.fn().mockResolvedValue(mockStoreData),
+        });
+      }
+
+      return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+    });
+
   // Preserve original console.error
   const originalConsoleError = console.error;
+  const originalConsoleWarn = console.warn;
 
   beforeEach(() => {
     // Mock document body and elements
     document.body.innerHTML = `
       <meta itemprop="sku" content="12345678">
+      <ol id="prices" class="sku-list">
+        <li class="product-card-redesigned">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+          </div>
+        </li>
+        <li class="product-card-redesigned">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Μαρούσι, Ελλάδα</span></div>
+            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+          </div>
+        </li>
+        <li class="product-card-redesigned">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Βουλγαρία</span></div>
+          </div>
+        </li>
+      </ol>
       <article class="offering-card">
         <div class="price">1.028<span class="comma">,</span><span>89</span></div>
       </article>
     `;
 
     // Mock fetch API
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue(mockProductData),
-    });
+    global.fetch = createFetchMock();
 
     // Silence console errors during tests to keep output clean
     console.error = vi.fn();
+    console.warn = vi.fn();
   });
 
   afterEach(() => {
@@ -165,6 +249,7 @@ describe('SkroutzClient', () => {
 
     // Restore console.error
     console.error = originalConsoleError;
+    console.warn = originalConsoleWarn;
   });
 
   describe('getCurrentProductData', () => {
@@ -193,6 +278,12 @@ describe('SkroutzClient', () => {
         totalPrice: 950,
         shopId: 103,
       });
+
+      expect(result.storeAvailability).toEqual({
+        cities: ['Θεσσαλονίκη', 'Μαρούσι'],
+        userCity: undefined,
+        matchingCities: [],
+      });
     });
 
     it('should throw an error if fetch fails', async () => {
@@ -204,6 +295,118 @@ describe('SkroutzClient', () => {
 
       // Act & Assert
       await expect(SkroutzClient.getCurrentProductData()).rejects.toThrow('Failed to fetch');
+    });
+
+    it('should match store cities against the selected user city when available', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <div class="header-user-actions">
+          <span class="country-picker-text js-cp-link" tabindex="0">Ηρακλειο Κρήτης 71305</span>
+        </div>
+        <ol id="prices" class="sku-list">
+          <li class="product-card-redesigned">
+            <div class="merchant-box-bottom-content">
+              <div class="location"><span>Ηράκλειο, Ελλάδα</span></div>
+              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            </div>
+          </li>
+          <li class="product-card-redesigned">
+            <div class="merchant-box-bottom-content">
+              <div class="location"><span>Αθήνα, Ελλάδα</span></div>
+              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            </div>
+          </li>
+        </ol>
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+      `;
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability).toEqual({
+        cities: ['Αθήνα', 'Ηράκλειο'],
+        userCity: 'Ηρακλειο Κρήτης',
+        matchingCities: ['Ηράκλειο'],
+      });
+    });
+
+    it('should keep price data working when store availability fetch fails', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+      `;
+
+      global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+        const url = String(input);
+
+        if (url.includes('filter_products.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue(mockProductData),
+          });
+        }
+
+        if (url.includes('product_cards_nearest_location.json')) {
+          return Promise.resolve({
+            ok: false,
+            status: 500,
+          });
+        }
+
+        return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+      });
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.buyThroughStore).toEqual({
+        price: 945,
+        shippingCost: 5,
+        totalPrice: 950,
+        shopId: 103,
+      });
+      expect(result.storeAvailability).toEqual({
+        cities: [],
+        userCity: undefined,
+        matchingCities: [],
+      });
+      expect(console.warn).toHaveBeenCalled();
+    });
+
+    it('should ignore locations that do not offer store pickup', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <ol id="prices" class="sku-list">
+          <li class="product-card-redesigned">
+            <div class="merchant-box-bottom-content">
+              <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+            </div>
+          </li>
+          <li class="product-card-redesigned">
+            <div class="merchant-box-bottom-content">
+              <div class="location"><span>Αχαρνές, Ελλάδα</span></div>
+              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            </div>
+          </li>
+        </ol>
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+      `;
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability).toEqual({
+        cities: ['Αχαρνές'],
+        userCity: undefined,
+        matchingCities: [],
+      });
+      expect(fetch).not.toHaveBeenCalledWith(
+        'https://www.skroutz.gr/s/product_cards_nearest_location.json',
+        expect.anything(),
+      );
     });
 
     it('should throw an error if SKU meta tag is missing', async () => {

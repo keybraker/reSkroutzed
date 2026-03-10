@@ -305,6 +305,19 @@ text-black {
   position: relative !important;
 }
 
+.price-checker-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  margin: 16px 0 !important;
+}
+
+.price-checker-stack .price-checker-outline {
+  margin: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
 .dark-mode .price-checker-outline {
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   background-color: var(--price-checker-dark-bg) !important;
@@ -1198,6 +1211,62 @@ text-black {
 .dark-mode .analysis-toggle-button.expanded .analysis-icon {
   background: #2b65d9 !important;
   color: #ffffff !important;
+}
+
+.store-availability-outline {
+  border: none !important;
+  border-radius: 0 0 16px 16px !important;
+  padding: 18px 20px !important;
+  margin-top: -2px !important;
+  background: #f0f0f0 !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  position: relative !important;
+}
+
+.dark-mode .store-availability-outline {
+  background: #3a3a3a !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* reSkroutzed badge removed; availability card now visually continues the price checker */
+
+.store-availability-status,
+.store-availability-summary {
+  margin: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: #172019 !important;
+}
+
+.store-availability-status {
+  font-weight: 700 !important;
+}
+
+.store-availability-status.matched {
+  color: #111 !important;
+}
+
+.store-availability-summary {
+  font-weight: 400 !important;
+  color: rgba(23, 32, 25, 0.82) !important;
+}
+
+.dark-mode .store-availability-status,
+.dark-mode .store-availability-summary {
+  color: #f3f3f3 !important;
+}
+
+.dark-mode .store-availability-status.matched {
+  color: #fff !important;
+}
+
+.dark-mode .store-availability-summary {
+  color: rgba(243, 243, 243, 0.82) !important;
 }
 
 .price-history-row .price-history-label {

@@ -249,6 +249,59 @@ function isPositiveStyling(
   return true;
 }
 
+function createStoreAvailabilityElement(
+  productPriceData: ProductPriceData,
+  language: Language,
+): HTMLDivElement {
+  const availability = productPriceData.storeAvailability;
+  const availabilityContainer = DomClient.createElement('div', {
+    className: 'store-availability-outline',
+  }) as HTMLDivElement;
+
+  const availabilityStatus = document.createElement('p');
+  availabilityStatus.className = 'store-availability-status';
+
+  if (availability.userCity && availability.matchingCities.length > 0) {
+    availabilityStatus.textContent =
+      language === Language.ENGLISH
+        ? `This product is available in your city, ${availability.userCity}.`
+        : `Το προϊόν είναι διαθέσιμο στην πόλη σου, ${availability.userCity}.`;
+    availabilityStatus.classList.add('matched');
+  } else if (availability.userCity) {
+    availabilityStatus.textContent =
+      language === Language.ENGLISH
+        ? `This product is not available in your city, ${availability.userCity}.`
+        : `Το προϊόν δεν είναι διαθέσιμο στην πόλη σου, ${availability.userCity}.`;
+  } else if (availability.cities.length > 0) {
+    availabilityStatus.textContent =
+      language === Language.ENGLISH
+        ? 'This product is available for store pickup in selected cities.'
+        : 'Το προϊόν είναι διαθέσιμο για παραλαβή από κατάστημα σε επιλεγμένες πόλεις.';
+  } else {
+    availabilityStatus.textContent =
+      language === Language.ENGLISH
+        ? 'Store availability information is not available right now.'
+        : 'Οι πληροφορίες διαθεσιμότητας καταστημάτων δεν είναι διαθέσιμες αυτή τη στιγμή.';
+  }
+
+  DomClient.appendElementToElement(availabilityStatus, availabilityContainer);
+
+  const citiesSummary = document.createElement('p');
+  citiesSummary.className = 'store-availability-summary';
+  citiesSummary.textContent =
+    availability.cities.length > 0
+      ? language === Language.ENGLISH
+        ? `This product is in stores in ${availability.cities.join(', ')}.`
+        : `Το προϊόν βρίσκεται σε καταστήματα σε ${availability.cities.join(', ')}.`
+      : language === Language.ENGLISH
+        ? 'This product does not currently have any store cities available.'
+        : 'Το προϊόν δεν έχει αυτή τη στιγμή διαθέσιμες πόλεις καταστημάτων.';
+
+  DomClient.appendElementToElement(citiesSummary, availabilityContainer);
+
+  return availabilityContainer;
+}
+
 function createPriceIndicationElement(
   productPriceData: ProductPriceData,
   productPriceHistory: ProductPriceHistory | undefined,
@@ -256,6 +309,9 @@ function createPriceIndicationElement(
   minimumPriceDifference: number,
 ): HTMLDivElement {
   try {
+    const priceCheckerStack = DomClient.createElement('div', {
+      className: 'price-checker-stack',
+    }) as HTMLDivElement;
     const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
     const priceIndication = DomClient.createElement('div', {
       className: [
@@ -376,7 +432,12 @@ function createPriceIndicationElement(
     priceIndication.title = language === Language.ENGLISH ? 'Βy reSkroutzed' : 'Από το reSkroutzed';
     DomClient.appendElementToElement(contentContainer, priceIndication);
 
-    return priceIndication;
+    DomClient.appendElementToElement(priceIndication, priceCheckerStack);
+
+    const storeAvailability = createStoreAvailabilityElement(productPriceData, language);
+    DomClient.appendElementToElement(storeAvailability, priceCheckerStack);
+
+    return priceCheckerStack;
   } catch (err) {
     console.error('PriceChecker: failed to build indication element', err);
     const fallback = document.createElement('div');
@@ -545,7 +606,9 @@ export class PriceCheckerDecorator implements FeatureInstance {
   }
 
   private cleanup(): void {
-    const existingIndicators = document.querySelectorAll('.price-checker-outline');
+    const existingIndicators = document.querySelectorAll(
+      '.price-checker-stack, .price-checker-outline, .store-availability-outline',
+    );
     const existingShippingTexts = document.querySelectorAll('.shipping-cost-text');
 
     existingIndicators.forEach((element) => element.remove());

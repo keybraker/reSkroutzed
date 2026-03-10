@@ -8,9 +8,16 @@ type PriceData = {
   shopId: number;
 };
 
+export type StoreAvailabilityData = {
+  cities: string[];
+  userCity?: string;
+  matchingCities: string[];
+};
+
 export type ProductPriceData = {
   buyThroughSkroutz: PriceData;
   buyThroughStore: PriceData;
+  storeAvailability: StoreAvailabilityData;
 };
 
 export type ProductPriceHistory = {
@@ -27,14 +34,13 @@ export class SkroutzClient {
       const skroutzRawPrice = this.getSkroutzRawPrice();
 
       const productData = await this.getProductData(productCode);
-      // const storeIds = Object.values(productData.product_cards)
-      //   .map((card) => card.shop_id)
-      //   .filter((id) => id > 0)
-      //   .sort((a, b) => a - b);
+      const userCity = this.getUserCity();
+      const storeAvailability = await this.getStoreAvailability(productData, userCity);
 
       return {
         buyThroughSkroutz: this.getSkroutzPriceData(productData, skroutzRawPrice),
         buyThroughStore: this.getStorePriceData(productData),
+        storeAvailability,
       };
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
@@ -186,6 +192,157 @@ export class SkroutzClient {
     }
 
     return (await response.json()) as Store[];
+  }
+
+  private static async getStoreAvailability(
+    productData: ProductData,
+    userCity?: string,
+  ): Promise<StoreAvailabilityData> {
+    const domCities = this.getStoreAvailabilityFromDom();
+    if (domCities.length > 0) {
+      return {
+        cities: domCities,
+        userCity,
+        matchingCities: this.getMatchingCities(domCities, userCity),
+      };
+    }
+
+    const storeIds = Array.from(
+      new Set(
+        Object.values(productData.product_cards)
+          .map((card) => card.shop_id)
+          .filter((id) => id > 0),
+      ),
+    ).sort((left, right) => left - right);
+
+    if (storeIds.length === 0) {
+      return {
+        cities: [],
+        userCity,
+        matchingCities: [],
+      };
+    }
+
+    try {
+      const stores = await this.getStoreData(storeIds);
+      const cities = this.extractUniqueCities(stores);
+
+      return {
+        cities,
+        userCity,
+        matchingCities: this.getMatchingCities(cities, userCity),
+      };
+    } catch (error) {
+      console.warn('Failed to fetch store availability data:', error);
+
+      return {
+        cities: [],
+        userCity,
+        matchingCities: [],
+      };
+    }
+  }
+
+  private static getStoreAvailabilityFromDom(): string[] {
+    const cityMap = new Map<string, string>();
+    const offerCards = Array.from(document.querySelectorAll('#prices .product-card-redesigned'));
+
+    offerCards.forEach((offerCard) => {
+      const merchantContent = offerCard.querySelector('.merchant-box-bottom-content');
+      if (!merchantContent) {
+        return;
+      }
+
+      const hasStorePickup = !!merchantContent.querySelector('.store-pickup');
+      if (!hasStorePickup) {
+        return;
+      }
+
+      const locationText = merchantContent.querySelector('.location span')?.textContent?.trim();
+      const city = this.extractCityFromLocation(locationText);
+      if (!city) {
+        return;
+      }
+
+      const normalizedCity = this.normalizeLocation(city);
+      if (!cityMap.has(normalizedCity)) {
+        cityMap.set(normalizedCity, city);
+      }
+    });
+
+    return Array.from(cityMap.values()).sort((left, right) => left.localeCompare(right, 'el'));
+  }
+
+  private static getUserCity(): string | undefined {
+    const locationElement = document.querySelector(
+      '.header-user-actions .country-picker-text.js-cp-link, .country-picker-text.js-cp-link',
+    );
+
+    const locationText = locationElement?.textContent;
+    if (!locationText) {
+      return undefined;
+    }
+
+    const sanitized = locationText
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/\s+\d{5}$/, '');
+    return sanitized || undefined;
+  }
+
+  private static extractUniqueCities(stores: Store[]): string[] {
+    const cityMap = new Map<string, string>();
+
+    stores.forEach((store) => {
+      const city = store.store_location_address?.city?.trim();
+      if (!city) {
+        return;
+      }
+
+      const normalizedCity = this.normalizeLocation(city);
+      if (!cityMap.has(normalizedCity)) {
+        cityMap.set(normalizedCity, city);
+      }
+    });
+
+    return Array.from(cityMap.values()).sort((left, right) => left.localeCompare(right, 'el'));
+  }
+
+  private static extractCityFromLocation(locationText?: string): string | undefined {
+    if (!locationText) {
+      return undefined;
+    }
+
+    const sanitized = locationText.replace(/\s+/g, ' ').trim();
+    if (!sanitized) {
+      return undefined;
+    }
+
+    return sanitized.split(',')[0]?.trim() || undefined;
+  }
+
+  private static getMatchingCities(cities: string[], userCity?: string): string[] {
+    if (!userCity) {
+      return [];
+    }
+
+    const normalizedUserCity = this.normalizeLocation(userCity);
+
+    return cities.filter((city) => {
+      const normalizedCity = this.normalizeLocation(city);
+      return (
+        normalizedUserCity.includes(normalizedCity) || normalizedCity.includes(normalizedUserCity)
+      );
+    });
+  }
+
+  private static normalizeLocation(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLocaleLowerCase('el-GR');
   }
 
   private static getSkroutzPriceData(productData: ProductData, skroutzRawPrice: number): PriceData {
