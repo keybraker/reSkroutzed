@@ -1,74 +1,68 @@
 {
-    "name": "reSkroutzed",
-    "description": "reSkroutzed, is a must-have enhancer for website skroutz.gr",
-    "version": "1.9.12",
-    "manifest_version": 3,
-    "permissions": [
-        "storage"
-    ],
-    "host_permissions": [
-        "*://www.skroutz.gr/*",
-        "*://www.skroutz.ro/*",
-        "*://www.skroutz.cy/*",
-        "*://www.skroutz.de/*",
-        "*://www.skroutz.eu/*"
-    ],
-    "content_scripts": [
-        {
-            "matches": [
-                "https://www.skroutz.gr/*",
-                "https://www.skroutz.ro/*",
-                "https://www.skroutz.cy/*",
-                "https://www.skroutz.de/*",
-                "https://www.skroutz.eu/*"
-            ],
-            "css": [
-                "css/flaggerToggle.css",
-                "css/productFlags.css",
-                "css/shelfFlags.css",
-                "css/style.css",
-                "css/videoFlags.css",
-                "css/darkModeToggle.css",
-                "css/universalToggle.css"
-            ],
-            "js": [
-                "background.js"
-            ],
-            "run_at": "document_end"
-        }
-    ],
-    "web_accessible_resources": [
-        {
-            "resources": [
-                "icons/48.png"
-            ],
-            "matches": [
-                "https://www.skroutz.gr/*",
-                "https://www.skroutz.ro/*",
-                "https://www.skroutz.cy/*",
-                "https://www.skroutz.de/*",
-                "https://www.skroutz.eu/*"
-            ]
-        }
-    ],
-    "action": {
-        "default_popup": "popup/popup.html",
-        "default_icon": {
-            "48": "/icons/48.png",
-            "128": "/icons/128.png"
-        }
-    },
-    "icons": {
-        "48": "/icons/48.png",
-        "128": "/icons/128.png"
-    },
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "skroutz-sponsored-flagger@itsiakkas.com",
-            "strict_min_version": "109.0"
-        },
-        "gecko_android": {
-            "strict_min_version": "113.0"
-        }
+  "name": "reSkroutzed",
+  "description": "reSkroutzed, is a must-have enhancer for website skroutz.gr",
+  "version": "1.9.13",
+  "manifest_version": 3,
+  "permissions": ["storage"],
+  "host_permissions": [
+    "*://www.skroutz.gr/*",
+    "*://www.skroutz.ro/*",
+    "*://www.skroutz.cy/*",
+    "*://www.skroutz.de/*",
+    "*://www.skroutz.eu/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.skroutz.gr/*",
+        "https://www.skroutz.ro/*",
+        "https://www.skroutz.cy/*",
+        "https://www.skroutz.de/*",
+        "https://www.skroutz.eu/*"
+      ],
+      "css": [
+        "css/flaggerToggle.css",
+        "css/productFlags.css",
+        "css/shelfFlags.css",
+        "css/style.css",
+        "css/videoFlags.css",
+        "css/darkModeToggle.css",
+        "css/universalToggle.css"
+      ],
+      "js": ["background.js"],
+      "run_at": "document_end"
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/48.png"],
+      "matches": [
+        "https://www.skroutz.gr/*",
+        "https://www.skroutz.ro/*",
+        "https://www.skroutz.cy/*",
+        "https://www.skroutz.de/*",
+        "https://www.skroutz.eu/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "48": "/icons/48.png",
+      "128": "/icons/128.png"
+    }
+  },
+  "icons": {
+    "48": "/icons/48.png",
+    "128": "/icons/128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "skroutz-sponsored-flagger@itsiakkas.com",
+      "strict_min_version": "109.0"
+    },
+    "gecko_android": {
+      "strict_min_version": "113.0"
+    }
+  }
 }
