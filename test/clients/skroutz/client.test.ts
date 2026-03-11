@@ -211,13 +211,13 @@ describe('SkroutzClient', () => {
     document.body.innerHTML = `
       <meta itemprop="sku" content="12345678">
       <ol id="prices" class="sku-list">
-        <li class="product-card-redesigned">
+        <li id="shop-101" class="product-card-redesigned">
           <div class="merchant-box-bottom-content">
             <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
             <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
           </div>
         </li>
-        <li class="product-card-redesigned">
+        <li id="shop-102" class="product-card-redesigned">
           <div class="merchant-box-bottom-content">
             <div class="location"><span>Μαρούσι, Ελλάδα</span></div>
             <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
@@ -283,6 +283,10 @@ describe('SkroutzClient', () => {
         cities: ['Θεσσαλονίκη', 'Μαρούσι'],
         userCity: undefined,
         matchingCities: [],
+        cityShopMap: {
+          Θεσσαλονίκη: [101],
+          Μαρούσι: [102],
+        },
       });
     });
 
@@ -304,13 +308,13 @@ describe('SkroutzClient', () => {
           <span class="country-picker-text js-cp-link" tabindex="0">Ηρακλειο Κρήτης 71305</span>
         </div>
         <ol id="prices" class="sku-list">
-          <li class="product-card-redesigned">
+          <li id="shop-101" class="product-card-redesigned">
             <div class="merchant-box-bottom-content">
               <div class="location"><span>Ηράκλειο, Ελλάδα</span></div>
               <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
             </div>
           </li>
-          <li class="product-card-redesigned">
+          <li id="shop-102" class="product-card-redesigned">
             <div class="merchant-box-bottom-content">
               <div class="location"><span>Αθήνα, Ελλάδα</span></div>
               <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
@@ -328,6 +332,10 @@ describe('SkroutzClient', () => {
         cities: ['Αθήνα', 'Ηράκλειο'],
         userCity: 'Ηρακλειο Κρήτης',
         matchingCities: ['Ηράκλειο'],
+        cityShopMap: {
+          Αθήνα: [102],
+          Ηράκλειο: [101],
+        },
       });
     });
 
@@ -371,6 +379,7 @@ describe('SkroutzClient', () => {
         cities: [],
         userCity: undefined,
         matchingCities: [],
+        cityShopMap: {},
       });
       expect(console.warn).toHaveBeenCalled();
     });
@@ -379,12 +388,12 @@ describe('SkroutzClient', () => {
       document.body.innerHTML = `
         <meta itemprop="sku" content="12345678">
         <ol id="prices" class="sku-list">
-          <li class="product-card-redesigned">
+          <li id="shop-101" class="product-card-redesigned">
             <div class="merchant-box-bottom-content">
               <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
             </div>
           </li>
-          <li class="product-card-redesigned">
+          <li id="shop-102" class="product-card-redesigned">
             <div class="merchant-box-bottom-content">
               <div class="location"><span>Αχαρνές, Ελλάδα</span></div>
               <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
@@ -402,6 +411,9 @@ describe('SkroutzClient', () => {
         cities: ['Αχαρνές'],
         userCity: undefined,
         matchingCities: [],
+        cityShopMap: {
+          Αχαρνές: [102],
+        },
       });
       expect(fetch).not.toHaveBeenCalledWith(
         'https://www.skroutz.gr/s/product_cards_nearest_location.json',

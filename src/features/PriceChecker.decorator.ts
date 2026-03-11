@@ -198,33 +198,7 @@ function createShopButtonComponent(
     language === Language.ENGLISH ? 'Go to Shop' : 'Μετάβαση στο κατάστημα';
 
   goToStoreButton.addEventListener('click', (): void => {
-    const sliderToggleButton = document.querySelector(
-      '.alternative-option-wrapper.btn-reset',
-    ) as HTMLButtonElement | null;
-
-    if (sliderToggleButton) {
-      sliderToggleButton.click();
-    }
-
-    setTimeout(() => {
-      const targetId = `shop-${productPriceData.buyThroughStore.shopId}`;
-      const targetElements = document.querySelectorAll(`#${targetId}`);
-
-      if (targetElements.length > 0) {
-        const targetElement = targetElements.length > 1 ? targetElements[1] : targetElements[0];
-
-        targetElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'center',
-        });
-        targetElement.classList.add('lowest-price-store-highlight');
-
-        setTimeout(() => {
-          targetElement.classList.remove('lowest-price-store-highlight');
-        }, 3000);
-      }
-    }, 300);
+    scrollToShop(productPriceData.buyThroughStore.shopId);
   });
 
   return goToStoreButton;
@@ -247,6 +221,76 @@ function isPositiveStyling(
   }
 
   return true;
+}
+
+function scrollToShop(shopId: number): void {
+  const sliderToggleButton = document.querySelector(
+    '.alternative-option-wrapper.btn-reset',
+  ) as HTMLButtonElement | null;
+
+  if (sliderToggleButton) {
+    sliderToggleButton.click();
+  }
+
+  setTimeout(() => {
+    const targetId = `shop-${shopId}`;
+    const targetElements = document.querySelectorAll(`#${targetId}`);
+
+    if (targetElements.length > 0) {
+      const targetElement = targetElements.length > 1 ? targetElements[1] : targetElements[0];
+
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center',
+      });
+      targetElement.classList.add('lowest-price-store-highlight');
+
+      setTimeout(() => {
+        targetElement.classList.remove('lowest-price-store-highlight');
+      }, 3000);
+    }
+  }, 300);
+}
+
+function createCityElement(city: string, shopIds: number[]): HTMLSpanElement {
+  if (shopIds.length === 0) {
+    const span = document.createElement('span');
+    span.textContent = city;
+    return span;
+  }
+
+  if (shopIds.length === 1) {
+    const link = document.createElement('span');
+    link.className = 'city-shop-link';
+    link.textContent = city;
+    link.addEventListener('click', () => scrollToShop(shopIds[0]));
+    return link;
+  }
+
+  // Multiple shops: "CityName (1, 2)"
+  const wrapper = document.createElement('span');
+
+  const cityText = document.createElement('span');
+  cityText.textContent = city;
+  wrapper.appendChild(cityText);
+
+  wrapper.appendChild(document.createTextNode(' ('));
+
+  shopIds.forEach((shopId, i) => {
+    if (i > 0) {
+      wrapper.appendChild(document.createTextNode(', '));
+    }
+    const link = document.createElement('span');
+    link.className = 'city-shop-link';
+    link.textContent = String(i + 1);
+    link.addEventListener('click', () => scrollToShop(shopId));
+    wrapper.appendChild(link);
+  });
+
+  wrapper.appendChild(document.createTextNode(')'));
+
+  return wrapper;
 }
 
 function createStoreAvailabilityElement(
@@ -288,14 +332,29 @@ function createStoreAvailabilityElement(
 
   const citiesSummary = document.createElement('p');
   citiesSummary.className = 'store-availability-summary';
-  citiesSummary.textContent =
-    availability.cities.length > 0
-      ? language === Language.ENGLISH
-        ? `This product is in stores in ${availability.cities.join(', ')}.`
-        : `Το προϊόν βρίσκεται σε καταστήματα σε ${availability.cities.join(', ')}.`
-      : language === Language.ENGLISH
+
+  if (availability.cities.length > 0) {
+    const prefix =
+      language === Language.ENGLISH
+        ? 'This product is in stores in '
+        : 'Το προϊόν βρίσκεται σε καταστήματα σε ';
+    citiesSummary.appendChild(document.createTextNode(prefix));
+
+    availability.cities.forEach((city, index) => {
+      if (index > 0) {
+        citiesSummary.appendChild(document.createTextNode(', '));
+      }
+      const shopIds = availability.cityShopMap?.[city] ?? [];
+      citiesSummary.appendChild(createCityElement(city, shopIds));
+    });
+
+    citiesSummary.appendChild(document.createTextNode('.'));
+  } else {
+    citiesSummary.textContent =
+      language === Language.ENGLISH
         ? 'This product does not currently have any store cities available.'
         : 'Το προϊόν δεν έχει αυτή τη στιγμή διαθέσιμες πόλεις καταστημάτων.';
+  }
 
   DomClient.appendElementToElement(citiesSummary, availabilityContainer);
 

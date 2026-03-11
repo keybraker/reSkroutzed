@@ -12,6 +12,7 @@ export type StoreAvailabilityData = {
   cities: string[];
   userCity?: string;
   matchingCities: string[];
+  cityShopMap: Record<string, number[]>;
 };
 
 export type ProductPriceData = {
@@ -198,12 +199,13 @@ export class SkroutzClient {
     productData: ProductData,
     userCity?: string,
   ): Promise<StoreAvailabilityData> {
-    const domCities = this.getStoreAvailabilityFromDom();
+    const { cities: domCities, cityShopMap: domCityShopMap } = this.getStoreAvailabilityFromDom();
     if (domCities.length > 0) {
       return {
         cities: domCities,
         userCity,
         matchingCities: this.getMatchingCities(domCities, userCity),
+        cityShopMap: domCityShopMap,
       };
     }
 
@@ -220,17 +222,20 @@ export class SkroutzClient {
         cities: [],
         userCity,
         matchingCities: [],
+        cityShopMap: {},
       };
     }
 
     try {
       const stores = await this.getStoreData(storeIds);
       const cities = this.extractUniqueCities(stores);
+      const cityShopMap = this.buildCityShopMapFromApi(stores, storeIds);
 
       return {
         cities,
         userCity,
         matchingCities: this.getMatchingCities(cities, userCity),
+        cityShopMap,
       };
     } catch (error) {
       console.warn('Failed to fetch store availability data:', error);
@@ -239,12 +244,35 @@ export class SkroutzClient {
         cities: [],
         userCity,
         matchingCities: [],
+        cityShopMap: {},
       };
     }
   }
 
-  private static getStoreAvailabilityFromDom(): string[] {
-    const cityMap = new Map<string, string>();
+  private static buildCityShopMapFromApi(
+    stores: Store[],
+    storeIds: number[],
+  ): Record<string, number[]> {
+    const cityShopMap: Record<string, number[]> = {};
+    stores.forEach((store, index) => {
+      const city = store.store_location_address?.city?.trim();
+      const shopId = storeIds[index];
+      if (!city || shopId === undefined) return;
+      if (!cityShopMap[city]) {
+        cityShopMap[city] = [];
+      }
+      if (!cityShopMap[city].includes(shopId)) {
+        cityShopMap[city].push(shopId);
+      }
+    });
+    return cityShopMap;
+  }
+
+  private static getStoreAvailabilityFromDom(): {
+    cities: string[];
+    cityShopMap: Record<string, number[]>;
+  } {
+    const cityData = new Map<string, { displayCity: string; shopIds: number[] }>();
     const offerCards = Array.from(document.querySelectorAll('#prices .product-card-redesigned'));
 
     offerCards.forEach((offerCard) => {
@@ -265,12 +293,31 @@ export class SkroutzClient {
       }
 
       const normalizedCity = this.normalizeLocation(city);
-      if (!cityMap.has(normalizedCity)) {
-        cityMap.set(normalizedCity, city);
+      if (!cityData.has(normalizedCity)) {
+        cityData.set(normalizedCity, { displayCity: city, shopIds: [] });
+      }
+
+      const idAttr = (offerCard as HTMLElement).id || offerCard.closest('[id^="shop-"]')?.id || '';
+      const shopIdMatch = idAttr.match(/^shop-(\d+)$/);
+      if (shopIdMatch) {
+        const shopId = parseInt(shopIdMatch[1], 10);
+        const entry = cityData.get(normalizedCity)!;
+        if (!entry.shopIds.includes(shopId)) {
+          entry.shopIds.push(shopId);
+        }
       }
     });
 
-    return Array.from(cityMap.values()).sort((left, right) => left.localeCompare(right, 'el'));
+    const sorted = Array.from(cityData.values()).sort((a, b) =>
+      a.displayCity.localeCompare(b.displayCity, 'el'),
+    );
+
+    const cities = sorted.map((e) => e.displayCity);
+    const cityShopMap: Record<string, number[]> = Object.fromEntries(
+      sorted.map((e) => [e.displayCity, e.shopIds]),
+    );
+
+    return { cities, cityShopMap };
   }
 
   private static getUserCity(): string | undefined {

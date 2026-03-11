@@ -1269,6 +1269,25 @@ text-black {
   color: rgba(243, 243, 243, 0.82) !important;
 }
 
+.city-shop-link {
+  cursor: pointer !important;
+  color: #4a9edd !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
+.city-shop-link:hover {
+  color: #2b7dbf !important;
+}
+
+.dark-mode .city-shop-link {
+  color: #7ec8f5 !important;
+}
+
+.dark-mode .city-shop-link:hover {
+  color: #a8d9f8 !important;
+}
+
 .price-history-row .price-history-label {
   font-size: 13px !important;
   line-height: 1.3 !important;
