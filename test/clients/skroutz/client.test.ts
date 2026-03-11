@@ -235,7 +235,7 @@ describe('SkroutzClient', () => {
     `;
 
     // Mock fetch API
-    global.fetch = createFetchMock();
+    global.fetch = createFetchMock() as unknown as typeof global.fetch;
 
     // Silence console errors during tests to keep output clean
     console.error = vi.fn();
@@ -291,7 +291,7 @@ describe('SkroutzClient', () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: false,
         status: 404,
-      });
+      }) as unknown as typeof global.fetch;
 
       // Act & Assert
       await expect(SkroutzClient.getCurrentProductData()).rejects.toThrow('Failed to fetch');
@@ -357,7 +357,7 @@ describe('SkroutzClient', () => {
         }
 
         return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
-      });
+      }) as unknown as typeof global.fetch;
 
       const result = await SkroutzClient.getCurrentProductData();
 
@@ -484,7 +484,9 @@ describe('SkroutzClient', () => {
 
     it('should handle fetch rejected promises', async () => {
       // Mock fetch that rejects
-      global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+      global.fetch = vi
+        .fn()
+        .mockRejectedValue(new Error('Network error')) as unknown as typeof global.fetch;
 
       // Act & Assert
       await expect(SkroutzClient.getCurrentProductData()).rejects.toThrow('Network error');
