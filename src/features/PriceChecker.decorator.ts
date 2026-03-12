@@ -384,12 +384,6 @@ function createPriceIndicationElement(
 
     const tagsContainer = DomClient.createElement('div', { className: 'tags-container' });
 
-    const reSkroutzedReview = createReSkoutzedReviewElement(language);
-    DomClient.appendElementToElement(reSkroutzedReview, tagsContainer);
-
-    const buyMeCoffeeElement = createBuyMeCoffeeElement();
-    DomClient.appendElementToElement(buyMeCoffeeElement, tagsContainer);
-
     DomClient.appendElementToElement(tagsContainer, priceIndication);
 
     const contentContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
@@ -488,8 +482,22 @@ function createPriceIndicationElement(
 
     DomClient.appendElementToElement(actionContainer, contentContainer);
 
-    priceIndication.title = language === Language.ENGLISH ? 'Βy reSkroutzed' : 'Από το reSkroutzed';
+    priceIndication.title =
+      language === Language.ENGLISH
+        ? 'By reSkroutzed, Leave a review'
+        : 'Από το reSkroutzed, Αφήστε μια κριτική';
     DomClient.appendElementToElement(contentContainer, priceIndication);
+
+    // Add the top promotion (reSkroutzed badge) before the main price card
+    const reSkroutzedReview = createReSkoutzedReviewElement(language);
+    // append buy-me-coffee into the left area of the promo
+    const buyMeCoffeeElement = createBuyMeCoffeeElement();
+    const leftPlaceholder = reSkroutzedReview.querySelector('.store-availability-left');
+    if (leftPlaceholder) {
+      leftPlaceholder.appendChild(buyMeCoffeeElement);
+    }
+
+    DomClient.appendElementToElement(reSkroutzedReview, priceCheckerStack);
 
     DomClient.appendElementToElement(priceIndication, priceCheckerStack);
 

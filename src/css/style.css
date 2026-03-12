@@ -296,7 +296,7 @@ text-black {
 
 .price-checker-outline {
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  border-radius: 8px !important;
+  /* border-radius: 8px !important; */
   padding: 20px !important;
   margin: 16px 0 !important;
   background-color: var(--price-checker-light-bg) !important;
@@ -337,7 +337,9 @@ text-black {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  font-size: 14px !important;
   line-height: 1 !important;
 }
 
@@ -349,23 +351,31 @@ text-black {
   box-shadow:
     0 4px 12px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-  padding: 6px !important;
-  border-radius: 24px !important;
-  font-size: 11px !important;
+  padding: 8px 12px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.8px !important;
-  text-transform: uppercase !important;
+  letter-spacing: 0.6px !important;
+  text-transform: none !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  gap: 6px !important;
   z-index: 5 !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
   cursor: pointer !important;
   text-decoration: none !important;
-  backdrop-filter: blur(8px) !important;
+  backdrop-filter: none !important;
   position: relative !important;
-  overflow: hidden !important;
+  overflow: visible !important;
+  /* Fixed circular size */
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  font-size: 0 !important;
+  letter-spacing: 0 !important;
 }
 
 .buy-me-coffee::before {
@@ -375,7 +385,12 @@ text-black {
   left: -100% !important;
   width: 100% !important;
   height: 100% !important;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.16),
+    transparent
+  ) !important;
   transition: left 0.6s ease !important;
 }
 
@@ -387,15 +402,14 @@ text-black {
   background: linear-gradient(135deg, #ff8c69, #ffb347) !important;
   border-color: rgba(255, 255, 255, 0.4) !important;
   box-shadow:
-    0 6px 20px rgba(255, 107, 53, 0.4),
+    0 8px 24px rgba(255, 107, 53, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-  transform: translateY(-2px) scale(1.05) !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+  transform: none !important;
 }
 
 .buy-me-coffee:active {
-  transform: translateY(0) scale(0.98) !important;
-  transition: all 0.1s ease !important;
+  transform: none !important;
+  transition: box-shadow 0.12s ease !important;
 }
 
 .dark-mode .buy-me-coffee {
@@ -412,9 +426,9 @@ text-black {
   background: linear-gradient(135deg, #ff6347, #ff1493) !important;
   border-color: rgba(255, 255, 255, 0.3) !important;
   box-shadow:
-    0 6px 20px rgba(220, 20, 60, 0.5),
+    0 8px 24px rgba(220, 20, 60, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+  transform: none !important;
 }
 
 .reskroutzed-tag {
@@ -548,7 +562,7 @@ text-black {
   font-weight: 400 !important;
   background-color: #e6f4e6 !important;
   color: #2a662a !important;
-  border-radius: 8px !important;
+  /* border-radius: 8px !important; */
 }
 
 .info-label-negative {
@@ -558,7 +572,7 @@ text-black {
   font-weight: 400 !important;
   background-color: #f9e9e9 !important;
   color: #7d2422 !important;
-  border-radius: 8px !important;
+  /* border-radius: 8px !important; */
 }
 
 .dark-mode .info-label-positive {
@@ -1233,6 +1247,25 @@ text-black {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
+.own-promotion {
+  border: none !important;
+  border-radius: 16px 16px 0 0 !important;
+  padding: 10px 10px !important;
+  background: #f0f0f0 !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  position: relative !important;
+}
+
+.dark-mode .own-promotion {
+  background: #3a3a3a !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
 /* reSkroutzed badge removed; availability card now visually continues the price checker */
 
 .store-availability-status,
@@ -1286,6 +1319,30 @@ text-black {
 
 .dark-mode .city-shop-link:hover {
   color: #a8d9f8 !important;
+}
+
+/* layout helpers for reSkroutzed badge to match availability card */
+.store-availability-row {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 12px !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.store-availability-left {
+  flex: 1 1 0% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.store-availability-right {
+  flex: 3 1 0% !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
 }
 
 .price-history-row .price-history-label {
