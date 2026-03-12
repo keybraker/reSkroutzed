@@ -39,10 +39,11 @@ describe('createReskoutzedReviewElement', () => {
 
   it('should create a review element with correct classes', () => {
     const element = createReSkoutzedReviewElement(Language.ENGLISH);
+    const link = element.querySelector('a');
 
     expect(element.tagName).toBe('DIV');
-    expect(element.classList.contains('icon-border')).toBe(true);
-    expect(element.classList.contains('font-bold')).toBe(true);
+    expect(link?.classList.contains('icon-border')).toBe(true);
+    expect(link?.classList.contains('font-bold')).toBe(true);
   });
 
   it('should create a link with Chrome store URL when not in Firefox', () => {
