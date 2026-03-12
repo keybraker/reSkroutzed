@@ -255,6 +255,8 @@ html.dark-mode {
 }
 
 .inline-flex-row {
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
@@ -296,7 +298,7 @@ text-black {
 
 .price-checker-outline {
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  /* border-radius: 8px !important; */
+  border-radius: 8px !important;
   padding: 20px !important;
   margin: 16px 0 !important;
   background-color: var(--price-checker-light-bg) !important;
@@ -562,7 +564,7 @@ text-black {
   font-weight: 400 !important;
   background-color: #e6f4e6 !important;
   color: #2a662a !important;
-  /* border-radius: 8px !important; */
+  border-radius: 8px !important;
 }
 
 .info-label-negative {
@@ -572,7 +574,7 @@ text-black {
   font-weight: 400 !important;
   background-color: #f9e9e9 !important;
   color: #7d2422 !important;
-  /* border-radius: 8px !important; */
+  border-radius: 8px !important;
 }
 
 .dark-mode .info-label-positive {
@@ -1228,11 +1230,11 @@ text-black {
 }
 
 .store-availability-outline {
-  border: none !important;
-  border-radius: 0 0 16px 16px !important;
+  border: 1px dashed rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0 0 0 0 !important;
   padding: 18px 20px !important;
   margin-top: -2px !important;
-  background: #f0f0f0 !important;
+  background: #fcefb9 !important;
   border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
   display: flex !important;
@@ -1249,10 +1251,10 @@ text-black {
 
 .own-promotion {
   border: none !important;
-  border-radius: 16px 16px 0 0 !important;
+  border-radius: 0 0 16px 16px !important;
   padding: 10px 10px !important;
   background: #f0f0f0 !important;
-  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border: 1px dashed rgba(0, 0, 0, 0.06) !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
@@ -1262,7 +1264,7 @@ text-black {
 
 .dark-mode .own-promotion {
   background: #3a3a3a !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.04) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
@@ -1448,6 +1450,10 @@ text-black {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.price-display-wrapper {
+  padding-bottom: 12px !important;
 }
 
 /* Tighten layout inside calculation-container */

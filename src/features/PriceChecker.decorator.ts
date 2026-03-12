@@ -488,7 +488,7 @@ function createPriceIndicationElement(
         : 'Από το reSkroutzed, Αφήστε μια κριτική';
     DomClient.appendElementToElement(contentContainer, priceIndication);
 
-    // Add the top promotion (reSkroutzed badge) before the main price card
+    // Compose stack: price card -> availability -> review/coffee promo
     const reSkroutzedReview = createReSkoutzedReviewElement(language);
     // append buy-me-coffee into the left area of the promo
     const buyMeCoffeeElement = createBuyMeCoffeeElement();
@@ -497,12 +497,13 @@ function createPriceIndicationElement(
       leftPlaceholder.appendChild(buyMeCoffeeElement);
     }
 
-    DomClient.appendElementToElement(reSkroutzedReview, priceCheckerStack);
-
+    // price card first
     DomClient.appendElementToElement(priceIndication, priceCheckerStack);
-
+    // then availability
     const storeAvailability = createStoreAvailabilityElement(productPriceData, language);
     DomClient.appendElementToElement(storeAvailability, priceCheckerStack);
+    // finally the review + coffee promo so it appears below availability
+    DomClient.appendElementToElement(reSkroutzedReview, priceCheckerStack);
 
     return priceCheckerStack;
   } catch (err) {
