@@ -1230,12 +1230,11 @@ text-black {
 }
 
 .store-availability-outline {
-  border: 1px dashed rgba(0, 0, 0, 0.1) !important;
+  border: 1px dashed rgba(0, 0, 0, 0.04) !important;
   border-radius: 0 0 0 0 !important;
   padding: 18px 20px !important;
   margin-top: -2px !important;
   background: #fcefb9 !important;
-  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
@@ -1245,16 +1244,14 @@ text-black {
 
 .dark-mode .store-availability-outline {
   background: #3a3a3a !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 .own-promotion {
-  border: none !important;
+  border: 1px dashed rgba(0, 0, 0, 0.04) !important;
   border-radius: 0 0 16px 16px !important;
   padding: 10px 10px !important;
   background: #f0f0f0 !important;
-  border: 1px dashed rgba(0, 0, 0, 0.06) !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
@@ -1264,7 +1261,7 @@ text-black {
 
 .dark-mode .own-promotion {
   background: #3a3a3a !important;
-  border: 1px dashed rgba(255, 255, 255, 0.04) !important;
+  border: 1px dashed rgba(0, 0, 0, 0.04) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
