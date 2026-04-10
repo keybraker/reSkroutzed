@@ -207,6 +207,10 @@ describe('SkroutzClient', () => {
   const originalConsoleWarn = console.warn;
 
   beforeEach(() => {
+    (
+      SkroutzClient as unknown as { productDataCache: Map<string, Promise<ProductData>> }
+    ).productDataCache.clear();
+
     // Mock document body and elements
     document.body.innerHTML = `
       <meta itemprop="sku" content="12345678">

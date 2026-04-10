@@ -29,6 +29,8 @@ export type ProductPriceHistory = {
 };
 
 export class SkroutzClient {
+  private static readonly productDataCache = new Map<string, Promise<ProductData>>();
+
   public static async getCurrentProductData(): Promise<ProductPriceData> {
     try {
       const productCode = this.getSku();
@@ -46,6 +48,19 @@ export class SkroutzClient {
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
       throw error;
+    }
+  }
+
+  public static async getCurrentProductNames(): Promise<string[]> {
+    try {
+      const productCode = this.getSku();
+      const productData = await this.getProductData(productCode);
+
+      return this.extractProductNames(productData);
+    } catch (error) {
+      console.warn('Failed to fetch Skroutz product names:', error);
+
+      return [];
     }
   }
 
@@ -141,20 +156,55 @@ export class SkroutzClient {
   }
 
   private static async getProductData(productCode: string): Promise<ProductData> {
-    const response = await fetch(`https://www.skroutz.gr/s/${productCode}/filter_products.json`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch (HTTP: ${response.status}) price data for product with SKU ${productCode}`,
-      );
+    const cachedProductData = this.productDataCache.get(productCode);
+    if (cachedProductData) {
+      return await cachedProductData;
     }
 
-    return (await response.json()) as ProductData;
+    const productDataPromise = (async (): Promise<ProductData> => {
+      const response = await fetch(`https://www.skroutz.gr/s/${productCode}/filter_products.json`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch (HTTP: ${response.status}) price data for product with SKU ${productCode}`,
+        );
+      }
+
+      return (await response.json()) as ProductData;
+    })();
+
+    this.productDataCache.set(productCode, productDataPromise);
+
+    try {
+      return await productDataPromise;
+    } catch (error) {
+      this.productDataCache.delete(productCode);
+      throw error;
+    }
+  }
+
+  private static extractProductNames(productData: ProductData): string[] {
+    const productNameCounts = new Map<string, number>();
+
+    Object.values(productData.product_cards).forEach((productCard) => {
+      productCard.products.forEach((product) => {
+        const name = product.name.trim();
+        if (!name) {
+          return;
+        }
+
+        productNameCounts.set(name, (productNameCounts.get(name) ?? 0) + 1);
+      });
+    });
+
+    return [...productNameCounts.entries()]
+      .sort((left, right) => right[1] - left[1] || right[0].length - left[0].length)
+      .map(([name]) => name);
   }
 
   private static async getPriceGraphData(productCode: string): Promise<PriceChart> {

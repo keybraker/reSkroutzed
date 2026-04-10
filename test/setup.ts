@@ -13,6 +13,10 @@ document.body.innerHTML = '';
 
 // Mock Chrome API
 global.chrome = {
+  runtime: {
+    sendMessage: vi.fn(),
+    lastError: undefined,
+  },
   storage: {
     local: {
       get: vi.fn(),

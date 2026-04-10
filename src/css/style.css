@@ -707,6 +707,10 @@ text-black {
   font-weight: 700 !important;
 }
 
+.calculation-lead {
+  white-space: nowrap !important;
+}
+
 .minimum-price-difference-text {
   font-size: 12px !important;
   color: rgba(0, 0, 0, 0.6) !important;
@@ -1424,9 +1428,169 @@ text-black {
   line-height: 1.3 !important;
 }
 
+.price-display-row {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  width: 100% !important;
+}
+
+.price-display-column {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+.bestprice-badge {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-width: 124px !important;
+  padding: 4px 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 152, 0, 0.18) !important;
+  background: rgba(255, 248, 238, 0.95) !important;
+  box-shadow: 0 4px 10px rgba(255, 152, 0, 0.08) !important;
+  color: #8b530c !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease !important;
+}
+
+.bestprice-badge-positive {
+  border-color: rgba(58, 140, 58, 0.22) !important;
+  background: rgba(236, 248, 236, 0.98) !important;
+  box-shadow: 0 4px 10px rgba(58, 140, 58, 0.1) !important;
+  color: #2e7d32 !important;
+}
+
+.bestprice-badge-negative {
+  border-color: rgba(198, 40, 40, 0.22) !important;
+  background: rgba(253, 236, 236, 0.98) !important;
+  box-shadow: 0 4px 10px rgba(198, 40, 40, 0.1) !important;
+  color: #b3261e !important;
+}
+
+.bestprice-badge-content {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+}
+
+.bestprice-badge:hover {
+  transform: none !important;
+  background: rgba(224, 245, 226, 0.98) !important;
+  border-color: rgba(58, 140, 58, 0.38) !important;
+  box-shadow: 0 4px 10px rgba(58, 140, 58, 0.16) !important;
+  color: #2e7d32 !important;
+}
+
+.bestprice-badge-positive:hover {
+  background: rgba(224, 245, 226, 0.98) !important;
+  border-color: rgba(58, 140, 58, 0.38) !important;
+  box-shadow: 0 4px 10px rgba(58, 140, 58, 0.16) !important;
+  color: #2e7d32 !important;
+}
+
+.bestprice-badge-negative:hover {
+  /* Darken the negative (red) badge on hover to make it more prominent */
+  background: rgba(198, 40, 40, 0.12) !important;
+  border-color: rgba(198, 40, 40, 0.38) !important;
+  box-shadow: 0 4px 10px rgba(198, 40, 40, 0.18) !important;
+  color: #b3261e !important;
+}
+
+.bestprice-badge-price {
+  color: inherit !important;
+  font-size: 28px !important;
+  justify-content: flex-start !important;
+  line-height: 1 !important;
+  margin-right: 0 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.bestprice-badge-price .price-indicator-comma,
+.bestprice-badge-price .price-indicator-currency,
+.bestprice-badge-price .price-indicator-decimal {
+  font-size: 16px !important;
+}
+
+.bestprice-badge-logo {
+  width: 48px !important;
+  height: 32px !important;
+  flex: 0 0 auto !important;
+  display: block !important;
+  color: currentColor !important;
+  opacity: 0.95 !important;
+}
+
+.bestprice-badge-shipping {
+  color: inherit !important;
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+}
+
+.bestprice-badge-logo path,
+.icon.logo,
+.icon.logo svg,
+.icon.logo use,
+.icon.logo path {
+  fill: #ec1639 !important;
+  color: #ec1639 !important;
+}
+
+.dark-mode .bestprice-badge {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22) !important;
+}
+
+.dark-mode .bestprice-badge-positive {
+  background: rgba(22, 46, 25, 0.96) !important;
+  border-color: rgba(88, 160, 84, 0.3) !important;
+  color: #8fda92 !important;
+}
+
+.dark-mode .bestprice-badge-negative {
+  background: rgba(55, 24, 24, 0.96) !important;
+  border-color: rgba(229, 115, 115, 0.3) !important;
+  color: #ffb3b0 !important;
+}
+
+.dark-mode .bestprice-badge-positive:hover {
+  border-color: rgba(88, 160, 84, 0.5) !important;
+}
+
+.dark-mode .bestprice-badge-negative:hover {
+  /* Slightly deepen the red background and increase emphasis in dark mode */
+  background: rgba(80, 20, 20, 0.98) !important;
+  border-color: rgba(229, 115, 115, 0.6) !important;
+  box-shadow: 0 6px 14px rgba(229, 115, 115, 0.22) !important;
+  color: #ffb3b0 !important;
+}
+
 .analysis-container {
   display: none !important; /* hidden by default */
   width: 100% !important;
+}
+
+/* Visible indicator when BestPrice data is not available */
+.bestprice-unavailable {
+  margin-top: 8px !important;
+  font-size: 12px !important;
+  color: #6b6b6b !important;
+  background: transparent !important;
+  text-align: left !important;
 }
 
 .analysis-container.visible {
@@ -1475,6 +1639,16 @@ text-black {
 }
 
 @media (max-width: 640px) {
+  .price-display-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .bestprice-badge {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
   .analysis-container .price-breakdown-item {
     width: 100% !important;
   }
