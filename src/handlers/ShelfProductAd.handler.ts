@@ -7,6 +7,8 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
     'selected-product-cards',
     'sponsored-shelf',
     'js-recently-viewed-skus-shelf',
+    'placement-shelf',
+    'polymorphic-brand-shelf',
   ];
   private readonly flaggedShelfAdClass = 'flagged-shelf';
 
@@ -46,6 +48,10 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
 
   private flagElementsBySelector(selector: string): void {
     DomClient.getElementsByClass(selector).forEach((element) => {
+      if (element.classList.contains(this.flaggedShelfAdClass)) {
+        return;
+      }
+
       this.state.ShelfAdCount++;
       DomClient.addClassesToElement(element, this.flaggedShelfAdClass);
       DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
