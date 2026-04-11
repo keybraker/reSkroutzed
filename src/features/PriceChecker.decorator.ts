@@ -12,14 +12,194 @@ const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
 };
 
+type PriceCheckerRenderOptions = {
+  isBestPriceLoading?: boolean;
+  isPriceHistoryLoading?: boolean;
+};
+
+function createPriceCheckerFallbackElement(language: Language): HTMLDivElement {
+  const fallback = document.createElement('div');
+  fallback.className = 'price-checker-outline info-label-negative';
+  fallback.textContent =
+    language === Language.ENGLISH ? 'Price info unavailable' : 'Μη διαθέσιμη πληροφορία τιμής';
+
+  return fallback as HTMLDivElement;
+}
+
+function createSkeletonBlock(extraClasses: string[] = []): HTMLDivElement {
+  return DomClient.createElement('div', {
+    className: ['price-checker-skeleton-block', ...extraClasses],
+  }) as HTMLDivElement;
+}
+
+function createBestPriceLoadingBadge(): HTMLDivElement {
+  const badge = DomClient.createElement('div', {
+    className: ['bestprice-badge', 'bestprice-badge-loading'],
+  }) as HTMLDivElement;
+  badge.setAttribute('aria-hidden', 'true');
+
+  const logo = createSkeletonBlock(['price-checker-skeleton-logo']);
+  const content = DomClient.createElement('div', {
+    className: 'bestprice-badge-content',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-badge-price']),
+    content,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-badge-shipping']),
+    content,
+  );
+
+  DomClient.appendElementToElement(logo, badge);
+  DomClient.appendElementToElement(content, badge);
+
+  return badge;
+}
+
+function createPriceHistoryLoadingComponent(): HTMLDivElement {
+  const wrapper = DomClient.createElement('div', {
+    className: ['price-history-wrapper', 'price-history-loading-wrapper'],
+  }) as HTMLDivElement;
+  const row = DomClient.createElement('div', {
+    className: ['info-with-analysis-row', 'price-history-loading-row'],
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-history-copy']),
+    row,
+  );
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-chip']), row);
+  DomClient.appendElementToElement(row, wrapper);
+
+  return wrapper;
+}
+
+function createStoreAvailabilitySkeletonElement(): HTMLDivElement {
+  const container = DomClient.createElement('div', {
+    className: ['store-availability-outline', 'store-availability-loading'],
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-status']),
+    container,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-summary']),
+    container,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-summary-short']),
+    container,
+  );
+
+  return container;
+}
+
+function createPromotionSkeletonElement(): HTMLDivElement {
+  const promotion = DomClient.createElement('div', {
+    className: ['own-promotion', 'own-promotion-loading'],
+  }) as HTMLDivElement;
+  const row = DomClient.createElement('div', {
+    className: 'store-availability-row',
+  }) as HTMLDivElement;
+  const left = DomClient.createElement('div', {
+    className: 'store-availability-left',
+  }) as HTMLDivElement;
+  const right = DomClient.createElement('div', {
+    className: 'store-availability-right',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-circle']), left);
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-review-copy']),
+    right,
+  );
+
+  DomClient.appendElementToElement(left, row);
+  DomClient.appendElementToElement(right, row);
+  DomClient.appendElementToElement(row, promotion);
+
+  return promotion;
+}
+
+function createPriceCheckerSkeleton(): HTMLDivElement {
+  const stack = DomClient.createElement('div', {
+    className: ['price-checker-stack', 'price-checker-loading-stack'],
+  }) as HTMLDivElement;
+  stack.setAttribute('aria-busy', 'true');
+  stack.setAttribute('aria-live', 'polite');
+
+  const priceIndication = DomClient.createElement('div', {
+    className: ['display-padding', 'price-checker-outline', 'price-checker-loading'],
+  }) as HTMLDivElement;
+  priceIndication.style.marginTop = '14px';
+
+  const contentContainer = DomClient.createElement('div', {
+    className: 'inline-flex-col',
+  }) as HTMLDivElement;
+  const priceCalculationContainer = DomClient.createElement('div', {
+    className: 'price-calculation-container',
+  }) as HTMLDivElement;
+  const priceDisplay = DomClient.createElement('div', {
+    className: 'price-display-wrapper',
+  }) as HTMLDivElement;
+  const priceDisplayRow = DomClient.createElement('div', {
+    className: 'price-display-row',
+  }) as HTMLDivElement;
+  const priceColumn = DomClient.createElement('div', {
+    className: 'price-display-column',
+  }) as HTMLDivElement;
+  const infoRow = DomClient.createElement('div', {
+    className: 'info-with-analysis-row',
+  }) as HTMLDivElement;
+  const actionContainer = DomClient.createElement('div', {
+    className: 'inline-flex-row',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-price']),
+    priceColumn,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-shipping']),
+    priceColumn,
+  );
+  DomClient.appendElementToElement(priceColumn, priceDisplayRow);
+  DomClient.appendElementToElement(createBestPriceLoadingBadge(), priceDisplayRow);
+  DomClient.appendElementToElement(priceDisplayRow, priceDisplay);
+
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-info']), infoRow);
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-chip']), infoRow);
+
+  DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
+  DomClient.appendElementToElement(infoRow, priceCalculationContainer);
+  DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
+  DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-cta']),
+    actionContainer,
+  );
+  DomClient.appendElementToElement(actionContainer, contentContainer);
+  DomClient.appendElementToElement(contentContainer, priceIndication);
+
+  DomClient.appendElementToElement(priceIndication, stack);
+  DomClient.appendElementToElement(createStoreAvailabilitySkeletonElement(), stack);
+  DomClient.appendElementToElement(createPromotionSkeletonElement(), stack);
+
+  return stack;
+}
+
 function createPriceDisplayComponent(
   productPriceData: ProductPriceData,
   price: number,
   shippingCost: number,
   language: Language,
   bestPriceProductData?: BestPriceProductData,
+  isBestPriceLoading = false,
 ): HTMLDivElement {
-  if (bestPriceProductData) {
+  if (bestPriceProductData || isBestPriceLoading) {
     const row = DomClient.createElement('div', {
       className: 'price-display-row',
     }) as HTMLDivElement;
@@ -38,14 +218,18 @@ function createPriceDisplayComponent(
     DomClient.appendElementToElement(shippingText, priceColumn);
 
     DomClient.appendElementToElement(priceColumn, row);
-    DomClient.appendElementToElement(
-      createBestPriceBadge(
-        bestPriceProductData,
-        language,
-        isBestPriceCheaperThanBoth(productPriceData, bestPriceProductData),
-      ),
-      row,
-    );
+    if (bestPriceProductData) {
+      DomClient.appendElementToElement(
+        createBestPriceBadge(
+          bestPriceProductData,
+          language,
+          isBestPriceCheaperThanBoth(productPriceData, bestPriceProductData),
+        ),
+        row,
+      );
+    } else {
+      DomClient.appendElementToElement(createBestPriceLoadingBadge(), row);
+    }
 
     const container = DomClient.createElement('div', {
       className: 'price-display-wrapper',
@@ -572,6 +756,7 @@ function createPriceIndicationElement(
   language: Language,
   minimumPriceDifference: number,
   bestPriceProductData?: BestPriceProductData,
+  renderOptions: PriceCheckerRenderOptions = {},
 ): HTMLDivElement {
   try {
     const priceCheckerStack = DomClient.createElement('div', {
@@ -605,6 +790,7 @@ function createPriceIndicationElement(
       productPriceData.buyThroughStore.shippingCost,
       language,
       bestPriceProductData,
+      renderOptions.isBestPriceLoading,
     );
     DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
 
@@ -695,6 +881,8 @@ function createPriceIndicationElement(
         productPriceData.buyThroughStore.totalPrice,
       );
       DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
+    } else if (renderOptions.isPriceHistoryLoading) {
+      DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
     }
 
     DomClient.appendElementToElement(actionContainer, contentContainer);
@@ -725,11 +913,7 @@ function createPriceIndicationElement(
     return priceCheckerStack;
   } catch (err) {
     console.error('PriceChecker: failed to build indication element', err);
-    const fallback = document.createElement('div');
-    fallback.className = 'price-checker-outline info-label-negative';
-    fallback.textContent =
-      language === Language.ENGLISH ? 'Price info unavailable' : 'Μη διαθέσιμη πληροφορία τιμής';
-    return fallback as HTMLDivElement;
+    return createPriceCheckerFallbackElement(language);
   }
 }
 
@@ -764,6 +948,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
   private observer: MutationObserver | null = null;
   private isInitializing: boolean = false;
   private lastProductId: string | null = null;
+  private currentInitializationId: number = 0;
   /* Data */
   private productPriceData: ProductPriceData | undefined = undefined;
   private productPriceHistory: ProductPriceHistory | undefined = undefined;
@@ -850,61 +1035,156 @@ export class PriceCheckerDecorator implements FeatureInstance {
       return;
     }
 
+    const initializationId = ++this.currentInitializationId;
+
     try {
       this.isInitializing = true;
 
       const host = this.getPriceHostElement();
       if (!host) {
-        this.isInitializing = false;
         return;
       }
 
       this.cleanup();
+      this.productPriceData = undefined;
+      this.productPriceHistory = undefined;
+      this.bestPriceProductData = undefined;
+      this.replacePriceIndication(host, createPriceCheckerSkeleton());
+
+      let isPriceHistoryLoading = true;
+      let isBestPriceLoading = true;
+      const renderLoadedState = (): void => {
+        if (!this.isCurrentInitialization(initializationId) || !this.productPriceData) {
+          return;
+        }
+
+        const currentHost = this.getPriceHostElement();
+        if (!currentHost) {
+          return;
+        }
+
+        const priceIndication = createPriceIndicationElement(
+          this.productPriceData,
+          this.productPriceHistory,
+          this.state.language,
+          this.state.minimumPriceDifference,
+          this.bestPriceProductData,
+          {
+            isBestPriceLoading,
+            isPriceHistoryLoading,
+          },
+        );
+
+        this.replacePriceIndication(currentHost, priceIndication);
+        this.addPriceComparisonToOptions();
+      };
+
+      void SkroutzClient.getPriceHistory()
+        .then((productPriceHistory) => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          this.productPriceHistory = productPriceHistory;
+        })
+        .catch((error) => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          console.warn('PriceChecker: failed to fetch price history', error);
+        })
+        .finally(() => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          isPriceHistoryLoading = false;
+          renderLoadedState();
+        });
+
+      void BestPriceClient.getCurrentProductData()
+        .then((bestPriceProductData) => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          this.bestPriceProductData = bestPriceProductData;
+        })
+        .catch((error) => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          console.warn('PriceChecker: failed to fetch BestPrice data', error);
+        })
+        .finally(() => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          isBestPriceLoading = false;
+          renderLoadedState();
+        });
+
       this.productPriceData = await SkroutzClient.getCurrentProductData();
-      const priceHistoryPromise = SkroutzClient.getPriceHistory().catch((error) => {
-        console.warn('PriceChecker: failed to fetch price history', error);
-        return undefined;
-      });
-      const bestPricePromise = BestPriceClient.getCurrentProductData().catch((error) => {
-        console.warn('PriceChecker: failed to fetch BestPrice data', error);
-        return undefined;
-      });
 
-      [this.productPriceHistory, this.bestPriceProductData] = await Promise.all([
-        priceHistoryPromise,
-        bestPricePromise,
-      ]);
-
-      if (!this.productPriceData) {
-        this.isInitializing = false;
+      if (!this.isCurrentInitialization(initializationId) || !this.productPriceData) {
         return;
       }
 
-      this.adjustSiteData(host);
-      const priceIndication = createPriceIndicationElement(
-        this.productPriceData!,
-        this.productPriceHistory,
-        this.state.language,
-        this.state.minimumPriceDifference,
-        this.bestPriceProductData,
-      );
+      const currentHost = this.getPriceHostElement();
+      if (!currentHost) {
+        return;
+      }
 
-      this.insertPriceIndicationIntoHost(host, priceIndication);
+      this.adjustSiteData(currentHost);
+      renderLoadedState();
     } catch (e) {
       console.error('PriceChecker: initializeProductView failed', e);
+
+      if (this.isCurrentInitialization(initializationId)) {
+        const currentHost = this.getPriceHostElement();
+        if (currentHost) {
+          this.replacePriceIndication(
+            currentHost,
+            createPriceCheckerFallbackElement(this.state.language),
+          );
+        }
+      }
     } finally {
-      this.isInitializing = false;
+      if (this.isCurrentInitialization(initializationId)) {
+        this.isInitializing = false;
+      }
     }
   }
 
   private cleanup(): void {
-    const existingIndicators = document.querySelectorAll(
-      '.price-checker-stack, .price-checker-outline, .store-availability-outline',
-    );
+    this.removeRenderedPriceChecker();
     const existingShippingTexts = document.querySelectorAll('.shipping-cost-text');
+    const existingBreakdowns = document.querySelectorAll(
+      '.skroutz-breakdown-inline, .store-breakdown-inline',
+    );
+
+    existingShippingTexts.forEach((element) => element.remove());
+    existingBreakdowns.forEach((element) => element.remove());
+  }
+
+  private isCurrentInitialization(initializationId: number): boolean {
+    return initializationId === this.currentInitializationId;
+  }
+
+  private removeRenderedPriceChecker(): void {
+    const existingIndicators = document.querySelectorAll(
+      '.price-checker-stack, .price-checker-outline, .store-availability-outline, .own-promotion',
+    );
 
     existingIndicators.forEach((element) => element.remove());
-    existingShippingTexts.forEach((element) => element.remove());
+  }
+
+  private replacePriceIndication(host: Element, priceIndication: HTMLDivElement): void {
+    this.removeRenderedPriceChecker();
+    this.insertPriceIndicationIntoHost(host, priceIndication);
   }
 
   private adjustSiteData(element: Element): void {
@@ -939,8 +1219,6 @@ export class PriceCheckerDecorator implements FeatureInstance {
         (priceBox as Element).insertAdjacentElement('beforeend', shippingText);
       }
     }
-
-    this.addPriceComparisonToOptions();
   }
 
   private getPriceHostElement(): Element | null {
@@ -982,6 +1260,10 @@ export class PriceCheckerDecorator implements FeatureInstance {
     if (!this.productPriceData) {
       return;
     }
+
+    document
+      .querySelectorAll('.skroutz-breakdown-inline, .store-breakdown-inline')
+      .forEach((element) => element.remove());
 
     const findBuyOption = (searchText: string): Element | undefined => {
       const elements = Array.from(

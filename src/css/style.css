@@ -320,10 +320,158 @@ text-black {
   border-bottom-right-radius: 0 !important;
 }
 
+.price-checker-loading,
+.store-availability-loading,
+.own-promotion-loading {
+  overflow: hidden !important;
+}
+
+.price-checker-skeleton-block {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      rgba(255, 255, 255, 0.15) 100%
+    ),
+    rgba(22, 28, 45, 0.08) !important;
+  background-size: 200% 100% !important;
+  animation: price-checker-skeleton-shimmer 1.2s ease-in-out infinite !important;
+}
+
+.price-checker-skeleton-price {
+  width: 72% !important;
+  max-width: 220px !important;
+  height: 50px !important;
+  border-radius: 14px !important;
+}
+
+.price-checker-skeleton-shipping {
+  width: 124px !important;
+  height: 14px !important;
+  border-radius: 8px !important;
+  margin-top: 4px !important;
+}
+
+.price-checker-skeleton-info,
+.price-checker-skeleton-history-copy {
+  flex: 1 1 auto !important;
+  width: auto !important;
+}
+
+.price-checker-skeleton-info {
+  height: 14px !important;
+}
+
+.price-checker-skeleton-history-copy {
+  height: 16px !important;
+}
+
+.price-checker-skeleton-chip {
+  flex: 0 0 96px !important;
+  width: 96px !important;
+  height: 34px !important;
+  border-radius: 999px !important;
+}
+
+.price-checker-skeleton-cta {
+  width: 164px !important;
+  height: 40px !important;
+  border-radius: 999px !important;
+}
+
+.price-checker-skeleton-logo {
+  width: 48px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  flex: 0 0 auto !important;
+}
+
+.price-checker-skeleton-badge-price {
+  width: 72px !important;
+  height: 24px !important;
+  border-radius: 10px !important;
+}
+
+.price-checker-skeleton-badge-shipping {
+  width: 96px !important;
+  height: 12px !important;
+  border-radius: 8px !important;
+}
+
+.price-checker-skeleton-status {
+  width: 68% !important;
+  height: 16px !important;
+}
+
+.price-checker-skeleton-summary {
+  width: 100% !important;
+  height: 14px !important;
+}
+
+.price-checker-skeleton-summary-short {
+  width: 72% !important;
+  height: 14px !important;
+}
+
+.price-checker-skeleton-circle {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  flex: 0 0 40px !important;
+}
+
+.price-checker-skeleton-review-copy {
+  width: 100% !important;
+  max-width: 240px !important;
+  height: 16px !important;
+}
+
+.price-history-loading-wrapper,
+.price-history-loading-row {
+  width: 100% !important;
+}
+
+.store-availability-loading {
+  gap: 10px !important;
+}
+
+.own-promotion-loading {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+.own-promotion-loading .store-availability-right {
+  justify-content: flex-start !important;
+}
+
+@keyframes price-checker-skeleton-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
 .dark-mode .price-checker-outline {
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   background-color: var(--price-checker-dark-bg) !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark-mode .price-checker-skeleton-block {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.18) 50%,
+      rgba(255, 255, 255, 0.08) 100%
+    ),
+    rgba(255, 255, 255, 0.08) !important;
 }
 
 .tags-container {
@@ -1465,6 +1613,17 @@ text-black {
     border-color 0.2s ease !important;
 }
 
+.bestprice-badge-loading {
+  pointer-events: none !important;
+  border-style: dashed !important;
+  background: rgba(255, 255, 255, 0.52) !important;
+  box-shadow: none !important;
+}
+
+.bestprice-badge-loading .bestprice-badge-content {
+  gap: 6px !important;
+}
+
 .bestprice-badge-positive {
   border-color: rgba(58, 140, 58, 0.22) !important;
   background: rgba(236, 248, 236, 0.98) !important;
@@ -1553,6 +1712,10 @@ text-black {
 
 .dark-mode .bestprice-badge {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22) !important;
+}
+
+.dark-mode .bestprice-badge-loading {
+  background: rgba(255, 255, 255, 0.06) !important;
 }
 
 .dark-mode .bestprice-badge-positive {
