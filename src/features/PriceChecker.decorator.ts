@@ -949,20 +949,33 @@ export class PriceCheckerDecorator implements FeatureInstance {
   private isInitializing: boolean = false;
   private lastProductId: string | null = null;
   private currentInitializationId: number = 0;
+  private readonly boundNavigationHandler: () => Promise<void>;
   /* Data */
   private productPriceData: ProductPriceData | undefined = undefined;
   private productPriceHistory: ProductPriceHistory | undefined = undefined;
   private bestPriceProductData: BestPriceProductData | undefined = undefined;
 
-  constructor(private readonly state: State) {}
+  constructor(private readonly state: State) {
+    this.boundNavigationHandler = this.handleNavigation.bind(this);
+  }
 
   public async execute(): Promise<void> {
     await this.initializeProductView();
     this.setupNavigationHandlers();
   }
 
+  public destroy(): void {
+    window.removeEventListener('popstate', this.boundNavigationHandler);
+
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
+  }
+
   private setupNavigationHandlers(): void {
-    window.addEventListener('popstate', this.handleNavigation.bind(this));
+    window.removeEventListener('popstate', this.boundNavigationHandler);
+    window.addEventListener('popstate', this.boundNavigationHandler);
 
     this.setupProductViewObserver();
   }

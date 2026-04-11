@@ -162,11 +162,7 @@ describe('PriceCheckerDecorator', () => {
 
   afterEach(() => {
     if (decorator) {
-      const activeDecorator = decorator as PriceCheckerDecorator & {
-        observer?: MutationObserver | null;
-      };
-      activeDecorator.observer?.disconnect();
-      activeDecorator.observer = null;
+      decorator.destroy();
       decorator = undefined;
     }
 
