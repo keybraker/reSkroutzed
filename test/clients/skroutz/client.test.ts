@@ -207,6 +207,10 @@ describe('SkroutzClient', () => {
   const originalConsoleWarn = console.warn;
 
   beforeEach(() => {
+    (
+      SkroutzClient as unknown as { productDataCache: Map<string, Promise<ProductData>> }
+    ).productDataCache.clear();
+
     // Mock document body and elements
     document.body.innerHTML = `
       <meta itemprop="sku" content="12345678">
@@ -287,6 +291,44 @@ describe('SkroutzClient', () => {
           Θεσσαλονίκη: [101],
           Μαρούσι: [102],
         },
+      });
+    });
+
+    it('should match the buybox against ecommerce_final_price when Skroutz shows the discounted price', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <ol id="prices" class="sku-list">
+          <li id="shop-101" class="product-card-redesigned">
+            <div class="merchant-box-bottom-content">
+              <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            </div>
+          </li>
+          <li id="shop-103" class="product-card-redesigned">
+            <div class="merchant-box-bottom-content">
+              <div class="location"><span>Πάτρα, Ελλάδα</span></div>
+              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            </div>
+          </li>
+        </ol>
+        <article class="buybox">
+          <div class="price-box">
+            <div class="price-and-installments"></div>
+            <div class="final-price">
+              <span class="integer-part">945</span>
+              <span class="decimal-part">00</span>
+            </div>
+          </div>
+        </article>
+      `;
+
+      const result: ProductPriceData = await SkroutzClient.getCurrentProductData();
+
+      expect(result.buyThroughSkroutz).toEqual({
+        price: 945,
+        shippingCost: 5,
+        totalPrice: 950,
+        shopId: 103,
       });
     });
 

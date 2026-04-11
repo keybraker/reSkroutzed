@@ -1,9 +1,9 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\handlers\ShelfProductAd.handler.test.ts
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ShelfProductAdHandler } from '../../src/handlers/ShelfProductAd.handler';
 import { DomClient } from '../../src/clients/dom/client';
 import { State } from '../../src/common/types/State.type';
+import { ShelfProductAdHandler } from '../../src/handlers/ShelfProductAd.handler';
 
 // Mock the DomClient
 vi.mock('../../src/clients/dom/client', () => ({
@@ -105,6 +105,37 @@ describe('ShelfProductAdHandler', () => {
       expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(3);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(3);
       expect(mockState.ShelfAdCount).toBe(3);
+    });
+
+    it('should flag placement shelf advertisements', () => {
+      // Initial flagged elements
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+
+      // Mock li elements that don't match shelf classes
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+
+      // Mock the new placement shelf variant
+      const placementShelfElement = document.createElement('div');
+      placementShelfElement.classList.add('placement-shelf');
+      placementShelfElement.classList.add('polymorphic-brand-shelf');
+      vi.mocked(DomClient.addClassesToElement).mockImplementation((element, ...flagClasses) => {
+        element.classList.add(...flagClasses);
+      });
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([placementShelfElement]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([placementShelfElement]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+
+      shelfProductAdHandler.flag();
+
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
+        placementShelfElement,
+        'flagged-shelf',
+      );
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(placementShelfElement, 'hide');
+      expect(mockState.ShelfAdCount).toBe(1);
     });
   });
 

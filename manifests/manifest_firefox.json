@@ -9,8 +9,12 @@
     "*://www.skroutz.ro/*",
     "*://www.skroutz.cy/*",
     "*://www.skroutz.de/*",
-    "*://www.skroutz.eu/*"
+    "*://www.skroutz.eu/*",
+    "*://www.bestprice.gr/*"
   ],
+  "background": {
+    "scripts": ["service_worker.js"]
+  },
   "content_scripts": [
     {
       "matches": [

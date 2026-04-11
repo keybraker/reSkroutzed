@@ -1,3 +1,4 @@
+import { BestPriceClient, BestPriceProductData } from '../clients/best_price/client';
 import { DomClient } from '../clients/dom/client';
 import { ProductPriceData, ProductPriceHistory, SkroutzClient } from '../clients/skroutz/client';
 import { PriceHistoryComponent } from '../common/components/PriceHistory.component';
@@ -11,16 +12,317 @@ const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
 };
 
+type PriceCheckerRenderOptions = {
+  isBestPriceLoading?: boolean;
+  isPriceHistoryLoading?: boolean;
+};
+
+type PriceDisplayActionOptions = {
+  classNames?: string[];
+  price: number;
+  shippingCost?: number;
+  priceClassNames?: string[];
+  language: Language;
+  subtitleText: string;
+  title?: string;
+  ariaLabel: string;
+  href?: string;
+  onClick?: () => void;
+  notificationLogo?: HTMLElement | SVGSVGElement;
+};
+
+function createPriceCheckerFallbackElement(language: Language): HTMLDivElement {
+  const fallback = document.createElement('div');
+  fallback.className = 'price-checker-outline';
+  fallback.textContent =
+    language === Language.ENGLISH ? 'Price info unavailable' : 'Μη διαθέσιμη πληροφορία τιμής';
+
+  return fallback as HTMLDivElement;
+}
+
+function createSkeletonBlock(extraClasses: string[] = []): HTMLDivElement {
+  return DomClient.createElement('div', {
+    className: ['price-checker-skeleton-block', ...extraClasses],
+  }) as HTMLDivElement;
+}
+
+function createPriceDisplayLoadingAction(
+  classNames: string[] = [
+    'price-display-action',
+    'price-display-bestprice-action',
+    'bestprice-badge',
+    'bestprice-badge-loading',
+  ],
+  options: { includeNotificationLogo?: boolean } = {},
+): HTMLDivElement {
+  const action = DomClient.createElement('div', {
+    className: ['price-display-action', ...classNames],
+  }) as HTMLDivElement;
+  action.setAttribute('aria-hidden', 'true');
+
+  const content = DomClient.createElement('div', {
+    className: 'price-display-action-content',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-price']), content);
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-shipping']),
+    content,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-badge-label']),
+    content,
+  );
+  DomClient.appendElementToElement(content, action);
+
+  if (options.includeNotificationLogo) {
+    const notification = DomClient.createElement('div', {
+      className: 'price-display-action-notification',
+    }) as HTMLDivElement;
+    DomClient.appendElementToElement(
+      createSkeletonBlock(['price-checker-skeleton-logo']),
+      notification,
+    );
+    DomClient.appendElementToElement(notification, action);
+  }
+
+  const arrow = DomClient.createElement('span', {
+    className: ['price-display-action-arrow', 'price-display-action-arrow-loading'],
+  }) as HTMLSpanElement;
+  arrow.setAttribute('aria-hidden', 'true');
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-arrow']), arrow);
+  DomClient.appendElementToElement(arrow, action);
+
+  return action;
+}
+
+function createStorePriceLoadingAction(): HTMLDivElement {
+  return createPriceDisplayLoadingAction(['price-display-store-action']);
+}
+
+function createBestPriceLoadingBadge(): HTMLDivElement {
+  return createPriceDisplayLoadingAction(
+    ['price-display-bestprice-action', 'bestprice-badge', 'bestprice-badge-loading'],
+    { includeNotificationLogo: true },
+  );
+}
+
+function createPriceHistoryLoadingComponent(): HTMLDivElement {
+  const wrapper = DomClient.createElement('div', {
+    className: ['price-history-wrapper', 'price-history-loading-wrapper'],
+  }) as HTMLDivElement;
+
+  const row = DomClient.createElement('div', {
+    className: ['price-history-row', 'info-with-analysis-row', 'price-history-loading-row'],
+  }) as HTMLDivElement;
+  const topRow = DomClient.createElement('div', {
+    className: ['info-with-analysis-row', 'price-history-loading-top-row'],
+  }) as HTMLDivElement;
+  const assessments = DomClient.createElement('div', {
+    className: ['price-history-assessments', 'price-history-loading-assessments'],
+  }) as HTMLDivElement;
+  const controls = DomClient.createElement('div', {
+    className: 'price-history-controls',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-history-copy']),
+    assessments,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock([
+      'price-checker-skeleton-history-copy',
+      'price-checker-skeleton-history-copy-secondary',
+    ]),
+    assessments,
+  );
+
+  DomClient.appendElementToElement(assessments, topRow);
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-chip']), controls);
+  DomClient.appendElementToElement(controls, topRow);
+  DomClient.appendElementToElement(topRow, row);
+  DomClient.appendElementToElement(row, wrapper);
+
+  return wrapper;
+}
+
+function createStoreAvailabilitySkeletonElement(): HTMLDivElement {
+  const container = DomClient.createElement('div', {
+    className: ['store-availability-outline', 'store-availability-loading'],
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-status']),
+    container,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-summary']),
+    container,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-summary-short']),
+    container,
+  );
+
+  return container;
+}
+
+function createPromotionSkeletonElement(): HTMLDivElement {
+  const promotion = DomClient.createElement('div', {
+    className: ['own-promotion', 'own-promotion-loading'],
+  }) as HTMLDivElement;
+  const row = DomClient.createElement('div', {
+    className: 'store-availability-row',
+  }) as HTMLDivElement;
+  const left = DomClient.createElement('div', {
+    className: 'store-availability-left',
+  }) as HTMLDivElement;
+  const right = DomClient.createElement('div', {
+    className: 'store-availability-right',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-circle']), left);
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-review-copy']),
+    right,
+  );
+
+  DomClient.appendElementToElement(left, row);
+  DomClient.appendElementToElement(right, row);
+  DomClient.appendElementToElement(row, promotion);
+
+  return promotion;
+}
+
+function createPriceCheckerSkeleton(): HTMLDivElement {
+  const stack = DomClient.createElement('div', {
+    className: ['price-checker-stack', 'price-checker-loading-stack'],
+  }) as HTMLDivElement;
+  stack.setAttribute('aria-busy', 'true');
+  stack.setAttribute('aria-live', 'polite');
+
+  const priceIndication = DomClient.createElement('div', {
+    className: ['display-padding', 'price-checker-outline', 'price-checker-loading'],
+  }) as HTMLDivElement;
+  priceIndication.style.marginTop = '14px';
+
+  const contentContainer = DomClient.createElement('div', {
+    className: 'inline-flex-col',
+  }) as HTMLDivElement;
+  const priceCalculationContainer = DomClient.createElement('div', {
+    className: 'price-calculation-container',
+  }) as HTMLDivElement;
+  const priceDisplay = DomClient.createElement('div', {
+    className: 'price-display-wrapper',
+  }) as HTMLDivElement;
+  const priceDisplayRow = DomClient.createElement('div', {
+    className: 'price-display-row',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(createStorePriceLoadingAction(), priceDisplayRow);
+  DomClient.appendElementToElement(createPriceDisplayDivider(), priceDisplayRow);
+  DomClient.appendElementToElement(createBestPriceLoadingBadge(), priceDisplayRow);
+  DomClient.appendElementToElement(priceDisplayRow, priceDisplay);
+
+  DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
+  DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
+  DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
+  DomClient.appendElementToElement(createStoreAvailabilitySkeletonElement(), contentContainer);
+  DomClient.appendElementToElement(contentContainer, priceIndication);
+
+  DomClient.appendElementToElement(priceIndication, stack);
+  DomClient.appendElementToElement(createPromotionSkeletonElement(), stack);
+
+  return stack;
+}
+
 function createPriceDisplayComponent(
+  productPriceData: ProductPriceData,
   price: number,
   shippingCost: number,
   language: Language,
+  bestPriceProductData?: BestPriceProductData,
+  isBestPriceLoading = false,
 ): HTMLDivElement {
+  const storePriceClassNames = getPriceComparisonClassNames(
+    productPriceData.buyThroughSkroutz.totalPrice,
+    productPriceData.buyThroughStore.totalPrice,
+  );
+
+  if (bestPriceProductData || isBestPriceLoading) {
+    const row = DomClient.createElement('div', {
+      className: 'price-display-row',
+    }) as HTMLDivElement;
+    DomClient.appendElementToElement(
+      createStorePriceAction(productPriceData, price, shippingCost, language),
+      row,
+    );
+    DomClient.appendElementToElement(createPriceDisplayDivider(), row);
+    if (bestPriceProductData) {
+      DomClient.appendElementToElement(
+        createBestPriceBadge(
+          bestPriceProductData,
+          productPriceData.buyThroughSkroutz.totalPrice,
+          language,
+        ),
+        row,
+      );
+    } else {
+      DomClient.appendElementToElement(createBestPriceLoadingBadge(), row);
+    }
+
+    const container = DomClient.createElement('div', {
+      className: 'price-display-wrapper',
+    }) as HTMLDivElement;
+    DomClient.appendElementToElement(row, container);
+
+    return container;
+  }
+
   const container = DomClient.createElement('div', {
     className: 'price-display-wrapper',
   }) as HTMLDivElement;
 
-  const priceElement = DomClient.createElement('div', { className: 'price-indicator-price' });
+  const priceElement = createFormattedPriceElement(price, storePriceClassNames);
+  DomClient.appendElementToElement(priceElement, container);
+
+  const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
+  shippingText.classList.add(...storePriceClassNames);
+  const formattedShipping = shippingCost.toFixed(2).replace('.', ',');
+  shippingText.textContent = `(+${formattedShipping}€ ${
+    language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
+  })`;
+  DomClient.appendElementToElement(shippingText, container);
+
+  const notAvailable = DomClient.createElement('div', { className: 'bestprice-unavailable' });
+  notAvailable.textContent =
+    language === Language.ENGLISH ? 'BestPrice not available' : 'BestPrice: δεν βρέθηκε';
+  DomClient.appendElementToElement(notAvailable, container);
+
+  return container;
+}
+
+function getPriceComparisonClassNames(
+  skroutzTotalPrice: number,
+  comparedOfferTotalPrice: number,
+): string[] {
+  const priceDifference = roundToZero(comparedOfferTotalPrice - skroutzTotalPrice);
+
+  if (priceDifference < 0) {
+    return ['price-display-action-positive'];
+  }
+
+  if (priceDifference > 0) {
+    return ['price-display-action-negative'];
+  }
+
+  return [];
+}
+
+function createFormattedPriceElement(price: number, extraClasses: string[] = []): HTMLDivElement {
+  const priceElement = DomClient.createElement('div', {
+    className: ['price-indicator-price', ...extraClasses],
+  }) as HTMLDivElement;
 
   const [integerPart, decimalPart] = price.toFixed(2).split('.');
 
@@ -38,21 +340,247 @@ function createPriceDisplayComponent(
   currencySymbol.textContent = '€';
   DomClient.appendElementToElement(currencySymbol, priceElement);
 
-  DomClient.appendElementToElement(priceElement, container);
+  return priceElement;
+}
 
-  const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
+function createShippingCostElement(
+  shippingCost: number,
+  language: Language,
+  extraClasses: string[] = [],
+): HTMLDivElement {
+  const shippingText = DomClient.createElement('div', {
+    className: ['shipping-cost-text', ...extraClasses],
+  }) as HTMLDivElement;
   const formattedShipping = shippingCost.toFixed(2).replace('.', ',');
   shippingText.textContent = `(+${formattedShipping}€ ${
     language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
   })`;
-  DomClient.appendElementToElement(shippingText, container);
 
-  return container;
+  return shippingText;
+}
+
+function createPriceDisplaySubtitle(
+  language: Language,
+  extraClasses: string[] = [],
+  preferredText?: string,
+): HTMLDivElement {
+  const subtitle = DomClient.createElement('div', {
+    className: ['price-display-subtitle', ...extraClasses],
+  }) as HTMLDivElement;
+  subtitle.textContent =
+    preferredText ??
+    (language === Language.ENGLISH ? 'Buy through store' : 'Αγορά μέσω καταστήματος');
+
+  return subtitle;
+}
+
+function createPriceDisplayActionArrow(): HTMLSpanElement {
+  const arrow = DomClient.createElement('span', {
+    className: 'price-display-action-arrow',
+  }) as HTMLSpanElement;
+  arrow.setAttribute('aria-hidden', 'true');
+  arrow.innerHTML =
+    '<svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  return arrow;
+}
+
+function createBestPriceLogo(): SVGSVGElement {
+  const logo = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  logo.setAttribute('viewBox', '0 0 44 28');
+  logo.setAttribute('aria-hidden', 'true');
+  logo.classList.add('bestprice-badge-logo');
+
+  const logoPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  logoPath.setAttribute('fill-rule', 'evenodd');
+  logoPath.setAttribute(
+    'd',
+    'M25.016 8.96052C25.3883 8.98468 25.9053 8.91067 25.9914 9.40857C26.0751 9.8923 25.5021 10.1517 25.1015 10.2202C24.1869 10.377 23.2839 10.0922 22.4875 9.65742L22.2603 9.53529L21.5837 12.7709C22.9048 13.1744 24.5267 13.2773 25.8989 13.0421C28.2431 12.6404 30.3538 10.9752 29.9109 8.4146C29.5958 6.59385 28.2426 5.91754 26.5204 5.8318L25.5998 5.7846C25.2872 5.76493 24.7914 5.79123 24.7224 5.39303C24.6462 4.95211 25.1243 4.73833 25.4674 4.67941C26.3249 4.53251 27.1299 4.76076 27.8804 5.10075L28.4475 2.25371L28.9046 4.89594L31.0457 4.42658L32.3156 11.7668L36.2322 11.0956L34.9621 3.75537L37.1378 3.48522L36.5348 0L28.3015 1.41083L28.4316 2.16237C27.2896 1.72523 26.1166 1.60942 24.8846 1.82065C22.5403 2.22231 20.4565 4.04419 20.897 6.59038C21.1853 8.25475 22.6149 8.94727 24.2052 8.95297L25.016 8.96052ZM21.0173 10.6856L17.6011 11.271L17.419 10.2184L20.435 9.70156L19.9526 6.91345L16.9366 7.43021L16.7593 6.40596L20.0612 5.84027L19.5542 2.90984L12.3072 4.15174L14.1579 14.8482L10.4896 15.4768C12.1488 15.0332 13.6351 13.9518 13.2939 11.9798C13.0699 10.6852 12.1957 9.9709 10.9379 9.76171L10.9231 9.67638C11.829 9.21345 12.129 8.22467 11.9641 7.27169C11.5359 4.79655 9.33413 4.66126 7.23299 5.02113L2.67325 5.80255L4.52388 16.4989L0 17.2742L1.85586 28L5.62947 27.3532L5.07069 24.1242L7.07183 23.7813C9.25883 23.4065 10.3948 21.8058 10.0158 19.6152C9.59539 17.1848 7.82292 16.1729 5.6015 16.3446L9.55338 15.6672L11.4041 26.3638L15.2349 25.7074L14.6393 22.2649L17.0216 25.4011L25.3117 23.9806L23.4561 13.2549L21.5193 13.5867L21.0173 10.6856ZM6.24871 20.1288C6.3988 20.9965 5.67517 21.2378 4.98913 21.3553L4.60308 21.4213L4.28066 19.5579L4.65236 19.4943C5.29557 19.3841 6.10343 19.2896 6.24871 20.1288ZM7.01763 9.30581L6.75186 7.76949L7.46648 7.64705C7.9096 7.5711 8.35118 7.65653 8.4521 8.23976C8.58017 8.97938 7.94669 9.14657 7.37499 9.24454L7.01763 9.30581ZM8.15969 13.2698L7.71658 13.3457L7.40891 11.5676L7.79485 11.5014C8.42382 11.3937 9.42193 11.2079 9.57705 12.1042C9.7296 12.986 8.78856 13.1619 8.15969 13.2698ZM14.4727 19.6861L14.2012 19.7327L13.8862 17.9121L14.1864 17.8606C14.8725 17.743 15.4591 17.7304 15.6043 18.5697C15.742 19.3663 15.1161 19.5761 14.4727 19.6861ZM18.5913 21.5436C18.3203 21.2532 18.0645 21.1359 17.823 21.0162L17.8083 20.9308C19.1658 20.1856 19.6958 19.421 19.4128 17.7851C18.9902 15.3427 17.1354 14.5573 14.9783 14.7378L19.5447 13.9552L21.3585 24.4386L18.5913 21.5436ZM28.9009 17.8439C28.6989 16.6772 29.4966 15.5885 30.6688 15.3877C31.5692 15.2333 32.4273 15.5989 33.1571 16.0744L32.3363 12.0113C31.4439 11.8715 30.5306 11.8668 29.6301 12.0211C26.4711 12.5625 24.4312 15.4897 24.9728 18.6193C25.502 21.6776 28.3144 23.6419 31.3876 23.1154C32.0881 22.9952 33.5406 22.6292 34.1009 22.2109L33.5213 18.1797C32.9985 18.8991 32.3643 19.4033 31.4495 19.56C30.2775 19.761 29.1049 19.0244 28.9009 17.8439ZM33.527 14.936L33.3689 16.574L34.5123 16.3781L34.5962 16.8616L33.8813 16.9843L33.7234 18.6223L35.167 18.3751C36.3082 20.3766 38.5222 21.5203 40.9665 21.1014C41.667 20.9814 43.1196 20.6155 43.68 20.1971L43.3099 17.463C42.1131 17.9462 40.6457 18.2271 39.598 17.6156L42.4281 17.1308L42.5863 15.4925L38.5553 16.1832C38.5311 16.1288 38.5213 16.0718 38.5116 16.015L38.4796 15.83L38.4573 15.702L42.0738 15.0823L42.2319 13.4441L38.8585 14.022C39.6472 13.052 41.2292 12.7518 42.5282 12.6902L41.9153 9.99771C41.0226 9.85784 40.1094 9.85316 39.2088 10.0075C36.6933 10.4385 34.8702 12.4061 34.5275 14.7643L33.527 14.936ZM33.2002 24.6066C32.7805 24.6066 32.3434 24.8759 32.3434 25.3336C32.3434 25.7857 32.7806 26.0431 33.2002 26.0431C33.6199 26.0431 34.0568 25.7857 34.0568 25.3336C34.0569 24.8758 33.6199 24.6066 33.2002 24.6066ZM36.443 24.4522H37.1559C37.0813 24.7097 36.765 24.83 36.5178 24.83C36.0061 24.83 35.707 24.3836 35.707 23.9086C35.707 23.388 36.0175 22.9074 36.581 22.9074C36.8342 22.9074 37.0584 23.0161 37.179 23.2392L38.6509 22.7014C38.3118 21.9632 37.2768 21.5911 36.5234 21.5911C35.1607 21.5911 34.1201 22.4438 34.1201 23.8458C34.1201 25.2304 35.1896 26.0431 36.5121 26.0431C37.179 26.0431 37.892 25.7798 38.3521 25.2763C38.8637 24.7213 38.8581 24.1433 38.8753 23.4339H36.4431L36.443 24.4522Z',
+  );
+  logo.appendChild(logoPath);
+
+  return logo;
+}
+
+function createPriceDisplayDivider(): HTMLDivElement {
+  const divider = DomClient.createElement('div', {
+    className: 'price-display-divider',
+  }) as HTMLDivElement;
+  divider.setAttribute('aria-hidden', 'true');
+
+  return divider;
+}
+
+function createPriceDisplayAction(
+  options: PriceDisplayActionOptions,
+): HTMLAnchorElement | HTMLButtonElement {
+  const element = options.href
+    ? (document.createElement('a') as HTMLAnchorElement | HTMLButtonElement)
+    : (document.createElement('button') as HTMLAnchorElement | HTMLButtonElement);
+
+  element.className = ['price-display-action', ...(options.classNames ?? [])].join(' ');
+  element.title = options.title ?? '';
+  element.setAttribute('aria-label', options.ariaLabel);
+
+  if (element instanceof HTMLAnchorElement && options.href) {
+    element.href = options.href;
+    element.target = '_blank';
+    element.rel = 'noopener noreferrer';
+  }
+
+  if (element instanceof HTMLButtonElement) {
+    element.type = 'button';
+  }
+
+  const content = DomClient.createElement('div', {
+    className: 'price-display-action-content',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(
+    createFormattedPriceElement(options.price, options.priceClassNames ?? []),
+    content,
+  );
+
+  if (options.shippingCost !== undefined) {
+    DomClient.appendElementToElement(
+      createShippingCostElement(options.shippingCost, options.language, options.priceClassNames),
+      content,
+    );
+  }
+
+  DomClient.appendElementToElement(
+    createPriceDisplaySubtitle(options.language, [], options.subtitleText),
+    content,
+  );
+
+  DomClient.appendElementToElement(content, element);
+
+  if (options.notificationLogo) {
+    const notification = DomClient.createElement('div', {
+      className: 'price-display-action-notification',
+    }) as HTMLDivElement;
+    DomClient.appendElementToElement(options.notificationLogo, notification);
+    DomClient.appendElementToElement(notification, element);
+  }
+
+  DomClient.appendElementToElement(createPriceDisplayActionArrow(), element);
+
+  if (options.onClick) {
+    element.addEventListener('click', options.onClick);
+  }
+
+  return element;
+}
+
+function createStorePriceAction(
+  productPriceData: ProductPriceData,
+  price: number,
+  shippingCost: number,
+  language: Language,
+): HTMLButtonElement {
+  const priceClassNames = getPriceComparisonClassNames(
+    productPriceData.buyThroughSkroutz.totalPrice,
+    productPriceData.buyThroughStore.totalPrice,
+  );
+
+  return createPriceDisplayAction({
+    classNames: ['price-display-store-action', ...priceClassNames],
+    price,
+    shippingCost,
+    priceClassNames,
+    language,
+    subtitleText: language === Language.ENGLISH ? 'Buy through store' : 'Αγορά μέσω καταστήματος',
+    title:
+      language === Language.ENGLISH
+        ? 'Go to the matching store offer'
+        : 'Μετάβαση στην αντίστοιχη προσφορά καταστήματος',
+    ariaLabel:
+      language === Language.ENGLISH ? 'Go to store offer' : 'Μετάβαση στην προσφορά καταστήματος',
+    onClick: (): void => {
+      scrollToShop(productPriceData.buyThroughStore.shopId);
+    },
+  }) as HTMLButtonElement;
+}
+
+function createBestPriceBadge(
+  bestPriceProductData: BestPriceProductData,
+  skroutzTotalPrice: number,
+  language: Language,
+): HTMLAnchorElement {
+  const bestPriceTotal =
+    bestPriceProductData.totalPrice ??
+    bestPriceProductData.price + (bestPriceProductData.shippingCost ?? 0);
+  const priceClassNames = getPriceComparisonClassNames(skroutzTotalPrice, bestPriceTotal);
+
+  const bestPriceLink = createPriceDisplayAction({
+    classNames: ['price-display-bestprice-action', 'bestprice-badge', ...priceClassNames],
+    price: bestPriceProductData.price,
+    shippingCost: bestPriceProductData.shippingCost,
+    priceClassNames,
+    language,
+    subtitleText: language === Language.ENGLISH ? 'Buy through BestPrice' : 'Αγορά μέσω BestPrice',
+    title: bestPriceProductData.title,
+    ariaLabel:
+      language === Language.ENGLISH
+        ? 'Open BestPrice product page'
+        : 'Άνοιγμα σελίδας προϊόντος στο BestPrice',
+    href: bestPriceProductData.url,
+    notificationLogo: createBestPriceLogo(),
+  }) as HTMLAnchorElement;
+
+  if (bestPriceProductData.shippingCost !== undefined) {
+    bestPriceLink.title = `${bestPriceProductData.title} · ${bestPriceProductData.price
+      .toFixed(2)
+      .replace('.', ',')}€ (+${bestPriceProductData.shippingCost.toFixed(2).replace('.', ',')}€ ${
+      language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
+    })`;
+  }
+
+  return bestPriceLink;
+}
+
+function createAnalysisToggleButton(
+  analysisContainer: HTMLDivElement,
+  language: Language,
+): HTMLButtonElement {
+  const analysisButton = DomClient.createElement('button', {
+    className: ['analysis-toggle-button'],
+  }) as HTMLButtonElement;
+  analysisButton.type = 'button';
+  analysisButton.setAttribute('aria-expanded', 'false');
+  analysisButton.setAttribute('aria-controls', analysisContainer.id);
+
+  const analysisLabel = language === Language.ENGLISH ? 'Analysis' : 'Ανάλυση';
+  const labelSpan = document.createElement('span');
+  labelSpan.textContent = analysisLabel;
+
+  const iconSpan = document.createElement('span');
+  iconSpan.className = 'analysis-icon';
+  iconSpan.innerHTML =
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+
+  analysisButton.appendChild(labelSpan);
+  analysisButton.appendChild(iconSpan);
+  analysisButton.addEventListener('click', () => {
+    const willShow = analysisContainer.style.display === 'none';
+    if (willShow) {
+      analysisContainer.style.display = 'flex';
+      analysisContainer.classList.add('visible');
+    } else {
+      analysisContainer.style.display = 'none';
+      analysisContainer.classList.remove('visible');
+    }
+    analysisButton.setAttribute('aria-expanded', String(willShow));
+    analysisButton.classList.toggle('expanded', willShow);
+  });
+
+  return analysisButton;
 }
 
 function createPriceComparisonBreakdownComponent(
   productPriceData: ProductPriceData,
   language: Language,
+  bestPriceProductData?: BestPriceProductData,
 ): HTMLElement {
   const transportationBreakdown = DomClient.createElement('div', {
     className: 'transportation-breakdown',
@@ -98,6 +626,35 @@ function createPriceComparisonBreakdownComponent(
   DomClient.appendElementToElement(skroutzContainer, transportationBreakdown);
   DomClient.appendElementToElement(storeContainer, transportationBreakdown);
 
+  if (bestPriceProductData) {
+    const bestPriceContainer = DomClient.createElement('div', {
+      className: 'price-breakdown-item',
+    });
+    const bestLabel = DomClient.createElement('div', { className: 'breakdown-label' });
+    bestLabel.textContent = language === Language.ENGLISH ? 'BestPrice' : 'BestPrice';
+
+    const bestValue = DomClient.createElement('div', { className: 'breakdown-value' });
+    const bpPrice = bestPriceProductData.price.toFixed(2);
+    const bpShipping =
+      bestPriceProductData.shippingCost !== undefined
+        ? bestPriceProductData.shippingCost.toFixed(2)
+        : null;
+    const bpTotalNum =
+      bestPriceProductData.totalPrice ??
+      bestPriceProductData.price + (bestPriceProductData.shippingCost ?? 0);
+    const bpTotal = bpTotalNum.toFixed(2);
+
+    if (bpShipping !== null) {
+      bestValue.textContent = `${bpPrice}€ + ${bpShipping}€ = ${bpTotal}€`;
+    } else {
+      bestValue.textContent = `${bpPrice}€ = ${bpTotal}€`;
+    }
+
+    DomClient.appendElementToElement(bestLabel, bestPriceContainer);
+    DomClient.appendElementToElement(bestValue, bestPriceContainer);
+    DomClient.appendElementToElement(bestPriceContainer, transportationBreakdown);
+  }
+
   return transportationBreakdown;
 }
 
@@ -105,31 +662,14 @@ function createCalculationComponent(
   productPriceData: ProductPriceData,
   minimumPriceDifference: number,
   language: Language,
+  bestPriceProductData?: BestPriceProductData,
 ): HTMLDivElement {
   const calculationContainer = DomClient.createElement('div', {
     className: 'calculation-container',
   }) as HTMLDivElement;
-  if (productPriceData.buyThroughSkroutz.shopId === productPriceData.buyThroughStore.shopId) {
-    calculationContainer.innerHTML = `${
-      language === Language.ENGLISH
-        ? 'Both options are from the same shop'
-        : 'Και οι δύο επιλογές είναι από το ίδιο κατάστημα'
-    }`;
-    return calculationContainer;
-  }
-
   const priceDifference = roundToZero(
     productPriceData.buyThroughSkroutz.totalPrice - productPriceData.buyThroughStore.totalPrice,
   );
-  if (priceDifference === 0) {
-    calculationContainer.innerHTML = `${
-      language === Language.ENGLISH
-        ? 'There is no difference in price'
-        : 'Δεν υπάρχει διαφορά στην τιμή'
-    }`;
-    return calculationContainer;
-  }
-
   const differenceAbsolute = Math.abs(priceDifference);
   const base = productPriceData.buyThroughStore.totalPrice;
   const percentDiff = base > 0 ? (differenceAbsolute / base) * 100 : 0;
@@ -137,22 +677,43 @@ function createCalculationComponent(
     language === Language.ENGLISH
       ? 'Buying through Skroutz is'
       : 'Με "Aγορά μέσω Skroutz" είναι κατά';
+  const priceComparisonLead = document.createElement('div');
+  priceComparisonLead.className = 'calculation-lead';
+  priceComparisonLead.textContent = buyingThroughSkroutz;
 
-  if (priceDifference <= 0) {
+  if (productPriceData.buyThroughSkroutz.shopId === productPriceData.buyThroughStore.shopId) {
+    calculationContainer.innerHTML = `${
+      language === Language.ENGLISH
+        ? 'Both options are from the same shop'
+        : 'Και οι δύο επιλογές είναι από το ίδιο κατάστημα'
+    }`;
+  } else if (priceDifference === 0) {
+    calculationContainer.innerHTML = `${
+      language === Language.ENGLISH
+        ? 'There is no difference in price'
+        : 'Δεν υπάρχει διαφορά στην τιμή'
+    }`;
+  } else if (priceDifference <= 0) {
     const cheaper = language === Language.ENGLISH ? 'cheaper' : 'φθηνότερο';
-    calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${differenceAbsolute.toFixed(
+    calculationContainer.appendChild(priceComparisonLead);
+    const priceDifferenceLine = document.createElement('div');
+    priceDifferenceLine.innerHTML = `<strong>${differenceAbsolute.toFixed(
       2,
     )}€ <u>${cheaper}</u></strong> (${productPriceData.buyThroughStore.totalPrice.toFixed(
       2,
     )}€ - ${productPriceData.buyThroughSkroutz.totalPrice.toFixed(2)}€)`;
+    calculationContainer.appendChild(priceDifferenceLine);
   } else {
     calculationContainer.classList.add('calculation-negative');
     const moreExpensive = language === Language.ENGLISH ? 'more expensive' : 'ακριβότερο';
-    calculationContainer.innerHTML = `${buyingThroughSkroutz}<br><strong>${differenceAbsolute.toFixed(
+    calculationContainer.appendChild(priceComparisonLead);
+    const priceDifferenceLine = document.createElement('div');
+    priceDifferenceLine.innerHTML = `<strong>${differenceAbsolute.toFixed(
       2,
     )}€ <u>${moreExpensive}</u></strong> (${productPriceData.buyThroughSkroutz.totalPrice.toFixed(
       2,
     )}€ - ${productPriceData.buyThroughStore.totalPrice.toFixed(2)}€)`;
+    calculationContainer.appendChild(priceDifferenceLine);
   }
 
   if (minimumPriceDifference > 0) {
@@ -176,51 +737,47 @@ function createCalculationComponent(
     DomClient.appendElementToElement(span, calculationContainer);
   }
 
-  return calculationContainer;
-}
+  if (bestPriceProductData) {
+    const bestPriceTotal = bestPriceProductData.totalPrice ?? bestPriceProductData.price;
+    const bestPriceDifference = roundToZero(
+      productPriceData.buyThroughSkroutz.totalPrice - bestPriceTotal,
+    );
+    const bestPriceTotalsText = `(${productPriceData.buyThroughSkroutz.totalPrice.toFixed(
+      2,
+    )}€ - ${bestPriceTotal.toFixed(2)}€)`;
 
-function createShopButtonComponent(
-  productPriceData: ProductPriceData,
-  minimumPriceDifference: number,
-  language: Language,
-): HTMLButtonElement {
-  const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
+    const bestPriceComparison = document.createElement('span');
+    bestPriceComparison.className = 'bestprice-comparison-text';
 
-  const buttonStyle = showPositiveStyling
-    ? 'go-to-shop-button-positive'
-    : 'go-to-shop-button-negative';
+    if (bestPriceDifference === 0) {
+      bestPriceComparison.textContent =
+        language === Language.ENGLISH
+          ? `BestPrice has the same total price as this option ${bestPriceTotalsText}`
+          : `Το BestPrice έχει την ίδια συνολική τιμή ${bestPriceTotalsText}`;
+    } else if (bestPriceDifference > 0) {
+      bestPriceComparison.innerHTML =
+        language === Language.ENGLISH
+          ? `<strong>BestPrice</strong> is <strong>${bestPriceDifference.toFixed(
+              2,
+            )}€ cheaper</strong> than this option ${bestPriceTotalsText}`
+          : `Το <strong>BestPrice</strong> είναι <strong>${bestPriceDifference.toFixed(
+              2,
+            )}€ <u>φθηνότερο</u></strong> ${bestPriceTotalsText}`;
+    } else {
+      bestPriceComparison.innerHTML =
+        language === Language.ENGLISH
+          ? `<strong>BestPrice</strong> is <strong>${Math.abs(bestPriceDifference).toFixed(
+              2,
+            )}€ more expensive</strong> than this option ${bestPriceTotalsText}`
+          : `Το <strong>BestPrice</strong> είναι <strong>${Math.abs(bestPriceDifference).toFixed(
+              2,
+            )}€ <u>ακριβότερο</u></strong> ${bestPriceTotalsText}`;
+    }
 
-  const goToStoreButton = DomClient.createElement('button', {
-    className: [buttonStyle, 'bold-text'],
-  }) as HTMLButtonElement;
-
-  goToStoreButton.textContent =
-    language === Language.ENGLISH ? 'Go to Shop' : 'Μετάβαση στο κατάστημα';
-
-  goToStoreButton.addEventListener('click', (): void => {
-    scrollToShop(productPriceData.buyThroughStore.shopId);
-  });
-
-  return goToStoreButton;
-}
-
-function isPositiveStyling(
-  productPriceData: ProductPriceData,
-  minimumPriceDifference: number,
-): boolean {
-  const isPositive =
-    productPriceData.buyThroughSkroutz.totalPrice <= productPriceData.buyThroughStore.totalPrice;
-
-  if (!isPositive) {
-    const priceDifference =
-      productPriceData.buyThroughSkroutz.totalPrice - productPriceData.buyThroughStore.totalPrice;
-
-    const base = productPriceData.buyThroughStore.totalPrice;
-    const percentDiff = base > 0 ? (Math.abs(priceDifference) / base) * 100 : Infinity;
-    return percentDiff <= minimumPriceDifference;
+    DomClient.appendElementToElement(bestPriceComparison, calculationContainer);
   }
 
-  return true;
+  return calculationContainer;
 }
 
 function scrollToShop(shopId: number): void {
@@ -366,18 +923,15 @@ function createPriceIndicationElement(
   productPriceHistory: ProductPriceHistory | undefined,
   language: Language,
   minimumPriceDifference: number,
+  bestPriceProductData?: BestPriceProductData,
+  renderOptions: PriceCheckerRenderOptions = {},
 ): HTMLDivElement {
   try {
     const priceCheckerStack = DomClient.createElement('div', {
       className: 'price-checker-stack',
     }) as HTMLDivElement;
-    const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
     const priceIndication = DomClient.createElement('div', {
-      className: [
-        'display-padding',
-        'price-checker-outline',
-        showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
-      ],
+      className: ['display-padding', 'price-checker-outline'],
     }) as HTMLDivElement;
 
     (priceIndication as HTMLDivElement).style.marginTop = '14px';
@@ -391,25 +945,16 @@ function createPriceIndicationElement(
       className: 'price-calculation-container',
     });
     const infoContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
-    const actionContainer = DomClient.createElement('div', { className: 'inline-flex-row' });
 
     const priceDisplay = createPriceDisplayComponent(
+      productPriceData,
       productPriceData.buyThroughStore.price,
       productPriceData.buyThroughStore.shippingCost,
       language,
+      bestPriceProductData,
+      renderOptions.isBestPriceLoading,
     );
     DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
-
-    const infoText = document.createElement('span');
-    infoText.textContent =
-      language === Language.ENGLISH
-        ? 'This is the lowest price with shipping apart from "Buy through Skroutz"'
-        : 'Αυτή είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"';
-
-    const infoWithAnalysisRow = DomClient.createElement('div', {
-      className: 'info-with-analysis-row',
-    });
-    DomClient.appendElementToElement(infoText, infoWithAnalysisRow);
 
     const analysisContainer = DomClient.createElement('div', {
       className: ['analysis-container'],
@@ -418,54 +963,25 @@ function createPriceIndicationElement(
     const analysisId = `analysis-${productPriceData.buyThroughStore.shopId}`;
     analysisContainer.id = analysisId;
 
-    const analysisButton = DomClient.createElement('button', {
-      className: ['analysis-toggle-button'],
-    }) as HTMLButtonElement;
-    analysisButton.type = 'button';
-    analysisButton.setAttribute('aria-expanded', 'false');
-    analysisButton.setAttribute('aria-controls', analysisId);
-    const analysisLabel = language === Language.ENGLISH ? 'Analysis' : 'Ανάλυση';
-    const labelSpan = document.createElement('span');
-    labelSpan.textContent = analysisLabel;
-    const iconSpan = document.createElement('span');
-    iconSpan.className = 'analysis-icon';
-    iconSpan.innerHTML =
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
-    analysisButton.appendChild(labelSpan);
-    analysisButton.appendChild(iconSpan);
-    analysisButton.addEventListener('click', () => {
-      const willShow = analysisContainer.style.display === 'none';
-      if (willShow) {
-        analysisContainer.style.display = 'flex';
-        analysisContainer.classList.add('visible');
-      } else {
-        analysisContainer.style.display = 'none';
-        analysisContainer.classList.remove('visible');
-      }
-      analysisButton.setAttribute('aria-expanded', String(willShow));
-      analysisButton.classList.toggle('expanded', willShow);
-    });
-    DomClient.appendElementToElement(analysisButton, infoWithAnalysisRow);
-
-    DomClient.appendElementToElement(infoWithAnalysisRow, priceCalculationContainer);
-
     DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
 
-    const calcElem = createCalculationComponent(productPriceData, minimumPriceDifference, language);
+    const calcElem = createCalculationComponent(
+      productPriceData,
+      minimumPriceDifference,
+      language,
+      bestPriceProductData,
+    );
     if (calcElem) DomClient.appendElementToElement(calcElem, analysisContainer);
-    const breakdownElem = createPriceComparisonBreakdownComponent(productPriceData, language);
+    const breakdownElem = createPriceComparisonBreakdownComponent(
+      productPriceData,
+      language,
+      bestPriceProductData,
+    );
     DomClient.appendElementToElement(breakdownElem, analysisContainer);
 
     DomClient.appendElementToElement(analysisContainer, contentContainer);
 
     DomClient.appendElementToElement(infoContainer, contentContainer);
-
-    const goToStoreButton = createShopButtonComponent(
-      productPriceData,
-      minimumPriceDifference,
-      language,
-    );
-    DomClient.appendElementToElement(goToStoreButton, actionContainer);
 
     if (productPriceHistory) {
       const priceHistoryBreakdown = PriceHistoryComponent(
@@ -477,10 +993,20 @@ function createPriceIndicationElement(
         language,
         productPriceData.buyThroughStore.totalPrice,
       );
+      const priceHistoryControls = priceHistoryBreakdown.querySelector('.price-history-controls');
+      if (priceHistoryControls) {
+        DomClient.appendElementToElement(
+          createAnalysisToggleButton(analysisContainer, language),
+          priceHistoryControls,
+        );
+      }
       DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
+    } else if (renderOptions.isPriceHistoryLoading) {
+      DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
     }
 
-    DomClient.appendElementToElement(actionContainer, contentContainer);
+    const storeAvailability = createStoreAvailabilityElement(productPriceData, language);
+    DomClient.appendElementToElement(storeAvailability, contentContainer);
 
     priceIndication.title =
       language === Language.ENGLISH
@@ -499,20 +1025,13 @@ function createPriceIndicationElement(
 
     // price card first
     DomClient.appendElementToElement(priceIndication, priceCheckerStack);
-    // then availability
-    const storeAvailability = createStoreAvailabilityElement(productPriceData, language);
-    DomClient.appendElementToElement(storeAvailability, priceCheckerStack);
-    // finally the review + coffee promo so it appears below availability
+    // finally the review + coffee promo so it appears below the main card
     DomClient.appendElementToElement(reSkroutzedReview, priceCheckerStack);
 
     return priceCheckerStack;
   } catch (err) {
     console.error('PriceChecker: failed to build indication element', err);
-    const fallback = document.createElement('div');
-    fallback.className = 'price-checker-outline info-label-negative';
-    fallback.textContent =
-      language === Language.ENGLISH ? 'Price info unavailable' : 'Μη διαθέσιμη πληροφορία τιμής';
-    return fallback as HTMLDivElement;
+    return createPriceCheckerFallbackElement(language);
   }
 }
 
@@ -547,19 +1066,34 @@ export class PriceCheckerDecorator implements FeatureInstance {
   private observer: MutationObserver | null = null;
   private isInitializing: boolean = false;
   private lastProductId: string | null = null;
+  private currentInitializationId: number = 0;
+  private readonly boundNavigationHandler: () => Promise<void>;
   /* Data */
   private productPriceData: ProductPriceData | undefined = undefined;
   private productPriceHistory: ProductPriceHistory | undefined = undefined;
+  private bestPriceProductData: BestPriceProductData | undefined = undefined;
 
-  constructor(private readonly state: State) {}
+  constructor(private readonly state: State) {
+    this.boundNavigationHandler = this.handleNavigation.bind(this);
+  }
 
   public async execute(): Promise<void> {
     await this.initializeProductView();
     this.setupNavigationHandlers();
   }
 
+  public destroy(): void {
+    window.removeEventListener('popstate', this.boundNavigationHandler);
+
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
+  }
+
   private setupNavigationHandlers(): void {
-    window.addEventListener('popstate', this.handleNavigation.bind(this));
+    window.removeEventListener('popstate', this.boundNavigationHandler);
+    window.addEventListener('popstate', this.boundNavigationHandler);
 
     this.setupProductViewObserver();
   }
@@ -632,55 +1166,156 @@ export class PriceCheckerDecorator implements FeatureInstance {
       return;
     }
 
+    const initializationId = ++this.currentInitializationId;
+
     try {
       this.isInitializing = true;
 
       const host = this.getPriceHostElement();
       if (!host) {
-        this.isInitializing = false;
         return;
       }
 
       this.cleanup();
+      this.productPriceData = undefined;
+      this.productPriceHistory = undefined;
+      this.bestPriceProductData = undefined;
+      this.replacePriceIndication(host, createPriceCheckerSkeleton());
+
+      let isPriceHistoryLoading = true;
+      let isBestPriceLoading = true;
+      const renderLoadedState = (): void => {
+        if (!this.isCurrentInitialization(initializationId) || !this.productPriceData) {
+          return;
+        }
+
+        const currentHost = this.getPriceHostElement();
+        if (!currentHost) {
+          return;
+        }
+
+        const priceIndication = createPriceIndicationElement(
+          this.productPriceData,
+          this.productPriceHistory,
+          this.state.language,
+          this.state.minimumPriceDifference,
+          this.bestPriceProductData,
+          {
+            isBestPriceLoading,
+            isPriceHistoryLoading,
+          },
+        );
+
+        this.replacePriceIndication(currentHost, priceIndication);
+        this.addPriceComparisonToOptions();
+      };
+
+      void SkroutzClient.getPriceHistory()
+        .then((productPriceHistory) => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          this.productPriceHistory = productPriceHistory;
+        })
+        .catch((error) => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          console.warn('PriceChecker: failed to fetch price history', error);
+        })
+        .finally(() => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          isPriceHistoryLoading = false;
+          renderLoadedState();
+        });
+
+      void BestPriceClient.getCurrentProductData()
+        .then((bestPriceProductData) => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          this.bestPriceProductData = bestPriceProductData;
+        })
+        .catch((error) => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          console.warn('PriceChecker: failed to fetch BestPrice data', error);
+        })
+        .finally(() => {
+          if (!this.isCurrentInitialization(initializationId)) {
+            return;
+          }
+
+          isBestPriceLoading = false;
+          renderLoadedState();
+        });
+
       this.productPriceData = await SkroutzClient.getCurrentProductData();
 
-      try {
-        this.productPriceHistory = await SkroutzClient.getPriceHistory();
-      } catch (e) {
-        this.productPriceHistory = undefined;
-
-        console.warn('PriceChecker: failed to fetch price history', e);
-      }
-
-      if (!this.productPriceData) {
-        this.isInitializing = false;
+      if (!this.isCurrentInitialization(initializationId) || !this.productPriceData) {
         return;
       }
 
-      this.adjustSiteData(host);
-      const priceIndication = createPriceIndicationElement(
-        this.productPriceData!,
-        this.productPriceHistory,
-        this.state.language,
-        this.state.minimumPriceDifference,
-      );
+      const currentHost = this.getPriceHostElement();
+      if (!currentHost) {
+        return;
+      }
 
-      this.insertPriceIndicationIntoHost(host, priceIndication);
+      this.adjustSiteData(currentHost);
+      renderLoadedState();
     } catch (e) {
       console.error('PriceChecker: initializeProductView failed', e);
+
+      if (this.isCurrentInitialization(initializationId)) {
+        const currentHost = this.getPriceHostElement();
+        if (currentHost) {
+          this.replacePriceIndication(
+            currentHost,
+            createPriceCheckerFallbackElement(this.state.language),
+          );
+        }
+      }
     } finally {
-      this.isInitializing = false;
+      if (this.isCurrentInitialization(initializationId)) {
+        this.isInitializing = false;
+      }
     }
   }
 
   private cleanup(): void {
-    const existingIndicators = document.querySelectorAll(
-      '.price-checker-stack, .price-checker-outline, .store-availability-outline',
-    );
+    this.removeRenderedPriceChecker();
     const existingShippingTexts = document.querySelectorAll('.shipping-cost-text');
+    const existingBreakdowns = document.querySelectorAll(
+      '.skroutz-breakdown-inline, .store-breakdown-inline',
+    );
+
+    existingShippingTexts.forEach((element) => element.remove());
+    existingBreakdowns.forEach((element) => element.remove());
+  }
+
+  private isCurrentInitialization(initializationId: number): boolean {
+    return initializationId === this.currentInitializationId;
+  }
+
+  private removeRenderedPriceChecker(): void {
+    const existingIndicators = document.querySelectorAll(
+      '.price-checker-stack, .price-checker-outline, .store-availability-outline, .own-promotion',
+    );
 
     existingIndicators.forEach((element) => element.remove());
-    existingShippingTexts.forEach((element) => element.remove());
+  }
+
+  private replacePriceIndication(host: Element, priceIndication: HTMLDivElement): void {
+    this.removeRenderedPriceChecker();
+    this.insertPriceIndicationIntoHost(host, priceIndication);
   }
 
   private adjustSiteData(element: Element): void {
@@ -715,8 +1350,6 @@ export class PriceCheckerDecorator implements FeatureInstance {
         (priceBox as Element).insertAdjacentElement('beforeend', shippingText);
       }
     }
-
-    this.addPriceComparisonToOptions();
   }
 
   private getPriceHostElement(): Element | null {
@@ -759,6 +1392,10 @@ export class PriceCheckerDecorator implements FeatureInstance {
       return;
     }
 
+    document
+      .querySelectorAll('.skroutz-breakdown-inline, .store-breakdown-inline')
+      .forEach((element) => element.remove());
+
     const findBuyOption = (searchText: string): Element | undefined => {
       const elements = Array.from(
         document.querySelectorAll('.buy-section h3, .buy-section .heading'),
@@ -781,6 +1418,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
       const breakdown = createPriceComparisonBreakdownComponent(
         this.productPriceData,
         this.state.language,
+        this.bestPriceProductData,
       );
 
       breakdown.classList.add(className);

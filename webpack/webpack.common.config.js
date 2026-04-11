@@ -1,17 +1,18 @@
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
-  mode: "production",
+  mode: 'production',
   entry: {
-    background: "./src/background.ts",
-    popup: "./popup/popup.js"
+    background: './src/background.ts',
+    service_worker: './src/service_worker.ts',
+    popup: './popup/popup.js',
   },
   output: {
-    filename: "[name].js",
+    filename: '[name].js',
   },
   plugins: [
     new CleanWebpackPlugin(),
@@ -26,17 +27,17 @@ module.exports = {
       },
     }),
     new MiniCssExtractPlugin({
-      filename: "css/[name].css",
+      filename: 'css/[name].css',
     }),
   ],
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: ['.ts', '.js'],
     alias: {
-      "@clients": __dirname + "/../src/clients",
-      "@common": __dirname + "/../src/common",
-      "@features": __dirname + "/../src/features",
-      "@handlers": __dirname + "/../src/handlers",
-    }
+      '@clients': __dirname + '/../src/clients',
+      '@common': __dirname + '/../src/common',
+      '@features': __dirname + '/../src/features',
+      '@handlers': __dirname + '/../src/handlers',
+    },
   },
   module: {
     rules: [
@@ -44,12 +45,12 @@ module.exports = {
         test: /\.tsx?$/,
         use: [
           {
-            loader: "ts-loader",
+            loader: 'ts-loader',
             options: {
               transpileOnly: true,
               experimentalWatchApi: true,
-            }
-          }
+            },
+          },
         ],
         exclude: /node_modules/,
       },
@@ -58,11 +59,11 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               sourceMap: true,
-            }
-          }
+            },
+          },
         ],
       },
     ],
@@ -106,4 +107,4 @@ module.exports = {
     },
   },
   parallelism: 4,
-}
+};
