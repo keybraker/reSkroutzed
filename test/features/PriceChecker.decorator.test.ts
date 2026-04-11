@@ -241,8 +241,20 @@ describe('PriceCheckerDecorator', () => {
     expect(bestPriceBadge?.href).toBe('https://www.bestprice.gr/item/mock.html');
     expect(bestPriceBadge?.textContent).toContain('Buy through BestPrice');
     expect(bestPriceBadge?.classList.contains('price-display-bestprice-action')).toBe(true);
+    expect(bestPriceBadge?.classList.contains('price-display-action-positive')).toBe(true);
     expect(bestPriceBadge?.querySelector('.bestprice-badge-logo')).not.toBeNull();
     expect(document.querySelector('.price-history-loading-wrapper')).not.toBeNull();
+
+    const hydratedStoreAction = document.querySelector(
+      '.price-display-store-action',
+    ) as HTMLButtonElement | null;
+    expect(hydratedStoreAction?.classList.contains('price-display-action-positive')).toBe(true);
+    expect(
+      document.querySelector('.price-checker-outline')?.classList.contains('info-label-positive'),
+    ).toBe(false);
+    expect(
+      document.querySelector('.price-checker-outline')?.classList.contains('info-label-negative'),
+    ).toBe(false);
 
     priceHistoryDeferred.resolve(mockPriceHistory);
     await flushPromises();
@@ -287,5 +299,81 @@ describe('PriceCheckerDecorator', () => {
     expect(sliderClickSpy).toHaveBeenCalledTimes(1);
     expect(scrollIntoViewSpy).toHaveBeenCalledTimes(1);
     expect(secondTarget.classList.contains('lowest-price-store-highlight')).toBe(true);
+  });
+
+  it('styles each offer independently against the Skroutz total price', async () => {
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue({
+      ...mockProductPriceData,
+      buyThroughStore: {
+        ...mockProductPriceData.buyThroughStore,
+        price: 108,
+        shippingCost: 2,
+        totalPrice: 110,
+      },
+    });
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue({
+      ...mockBestPriceData,
+      price: 99,
+      shippingCost: 1,
+      totalPrice: 100,
+    });
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    const storeAction = document.querySelector(
+      '.price-display-store-action',
+    ) as HTMLButtonElement | null;
+    const bestPriceBadge = document.querySelector('.bestprice-badge') as HTMLAnchorElement | null;
+
+    expect(storeAction?.classList.contains('price-display-action-negative')).toBe(true);
+    expect(
+      storeAction
+        ?.querySelector('.price-indicator-price')
+        ?.classList.contains('price-display-action-negative'),
+    ).toBe(true);
+    expect(bestPriceBadge?.classList.contains('price-display-action-positive')).toBe(true);
+    expect(
+      bestPriceBadge
+        ?.querySelector('.price-indicator-price')
+        ?.classList.contains('price-display-action-positive'),
+    ).toBe(true);
+  });
+
+  it('describes BestPrice against the Buy through Skroutz total in the analysis text', async () => {
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue({
+      ...mockProductPriceData,
+      buyThroughSkroutz: {
+        price: 718.89,
+        shippingCost: 0,
+        totalPrice: 718.89,
+        shopId: 101,
+      },
+      buyThroughStore: {
+        price: 667,
+        shippingCost: 0,
+        totalPrice: 667,
+        shopId: 202,
+      },
+    });
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue({
+      ...mockBestPriceData,
+      price: 659,
+      shippingCost: 4.9,
+      totalPrice: 663.9,
+    });
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    const comparisonText = document.querySelector('.bestprice-comparison-text');
+
+    expect(comparisonText?.textContent).toContain('54.99€');
+    expect(comparisonText?.textContent).toContain('(718.89€ - 663.90€)');
+    expect(comparisonText?.textContent).not.toContain('(667.00€ - 663.90€)');
   });
 });

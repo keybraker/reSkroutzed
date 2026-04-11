@@ -21,6 +21,7 @@ type PriceDisplayActionOptions = {
   classNames?: string[];
   price: number;
   shippingCost?: number;
+  priceClassNames?: string[];
   language: Language;
   subtitleText: string;
   title?: string;
@@ -32,7 +33,7 @@ type PriceDisplayActionOptions = {
 
 function createPriceCheckerFallbackElement(language: Language): HTMLDivElement {
   const fallback = document.createElement('div');
-  fallback.className = 'price-checker-outline info-label-negative';
+  fallback.className = 'price-checker-outline';
   fallback.textContent =
     language === Language.ENGLISH ? 'Price info unavailable' : 'Μη διαθέσιμη πληροφορία τιμής';
 
@@ -243,6 +244,11 @@ function createPriceDisplayComponent(
   bestPriceProductData?: BestPriceProductData,
   isBestPriceLoading = false,
 ): HTMLDivElement {
+  const storePriceClassNames = getPriceComparisonClassNames(
+    productPriceData.buyThroughSkroutz.totalPrice,
+    productPriceData.buyThroughStore.totalPrice,
+  );
+
   if (bestPriceProductData || isBestPriceLoading) {
     const row = DomClient.createElement('div', {
       className: 'price-display-row',
@@ -253,7 +259,14 @@ function createPriceDisplayComponent(
     );
     DomClient.appendElementToElement(createPriceDisplayDivider(), row);
     if (bestPriceProductData) {
-      DomClient.appendElementToElement(createBestPriceBadge(bestPriceProductData, language), row);
+      DomClient.appendElementToElement(
+        createBestPriceBadge(
+          bestPriceProductData,
+          productPriceData.buyThroughSkroutz.totalPrice,
+          language,
+        ),
+        row,
+      );
     } else {
       DomClient.appendElementToElement(createBestPriceLoadingBadge(), row);
     }
@@ -270,10 +283,11 @@ function createPriceDisplayComponent(
     className: 'price-display-wrapper',
   }) as HTMLDivElement;
 
-  const priceElement = createFormattedPriceElement(price);
+  const priceElement = createFormattedPriceElement(price, storePriceClassNames);
   DomClient.appendElementToElement(priceElement, container);
 
   const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
+  shippingText.classList.add(...storePriceClassNames);
   const formattedShipping = shippingCost.toFixed(2).replace('.', ',');
   shippingText.textContent = `(+${formattedShipping}€ ${
     language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
@@ -286,6 +300,23 @@ function createPriceDisplayComponent(
   DomClient.appendElementToElement(notAvailable, container);
 
   return container;
+}
+
+function getPriceComparisonClassNames(
+  skroutzTotalPrice: number,
+  comparedOfferTotalPrice: number,
+): string[] {
+  const priceDifference = roundToZero(comparedOfferTotalPrice - skroutzTotalPrice);
+
+  if (priceDifference < 0) {
+    return ['price-display-action-positive'];
+  }
+
+  if (priceDifference > 0) {
+    return ['price-display-action-negative'];
+  }
+
+  return [];
 }
 
 function createFormattedPriceElement(price: number, extraClasses: string[] = []): HTMLDivElement {
@@ -405,11 +436,14 @@ function createPriceDisplayAction(
     className: 'price-display-action-content',
   }) as HTMLDivElement;
 
-  DomClient.appendElementToElement(createFormattedPriceElement(options.price), content);
+  DomClient.appendElementToElement(
+    createFormattedPriceElement(options.price, options.priceClassNames ?? []),
+    content,
+  );
 
   if (options.shippingCost !== undefined) {
     DomClient.appendElementToElement(
-      createShippingCostElement(options.shippingCost, options.language),
+      createShippingCostElement(options.shippingCost, options.language, options.priceClassNames),
       content,
     );
   }
@@ -444,10 +478,16 @@ function createStorePriceAction(
   shippingCost: number,
   language: Language,
 ): HTMLButtonElement {
+  const priceClassNames = getPriceComparisonClassNames(
+    productPriceData.buyThroughSkroutz.totalPrice,
+    productPriceData.buyThroughStore.totalPrice,
+  );
+
   return createPriceDisplayAction({
-    classNames: ['price-display-store-action'],
+    classNames: ['price-display-store-action', ...priceClassNames],
     price,
     shippingCost,
+    priceClassNames,
     language,
     subtitleText: language === Language.ENGLISH ? 'Buy through store' : 'Αγορά μέσω καταστήματος',
     title:
@@ -464,12 +504,19 @@ function createStorePriceAction(
 
 function createBestPriceBadge(
   bestPriceProductData: BestPriceProductData,
+  skroutzTotalPrice: number,
   language: Language,
 ): HTMLAnchorElement {
+  const bestPriceTotal =
+    bestPriceProductData.totalPrice ??
+    bestPriceProductData.price + (bestPriceProductData.shippingCost ?? 0);
+  const priceClassNames = getPriceComparisonClassNames(skroutzTotalPrice, bestPriceTotal);
+
   const bestPriceLink = createPriceDisplayAction({
-    classNames: ['price-display-bestprice-action', 'bestprice-badge'],
+    classNames: ['price-display-bestprice-action', 'bestprice-badge', ...priceClassNames],
     price: bestPriceProductData.price,
     shippingCost: bestPriceProductData.shippingCost,
+    priceClassNames,
     language,
     subtitleText: language === Language.ENGLISH ? 'Buy through BestPrice' : 'Αγορά μέσω BestPrice',
     title: bestPriceProductData.title,
@@ -693,9 +740,9 @@ function createCalculationComponent(
   if (bestPriceProductData) {
     const bestPriceTotal = bestPriceProductData.totalPrice ?? bestPriceProductData.price;
     const bestPriceDifference = roundToZero(
-      productPriceData.buyThroughStore.totalPrice - bestPriceTotal,
+      productPriceData.buyThroughSkroutz.totalPrice - bestPriceTotal,
     );
-    const bestPriceTotalsText = `(${productPriceData.buyThroughStore.totalPrice.toFixed(
+    const bestPriceTotalsText = `(${productPriceData.buyThroughSkroutz.totalPrice.toFixed(
       2,
     )}€ - ${bestPriceTotal.toFixed(2)}€)`;
 
@@ -731,25 +778,6 @@ function createCalculationComponent(
   }
 
   return calculationContainer;
-}
-
-function isPositiveStyling(
-  productPriceData: ProductPriceData,
-  minimumPriceDifference: number,
-): boolean {
-  const isPositive =
-    productPriceData.buyThroughSkroutz.totalPrice <= productPriceData.buyThroughStore.totalPrice;
-
-  if (!isPositive) {
-    const priceDifference =
-      productPriceData.buyThroughSkroutz.totalPrice - productPriceData.buyThroughStore.totalPrice;
-
-    const base = productPriceData.buyThroughStore.totalPrice;
-    const percentDiff = base > 0 ? (Math.abs(priceDifference) / base) * 100 : Infinity;
-    return percentDiff <= minimumPriceDifference;
-  }
-
-  return true;
 }
 
 function scrollToShop(shopId: number): void {
@@ -902,13 +930,8 @@ function createPriceIndicationElement(
     const priceCheckerStack = DomClient.createElement('div', {
       className: 'price-checker-stack',
     }) as HTMLDivElement;
-    const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
     const priceIndication = DomClient.createElement('div', {
-      className: [
-        'display-padding',
-        'price-checker-outline',
-        showPositiveStyling ? 'info-label-positive' : 'info-label-negative',
-      ],
+      className: ['display-padding', 'price-checker-outline'],
     }) as HTMLDivElement;
 
     (priceIndication as HTMLDivElement).style.marginTop = '14px';

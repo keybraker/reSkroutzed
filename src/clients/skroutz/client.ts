@@ -446,7 +446,7 @@ export class SkroutzClient {
     const productCards = productData.product_cards;
 
     const firstCard = Object.values(productCards).find(
-      (card) => card.raw_price === skroutzRawPrice,
+      (card) => this.getEffectiveCardPrice(card) === skroutzRawPrice,
     );
     if (!firstCard) {
       throw new Error('No product cards found');
@@ -457,9 +457,9 @@ export class SkroutzClient {
     }
 
     return {
-      price: firstCard.raw_price,
+      price: this.getEffectiveCardPrice(firstCard),
       shippingCost: firstCard.shipping_cost,
-      totalPrice: firstCard.raw_price + firstCard.shipping_cost,
+      totalPrice: this.getEffectiveCardPrice(firstCard) + firstCard.shipping_cost,
       shopId: firstCard.shop_id,
     };
   }
@@ -473,12 +473,11 @@ export class SkroutzClient {
     let storeShopId = 0;
 
     Object.values(productCards).forEach((card) => {
-      card.raw_price =
-        card.ecommerce_final_price !== 0 ? card.ecommerce_final_price : card.raw_price;
-      const totalCost = card.raw_price + card.shipping_cost;
+      const effectivePrice = this.getEffectiveCardPrice(card);
+      const totalCost = effectivePrice + card.shipping_cost;
       if (totalCost < lowestStorePrice) {
         lowestStorePrice = totalCost;
-        lowestStoreProductPrice = card.raw_price;
+        lowestStoreProductPrice = effectivePrice;
         lowestStoreShippingCost = card.shipping_cost;
         storeShopId = card.shop_id;
       }
@@ -490,5 +489,9 @@ export class SkroutzClient {
       totalPrice: lowestStorePrice,
       shopId: storeShopId,
     };
+  }
+
+  private static getEffectiveCardPrice(card: ProductData['product_cards'][string]): number {
+    return card.ecommerce_final_price !== 0 ? card.ecommerce_final_price : card.raw_price;
   }
 }
