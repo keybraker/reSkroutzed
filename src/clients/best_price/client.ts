@@ -1,9 +1,9 @@
 import { SkroutzClient } from '../skroutz/client';
 import bestPriceCategoryMap from './bestprice-category-map';
 import type {
-    BestPriceBridgeRequest,
-    BestPriceBridgeResponse,
-    BestPriceBridgeSuccess,
+  BestPriceBridgeRequest,
+  BestPriceBridgeResponse,
+  BestPriceBridgeSuccess,
 } from './messages';
 
 const BEST_PRICE_BASE_URL = 'https://www.bestprice.gr';
