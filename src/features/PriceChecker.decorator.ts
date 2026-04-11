@@ -17,6 +17,19 @@ type PriceCheckerRenderOptions = {
   isPriceHistoryLoading?: boolean;
 };
 
+type PriceDisplayActionOptions = {
+  classNames?: string[];
+  price: number;
+  shippingCost?: number;
+  language: Language;
+  subtitleText: string;
+  title?: string;
+  ariaLabel: string;
+  href?: string;
+  onClick?: () => void;
+  notificationLogo?: HTMLElement | SVGSVGElement;
+};
+
 function createPriceCheckerFallbackElement(language: Language): HTMLDivElement {
   const fallback = document.createElement('div');
   fallback.className = 'price-checker-outline info-label-negative';
@@ -32,45 +45,101 @@ function createSkeletonBlock(extraClasses: string[] = []): HTMLDivElement {
   }) as HTMLDivElement;
 }
 
-function createBestPriceLoadingBadge(): HTMLDivElement {
-  const badge = DomClient.createElement('div', {
-    className: ['bestprice-badge', 'bestprice-badge-loading'],
+function createPriceDisplayLoadingAction(
+  classNames: string[] = [
+    'price-display-action',
+    'price-display-bestprice-action',
+    'bestprice-badge',
+    'bestprice-badge-loading',
+  ],
+  options: { includeNotificationLogo?: boolean } = {},
+): HTMLDivElement {
+  const action = DomClient.createElement('div', {
+    className: ['price-display-action', ...classNames],
   }) as HTMLDivElement;
-  badge.setAttribute('aria-hidden', 'true');
+  action.setAttribute('aria-hidden', 'true');
 
-  const logo = createSkeletonBlock(['price-checker-skeleton-logo']);
   const content = DomClient.createElement('div', {
-    className: 'bestprice-badge-content',
+    className: 'price-display-action-content',
   }) as HTMLDivElement;
 
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-price']), content);
   DomClient.appendElementToElement(
-    createSkeletonBlock(['price-checker-skeleton-badge-price']),
+    createSkeletonBlock(['price-checker-skeleton-shipping']),
     content,
   );
   DomClient.appendElementToElement(
-    createSkeletonBlock(['price-checker-skeleton-badge-shipping']),
+    createSkeletonBlock(['price-checker-skeleton-badge-label']),
     content,
   );
+  DomClient.appendElementToElement(content, action);
 
-  DomClient.appendElementToElement(logo, badge);
-  DomClient.appendElementToElement(content, badge);
+  if (options.includeNotificationLogo) {
+    const notification = DomClient.createElement('div', {
+      className: 'price-display-action-notification',
+    }) as HTMLDivElement;
+    DomClient.appendElementToElement(
+      createSkeletonBlock(['price-checker-skeleton-logo']),
+      notification,
+    );
+    DomClient.appendElementToElement(notification, action);
+  }
 
-  return badge;
+  const arrow = DomClient.createElement('span', {
+    className: ['price-display-action-arrow', 'price-display-action-arrow-loading'],
+  }) as HTMLSpanElement;
+  arrow.setAttribute('aria-hidden', 'true');
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-arrow']), arrow);
+  DomClient.appendElementToElement(arrow, action);
+
+  return action;
+}
+
+function createStorePriceLoadingAction(): HTMLDivElement {
+  return createPriceDisplayLoadingAction(['price-display-store-action']);
+}
+
+function createBestPriceLoadingBadge(): HTMLDivElement {
+  return createPriceDisplayLoadingAction(
+    ['price-display-bestprice-action', 'bestprice-badge', 'bestprice-badge-loading'],
+    { includeNotificationLogo: true },
+  );
 }
 
 function createPriceHistoryLoadingComponent(): HTMLDivElement {
   const wrapper = DomClient.createElement('div', {
     className: ['price-history-wrapper', 'price-history-loading-wrapper'],
   }) as HTMLDivElement;
+
   const row = DomClient.createElement('div', {
-    className: ['info-with-analysis-row', 'price-history-loading-row'],
+    className: ['price-history-row', 'info-with-analysis-row', 'price-history-loading-row'],
+  }) as HTMLDivElement;
+  const topRow = DomClient.createElement('div', {
+    className: ['info-with-analysis-row', 'price-history-loading-top-row'],
+  }) as HTMLDivElement;
+  const assessments = DomClient.createElement('div', {
+    className: ['price-history-assessments', 'price-history-loading-assessments'],
+  }) as HTMLDivElement;
+  const controls = DomClient.createElement('div', {
+    className: 'price-history-controls',
   }) as HTMLDivElement;
 
   DomClient.appendElementToElement(
     createSkeletonBlock(['price-checker-skeleton-history-copy']),
-    row,
+    assessments,
   );
-  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-chip']), row);
+  DomClient.appendElementToElement(
+    createSkeletonBlock([
+      'price-checker-skeleton-history-copy',
+      'price-checker-skeleton-history-copy-secondary',
+    ]),
+    assessments,
+  );
+
+  DomClient.appendElementToElement(assessments, topRow);
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-chip']), controls);
+  DomClient.appendElementToElement(controls, topRow);
+  DomClient.appendElementToElement(topRow, row);
   DomClient.appendElementToElement(row, wrapper);
 
   return wrapper;
@@ -148,44 +217,19 @@ function createPriceCheckerSkeleton(): HTMLDivElement {
   const priceDisplayRow = DomClient.createElement('div', {
     className: 'price-display-row',
   }) as HTMLDivElement;
-  const priceColumn = DomClient.createElement('div', {
-    className: 'price-display-column',
-  }) as HTMLDivElement;
-  const infoRow = DomClient.createElement('div', {
-    className: 'info-with-analysis-row',
-  }) as HTMLDivElement;
-  const actionContainer = DomClient.createElement('div', {
-    className: 'inline-flex-row',
-  }) as HTMLDivElement;
 
-  DomClient.appendElementToElement(
-    createSkeletonBlock(['price-checker-skeleton-price']),
-    priceColumn,
-  );
-  DomClient.appendElementToElement(
-    createSkeletonBlock(['price-checker-skeleton-shipping']),
-    priceColumn,
-  );
-  DomClient.appendElementToElement(priceColumn, priceDisplayRow);
+  DomClient.appendElementToElement(createStorePriceLoadingAction(), priceDisplayRow);
+  DomClient.appendElementToElement(createPriceDisplayDivider(), priceDisplayRow);
   DomClient.appendElementToElement(createBestPriceLoadingBadge(), priceDisplayRow);
   DomClient.appendElementToElement(priceDisplayRow, priceDisplay);
 
-  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-info']), infoRow);
-  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-chip']), infoRow);
-
   DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
-  DomClient.appendElementToElement(infoRow, priceCalculationContainer);
   DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
   DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
-  DomClient.appendElementToElement(
-    createSkeletonBlock(['price-checker-skeleton-cta']),
-    actionContainer,
-  );
-  DomClient.appendElementToElement(actionContainer, contentContainer);
+  DomClient.appendElementToElement(createStoreAvailabilitySkeletonElement(), contentContainer);
   DomClient.appendElementToElement(contentContainer, priceIndication);
 
   DomClient.appendElementToElement(priceIndication, stack);
-  DomClient.appendElementToElement(createStoreAvailabilitySkeletonElement(), stack);
   DomClient.appendElementToElement(createPromotionSkeletonElement(), stack);
 
   return stack;
@@ -203,30 +247,13 @@ function createPriceDisplayComponent(
     const row = DomClient.createElement('div', {
       className: 'price-display-row',
     }) as HTMLDivElement;
-    const priceColumn = DomClient.createElement('div', {
-      className: 'price-display-column',
-    }) as HTMLDivElement;
-
-    const priceElement = createFormattedPriceElement(price);
-    DomClient.appendElementToElement(priceElement, priceColumn);
-
-    const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
-    const formattedShipping = shippingCost.toFixed(2).replace('.', ',');
-    shippingText.textContent = `(+${formattedShipping}€ ${
-      language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
-    })`;
-    DomClient.appendElementToElement(shippingText, priceColumn);
-
-    DomClient.appendElementToElement(priceColumn, row);
+    DomClient.appendElementToElement(
+      createStorePriceAction(productPriceData, price, shippingCost, language),
+      row,
+    );
+    DomClient.appendElementToElement(createPriceDisplayDivider(), row);
     if (bestPriceProductData) {
-      DomClient.appendElementToElement(
-        createBestPriceBadge(
-          bestPriceProductData,
-          language,
-          isBestPriceCheaperThanBoth(productPriceData, bestPriceProductData),
-        ),
-        row,
-      );
+      DomClient.appendElementToElement(createBestPriceBadge(bestPriceProductData, language), row);
     } else {
       DomClient.appendElementToElement(createBestPriceLoadingBadge(), row);
     }
@@ -285,27 +312,49 @@ function createFormattedPriceElement(price: number, extraClasses: string[] = [])
   return priceElement;
 }
 
-function createBestPriceBadge(
-  bestPriceProductData: BestPriceProductData,
+function createShippingCostElement(
+  shippingCost: number,
   language: Language,
-  isCheaperThanBoth: boolean,
-): HTMLAnchorElement {
-  const bestPriceLink = document.createElement('a');
-  bestPriceLink.className = [
-    'bestprice-badge',
-    isCheaperThanBoth ? 'bestprice-badge-positive' : 'bestprice-badge-negative',
-  ].join(' ');
-  bestPriceLink.href = bestPriceProductData.url;
-  bestPriceLink.target = '_blank';
-  bestPriceLink.rel = 'noopener noreferrer';
-  bestPriceLink.title = bestPriceProductData.title;
-  bestPriceLink.setAttribute(
-    'aria-label',
-    language === Language.ENGLISH
-      ? 'Open BestPrice product page'
-      : 'Άνοιγμα σελίδας προϊόντος στο BestPrice',
-  );
+  extraClasses: string[] = [],
+): HTMLDivElement {
+  const shippingText = DomClient.createElement('div', {
+    className: ['shipping-cost-text', ...extraClasses],
+  }) as HTMLDivElement;
+  const formattedShipping = shippingCost.toFixed(2).replace('.', ',');
+  shippingText.textContent = `(+${formattedShipping}€ ${
+    language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
+  })`;
 
+  return shippingText;
+}
+
+function createPriceDisplaySubtitle(
+  language: Language,
+  extraClasses: string[] = [],
+  preferredText?: string,
+): HTMLDivElement {
+  const subtitle = DomClient.createElement('div', {
+    className: ['price-display-subtitle', ...extraClasses],
+  }) as HTMLDivElement;
+  subtitle.textContent =
+    preferredText ??
+    (language === Language.ENGLISH ? 'Buy through store' : 'Αγορά μέσω καταστήματος');
+
+  return subtitle;
+}
+
+function createPriceDisplayActionArrow(): HTMLSpanElement {
+  const arrow = DomClient.createElement('span', {
+    className: 'price-display-action-arrow',
+  }) as HTMLSpanElement;
+  arrow.setAttribute('aria-hidden', 'true');
+  arrow.innerHTML =
+    '<svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  return arrow;
+}
+
+function createBestPriceLogo(): SVGSVGElement {
   const logo = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   logo.setAttribute('viewBox', '0 0 44 28');
   logo.setAttribute('aria-hidden', 'true');
@@ -319,28 +368,118 @@ function createBestPriceBadge(
   );
   logo.appendChild(logoPath);
 
-  const content = DomClient.createElement('div', {
-    className: 'bestprice-badge-content',
-  });
+  return logo;
+}
 
-  const priceElement = createFormattedPriceElement(bestPriceProductData.price, [
-    'bestprice-badge-price',
-  ]);
-  DomClient.appendElementToElement(priceElement, content);
+function createPriceDisplayDivider(): HTMLDivElement {
+  const divider = DomClient.createElement('div', {
+    className: 'price-display-divider',
+  }) as HTMLDivElement;
+  divider.setAttribute('aria-hidden', 'true');
 
-  if (bestPriceProductData.shippingCost !== undefined) {
-    const shippingElement = DomClient.createElement('div', {
-      className: 'bestprice-badge-shipping',
-    });
-    const formattedShipping = bestPriceProductData.shippingCost.toFixed(2).replace('.', ',');
-    shippingElement.textContent = `(+${formattedShipping}€ ${
-      language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
-    })`;
-    DomClient.appendElementToElement(shippingElement, content);
+  return divider;
+}
+
+function createPriceDisplayAction(
+  options: PriceDisplayActionOptions,
+): HTMLAnchorElement | HTMLButtonElement {
+  const element = options.href
+    ? (document.createElement('a') as HTMLAnchorElement | HTMLButtonElement)
+    : (document.createElement('button') as HTMLAnchorElement | HTMLButtonElement);
+
+  element.className = ['price-display-action', ...(options.classNames ?? [])].join(' ');
+  element.title = options.title ?? '';
+  element.setAttribute('aria-label', options.ariaLabel);
+
+  if (element instanceof HTMLAnchorElement && options.href) {
+    element.href = options.href;
+    element.target = '_blank';
+    element.rel = 'noopener noreferrer';
   }
 
-  DomClient.appendElementToElement(logo, bestPriceLink);
-  DomClient.appendElementToElement(content, bestPriceLink);
+  if (element instanceof HTMLButtonElement) {
+    element.type = 'button';
+  }
+
+  const content = DomClient.createElement('div', {
+    className: 'price-display-action-content',
+  }) as HTMLDivElement;
+
+  DomClient.appendElementToElement(createFormattedPriceElement(options.price), content);
+
+  if (options.shippingCost !== undefined) {
+    DomClient.appendElementToElement(
+      createShippingCostElement(options.shippingCost, options.language),
+      content,
+    );
+  }
+
+  DomClient.appendElementToElement(
+    createPriceDisplaySubtitle(options.language, [], options.subtitleText),
+    content,
+  );
+
+  DomClient.appendElementToElement(content, element);
+
+  if (options.notificationLogo) {
+    const notification = DomClient.createElement('div', {
+      className: 'price-display-action-notification',
+    }) as HTMLDivElement;
+    DomClient.appendElementToElement(options.notificationLogo, notification);
+    DomClient.appendElementToElement(notification, element);
+  }
+
+  DomClient.appendElementToElement(createPriceDisplayActionArrow(), element);
+
+  if (options.onClick) {
+    element.addEventListener('click', options.onClick);
+  }
+
+  return element;
+}
+
+function createStorePriceAction(
+  productPriceData: ProductPriceData,
+  price: number,
+  shippingCost: number,
+  language: Language,
+): HTMLButtonElement {
+  return createPriceDisplayAction({
+    classNames: ['price-display-store-action'],
+    price,
+    shippingCost,
+    language,
+    subtitleText: language === Language.ENGLISH ? 'Buy through store' : 'Αγορά μέσω καταστήματος',
+    title:
+      language === Language.ENGLISH
+        ? 'Go to the matching store offer'
+        : 'Μετάβαση στην αντίστοιχη προσφορά καταστήματος',
+    ariaLabel:
+      language === Language.ENGLISH ? 'Go to store offer' : 'Μετάβαση στην προσφορά καταστήματος',
+    onClick: (): void => {
+      scrollToShop(productPriceData.buyThroughStore.shopId);
+    },
+  }) as HTMLButtonElement;
+}
+
+function createBestPriceBadge(
+  bestPriceProductData: BestPriceProductData,
+  language: Language,
+): HTMLAnchorElement {
+  const bestPriceLink = createPriceDisplayAction({
+    classNames: ['price-display-bestprice-action', 'bestprice-badge'],
+    price: bestPriceProductData.price,
+    shippingCost: bestPriceProductData.shippingCost,
+    language,
+    subtitleText: language === Language.ENGLISH ? 'Buy through BestPrice' : 'Αγορά μέσω BestPrice',
+    title: bestPriceProductData.title,
+    ariaLabel:
+      language === Language.ENGLISH
+        ? 'Open BestPrice product page'
+        : 'Άνοιγμα σελίδας προϊόντος στο BestPrice',
+    href: bestPriceProductData.url,
+    notificationLogo: createBestPriceLogo(),
+  }) as HTMLAnchorElement;
 
   if (bestPriceProductData.shippingCost !== undefined) {
     bestPriceLink.title = `${bestPriceProductData.title} · ${bestPriceProductData.price
@@ -353,16 +492,42 @@ function createBestPriceBadge(
   return bestPriceLink;
 }
 
-function isBestPriceCheaperThanBoth(
-  productPriceData: ProductPriceData,
-  bestPriceProductData: BestPriceProductData,
-): boolean {
-  const bestPriceTotal = bestPriceProductData.totalPrice ?? bestPriceProductData.price;
+function createAnalysisToggleButton(
+  analysisContainer: HTMLDivElement,
+  language: Language,
+): HTMLButtonElement {
+  const analysisButton = DomClient.createElement('button', {
+    className: ['analysis-toggle-button'],
+  }) as HTMLButtonElement;
+  analysisButton.type = 'button';
+  analysisButton.setAttribute('aria-expanded', 'false');
+  analysisButton.setAttribute('aria-controls', analysisContainer.id);
 
-  return (
-    bestPriceTotal < productPriceData.buyThroughSkroutz.totalPrice &&
-    bestPriceTotal < productPriceData.buyThroughStore.totalPrice
-  );
+  const analysisLabel = language === Language.ENGLISH ? 'Analysis' : 'Ανάλυση';
+  const labelSpan = document.createElement('span');
+  labelSpan.textContent = analysisLabel;
+
+  const iconSpan = document.createElement('span');
+  iconSpan.className = 'analysis-icon';
+  iconSpan.innerHTML =
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+
+  analysisButton.appendChild(labelSpan);
+  analysisButton.appendChild(iconSpan);
+  analysisButton.addEventListener('click', () => {
+    const willShow = analysisContainer.style.display === 'none';
+    if (willShow) {
+      analysisContainer.style.display = 'flex';
+      analysisContainer.classList.add('visible');
+    } else {
+      analysisContainer.style.display = 'none';
+      analysisContainer.classList.remove('visible');
+    }
+    analysisButton.setAttribute('aria-expanded', String(willShow));
+    analysisButton.classList.toggle('expanded', willShow);
+  });
+
+  return analysisButton;
 }
 
 function createPriceComparisonBreakdownComponent(
@@ -568,31 +733,6 @@ function createCalculationComponent(
   return calculationContainer;
 }
 
-function createShopButtonComponent(
-  productPriceData: ProductPriceData,
-  minimumPriceDifference: number,
-  language: Language,
-): HTMLButtonElement {
-  const showPositiveStyling = isPositiveStyling(productPriceData, minimumPriceDifference);
-
-  const buttonStyle = showPositiveStyling
-    ? 'go-to-shop-button-positive'
-    : 'go-to-shop-button-negative';
-
-  const goToStoreButton = DomClient.createElement('button', {
-    className: [buttonStyle, 'bold-text'],
-  }) as HTMLButtonElement;
-
-  goToStoreButton.textContent =
-    language === Language.ENGLISH ? 'Go to Shop' : 'Μετάβαση στο κατάστημα';
-
-  goToStoreButton.addEventListener('click', (): void => {
-    scrollToShop(productPriceData.buyThroughStore.shopId);
-  });
-
-  return goToStoreButton;
-}
-
 function isPositiveStyling(
   productPriceData: ProductPriceData,
   minimumPriceDifference: number,
@@ -782,7 +922,6 @@ function createPriceIndicationElement(
       className: 'price-calculation-container',
     });
     const infoContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
-    const actionContainer = DomClient.createElement('div', { className: 'inline-flex-row' });
 
     const priceDisplay = createPriceDisplayComponent(
       productPriceData,
@@ -794,54 +933,12 @@ function createPriceIndicationElement(
     );
     DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
 
-    const infoText = document.createElement('span');
-    infoText.textContent =
-      language === Language.ENGLISH
-        ? 'This is the lowest price with shipping apart from "Buy through Skroutz"'
-        : 'Αυτή είναι η χαμηλότερη τιμή με μεταφορικά εκτός "Αγορά μέσω Skroutz"';
-
-    const infoWithAnalysisRow = DomClient.createElement('div', {
-      className: 'info-with-analysis-row',
-    });
-    DomClient.appendElementToElement(infoText, infoWithAnalysisRow);
-
     const analysisContainer = DomClient.createElement('div', {
       className: ['analysis-container'],
     }) as HTMLDivElement;
     analysisContainer.style.display = 'none';
     const analysisId = `analysis-${productPriceData.buyThroughStore.shopId}`;
     analysisContainer.id = analysisId;
-
-    const analysisButton = DomClient.createElement('button', {
-      className: ['analysis-toggle-button'],
-    }) as HTMLButtonElement;
-    analysisButton.type = 'button';
-    analysisButton.setAttribute('aria-expanded', 'false');
-    analysisButton.setAttribute('aria-controls', analysisId);
-    const analysisLabel = language === Language.ENGLISH ? 'Analysis' : 'Ανάλυση';
-    const labelSpan = document.createElement('span');
-    labelSpan.textContent = analysisLabel;
-    const iconSpan = document.createElement('span');
-    iconSpan.className = 'analysis-icon';
-    iconSpan.innerHTML =
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
-    analysisButton.appendChild(labelSpan);
-    analysisButton.appendChild(iconSpan);
-    analysisButton.addEventListener('click', () => {
-      const willShow = analysisContainer.style.display === 'none';
-      if (willShow) {
-        analysisContainer.style.display = 'flex';
-        analysisContainer.classList.add('visible');
-      } else {
-        analysisContainer.style.display = 'none';
-        analysisContainer.classList.remove('visible');
-      }
-      analysisButton.setAttribute('aria-expanded', String(willShow));
-      analysisButton.classList.toggle('expanded', willShow);
-    });
-    DomClient.appendElementToElement(analysisButton, infoWithAnalysisRow);
-
-    DomClient.appendElementToElement(infoWithAnalysisRow, priceCalculationContainer);
 
     DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
 
@@ -863,13 +960,6 @@ function createPriceIndicationElement(
 
     DomClient.appendElementToElement(infoContainer, contentContainer);
 
-    const goToStoreButton = createShopButtonComponent(
-      productPriceData,
-      minimumPriceDifference,
-      language,
-    );
-    DomClient.appendElementToElement(goToStoreButton, actionContainer);
-
     if (productPriceHistory) {
       const priceHistoryBreakdown = PriceHistoryComponent(
         getPriceHistoryComparisonOutcome(
@@ -880,12 +970,20 @@ function createPriceIndicationElement(
         language,
         productPriceData.buyThroughStore.totalPrice,
       );
+      const priceHistoryControls = priceHistoryBreakdown.querySelector('.price-history-controls');
+      if (priceHistoryControls) {
+        DomClient.appendElementToElement(
+          createAnalysisToggleButton(analysisContainer, language),
+          priceHistoryControls,
+        );
+      }
       DomClient.appendElementToElement(priceHistoryBreakdown, contentContainer);
     } else if (renderOptions.isPriceHistoryLoading) {
       DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
     }
 
-    DomClient.appendElementToElement(actionContainer, contentContainer);
+    const storeAvailability = createStoreAvailabilityElement(productPriceData, language);
+    DomClient.appendElementToElement(storeAvailability, contentContainer);
 
     priceIndication.title =
       language === Language.ENGLISH
@@ -904,10 +1002,7 @@ function createPriceIndicationElement(
 
     // price card first
     DomClient.appendElementToElement(priceIndication, priceCheckerStack);
-    // then availability
-    const storeAvailability = createStoreAvailabilityElement(productPriceData, language);
-    DomClient.appendElementToElement(storeAvailability, priceCheckerStack);
-    // finally the review + coffee promo so it appears below availability
+    // finally the review + coffee promo so it appears below the main card
     DomClient.appendElementToElement(reSkroutzedReview, priceCheckerStack);
 
     return priceCheckerStack;

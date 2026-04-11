@@ -168,6 +168,7 @@ describe('PriceCheckerDecorator', () => {
 
     document.body.innerHTML = '';
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   it('renders a skeleton immediately before product data resolves', async () => {
@@ -218,6 +219,15 @@ describe('PriceCheckerDecorator', () => {
     expect(document.querySelector('.price-checker-outline')).not.toBeNull();
     expect(document.querySelector('.bestprice-badge-loading')).not.toBeNull();
     expect(document.querySelector('.price-history-loading-wrapper')).not.toBeNull();
+    expect(document.querySelector('.go-to-shop-button-positive')).toBeNull();
+    expect(document.querySelector('.go-to-shop-button-negative')).toBeNull();
+    expect(document.querySelector('.price-display-divider')).not.toBeNull();
+    const storeAction = document.querySelector(
+      '.price-display-store-action',
+    ) as HTMLButtonElement | null;
+    expect(storeAction).not.toBeNull();
+    expect(storeAction?.tagName).toBe('BUTTON');
+    expect(storeAction?.textContent).toContain('Buy through store');
     expect(
       document.querySelector('.price-display-wrapper .shipping-cost-text')?.textContent,
     ).toContain('(+3,00€ shipping)');
@@ -229,6 +239,9 @@ describe('PriceCheckerDecorator', () => {
     expect(document.querySelector('.bestprice-badge-loading')).toBeNull();
     expect(bestPriceBadge).not.toBeNull();
     expect(bestPriceBadge?.href).toBe('https://www.bestprice.gr/item/mock.html');
+    expect(bestPriceBadge?.textContent).toContain('Buy through BestPrice');
+    expect(bestPriceBadge?.classList.contains('price-display-bestprice-action')).toBe(true);
+    expect(bestPriceBadge?.querySelector('.bestprice-badge-logo')).not.toBeNull();
     expect(document.querySelector('.price-history-loading-wrapper')).not.toBeNull();
 
     priceHistoryDeferred.resolve(mockPriceHistory);
@@ -236,5 +249,43 @@ describe('PriceCheckerDecorator', () => {
 
     expect(document.querySelector('.price-history-loading-wrapper')).toBeNull();
     expect(document.querySelector('.mock-price-history')).not.toBeNull();
+  });
+
+  it('clicking the store price reuses the store navigation behavior', async () => {
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    const sliderToggleButton = document.createElement('button');
+    sliderToggleButton.className = 'alternative-option-wrapper btn-reset';
+    const sliderClickSpy = vi.spyOn(sliderToggleButton, 'click');
+    document.body.appendChild(sliderToggleButton);
+
+    const firstTarget = document.createElement('div');
+    firstTarget.id = 'shop-202';
+    const secondTarget = document.createElement('div');
+    secondTarget.id = 'shop-202';
+    const scrollIntoViewSpy = vi.fn();
+    secondTarget.scrollIntoView = scrollIntoViewSpy;
+    document.body.appendChild(firstTarget);
+    document.body.appendChild(secondTarget);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    vi.useFakeTimers();
+
+    const storeAction = document.querySelector(
+      '.price-display-store-action',
+    ) as HTMLButtonElement | null;
+    expect(storeAction).not.toBeNull();
+
+    storeAction?.click();
+    vi.advanceTimersByTime(300);
+
+    expect(sliderClickSpy).toHaveBeenCalledTimes(1);
+    expect(scrollIntoViewSpy).toHaveBeenCalledTimes(1);
+    expect(secondTarget.classList.contains('lowest-price-store-highlight')).toBe(true);
   });
 });

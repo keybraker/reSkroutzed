@@ -79,10 +79,19 @@ export function PriceHistoryComponent(
   topRow.style.display = 'flex';
   topRow.style.flexDirection = 'row';
   topRow.style.alignItems = 'center';
+  topRow.style.justifyContent = 'space-between';
   topRow.style.gap = '16px';
 
   DomClient.appendElementToElement(assessmentsContainer, topRow);
-  DomClient.appendElementToElement(topRow, row);
+
+  const controlsContainer = DomClient.createElement('div', {
+    className: 'price-history-controls',
+  });
+  controlsContainer.style.display = 'flex';
+  controlsContainer.style.flexDirection = 'row';
+  controlsContainer.style.alignItems = 'center';
+  controlsContainer.style.gap = '12px';
+  controlsContainer.style.marginLeft = 'auto';
 
   const toggleButton = DomClient.createElement('button', {
     className: ['analysis-toggle-button', 'price-history-toggle-button'],
@@ -104,14 +113,16 @@ export function PriceHistoryComponent(
     nativeBtn?.click();
   });
 
-  DomClient.appendElementToElement(toggleButton, topRow);
+  DomClient.appendElementToElement(toggleButton, controlsContainer);
+  DomClient.appendElementToElement(controlsContainer, topRow);
+  DomClient.appendElementToElement(topRow, row);
 
   const line = document.createElement('hr');
   line.className = 'price-history-separator';
   line.style.border = 'none';
   line.style.borderTop = '1px solid currentColor';
   line.style.opacity = '0.2';
-  line.style.margin = '8px 0 24px';
+  line.style.margin = '2px 0 24px';
   DomClient.appendElementToElement(line, wrapper);
 
   DomClient.appendElementToElement(row, wrapper);
