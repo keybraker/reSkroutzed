@@ -1906,6 +1906,57 @@ text-black {
 }
 
 @media (max-width: 640px) {
+  .price-checker-outline {
+    padding: 16px !important;
+    margin: 12px 0 !important;
+  }
+
+  .display-padding {
+    gap: 12px !important;
+    margin-top: 16px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .tags-container {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    justify-content: flex-end !important;
+    flex-wrap: wrap !important;
+    margin-bottom: 6px !important;
+  }
+
+  .price-indicator-price {
+    font-size: 36px !important;
+  }
+
+  .price-indicator-currency,
+  .price-indicator-decimal,
+  .price-indicator-comma {
+    font-size: 22px !important;
+  }
+
+  .price-calculation-container {
+    gap: 6px !important;
+  }
+
+  .calculation-container {
+    padding: 12px !important;
+    font-size: 14px !important;
+  }
+
+  .calculation-container strong {
+    font-size: 16px !important;
+  }
+
+  .calculation-lead {
+    white-space: normal !important;
+  }
+
+  .minimum-price-difference-text {
+    margin-top: 2px !important;
+  }
+
   .price-display-row {
     flex-direction: column !important;
     align-items: stretch !important;
@@ -1931,17 +1982,122 @@ text-black {
     padding-right: 0 !important;
   }
 
+  .price-display-action {
+    padding: 12px 0 !important;
+    gap: 10px !important;
+  }
+
   .price-display-action-content {
     min-height: auto !important;
+  }
+
+  .price-display-action-content .shipping-cost-text {
+    white-space: normal !important;
+  }
+
+  .price-display-action-notification {
+    right: 24px !important;
   }
 
   .price-display-subtitle {
     min-height: 0 !important;
   }
 
+  .info-with-analysis-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .price-history-row {
+    align-items: center !important;
+  }
+
+  .price-history-assessments {
+    width: 100% !important;
+    align-items: center !important;
+    text-align: center !important;
+    margin-bottom: 4px !important;
+  }
+
+  .price-history-row .price-history-label {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 12px !important;
+  }
+
+  .price-history-controls {
+    width: 100% !important;
+    justify-content: center !important;
+    margin-left: 0 !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+
+  .analysis-toggle-button {
+    width: auto !important;
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .price-history-header {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+  }
+
+  .price-history-header .toggle-icon {
+    margin-left: auto !important;
+  }
+
+  .store-availability-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .store-availability-left,
+  .store-availability-right {
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+
+  .store-availability-right {
+    flex: 1 1 auto !important;
+  }
+
+  .own-promotion .store-availability-row {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .own-promotion .store-availability-left,
+  .own-promotion .store-availability-right {
+    width: auto !important;
+  }
+
+  .own-promotion .store-availability-left {
+    flex: 0 0 auto !important;
+  }
+
+  .own-promotion .store-availability-right {
+    flex: 1 1 auto !important;
+    justify-content: flex-end !important;
+  }
+
+  .buy-me-coffee {
+    justify-content: center !important;
+  }
+
   .analysis-container .price-breakdown-item {
     width: 100% !important;
   }
+
   .analysis-container .transportation-breakdown {
     flex-direction: column !important;
   }
