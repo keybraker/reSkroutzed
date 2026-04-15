@@ -96,6 +96,17 @@ function createPriceDisplayLoadingAction(
   return action;
 }
 
+function createBestPriceUnavailableStatus(language: Language): HTMLDivElement {
+  const status = DomClient.createElement('div', {
+    className: ['price-display-column', 'bestprice-unavailable'],
+  }) as HTMLDivElement;
+
+  status.textContent =
+    language === Language.ENGLISH ? 'BestPrice not available' : 'BestPrice: δεν βρέθηκε';
+
+  return status;
+}
+
 function createStorePriceLoadingAction(): HTMLDivElement {
   return createPriceDisplayLoadingAction(['price-display-store-action']);
 }
@@ -245,11 +256,6 @@ function createPriceDisplayComponent(
   bestPriceProductData?: BestPriceProductData,
   isBestPriceLoading = false,
 ): HTMLDivElement {
-  const storePriceClassNames = getPriceComparisonClassNames(
-    productPriceData.buyThroughSkroutz.totalPrice,
-    productPriceData.buyThroughStore.totalPrice,
-  );
-
   if (bestPriceProductData || isBestPriceLoading) {
     const row = DomClient.createElement('div', {
       className: 'price-display-row',
@@ -280,25 +286,20 @@ function createPriceDisplayComponent(
     return container;
   }
 
+  const row = DomClient.createElement('div', {
+    className: 'price-display-row',
+  }) as HTMLDivElement;
+  DomClient.appendElementToElement(
+    createStorePriceAction(productPriceData, price, shippingCost, language),
+    row,
+  );
+  DomClient.appendElementToElement(createPriceDisplayDivider(), row);
+  DomClient.appendElementToElement(createBestPriceUnavailableStatus(language), row);
+
   const container = DomClient.createElement('div', {
     className: 'price-display-wrapper',
   }) as HTMLDivElement;
-
-  const priceElement = createFormattedPriceElement(price, storePriceClassNames);
-  DomClient.appendElementToElement(priceElement, container);
-
-  const shippingText = DomClient.createElement('div', { className: 'shipping-cost-text' });
-  shippingText.classList.add(...storePriceClassNames);
-  const formattedShipping = shippingCost.toFixed(2).replace('.', ',');
-  shippingText.textContent = `(+${formattedShipping}€ ${
-    language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
-  })`;
-  DomClient.appendElementToElement(shippingText, container);
-
-  const notAvailable = DomClient.createElement('div', { className: 'bestprice-unavailable' });
-  notAvailable.textContent =
-    language === Language.ENGLISH ? 'BestPrice not available' : 'BestPrice: δεν βρέθηκε';
-  DomClient.appendElementToElement(notAvailable, container);
+  DomClient.appendElementToElement(row, container);
 
   return container;
 }

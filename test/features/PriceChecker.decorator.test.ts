@@ -301,6 +301,32 @@ describe('PriceCheckerDecorator', () => {
     expect(secondTarget.classList.contains('lowest-price-store-highlight')).toBe(true);
   });
 
+  it('keeps the store CTA as a button when BestPrice is unavailable', async () => {
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(undefined);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    const storeAction = document.querySelector(
+      '.price-display-store-action',
+    ) as HTMLButtonElement | null;
+    const unavailableStatus = document.querySelector(
+      '.bestprice-unavailable',
+    ) as HTMLDivElement | null;
+    const priceRow = document.querySelector('.price-display-row') as HTMLDivElement | null;
+
+    expect(priceRow).not.toBeNull();
+    expect(storeAction).not.toBeNull();
+    expect(storeAction?.tagName).toBe('BUTTON');
+    expect(storeAction?.textContent).toContain('Buy through store');
+    expect(unavailableStatus).not.toBeNull();
+    expect(unavailableStatus?.textContent).toContain('BestPrice not available');
+    expect(priceRow?.lastElementChild).toBe(unavailableStatus);
+  });
+
   it('styles each offer independently against the Skroutz total price', async () => {
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue({
       ...mockProductPriceData,

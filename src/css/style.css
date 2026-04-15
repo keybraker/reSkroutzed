@@ -2056,11 +2056,21 @@ text-black {
 
 /* Visible indicator when BestPrice data is not available */
 .bestprice-unavailable {
-  margin-top: 8px !important;
+  flex: 1 1 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  padding: 10px 16px 8px !important;
   font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
   color: #6b6b6b !important;
   background: transparent !important;
-  text-align: left !important;
+  text-align: right !important;
+}
+
+.dark-mode .bestprice-unavailable {
+  color: rgba(224, 224, 224, 0.72) !important;
 }
 
 .analysis-container.visible {
