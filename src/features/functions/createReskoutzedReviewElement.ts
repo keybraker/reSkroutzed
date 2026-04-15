@@ -5,19 +5,21 @@ import { createLogoElement } from './createLogoElement';
 export function createReSkoutzedReviewElement(language: Language): HTMLDivElement {
   const reSkoutzedReviewElement = document.createElement('div');
   const reSkoutzedReviewLink = document.createElement('a');
+  const prefixText = document.createElement('span');
+  const brandName = document.createElement('strong');
+  const reviewCopy = document.createElement('span');
+  const logoSlot = document.createElement('span');
 
-  // Use the own-promotion outline so this appears as the top/start
   reSkoutzedReviewElement.classList.add('own-promotion');
 
-  // Create a horizontal row and split into 3/4 (left) and 1/4 (right)
   const row = document.createElement('div');
-  row.className = 'store-availability-row';
+  row.className = 'store-availability-row own-promotion-row';
 
   const left = document.createElement('div');
-  left.className = 'store-availability-left';
+  left.className = 'store-availability-left own-promotion-left';
 
   const right = document.createElement('div');
-  right.className = 'store-availability-right';
+  right.className = 'store-availability-right own-promotion-right';
 
   const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   const storeUrl = isFirefox
@@ -27,21 +29,28 @@ export function createReSkoutzedReviewElement(language: Language): HTMLDivElemen
   reSkoutzedReviewLink.href = storeUrl;
   reSkoutzedReviewLink.target = '_blank';
   reSkoutzedReviewLink.rel = 'noopener noreferrer';
-  reSkoutzedReviewLink.textContent =
-    language === Language.ENGLISH
-      ? 'By reSkroutzed — Leave a review'
-      : 'Από το reSkroutzed — Αφήστε μια κριτική';
-  reSkoutzedReviewLink.classList.add('icon-border', 'font-bold');
+  reSkoutzedReviewLink.classList.add('icon-border', 'own-promotion-review-link');
 
-  // Place the link and logo on the right side; left is reserved for the "buy me a coffee" element
+  prefixText.className = 'own-promotion-review-prefix';
+  prefixText.textContent = language === Language.ENGLISH ? 'By' : '';
+
+  reviewCopy.className = 'own-promotion-review-copy';
+
   const icon = createLogoElement();
-  const rightContent = document.createElement('div');
-  rightContent.style.display = 'flex';
-  rightContent.style.alignItems = 'center';
-  rightContent.style.gap = '8px';
-  DomClient.appendElementToElement(reSkoutzedReviewLink, rightContent);
-  DomClient.appendElementToElement(icon, rightContent);
-  DomClient.appendElementToElement(rightContent, right);
+  icon.classList.remove('icon-border');
+  icon.classList.add('own-promotion-brand-logo');
+
+  logoSlot.className = 'own-promotion-brand-logo-slot';
+
+  brandName.textContent = 'reSkroutzed';
+  DomClient.appendElementToElement(prefixText, reviewCopy);
+  DomClient.appendElementToElement(brandName, reviewCopy);
+  DomClient.appendElementToElement(reviewCopy, reSkoutzedReviewLink);
+
+  DomClient.appendElementToElement(icon, logoSlot);
+  DomClient.appendElementToElement(logoSlot, reSkoutzedReviewLink);
+
+  DomClient.appendElementToElement(reSkoutzedReviewLink, left);
 
   row.appendChild(left);
   row.appendChild(right);

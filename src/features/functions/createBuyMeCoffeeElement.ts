@@ -10,11 +10,17 @@ export function createBuyMeCoffeeElement(): HTMLDivElement {
   buyMeCoffeeLink.target = '_blank';
   buyMeCoffeeLink.rel = 'noopener noreferrer';
   buyMeCoffeeLink.title = 'Buy Me A Coffee';
+  buyMeCoffeeLink.classList.add('buy-me-coffee-link');
+
+  const coffeeLabel = document.createElement('span');
+  coffeeLabel.classList.add('coffee-label');
+  coffeeLabel.textContent = 'Buy me a coffee';
 
   const coffeeIcon = document.createElement('span');
   coffeeIcon.classList.add('coffee-icon');
-  coffeeIcon.innerHTML = '☕';
+  coffeeIcon.textContent = '☕';
 
+  DomClient.appendElementToElement(coffeeLabel, buyMeCoffeeLink);
   DomClient.appendElementToElement(coffeeIcon, buyMeCoffeeLink);
   DomClient.appendElementToElement(buyMeCoffeeLink, buyMeCoffeeElement);
 

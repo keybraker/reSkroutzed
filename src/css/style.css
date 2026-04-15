@@ -170,7 +170,7 @@ html.dark-mode {
   border-bottom: 1px solid var(--color-border-primary) !important;
 }
 
-.dark-mode .site-header.is-visible,
+.dark-mode .site-header .site-header.is-visible,
 .dark-mode .remain-sticky {
   background-color: var(--color-background-highlight) !important;
   color: var(--color-text-primary) !important;
@@ -305,6 +305,7 @@ text-black {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
   transition: all 0.2s ease-in-out !important;
   position: relative !important;
+  overflow: hidden !important;
 }
 
 .price-checker-stack {
@@ -316,8 +317,7 @@ text-black {
 
 .price-checker-stack .price-checker-outline {
   margin: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
+  border-radius: 18px !important;
 }
 
 .price-checker-loading,
@@ -471,12 +471,7 @@ text-black {
 }
 
 .own-promotion-loading {
-  padding-top: 12px !important;
-  padding-bottom: 12px !important;
-}
-
-.own-promotion-loading .store-availability-right {
-  justify-content: flex-start !important;
+  min-height: 52px !important;
 }
 
 @keyframes price-checker-skeleton-shimmer {
@@ -522,13 +517,28 @@ text-black {
   height: 18px !important;
   font-size: 14px !important;
   line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+.coffee-label {
+  white-space: nowrap !important;
+}
+
+.buy-me-coffee-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  color: inherit !important;
+  text-decoration: none !important;
+  width: 100% !important;
 }
 
 .buy-me-coffee {
   position: static !important;
   color: #ffffff !important;
   background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
-  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(101, 52, 17, 0.18) !important;
   box-shadow:
     0 4px 12px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
@@ -544,39 +554,45 @@ text-black {
   justify-content: center !important;
   gap: 6px !important;
   z-index: 5 !important;
-  transition: box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition:
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.22s ease,
+    border-color 0.22s ease !important;
   cursor: pointer !important;
   text-decoration: none !important;
   backdrop-filter: none !important;
   position: relative !important;
-  overflow: visible !important;
-  /* Fixed circular size */
-  width: 40px !important;
-  height: 40px !important;
-  padding: 0 !important;
-  border-radius: 50% !important;
-  font-size: 0 !important;
-  letter-spacing: 0 !important;
+  overflow: hidden !important;
+  min-height: 44px !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
 }
 
 .buy-me-coffee::before {
   content: '' !important;
   position: absolute !important;
   top: 0 !important;
-  left: -100% !important;
-  width: 100% !important;
+  left: -140% !important;
+  width: 70% !important;
   height: 100% !important;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0.24),
     transparent
   ) !important;
-  transition: left 0.6s ease !important;
+  transform: skewX(-20deg) !important;
+  opacity: 0 !important;
+  transition:
+    left 0.42s ease,
+    opacity 0.18s ease !important;
 }
 
 .buy-me-coffee:hover::before {
-  left: 100% !important;
+  left: 170% !important;
+  opacity: 1 !important;
 }
 
 .buy-me-coffee:hover {
@@ -596,7 +612,7 @@ text-black {
 .dark-mode .buy-me-coffee {
   color: #ffffff !important;
   background: linear-gradient(135deg, #ff4500, #dc143c) !important;
-  border: 2px solid rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   box-shadow:
     0 4px 12px rgba(220, 20, 60, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
@@ -839,15 +855,18 @@ text-black {
 .price-indicator-currency {
   margin-left: 2px !important;
   font-size: 28px !important;
+  color: inherit !important;
 }
 
 .price-indicator-decimal {
   font-size: 28px !important;
+  color: inherit !important;
 }
 
 .price-indicator-comma {
   font-size: 28px !important;
   margin-right: 1px !important;
+  color: inherit !important;
 }
 
 .price-calculation-container {
@@ -860,20 +879,20 @@ text-black {
 }
 
 .calculation-container {
-  text-align: center !important;
+  text-align: left !important;
   width: 100% !important;
   padding: 15px !important;
   background-color: rgba(0, 0, 0, 0.015) !important;
   border-radius: 6px !important;
   border: 1px dashed rgba(0, 0, 0, 0.2) !important;
   color: var(--text-light) !important;
-  font-size: 16px !important;
+  font-size: 14px !important;
   font-weight: 500 !important;
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
 }
 
 .dark-mode .calculation-container {
@@ -887,19 +906,49 @@ text-black {
   font-weight: 700 !important;
 }
 
-.calculation-lead {
-  white-space: nowrap !important;
+.analysis-metric-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.analysis-metric-summary {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: inherit !important;
+  text-align: left !important;
+  line-height: 1.35 !important;
+}
+
+.analysis-metric-details {
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.bestprice-comparison-text {
+  display: block !important;
 }
 
 .minimum-price-difference-text {
   font-size: 12px !important;
   color: rgba(0, 0, 0, 0.6) !important;
   display: block !important;
-  margin-top: 4px !important;
-  font-style: italic !important;
+  margin-top: 0 !important;
+  font-style: normal !important;
+  padding-top: 8px !important;
+  border-top: 1px dashed rgba(0, 0, 0, 0.12) !important;
 }
 
 .dark-mode .minimum-price-difference-text {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark-mode .analysis-metric-summary {
+  color: var(--text-dark) !important;
+}
+
+.dark-mode .analysis-metric-details {
   color: rgba(255, 255, 255, 0.6) !important;
 }
 
@@ -1436,21 +1485,170 @@ text-black {
 }
 
 .own-promotion {
-  border: 1px dashed rgba(0, 0, 0, 0.04) !important;
-  border-radius: 0 0 16px 16px !important;
-  padding: 10px 10px !important;
-  background: #f0f0f0 !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
+  margin: -20px -20px 12px !important;
+  padding: 12px 16px !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 18px 18px 0 0 !important;
+  background: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px !important;
+  gap: 0 !important;
   position: relative !important;
+  overflow: hidden !important;
 }
 
 .dark-mode .own-promotion {
-  background: #3a3a3a !important;
-  border: 1px dashed rgba(0, 0, 0, 0.04) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.own-promotion .store-availability-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.own-promotion-left {
+  flex: 0 0 45% !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  max-width: 45% !important;
+  overflow: visible !important;
+}
+
+.own-promotion-right {
+  flex: 0 0 45% !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  max-width: 45% !important;
+}
+
+.own-promotion-review-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+  flex: 1 1 auto !important;
+  min-height: 38px !important;
+  padding: 8px 14px !important;
+  border: 1px solid rgba(120, 68, 40, 0.18) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.66) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  text-decoration: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.dark-mode .own-promotion-review-link {
+  border-color: rgba(255, 222, 205, 0.14) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+.own-promotion-review-link {
+  color: #4c2516 !important;
+  font-size: 13px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  text-align: left !important;
+}
+
+.own-promotion-review-copy {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+.own-promotion-review-prefix {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+}
+
+.own-promotion-review-link strong {
+  font-weight: 800 !important;
+  font-style: normal !important;
+  pointer-events: none !important;
+}
+
+.own-promotion-brand-logo {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+  font-style: normal !important;
+  text-align: initial !important;
+  vertical-align: middle !important;
+  line-height: 1 !important;
+  color: inherit !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  pointer-events: none !important;
+}
+
+.own-promotion-brand-logo-slot {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 24px !important;
+  height: 24px !important;
+  flex: 0 0 24px !important;
+  margin-left: auto !important;
+}
+
+.own-promotion-review-link:hover,
+.own-promotion-review-link:focus-visible {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-color: rgba(120, 68, 40, 0.26) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-1px) !important;
+  outline: none !important;
+}
+
+.dark-mode .own-promotion-review-link {
+  color: #fff1e8 !important;
+}
+
+.dark-mode .own-promotion-review-link:hover,
+.dark-mode .own-promotion-review-link:focus-visible {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 222, 205, 0.22) !important;
+}
+
+.own-promotion-brand-logo img {
+  width: 18px !important;
+  height: 18px !important;
+  display: block !important;
 }
 
 /* reSkroutzed badge removed; availability card now visually continues the price checker */
@@ -1888,16 +2086,17 @@ text-black {
 .calculation-container {
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
 }
 
 .calculation-container .minimum-price-difference-text {
-  align-self: center !important;
+  align-self: stretch !important;
 }
 
 /* Ensure breakdown items stack correctly in analysis context */
 .analysis-container .transportation-breakdown {
+  display: none !important;
   flex-wrap: wrap !important;
 }
 
@@ -1945,12 +2144,15 @@ text-black {
     font-size: 14px !important;
   }
 
-  .calculation-container strong {
-    font-size: 16px !important;
+  .analysis-metric-topline {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
   }
 
-  .calculation-lead {
-    white-space: normal !important;
+  .analysis-metric-summary {
+    text-align: left !important;
+    font-size: 15px !important;
   }
 
   .minimum-price-difference-text {
@@ -2072,26 +2274,25 @@ text-black {
 
   .own-promotion .store-availability-row {
     flex-direction: row !important;
-    align-items: center !important;
-    gap: 12px !important;
-  }
-
-  .own-promotion .store-availability-left,
-  .own-promotion .store-availability-right {
-    width: auto !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
   }
 
   .own-promotion .store-availability-left {
-    flex: 0 0 auto !important;
+    width: 45% !important;
+    max-width: 45% !important;
+    justify-content: flex-start !important;
   }
 
   .own-promotion .store-availability-right {
-    flex: 1 1 auto !important;
+    width: 45% !important;
+    max-width: 45% !important;
     justify-content: flex-end !important;
   }
 
   .buy-me-coffee {
     justify-content: center !important;
+    width: 100% !important;
   }
 
   .analysis-container .price-breakdown-item {

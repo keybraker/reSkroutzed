@@ -463,6 +463,50 @@ describe('SkroutzClient', () => {
       );
     });
 
+    it('should prefer the drawer city and keep explicit no-store-city results from the DOM', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <div class="header-user-actions">
+          <span class="country-picker-text js-cp-link" tabindex="0">Ελλάδα</span>
+        </div>
+        <div class="bottom-drawer-content">
+          <div class="bottom-drawer-body">
+            <div class="blp-prompt js-blp-prompt">
+              <p><span>Υπολογισμός τιμών για:</span>Αθήνα</p>
+              <button type="button" data-type="personalization-settings">Αλλαγή</button>
+            </div>
+            <div class="availability-message">
+              <p>Το προϊόν δεν είναι διαθέσιμο στην πόλη σου, Αθήνα.</p>
+              <p>Το προϊόν δεν έχει αυτή τη στιγμή διαθέσιμες πόλεις καταστημάτων.</p>
+            </div>
+            <ol id="prices" class="sku-list">
+              <li id="shop-101" class="product-card-redesigned">
+                <div class="merchant-box-bottom-content">
+                  <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+      `;
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability).toEqual({
+        cities: [],
+        userCity: 'Αθήνα',
+        matchingCities: [],
+        cityShopMap: {},
+      });
+      expect(fetch).not.toHaveBeenCalledWith(
+        'https://www.skroutz.gr/s/product_cards_nearest_location.json',
+        expect.anything(),
+      );
+    });
+
     it('should throw an error if SKU meta tag is missing', async () => {
       // Remove the SKU meta tag
       document.body.innerHTML = `

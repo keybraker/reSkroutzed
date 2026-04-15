@@ -34,6 +34,21 @@
   box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
+.universal-toggle-button .icon-border {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+}
+
+.universal-toggle-button .logo-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
 .universal-toggle-button:hover {
   transform: scale(1.1) !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;

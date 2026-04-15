@@ -28,6 +28,12 @@ export type ProductPriceHistory = {
   sixMonthPrices: PriceChartValue[];
 };
 
+type DomStoreAvailability = {
+  cities: string[];
+  cityShopMap: Record<string, number[]>;
+  hasExplicitNoStoreCitiesMessage: boolean;
+};
+
 export class SkroutzClient {
   private static readonly productDataCache = new Map<string, Promise<ProductData>>();
 
@@ -249,13 +255,26 @@ export class SkroutzClient {
     productData: ProductData,
     userCity?: string,
   ): Promise<StoreAvailabilityData> {
-    const { cities: domCities, cityShopMap: domCityShopMap } = this.getStoreAvailabilityFromDom();
+    const {
+      cities: domCities,
+      cityShopMap: domCityShopMap,
+      hasExplicitNoStoreCitiesMessage,
+    } = this.getStoreAvailabilityFromDom();
     if (domCities.length > 0) {
       return {
         cities: domCities,
         userCity,
         matchingCities: this.getMatchingCities(domCities, userCity),
         cityShopMap: domCityShopMap,
+      };
+    }
+
+    if (hasExplicitNoStoreCitiesMessage) {
+      return {
+        cities: [],
+        userCity,
+        matchingCities: [],
+        cityShopMap: {},
       };
     }
 
@@ -318,10 +337,7 @@ export class SkroutzClient {
     return cityShopMap;
   }
 
-  private static getStoreAvailabilityFromDom(): {
-    cities: string[];
-    cityShopMap: Record<string, number[]>;
-  } {
+  private static getStoreAvailabilityFromDom(): DomStoreAvailability {
     const cityData = new Map<string, { displayCity: string; shopIds: number[] }>();
     const offerCards = Array.from(document.querySelectorAll('#prices .product-card-redesigned'));
 
@@ -367,10 +383,20 @@ export class SkroutzClient {
       sorted.map((e) => [e.displayCity, e.shopIds]),
     );
 
-    return { cities, cityShopMap };
+    return {
+      cities,
+      cityShopMap,
+      hasExplicitNoStoreCitiesMessage: this.hasExplicitNoStoreCitiesMessage(),
+    };
   }
 
   private static getUserCity(): string | undefined {
+    const drawerPrompt = document.querySelector('.blp-prompt p, .js-blp-prompt p');
+    const drawerPromptText = this.getPromptLocationText(drawerPrompt);
+    if (drawerPromptText) {
+      return drawerPromptText;
+    }
+
     const locationElement = document.querySelector(
       '.header-user-actions .country-picker-text.js-cp-link, .country-picker-text.js-cp-link',
     );
@@ -384,7 +410,60 @@ export class SkroutzClient {
       .replace(/\s+/g, ' ')
       .trim()
       .replace(/\s+\d{5}$/, '');
-    return sanitized || undefined;
+    if (!sanitized || this.isCountryOnlyLocation(sanitized)) {
+      return undefined;
+    }
+
+    return sanitized;
+  }
+
+  private static getPromptLocationText(element: Element | null): string | undefined {
+    if (!element) {
+      return undefined;
+    }
+
+    const directText = Array.from(element.childNodes)
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent ?? '')
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (directText) {
+      return directText;
+    }
+
+    const promptText = element.textContent?.replace(/\s+/g, ' ').trim();
+    if (!promptText) {
+      return undefined;
+    }
+
+    const city = promptText
+      .replace(/^(Υπολογισμός τιμών για:|Price calculation for:|Prices calculated for:)\s*/i, '')
+      .trim();
+
+    if (!city || this.isCountryOnlyLocation(city)) {
+      return undefined;
+    }
+
+    return city;
+  }
+
+  private static hasExplicitNoStoreCitiesMessage(): boolean {
+    const drawerRoot =
+      document.querySelector('#prices')?.closest('.bottom-drawer-content') ??
+      document.querySelector('.bottom-drawer-content');
+    const drawerText = drawerRoot?.textContent?.replace(/\s+/g, ' ').trim();
+
+    if (!drawerText) {
+      return false;
+    }
+
+    const normalizedText = this.normalizeLocation(drawerText);
+    return [
+      'Το προϊόν δεν έχει αυτή τη στιγμή διαθέσιμες πόλεις καταστημάτων.',
+      'This product does not currently have any store cities available.',
+    ].some((message) => normalizedText.includes(this.normalizeLocation(message)));
   }
 
   private static extractUniqueCities(stores: Store[]): string[] {
@@ -440,6 +519,11 @@ export class SkroutzClient {
       .replace(/\s+/g, ' ')
       .trim()
       .toLocaleLowerCase('el-GR');
+  }
+
+  private static isCountryOnlyLocation(value: string): boolean {
+    const normalizedValue = this.normalizeLocation(value);
+    return normalizedValue === 'ελλαδα' || normalizedValue === 'greece';
   }
 
   private static getSkroutzPriceData(productData: ProductData, skroutzRawPrice: number): PriceData {

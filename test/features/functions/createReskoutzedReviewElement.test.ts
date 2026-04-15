@@ -39,11 +39,10 @@ describe('createReskoutzedReviewElement', () => {
 
   it('should create a review element with correct classes', () => {
     const element = createReSkoutzedReviewElement(Language.ENGLISH);
-    const link = element.querySelector('a');
+    const link = element.querySelector<HTMLAnchorElement>('.own-promotion-review-link');
 
     expect(element.tagName).toBe('DIV');
     expect(link?.classList.contains('icon-border')).toBe(true);
-    expect(link?.classList.contains('font-bold')).toBe(true);
   });
 
   it('should create a link with Chrome store URL when not in Firefox', () => {
@@ -54,7 +53,10 @@ describe('createReskoutzedReviewElement', () => {
     });
 
     const element = createReSkoutzedReviewElement(Language.ENGLISH);
-    const link = element.querySelector('a');
+    const link = element.querySelector<HTMLAnchorElement>('.own-promotion-review-link');
+    const prefix = link?.querySelector('.own-promotion-review-prefix');
+    const highlightedBrand = link?.querySelector('strong');
+    const logo = link?.querySelector('.mock-logo');
 
     expect(link).not.toBeNull();
     expect(link?.href).toBe(
@@ -62,9 +64,9 @@ describe('createReskoutzedReviewElement', () => {
     );
     expect(link?.target).toBe('_blank');
     expect(link?.rel).toBe('noopener noreferrer');
-    expect(link?.textContent).toBe('By reSkroutzed — Leave a review');
-    expect(link?.classList.contains('icon-border')).toBe(true);
-    expect(link?.classList.contains('font-bold')).toBe(true);
+    expect(prefix?.textContent).toBe('By');
+    expect(highlightedBrand?.textContent).toBe('reSkroutzed');
+    expect(logo).not.toBeNull();
   });
 
   it('should create a link with Firefox store URL when in Firefox', () => {
@@ -74,13 +76,16 @@ describe('createReskoutzedReviewElement', () => {
     });
 
     const element = createReSkoutzedReviewElement(Language.ENGLISH);
-    const link = element.querySelector('a');
+    const link = element.querySelector<HTMLAnchorElement>('.own-promotion-review-link');
+    const prefix = link?.querySelector('.own-promotion-review-prefix');
+    const highlightedBrand = link?.querySelector('strong');
 
     expect(link).not.toBeNull();
     expect(link?.href).toBe('https://addons.mozilla.org/en-US/firefox/addon/reskroutzed/reviews/');
     expect(link?.target).toBe('_blank');
     expect(link?.rel).toBe('noopener noreferrer');
-    expect(link?.textContent).toBe('By reSkroutzed — Leave a review');
+    expect(prefix?.textContent).toBe('By');
+    expect(highlightedBrand?.textContent).toBe('reSkroutzed');
   });
 
   it('should create and append a logo element', () => {

@@ -40,10 +40,10 @@ vi.mock('../../src/features/functions/createReskoutzedReviewElement', () => ({
     row.className = 'store-availability-row';
 
     const left = document.createElement('div');
-    left.className = 'store-availability-left';
+    left.className = 'store-availability-left own-promotion-left';
 
     const right = document.createElement('div');
-    right.className = 'store-availability-right';
+    right.className = 'store-availability-right own-promotion-right';
 
     row.appendChild(left);
     row.appendChild(right);
@@ -371,9 +371,13 @@ describe('PriceCheckerDecorator', () => {
     await flushPromises();
 
     const comparisonText = document.querySelector('.bestprice-comparison-text');
+    const analysisRows = document.querySelectorAll('.analysis-metric-row');
+    const storeText = analysisRows[0];
 
-    expect(comparisonText?.textContent).toContain('54.99€');
-    expect(comparisonText?.textContent).toContain('(718.89€ - 663.90€)');
-    expect(comparisonText?.textContent).not.toContain('(667.00€ - 663.90€)');
+    expect(storeText?.textContent).toContain('Buying through "Store" is 51.89€ cheaper');
+    expect(storeText?.textContent).toContain('718.89€ - 667.00€');
+    expect(comparisonText?.textContent).toContain('Buying through "BestPrice" is 54.99€ cheaper');
+    expect(comparisonText?.textContent).toContain('718.89€ - 663.90€');
+    expect(comparisonText?.textContent).not.toContain('667.00€ - 663.90€');
   });
 });

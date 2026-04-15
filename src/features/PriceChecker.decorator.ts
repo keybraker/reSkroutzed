@@ -172,20 +172,20 @@ function createPromotionSkeletonElement(): HTMLDivElement {
     className: ['own-promotion', 'own-promotion-loading'],
   }) as HTMLDivElement;
   const row = DomClient.createElement('div', {
-    className: 'store-availability-row',
+    className: ['store-availability-row', 'own-promotion-row'],
   }) as HTMLDivElement;
   const left = DomClient.createElement('div', {
-    className: 'store-availability-left',
+    className: ['store-availability-left', 'own-promotion-left'],
   }) as HTMLDivElement;
   const right = DomClient.createElement('div', {
-    className: 'store-availability-right',
+    className: ['store-availability-right', 'own-promotion-right'],
   }) as HTMLDivElement;
 
-  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-circle']), left);
   DomClient.appendElementToElement(
     createSkeletonBlock(['price-checker-skeleton-review-copy']),
-    right,
+    left,
   );
+  DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-circle']), right);
 
   DomClient.appendElementToElement(left, row);
   DomClient.appendElementToElement(right, row);
@@ -209,6 +209,8 @@ function createPriceCheckerSkeleton(): HTMLDivElement {
   const contentContainer = DomClient.createElement('div', {
     className: 'inline-flex-col',
   }) as HTMLDivElement;
+  DomClient.appendElementToElement(createPromotionSkeletonElement(), priceIndication);
+
   const priceCalculationContainer = DomClient.createElement('div', {
     className: 'price-calculation-container',
   }) as HTMLDivElement;
@@ -231,7 +233,6 @@ function createPriceCheckerSkeleton(): HTMLDivElement {
   DomClient.appendElementToElement(contentContainer, priceIndication);
 
   DomClient.appendElementToElement(priceIndication, stack);
-  DomClient.appendElementToElement(createPromotionSkeletonElement(), stack);
 
   return stack;
 }
@@ -658,6 +659,54 @@ function createPriceComparisonBreakdownComponent(
   return transportationBreakdown;
 }
 
+function formatAnalysisPrice(value: number): string {
+  return `${value.toFixed(2)}€`;
+}
+
+function createAnalysisMetricRow(summary: string, details: string): HTMLDivElement {
+  const row = document.createElement('div');
+  row.className = 'analysis-metric-row';
+
+  const summaryElement = document.createElement('div');
+  summaryElement.className = 'analysis-metric-summary';
+  summaryElement.textContent = summary;
+
+  const detailsElement = document.createElement('span');
+  detailsElement.className = 'analysis-metric-details';
+  detailsElement.textContent = details;
+
+  row.appendChild(summaryElement);
+  row.appendChild(detailsElement);
+
+  return row;
+}
+
+function createComparisonSummary(
+  optionLabel: string,
+  skroutzTotal: number,
+  optionTotal: number,
+  language: Language,
+): string {
+  const difference = roundToZero(optionTotal - skroutzTotal);
+  const differenceAbsolute = Math.abs(difference).toFixed(2);
+
+  if (difference === 0) {
+    return language === Language.ENGLISH
+      ? `Buying through "${optionLabel}" has the same total price`
+      : `Με "${optionLabel}" έχει την ίδια τελική τιμή`;
+  }
+
+  if (difference < 0) {
+    return language === Language.ENGLISH
+      ? `Buying through "${optionLabel}" is ${differenceAbsolute}€ cheaper`
+      : `Με "${optionLabel}" είναι ${differenceAbsolute}€ φθηνότερο`;
+  }
+
+  return language === Language.ENGLISH
+    ? `Buying through "${optionLabel}" is ${differenceAbsolute}€ more expensive`
+    : `Με "${optionLabel}" είναι ${differenceAbsolute}€ ακριβότερο`;
+}
+
 function createCalculationComponent(
   productPriceData: ProductPriceData,
   minimumPriceDifference: number,
@@ -673,63 +722,38 @@ function createCalculationComponent(
   const differenceAbsolute = Math.abs(priceDifference);
   const base = productPriceData.buyThroughStore.totalPrice;
   const percentDiff = base > 0 ? (differenceAbsolute / base) * 100 : 0;
-  const buyingThroughSkroutz =
-    language === Language.ENGLISH
-      ? 'Buying through Skroutz is'
-      : 'Με "Aγορά μέσω Skroutz" είναι κατά';
-  const priceComparisonLead = document.createElement('div');
-  priceComparisonLead.className = 'calculation-lead';
-  priceComparisonLead.textContent = buyingThroughSkroutz;
+  const skroutzTotal = formatAnalysisPrice(productPriceData.buyThroughSkroutz.totalPrice);
+  const storeTotal = formatAnalysisPrice(productPriceData.buyThroughStore.totalPrice);
+  const storeLabel = language === Language.ENGLISH ? 'Store' : 'Αγορά μέσω καταστήματος';
 
   if (productPriceData.buyThroughSkroutz.shopId === productPriceData.buyThroughStore.shopId) {
-    calculationContainer.innerHTML = `${
+    const summary =
       language === Language.ENGLISH
         ? 'Both options are from the same shop'
-        : 'Και οι δύο επιλογές είναι από το ίδιο κατάστημα'
-    }`;
-  } else if (priceDifference === 0) {
-    calculationContainer.innerHTML = `${
-      language === Language.ENGLISH
-        ? 'There is no difference in price'
-        : 'Δεν υπάρχει διαφορά στην τιμή'
-    }`;
-  } else if (priceDifference <= 0) {
-    const cheaper = language === Language.ENGLISH ? 'cheaper' : 'φθηνότερο';
-    calculationContainer.appendChild(priceComparisonLead);
-    const priceDifferenceLine = document.createElement('div');
-    priceDifferenceLine.innerHTML = `<strong>${differenceAbsolute.toFixed(
-      2,
-    )}€ <u>${cheaper}</u></strong> (${productPriceData.buyThroughStore.totalPrice.toFixed(
-      2,
-    )}€ - ${productPriceData.buyThroughSkroutz.totalPrice.toFixed(2)}€)`;
-    calculationContainer.appendChild(priceDifferenceLine);
+        : 'Και οι δύο επιλογές είναι από το ίδιο κατάστημα';
+    calculationContainer.appendChild(
+      createAnalysisMetricRow(summary, `${skroutzTotal} - ${storeTotal}`),
+    );
   } else {
-    calculationContainer.classList.add('calculation-negative');
-    const moreExpensive = language === Language.ENGLISH ? 'more expensive' : 'ακριβότερο';
-    calculationContainer.appendChild(priceComparisonLead);
-    const priceDifferenceLine = document.createElement('div');
-    priceDifferenceLine.innerHTML = `<strong>${differenceAbsolute.toFixed(
-      2,
-    )}€ <u>${moreExpensive}</u></strong> (${productPriceData.buyThroughSkroutz.totalPrice.toFixed(
-      2,
-    )}€ - ${productPriceData.buyThroughStore.totalPrice.toFixed(2)}€)`;
-    calculationContainer.appendChild(priceDifferenceLine);
+    calculationContainer.appendChild(
+      createAnalysisMetricRow(
+        createComparisonSummary(
+          storeLabel,
+          productPriceData.buyThroughSkroutz.totalPrice,
+          productPriceData.buyThroughStore.totalPrice,
+          language,
+        ),
+        `${skroutzTotal} - ${storeTotal}`,
+      ),
+    );
   }
 
   if (minimumPriceDifference > 0) {
     const isBelow = percentDiff <= minimumPriceDifference;
     const message =
       language === Language.ENGLISH
-        ? `${
-            isBelow ? 'Below' : 'Exceeds'
-          } the minimum percentage difference threshold of ${minimumPriceDifference.toFixed(1)}% (Δ=${percentDiff.toFixed(
-            1,
-          )}%)`
-        : `${
-            isBelow ? 'Κάτω από' : 'Υπερβαίνει'
-          } την ελάχιστη ποσοστιαία διαφορά ${minimumPriceDifference.toFixed(1)}% (Δ=${percentDiff.toFixed(
-            1,
-          )}%)`;
+        ? `Threshold: ${isBelow ? 'below' : 'above'} ${minimumPriceDifference.toFixed(1)}% (Δ ${percentDiff.toFixed(1)}%)`
+        : `Όριο: ${isBelow ? 'κάτω από' : 'πάνω από'} ${minimumPriceDifference.toFixed(1)}% (Δ ${percentDiff.toFixed(1)}%)`;
 
     const span = document.createElement('span');
     span.className = 'minimum-price-difference-text';
@@ -739,40 +763,22 @@ function createCalculationComponent(
 
   if (bestPriceProductData) {
     const bestPriceTotal = bestPriceProductData.totalPrice ?? bestPriceProductData.price;
-    const bestPriceDifference = roundToZero(
-      productPriceData.buyThroughSkroutz.totalPrice - bestPriceTotal,
-    );
-    const bestPriceTotalsText = `(${productPriceData.buyThroughSkroutz.totalPrice.toFixed(
-      2,
-    )}€ - ${bestPriceTotal.toFixed(2)}€)`;
+    const bestPriceDetails = `${skroutzTotal} - ${formatAnalysisPrice(bestPriceTotal)}`;
 
-    const bestPriceComparison = document.createElement('span');
+    const bestPriceComparison = document.createElement('div');
     bestPriceComparison.className = 'bestprice-comparison-text';
 
-    if (bestPriceDifference === 0) {
-      bestPriceComparison.textContent =
-        language === Language.ENGLISH
-          ? `BestPrice has the same total price as this option ${bestPriceTotalsText}`
-          : `Το BestPrice έχει την ίδια συνολική τιμή ${bestPriceTotalsText}`;
-    } else if (bestPriceDifference > 0) {
-      bestPriceComparison.innerHTML =
-        language === Language.ENGLISH
-          ? `<strong>BestPrice</strong> is <strong>${bestPriceDifference.toFixed(
-              2,
-            )}€ cheaper</strong> than this option ${bestPriceTotalsText}`
-          : `Το <strong>BestPrice</strong> είναι <strong>${bestPriceDifference.toFixed(
-              2,
-            )}€ <u>φθηνότερο</u></strong> ${bestPriceTotalsText}`;
-    } else {
-      bestPriceComparison.innerHTML =
-        language === Language.ENGLISH
-          ? `<strong>BestPrice</strong> is <strong>${Math.abs(bestPriceDifference).toFixed(
-              2,
-            )}€ more expensive</strong> than this option ${bestPriceTotalsText}`
-          : `Το <strong>BestPrice</strong> είναι <strong>${Math.abs(bestPriceDifference).toFixed(
-              2,
-            )}€ <u>ακριβότερο</u></strong> ${bestPriceTotalsText}`;
-    }
+    bestPriceComparison.appendChild(
+      createAnalysisMetricRow(
+        createComparisonSummary(
+          'BestPrice',
+          productPriceData.buyThroughSkroutz.totalPrice,
+          bestPriceTotal,
+          language,
+        ),
+        bestPriceDetails,
+      ),
+    );
 
     DomClient.appendElementToElement(bestPriceComparison, calculationContainer);
   }
@@ -940,6 +946,14 @@ function createPriceIndicationElement(
 
     DomClient.appendElementToElement(tagsContainer, priceIndication);
 
+    const reSkroutzedReview = createReSkoutzedReviewElement(language);
+    const buyMeCoffeeElement = createBuyMeCoffeeElement();
+    const actionPlaceholder = reSkroutzedReview.querySelector('.own-promotion-right');
+    if (actionPlaceholder) {
+      actionPlaceholder.appendChild(buyMeCoffeeElement);
+    }
+    DomClient.appendElementToElement(reSkroutzedReview, priceIndication);
+
     const contentContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
     const priceCalculationContainer = DomClient.createElement('div', {
       className: 'price-calculation-container',
@@ -1014,19 +1028,7 @@ function createPriceIndicationElement(
         : 'Από το reSkroutzed, Αφήστε μια κριτική';
     DomClient.appendElementToElement(contentContainer, priceIndication);
 
-    // Compose stack: price card -> availability -> review/coffee promo
-    const reSkroutzedReview = createReSkoutzedReviewElement(language);
-    // append buy-me-coffee into the left area of the promo
-    const buyMeCoffeeElement = createBuyMeCoffeeElement();
-    const leftPlaceholder = reSkroutzedReview.querySelector('.store-availability-left');
-    if (leftPlaceholder) {
-      leftPlaceholder.appendChild(buyMeCoffeeElement);
-    }
-
-    // price card first
     DomClient.appendElementToElement(priceIndication, priceCheckerStack);
-    // finally the review + coffee promo so it appears below the main card
-    DomClient.appendElementToElement(reSkroutzedReview, priceCheckerStack);
 
     return priceCheckerStack;
   } catch (err) {
@@ -1342,7 +1344,6 @@ export class PriceCheckerDecorator implements FeatureInstance {
         (shippingText as HTMLDivElement).style.width = '100%';
         (shippingText as HTMLDivElement).style.flexBasis = '100%';
         (shippingText as HTMLDivElement).style.whiteSpace = 'nowrap';
-
         (finalPrice as HTMLElement).style.flexWrap = 'wrap';
         (finalPrice as HTMLElement).style.alignItems = 'flex-start';
         (finalPrice as Element).appendChild(shippingText);
