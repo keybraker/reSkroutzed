@@ -243,11 +243,9 @@ describe('PriceCheckerDecorator', () => {
       'This product is available in your city, Athens.',
     );
     expect(document.querySelector('.store-availability-shops-summary')?.textContent).toContain(
-      'You can get this directly in Athens, Patras.',
+      'You can get this directly from Athens, Heraklion (1, 2), Patras.',
     );
-    expect(document.querySelector('.store-availability-summary')?.textContent).toContain(
-      'You can order this right away from 3 shops: Athens, Patras, Heraklion (1, 2).',
-    );
+    expect(document.querySelector('.store-availability-summary')).toBeNull();
     expect(document.querySelector('.store-availability-online-summary')).toBeNull();
 
     bestPriceDeferred.resolve(mockBestPriceData);

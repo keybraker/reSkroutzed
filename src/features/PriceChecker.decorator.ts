@@ -894,52 +894,36 @@ function createStoreAvailabilityElement(
 
   DomClient.appendElementToElement(availabilityStatus, availabilityContainer);
 
-  if (availability.cities.length > 0) {
+  if (availability.cities.length > 0 || availability.orderCities.length > 0) {
+    const allCitiesMap = new Map<string, number[]>();
+    [...availability.cities, ...availability.orderCities].forEach((city) => {
+      const pickupShops = availability.cityShopMap?.[city] ?? [];
+      const orderShops = availability.orderCityShopMap?.[city] ?? [];
+      const mergedShops = Array.from(new Set([...pickupShops, ...orderShops]));
+      allCitiesMap.set(city, mergedShops);
+    });
+
+    const allCities = Array.from(allCitiesMap.keys()).sort((a, b) => a.localeCompare(b, 'el'));
+
     const shopsSummary = document.createElement('p');
     shopsSummary.className = 'store-availability-shops-summary';
     const prefix =
       language === Language.ENGLISH
-        ? 'You can get this directly in '
-        : 'Μπορείς να το παραλάβεις απευθείας σε ';
+        ? 'You can get this directly from '
+        : 'Μπορείς να το παραλάβεις απευθείας από ';
     shopsSummary.appendChild(document.createTextNode(prefix));
 
-    availability.cities.forEach((city, index) => {
+    allCities.forEach((city, index) => {
       if (index > 0) {
         shopsSummary.appendChild(document.createTextNode(', '));
       }
-      const shopIds = availability.cityShopMap?.[city] ?? [];
+      const shopIds = allCitiesMap.get(city) ?? [];
       shopsSummary.appendChild(createCityElement(city, shopIds));
     });
 
     shopsSummary.appendChild(document.createTextNode('.'));
     DomClient.appendElementToElement(shopsSummary, availabilityContainer);
   }
-
-  const citiesSummary = document.createElement('p');
-  citiesSummary.className = 'store-availability-summary';
-
-  const orderSummaryPrefix =
-    language === Language.ENGLISH
-      ? `You can order this right away from ${availability.availableShopCount} shops`
-      : `Μπορείς να το παραγγείλεις άμεσα από ${availability.availableShopCount} καταστήματα`;
-
-  citiesSummary.appendChild(document.createTextNode(orderSummaryPrefix));
-
-  if (availability.orderCities.length > 0) {
-    citiesSummary.appendChild(document.createTextNode(': '));
-
-    availability.orderCities.forEach((city, index) => {
-      if (index > 0) {
-        citiesSummary.appendChild(document.createTextNode(', '));
-      }
-      const shopIds = availability.orderCityShopMap?.[city] ?? [];
-      citiesSummary.appendChild(createCityElement(city, shopIds));
-    });
-  }
-
-  citiesSummary.appendChild(document.createTextNode('.'));
-
-  DomClient.appendElementToElement(citiesSummary, availabilityContainer);
 
   return availabilityContainer;
 }

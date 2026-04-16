@@ -1,8 +1,8 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\features\functions\createBuyMeCoffeeElement.test.ts
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createBuyMeCoffeeElement } from '../../../src/features/functions/createBuyMeCoffeeElement';
 import { DomClient } from '../../../src/clients/dom/client';
+import { createBuyMeCoffeeElement } from '../../../src/features/functions/createBuyMeCoffeeElement';
 
 // Mock dependencies
 vi.mock('../../../src/clients/dom/client');
@@ -52,15 +52,17 @@ describe('createBuyMeCoffeeElement', () => {
   it('should append the coffee icon to the link', () => {
     createBuyMeCoffeeElement();
 
-    // First call to appendElementToElement should be appending the coffee icon to the link
-    expect(DomClient.appendElementToElement).toHaveBeenCalledTimes(2);
+    // The calls to appendElementToElement are:
+    // 1. coffeeLabel -> buyMeCoffeeLink
+    // 2. coffeeIcon -> buyMeCoffeeLink
+    // 3. buyMeCoffeeLink -> buyMeCoffeeElement
+    expect(DomClient.appendElementToElement).toHaveBeenCalledTimes(3);
     expect(DomClient.appendElementToElement).toHaveBeenNthCalledWith(
-      1,
+      2,
       expect.objectContaining({
         classList: expect.objectContaining({
           contains: expect.any(Function),
         }),
-        innerHTML: '☕',
       }),
       expect.any(HTMLAnchorElement),
     );
@@ -69,9 +71,9 @@ describe('createBuyMeCoffeeElement', () => {
   it('should append the link to the main element', () => {
     const element = createBuyMeCoffeeElement();
 
-    // Second call to appendElementToElement should be appending the link to the main element
+    // Third call to appendElementToElement should be appending the link to the main element
     expect(DomClient.appendElementToElement).toHaveBeenNthCalledWith(
-      2,
+      3,
       expect.any(HTMLAnchorElement),
       element,
     );

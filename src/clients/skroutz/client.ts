@@ -322,29 +322,103 @@ export class SkroutzClient {
 
     try {
       const stores = await this.getStoreData(storeIds);
-      const cities = this.extractUniqueCities(stores);
-      const cityShopMap = this.buildCityShopMapFromApi(stores, storeIds);
+      const apiCities = this.extractUniqueCities(stores);
+      const apiCityShopMap = this.buildCityShopMapFromApi(stores, storeIds);
       const onlineOnlyShopCount = this.getOnlineOnlyShopCount(stores, storeIds.length);
 
-      if (cities.length === 0 && domOrderCities.length === 0) {
+      let finalCities = domCities;
+      let finalCityShopMap = domCityShopMap;
+
+      let finalOrderCities = apiCities.filter(
+        (c) => !domCities.some((dc) => this.normalizeLocation(dc) === this.normalizeLocation(c)),
+      );
+
+      let finalOrderCityShopMap = Object.fromEntries(
+        Object.entries(apiCityShopMap).filter(
+          ([c]) =>
+            !domCities.some((dc) => this.normalizeLocation(dc) === this.normalizeLocation(c)),
+        ),
+      );
+
+      let finalOnlineCount = onlineOnlyShopCount;
+      const hasNoDomLocationData = domCities.length === 0 && domOrderCities.length === 0;
+      const initialDistinctCityCount = new Set(
+        [...domCities, ...apiCities].map((city) => this.normalizeLocation(city)),
+      ).size;
+      const shouldFetchRefreshShow =
+        hasNoDomLocationData ||
+        apiCities.length === 0 ||
+        finalOnlineCount > 0 ||
+        (storeIds.length > 1 && initialDistinctCityCount <= 1);
+
+      if (shouldFetchRefreshShow) {
+        // If API did not return cities, or if it missed some shops (online only count > 0),
+        // try to use the DOM buybox as a fallback.
+        if (apiCities.length === 0 && domOrderCities.length > 0) {
+          finalCities = domCities;
+          finalCityShopMap = domCityShopMap;
+          finalOrderCities = domOrderCities;
+          finalOrderCityShopMap = domOrderCityShopMap;
+          finalOnlineCount = Math.max(storeIds.length - this.countMappedShops(domCityShopMap), 0);
+        }
+
+        // Try fetching refresh_show to get the entire drawer HTML and its full location list.
         try {
           const refreshShowDocument = await this.getRefreshShowDocument(productCode);
           const refreshShowAvailability = this.getStoreAvailabilityFromDom(refreshShowDocument);
 
-          if (refreshShowAvailability.orderCities.length > 0) {
-            return {
-              availableShopCount: storeIds.length,
-              cities: refreshShowAvailability.cities,
-              userCity,
-              matchingCities: this.getMatchingCities(refreshShowAvailability.cities, userCity),
-              cityShopMap: refreshShowAvailability.cityShopMap,
-              orderCities: refreshShowAvailability.orderCities,
-              orderCityShopMap: refreshShowAvailability.orderCityShopMap,
-              onlineOnlyShopCount: Math.max(
-                storeIds.length - this.countMappedShops(refreshShowAvailability.cityShopMap),
-                0,
-              ),
-            };
+          if (
+            refreshShowAvailability.cities.length > 0 ||
+            refreshShowAvailability.orderCities.length > 0
+          ) {
+            // Merge refreshShow data with whatever we already collected
+            [...refreshShowAvailability.cities, ...refreshShowAvailability.orderCities].forEach(
+              (city) => {
+                const pShops = refreshShowAvailability.cityShopMap[city] || [];
+                const oShops = refreshShowAvailability.orderCityShopMap[city] || [];
+                const norm = this.normalizeLocation(city);
+
+                // Add to pickup
+                if (pShops.length > 0) {
+                  if (!finalCities.find((c) => this.normalizeLocation(c) === norm)) {
+                    finalCities.push(city);
+                    finalCityShopMap[city] = [];
+                  }
+                  const existingCity = finalCities.find((c) => this.normalizeLocation(c) === norm)!;
+                  const set = new Set([...(finalCityShopMap[existingCity] || []), ...pShops]);
+                  finalCityShopMap[existingCity] = Array.from(set);
+                }
+
+                // Add to order
+                if (oShops.length > 0) {
+                  // Only add to orderCities if it's not already in pickup cities (mutually exclusive requirement)
+                  if (!finalCities.find((c) => this.normalizeLocation(c) === norm)) {
+                    if (!finalOrderCities.find((c) => this.normalizeLocation(c) === norm)) {
+                      finalOrderCities.push(city);
+                      finalOrderCityShopMap[city] = [];
+                    }
+                    const existingOrderCity = finalOrderCities.find(
+                      (c) => this.normalizeLocation(c) === norm,
+                    )!;
+                    const set2 = new Set([
+                      ...(finalOrderCityShopMap[existingOrderCity] || []),
+                      ...oShops,
+                    ]);
+                    finalOrderCityShopMap[existingOrderCity] = Array.from(set2);
+                  }
+                }
+              },
+            );
+
+            // Recalculate online count after merge
+            const allMappedIds = new Set<number>();
+            Object.values(finalCityShopMap)
+              .flat()
+              .forEach((id) => allMappedIds.add(id));
+            Object.values(finalOrderCityShopMap)
+              .flat()
+              .forEach((id) => allMappedIds.add(id));
+            finalOnlineCount = Math.max(storeIds.length - allMappedIds.size, 0);
           }
         } catch (refreshShowError) {
           console.warn('Failed to fetch refresh_show store availability data:', refreshShowError);
@@ -353,13 +427,13 @@ export class SkroutzClient {
 
       return {
         availableShopCount: storeIds.length,
-        cities,
+        cities: finalCities,
         userCity,
-        matchingCities: this.getMatchingCities(cities, userCity),
-        cityShopMap,
-        orderCities: cities,
-        orderCityShopMap: cityShopMap,
-        onlineOnlyShopCount,
+        matchingCities: this.getMatchingCities(finalCities, userCity),
+        cityShopMap: finalCityShopMap,
+        orderCities: finalOrderCities,
+        orderCityShopMap: finalOrderCityShopMap,
+        onlineOnlyShopCount: finalOnlineCount,
       };
     } catch (error) {
       console.warn('Failed to fetch store availability data:', error);
@@ -465,44 +539,44 @@ export class SkroutzClient {
   private static getStoreAvailabilityFromDom(root: ParentNode = document): DomStoreAvailability {
     const pickupCityData = new Map<string, { displayCity: string; shopIds: number[] }>();
     const orderCityData = new Map<string, { displayCity: string; shopIds: number[] }>();
+    const processedNodes = new Set<Element>();
 
-    // Scan all .merchant-box-bottom-content elements on the page.
-    // On page load these are present inside the buybox area; when the stores drawer
-    // is open they are also present inside the bottom-drawer, so this handles both cases.
-    const merchantContents = Array.from(root.querySelectorAll('.merchant-box-bottom-content'));
+    // Scan all possible product card containers on the page/drawer.
+    const contentNodes = Array.from(
+      root.querySelectorAll(
+        '.merchant-box-bottom, .merchant-box-bottom-content, .product-card-redesigned, .offering-card, .price-card',
+      ),
+    );
 
-    merchantContents.forEach((content) => {
-      const locationText = content.querySelector('.location span')?.textContent?.trim();
-      const city = this.extractCityFromLocation(locationText);
-      if (!city) {
+    contentNodes.forEach((content) => {
+      this.collectStoreAvailabilityFromNode(content, pickupCityData, orderCityData, processedNodes);
+    });
+
+    // Some live layouts expose location rows directly under outer merchant containers.
+    // Scan the location nodes too so we do not depend on a single inner wrapper shape.
+    Array.from(root.querySelectorAll('.location')).forEach((locationElement) => {
+      const container = locationElement.closest(
+        '.merchant-box-bottom, .merchant-box-bottom-content, .product-card-redesigned, .offering-card, .price-card',
+      );
+      if (!container) {
         return;
       }
 
-      const normalizedCity = this.normalizeLocation(city);
-
-      // Extract shop ID from the storefront link href: /shop/{id}/...
-      // This link is present in both buybox and drawer card layouts.
-      const href = content.querySelector('.storefront-link')?.getAttribute('href') ?? '';
-      const shopIds: number[] = [];
-      const shopIdMatch = href.match(/\/shop\/(\d+)\//);
-      if (shopIdMatch) {
-        shopIds.push(parseInt(shopIdMatch[1], 10));
-      }
-
-      this.addCityDataEntry(orderCityData, normalizedCity, city, shopIds);
-
-      const hasStorePickup = !!content.querySelector('.store-pickup');
-      if (hasStorePickup) {
-        this.addCityDataEntry(pickupCityData, normalizedCity, city, shopIds);
-      }
+      this.collectStoreAvailabilityFromNode(
+        container,
+        pickupCityData,
+        orderCityData,
+        processedNodes,
+      );
     });
 
     const sortedPickup = Array.from(pickupCityData.values()).sort((a, b) =>
       a.displayCity.localeCompare(b.displayCity, 'el'),
     );
-    const sortedOrder = Array.from(orderCityData.values()).sort((a, b) =>
-      a.displayCity.localeCompare(b.displayCity, 'el'),
-    );
+    const sortedOrder = Array.from(orderCityData.entries())
+      .filter(([normalizedCity]) => !pickupCityData.has(normalizedCity))
+      .map(([_, e]) => e)
+      .sort((a, b) => a.displayCity.localeCompare(b.displayCity, 'el'));
 
     const cities = sortedPickup.map((e) => e.displayCity);
     const cityShopMap: Record<string, number[]> = Object.fromEntries(
@@ -520,6 +594,45 @@ export class SkroutzClient {
       orderCityShopMap,
       hasExplicitNoStoreCitiesMessage: this.hasExplicitNoStoreCitiesMessage(root),
     };
+  }
+
+  private static collectStoreAvailabilityFromNode(
+    content: Element,
+    pickupCityData: Map<string, { displayCity: string; shopIds: number[] }>,
+    orderCityData: Map<string, { displayCity: string; shopIds: number[] }>,
+    processedNodes: Set<Element>,
+  ): void {
+    if (processedNodes.has(content)) {
+      return;
+    }
+
+    const locationText = content.querySelector('.location')?.textContent?.trim();
+    const city = this.extractCityFromLocation(locationText);
+    if (!city) {
+      return;
+    }
+
+    processedNodes.add(content);
+
+    const normalizedCity = this.normalizeLocation(city);
+
+    let href = content.querySelector('.storefront-link')?.getAttribute('href');
+    if (!href) {
+      href = content.querySelector('a[href*="/shop/"]')?.getAttribute('href') ?? '';
+    }
+
+    const shopIds: number[] = [];
+    const shopIdMatch = href.match(/\/shop\/(\d+)\//);
+    if (shopIdMatch) {
+      shopIds.push(parseInt(shopIdMatch[1], 10));
+    }
+
+    this.addCityDataEntry(orderCityData, normalizedCity, city, shopIds);
+
+    const hasStorePickup = !!content.querySelector('.store-pickup, .stock');
+    if (hasStorePickup) {
+      this.addCityDataEntry(pickupCityData, normalizedCity, city, shopIds);
+    }
   }
 
   private static addCityDataEntry(

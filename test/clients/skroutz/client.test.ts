@@ -292,13 +292,12 @@ describe('SkroutzClient', () => {
 
       expect(result.storeAvailability).toEqual({
         availableShopCount: 3,
-        cities: ['Αθήνα', 'Ηράκλειο', 'Πάτρα'],
+        cities: ['Θεσσαλονίκη', 'Μαρούσι'],
         userCity: undefined,
         matchingCities: [],
         cityShopMap: {
-          Αθήνα: [101],
-          Ηράκλειο: [102],
-          Πάτρα: [103],
+          Θεσσαλονίκη: [101],
+          Μαρούσι: [102],
         },
         orderCities: ['Αθήνα', 'Ηράκλειο', 'Πάτρα'],
         orderCityShopMap: {
@@ -388,18 +387,15 @@ describe('SkroutzClient', () => {
 
       expect(result.storeAvailability).toEqual({
         availableShopCount: 3,
-        cities: ['Αθήνα', 'Ηράκλειο', 'Πάτρα'],
+        cities: ['Αθήνα', 'Ηράκλειο'],
         userCity: 'Ηρακλειο Κρήτης',
         matchingCities: ['Ηράκλειο'],
         cityShopMap: {
-          Αθήνα: [101],
-          Ηράκλειο: [102],
-          Πάτρα: [103],
+          Αθήνα: [102],
+          Ηράκλειο: [101],
         },
-        orderCities: ['Αθήνα', 'Ηράκλειο', 'Πάτρα'],
+        orderCities: ['Πάτρα'],
         orderCityShopMap: {
-          Αθήνα: [101],
-          Ηράκλειο: [102],
           Πάτρα: [103],
         },
         onlineOnlyShopCount: 0,
@@ -505,9 +501,8 @@ describe('SkroutzClient', () => {
         cityShopMap: {
           Αχαρνές: [102],
         },
-        orderCities: ['Αχαρνές', 'Θεσσαλονίκη'],
+        orderCities: ['Θεσσαλονίκη'],
         orderCityShopMap: {
-          Αχαρνές: [102],
           Θεσσαλονίκη: [],
         },
         onlineOnlyShopCount: 2,
@@ -652,14 +647,423 @@ describe('SkroutzClient', () => {
         cityShopMap: {
           Αθήνα: [101],
         },
-        orderCities: ['Αθήνα', 'Πάτρα'],
+        orderCities: ['Πάτρα'],
         orderCityShopMap: {
-          Αθήνα: [101],
           Πάτρα: [102],
         },
-        onlineOnlyShopCount: 2,
+        onlineOnlyShopCount: 1,
       });
       expect(fetch).toHaveBeenCalledWith('/s/12345678/refresh_show', expect.any(Object));
+    });
+
+    it('should fetch refresh_show on initial load when the DOM has no locations yet', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <div data-sku-page--index-refresh-show-url-value="/s/12345678/refresh_show"></div>
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+      `;
+
+      global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+        const url = String(input);
+
+        if (url.includes('filter_products.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue(mockProductData),
+          });
+        }
+
+        if (url.includes('product_cards_nearest_location.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue([
+              {
+                stores_count: 3,
+                store_location_id: 10,
+                store_location_address: {
+                  city: 'Γλυφάδα',
+                  country: 'GR',
+                  region: 'Αττική',
+                  street: '',
+                  postcode: '',
+                  full: 'Γλυφάδα, Αττική',
+                },
+                display_full_store_address: false,
+                show_added_delay_message: false,
+              },
+              {
+                stores_count: 3,
+                store_location_id: 11,
+                store_location_address: {
+                  city: 'Γλυφάδα',
+                  country: 'GR',
+                  region: 'Αττική',
+                  street: '',
+                  postcode: '',
+                  full: 'Γλυφάδα, Αττική',
+                },
+                display_full_store_address: false,
+                show_added_delay_message: false,
+              },
+              {
+                stores_count: 3,
+                store_location_id: 12,
+                store_location_address: {
+                  city: 'Γλυφάδα',
+                  country: 'GR',
+                  region: 'Αττική',
+                  street: '',
+                  postcode: '',
+                  full: 'Γλυφάδα, Αττική',
+                },
+                display_full_store_address: false,
+                show_added_delay_message: false,
+              },
+            ]),
+          });
+        }
+
+        if (url.includes('refresh_show')) {
+          return Promise.resolve({
+            ok: true,
+            text: vi.fn().mockResolvedValue(`
+              <div class="product-cards-drawer-wrapper">
+                <div class="bottom-drawer open side-bar right product-cards-drawer">
+                  <div class="bottom-drawer-content">
+                    <div class="bottom-drawer-body">
+                      <ol id="prices" class="sku-list">
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Γλυφάδα, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/101/ShopA/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/102/ShopB/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Πάτρα, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/103/ShopC/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `),
+          });
+        }
+
+        return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+      }) as unknown as typeof global.fetch;
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability.cities).toEqual(['Γλυφάδα', 'Θεσσαλονίκη', 'Πάτρα']);
+      expect(fetch).toHaveBeenCalledWith('/s/12345678/refresh_show', expect.any(Object));
+    });
+
+    it('should merge all pickup-only cities from refresh_show when API returns only nearest location', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <div data-sku-page--index-refresh-show-url-value="/s/12345678/refresh_show"></div>
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+        <div class="merchant-box-bottom-content">
+          <div class="location"><span>Γλυφάδα, Ελλάδα</span></div>
+          <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+          <a class="storefront-link" href="/shop/201/ShopA/products.html?from=sku_page">Link</a>
+        </div>
+      `;
+
+      global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+        const url = String(input);
+
+        if (url.includes('filter_products.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue(mockProductData),
+          });
+        }
+
+        if (url.includes('product_cards_nearest_location.json')) {
+          // API returns only 1 nearest entry out of 3 stores
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue([
+              {
+                stores_count: 1,
+                store_location_id: 10,
+                store_location_address: {
+                  city: 'Γλυφάδα',
+                  country: 'GR',
+                  region: 'Αττική',
+                  street: '',
+                  postcode: '',
+                  full: 'Γλυφάδα, Αττική',
+                },
+                display_full_store_address: false,
+                show_added_delay_message: false,
+              },
+            ]),
+          });
+        }
+
+        if (url.includes('refresh_show')) {
+          // Drawer has 3 stores ALL with store-pickup
+          return Promise.resolve({
+            ok: true,
+            text: vi.fn().mockResolvedValue(`
+              <div class="product-cards-drawer-wrapper">
+                <div class="bottom-drawer open side-bar right product-cards-drawer">
+                  <div class="bottom-drawer-content">
+                    <div class="bottom-drawer-body">
+                      <ol id="prices" class="sku-list">
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Γλυφάδα, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/201/ShopA/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/202/ShopB/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Πάτρα, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/203/ShopC/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `),
+          });
+        }
+
+        return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+      }) as unknown as typeof global.fetch;
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability.cities).toContain('Γλυφάδα');
+      expect(result.storeAvailability.cities).toContain('Θεσσαλονίκη');
+      expect(result.storeAvailability.cities).toContain('Πάτρα');
+      expect(result.storeAvailability.cities).toHaveLength(3);
+      expect(result.storeAvailability.cityShopMap['Γλυφάδα']).toContain(201);
+      expect(result.storeAvailability.cityShopMap['Θεσσαλονίκη']).toContain(202);
+      expect(result.storeAvailability.cityShopMap['Πάτρα']).toContain(203);
+      expect(fetch).toHaveBeenCalledWith('/s/12345678/refresh_show', expect.any(Object));
+    });
+
+    it('should fetch refresh_show when the API collapses multiple shops into one city', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <div data-sku-page--index-refresh-show-url-value="/s/12345678/refresh_show"></div>
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+        <div class="merchant-box-bottom-content">
+          <div class="location"><span>Γλυφάδα, Ελλάδα</span></div>
+          <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+          <a class="storefront-link" href="/shop/101/ShopA/products.html?from=sku_page">Link</a>
+        </div>
+      `;
+
+      global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+        const url = String(input);
+
+        if (url.includes('filter_products.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue(mockProductData),
+          });
+        }
+
+        if (url.includes('product_cards_nearest_location.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue([
+              {
+                stores_count: 3,
+                store_location_id: 10,
+                store_location_address: {
+                  city: 'Γλυφάδα',
+                  country: 'GR',
+                  region: 'Αττική',
+                  street: '',
+                  postcode: '',
+                  full: 'Γλυφάδα, Αττική',
+                },
+                display_full_store_address: false,
+                show_added_delay_message: false,
+              },
+              {
+                stores_count: 3,
+                store_location_id: 11,
+                store_location_address: {
+                  city: 'Γλυφάδα',
+                  country: 'GR',
+                  region: 'Αττική',
+                  street: '',
+                  postcode: '',
+                  full: 'Γλυφάδα, Αττική',
+                },
+                display_full_store_address: false,
+                show_added_delay_message: false,
+              },
+              {
+                stores_count: 3,
+                store_location_id: 12,
+                store_location_address: {
+                  city: 'Γλυφάδα',
+                  country: 'GR',
+                  region: 'Αττική',
+                  street: '',
+                  postcode: '',
+                  full: 'Γλυφάδα, Αττική',
+                },
+                display_full_store_address: false,
+                show_added_delay_message: false,
+              },
+            ]),
+          });
+        }
+
+        if (url.includes('refresh_show')) {
+          return Promise.resolve({
+            ok: true,
+            text: vi.fn().mockResolvedValue(`
+              <div class="product-cards-drawer-wrapper">
+                <div class="bottom-drawer open side-bar right product-cards-drawer">
+                  <div class="bottom-drawer-content">
+                    <div class="bottom-drawer-body">
+                      <ol id="prices" class="sku-list">
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Γλυφάδα, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/101/ShopA/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/102/ShopB/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Πάτρα, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/103/ShopC/products.html?from=sku_page">Link</a>
+                          </div>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `),
+          });
+        }
+
+        return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+      }) as unknown as typeof global.fetch;
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability.cities).toEqual(['Γλυφάδα', 'Θεσσαλονίκη', 'Πάτρα']);
+      expect(result.storeAvailability.cityShopMap).toEqual({
+        Γλυφάδα: [101],
+        Θεσσαλονίκη: [102],
+        Πάτρα: [103],
+      });
+      expect(result.storeAvailability.onlineOnlyShopCount).toBe(0);
+      expect(fetch).toHaveBeenCalledWith('/s/12345678/refresh_show', expect.any(Object));
+    });
+
+    it('should parse all locations from merchant-box-bottom rows with stock indicators', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+        <div class="merchant-box-bottom expanded">
+          <div class="rating-info"><span>4,7</span></div>
+          <div class="location"><span>Καλλιθέα, Ελλάδα</span></div>
+          <div class="stock"><span>2 τεμάχια</span></div>
+          <a href="/shop/2164/Techstores/products.html?from=sku_page" class="storefront-link"><span>Δες όλα τα προϊόντα του καταστήματος</span></a>
+        </div>
+        <div class="merchant-box-bottom expanded">
+          <div class="rating-info"><span>4,6</span></div>
+          <div class="location"><span>Πειραιάς, Ελλάδα</span></div>
+          <div class="stock"><span>1 τεμάχιο</span></div>
+          <a href="/shop/2165/Shop2/products.html?from=sku_page" class="storefront-link"><span>Δες όλα τα προϊόντα του καταστήματος</span></a>
+        </div>
+        <div class="merchant-box-bottom expanded">
+          <div class="rating-info"><span>4,9</span></div>
+          <div class="location"><span>Αθήνα, Ελλάδα</span></div>
+          <div class="stock"><span>3 τεμάχια</span></div>
+          <a href="/shop/2166/Shop3/products.html?from=sku_page" class="storefront-link"><span>Δες όλα τα προϊόντα του καταστήματος</span></a>
+        </div>
+      `;
+
+      global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+        const url = String(input);
+
+        if (url.includes('filter_products.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue(mockProductData),
+          });
+        }
+
+        if (url.includes('product_cards_nearest_location.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue([]),
+          });
+        }
+
+        if (url.includes('refresh_show')) {
+          return Promise.resolve({
+            ok: true,
+            text: vi.fn().mockResolvedValue(document.body.innerHTML),
+          });
+        }
+
+        return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+      }) as unknown as typeof global.fetch;
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability.cities).toEqual(['Αθήνα', 'Καλλιθέα', 'Πειραιάς']);
+      expect(result.storeAvailability.cityShopMap).toEqual({
+        Αθήνα: [2166],
+        Καλλιθέα: [2164],
+        Πειραιάς: [2165],
+      });
     });
 
     it('should throw an error if SKU meta tag is missing', async () => {
