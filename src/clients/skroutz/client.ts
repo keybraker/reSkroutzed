@@ -9,10 +9,14 @@ type PriceData = {
 };
 
 export type StoreAvailabilityData = {
+  availableShopCount: number;
   cities: string[];
   userCity?: string;
   matchingCities: string[];
   cityShopMap: Record<string, number[]>;
+  orderCities: string[];
+  orderCityShopMap: Record<string, number[]>;
+  onlineOnlyShopCount: number;
 };
 
 export type ProductPriceData = {
@@ -31,6 +35,8 @@ export type ProductPriceHistory = {
 type DomStoreAvailability = {
   cities: string[];
   cityShopMap: Record<string, number[]>;
+  orderCities: string[];
+  orderCityShopMap: Record<string, number[]>;
   hasExplicitNoStoreCitiesMessage: boolean;
 };
 
@@ -248,50 +254,69 @@ export class SkroutzClient {
       );
     }
 
-    return (await response.json()) as Store[];
+    return this.normalizeStoreResponse(await response.json());
+  }
+
+  private static async getRefreshShowDocument(productCode: string): Promise<Document> {
+    const configuredPath = document
+      .querySelector('[data-sku-page--index-refresh-show-url-value]')
+      ?.getAttribute('data-sku-page--index-refresh-show-url-value');
+    const refreshShowPath = configuredPath?.trim() || `/s/${productCode}/refresh_show`;
+
+    const response = await fetch(refreshShowPath, {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch (HTTP: ${response.status}) refresh_show data for product with SKU ${productCode}`,
+      );
+    }
+
+    const html = await response.text();
+    return new DOMParser().parseFromString(html, 'text/html');
   }
 
   private static async getStoreAvailability(
     productData: ProductData,
     userCity?: string,
   ): Promise<StoreAvailabilityData> {
+    const productCode = this.getSku();
+    const storeIds = this.getUniqueShopIds(productData);
     const {
       cities: domCities,
       cityShopMap: domCityShopMap,
+      orderCities: domOrderCities,
+      orderCityShopMap: domOrderCityShopMap,
       hasExplicitNoStoreCitiesMessage,
     } = this.getStoreAvailabilityFromDom();
-    if (domCities.length > 0) {
+
+    if (storeIds.length === 0) {
       return {
-        cities: domCities,
+        availableShopCount: 0,
+        cities: [],
         userCity,
-        matchingCities: this.getMatchingCities(domCities, userCity),
-        cityShopMap: domCityShopMap,
+        matchingCities: [],
+        cityShopMap: {},
+        orderCities: [],
+        orderCityShopMap: {},
+        onlineOnlyShopCount: 0,
       };
     }
 
     if (hasExplicitNoStoreCitiesMessage) {
       return {
+        availableShopCount: storeIds.length,
         cities: [],
         userCity,
         matchingCities: [],
         cityShopMap: {},
-      };
-    }
-
-    const storeIds = Array.from(
-      new Set(
-        Object.values(productData.product_cards)
-          .map((card) => card.shop_id)
-          .filter((id) => id > 0),
-      ),
-    ).sort((left, right) => left - right);
-
-    if (storeIds.length === 0) {
-      return {
-        cities: [],
-        userCity,
-        matchingCities: [],
-        cityShopMap: {},
+        orderCities: domOrderCities,
+        orderCityShopMap: domOrderCityShopMap,
+        onlineOnlyShopCount: storeIds.length,
       };
     }
 
@@ -299,23 +324,100 @@ export class SkroutzClient {
       const stores = await this.getStoreData(storeIds);
       const cities = this.extractUniqueCities(stores);
       const cityShopMap = this.buildCityShopMapFromApi(stores, storeIds);
+      const onlineOnlyShopCount = this.getOnlineOnlyShopCount(stores, storeIds.length);
+
+      if (cities.length === 0 && domOrderCities.length === 0) {
+        try {
+          const refreshShowDocument = await this.getRefreshShowDocument(productCode);
+          const refreshShowAvailability = this.getStoreAvailabilityFromDom(refreshShowDocument);
+
+          if (refreshShowAvailability.orderCities.length > 0) {
+            return {
+              availableShopCount: storeIds.length,
+              cities: refreshShowAvailability.cities,
+              userCity,
+              matchingCities: this.getMatchingCities(refreshShowAvailability.cities, userCity),
+              cityShopMap: refreshShowAvailability.cityShopMap,
+              orderCities: refreshShowAvailability.orderCities,
+              orderCityShopMap: refreshShowAvailability.orderCityShopMap,
+              onlineOnlyShopCount: Math.max(
+                storeIds.length - this.countMappedShops(refreshShowAvailability.cityShopMap),
+                0,
+              ),
+            };
+          }
+        } catch (refreshShowError) {
+          console.warn('Failed to fetch refresh_show store availability data:', refreshShowError);
+        }
+      }
 
       return {
+        availableShopCount: storeIds.length,
         cities,
         userCity,
         matchingCities: this.getMatchingCities(cities, userCity),
         cityShopMap,
+        orderCities: cities,
+        orderCityShopMap: cityShopMap,
+        onlineOnlyShopCount,
       };
     } catch (error) {
       console.warn('Failed to fetch store availability data:', error);
 
       return {
-        cities: [],
+        availableShopCount: storeIds.length,
+        cities: domCities,
         userCity,
-        matchingCities: [],
-        cityShopMap: {},
+        matchingCities: this.getMatchingCities(domCities, userCity),
+        cityShopMap: domCityShopMap,
+        orderCities: domOrderCities,
+        orderCityShopMap: domOrderCityShopMap,
+        onlineOnlyShopCount: Math.max(storeIds.length - this.countMappedShops(domCityShopMap), 0),
       };
     }
+  }
+
+  private static getUniqueShopIds(productData: ProductData): number[] {
+    return Array.from(
+      new Set(
+        Object.values(productData.product_cards)
+          .map((card) => card.shop_id)
+          .filter((id) => id > 0),
+      ),
+    ).sort((left, right) => left - right);
+  }
+
+  private static normalizeStoreResponse(payload: unknown): Store[] {
+    if (Array.isArray(payload)) {
+      return payload as Store[];
+    }
+
+    if (!payload || typeof payload !== 'object') {
+      return [];
+    }
+
+    const data = payload as {
+      stores?: unknown;
+      data?: unknown;
+    };
+
+    if (Array.isArray(data.stores)) {
+      return data.stores as Store[];
+    }
+
+    if (Array.isArray(data.data)) {
+      return data.data as Store[];
+    }
+
+    if (
+      data.data &&
+      typeof data.data === 'object' &&
+      Array.isArray((data.data as { stores?: unknown }).stores)
+    ) {
+      return (data.data as { stores: Store[] }).stores;
+    }
+
+    return [];
   }
 
   private static buildCityShopMapFromApi(
@@ -323,13 +425,23 @@ export class SkroutzClient {
     storeIds: number[],
   ): Record<string, number[]> {
     const cityShopMap: Record<string, number[]> = {};
+    const canMapShopIdsReliably = stores.length === storeIds.length;
+
     stores.forEach((store, index) => {
       const city = store.store_location_address?.city?.trim();
-      const shopId = storeIds[index];
-      if (!city || shopId === undefined) return;
+      if (!city) return;
+
       if (!cityShopMap[city]) {
         cityShopMap[city] = [];
       }
+
+      if (!canMapShopIdsReliably) {
+        return;
+      }
+
+      const shopId = storeIds[index];
+      if (shopId === undefined) return;
+
       if (!cityShopMap[city].includes(shopId)) {
         cityShopMap[city].push(shopId);
       }
@@ -337,20 +449,29 @@ export class SkroutzClient {
     return cityShopMap;
   }
 
-  private static getStoreAvailabilityFromDom(): DomStoreAvailability {
-    const cityData = new Map<string, { displayCity: string; shopIds: number[] }>();
+  private static getOnlineOnlyShopCount(stores: Store[], requestedShopCount: number): number {
+    const storesWithCityCount = stores.filter((store) => {
+      const city = store.store_location_address?.city?.trim();
+      return !!city;
+    }).length;
+
+    return Math.max(requestedShopCount - storesWithCityCount, 0);
+  }
+
+  private static countMappedShops(cityShopMap: Record<string, number[]>): number {
+    return Object.values(cityShopMap).reduce((total, shopIds) => total + shopIds.length, 0);
+  }
+
+  private static getStoreAvailabilityFromDom(root: ParentNode = document): DomStoreAvailability {
+    const pickupCityData = new Map<string, { displayCity: string; shopIds: number[] }>();
+    const orderCityData = new Map<string, { displayCity: string; shopIds: number[] }>();
 
     // Scan all .merchant-box-bottom-content elements on the page.
     // On page load these are present inside the buybox area; when the stores drawer
     // is open they are also present inside the bottom-drawer, so this handles both cases.
-    const merchantContents = Array.from(document.querySelectorAll('.merchant-box-bottom-content'));
+    const merchantContents = Array.from(root.querySelectorAll('.merchant-box-bottom-content'));
 
     merchantContents.forEach((content) => {
-      const hasStorePickup = !!content.querySelector('.store-pickup');
-      if (!hasStorePickup) {
-        return;
-      }
-
       const locationText = content.querySelector('.location span')?.textContent?.trim();
       const city = this.extractCityFromLocation(locationText);
       if (!city) {
@@ -358,37 +479,69 @@ export class SkroutzClient {
       }
 
       const normalizedCity = this.normalizeLocation(city);
-      if (!cityData.has(normalizedCity)) {
-        cityData.set(normalizedCity, { displayCity: city, shopIds: [] });
-      }
 
       // Extract shop ID from the storefront link href: /shop/{id}/...
       // This link is present in both buybox and drawer card layouts.
       const href = content.querySelector('.storefront-link')?.getAttribute('href') ?? '';
+      const shopIds: number[] = [];
       const shopIdMatch = href.match(/\/shop\/(\d+)\//);
       if (shopIdMatch) {
-        const shopId = parseInt(shopIdMatch[1], 10);
-        const entry = cityData.get(normalizedCity)!;
-        if (!entry.shopIds.includes(shopId)) {
-          entry.shopIds.push(shopId);
-        }
+        shopIds.push(parseInt(shopIdMatch[1], 10));
+      }
+
+      this.addCityDataEntry(orderCityData, normalizedCity, city, shopIds);
+
+      const hasStorePickup = !!content.querySelector('.store-pickup');
+      if (hasStorePickup) {
+        this.addCityDataEntry(pickupCityData, normalizedCity, city, shopIds);
       }
     });
 
-    const sorted = Array.from(cityData.values()).sort((a, b) =>
+    const sortedPickup = Array.from(pickupCityData.values()).sort((a, b) =>
+      a.displayCity.localeCompare(b.displayCity, 'el'),
+    );
+    const sortedOrder = Array.from(orderCityData.values()).sort((a, b) =>
       a.displayCity.localeCompare(b.displayCity, 'el'),
     );
 
-    const cities = sorted.map((e) => e.displayCity);
+    const cities = sortedPickup.map((e) => e.displayCity);
     const cityShopMap: Record<string, number[]> = Object.fromEntries(
-      sorted.map((e) => [e.displayCity, e.shopIds]),
+      sortedPickup.map((e) => [e.displayCity, e.shopIds]),
+    );
+    const orderCities = sortedOrder.map((e) => e.displayCity);
+    const orderCityShopMap: Record<string, number[]> = Object.fromEntries(
+      sortedOrder.map((e) => [e.displayCity, e.shopIds]),
     );
 
     return {
       cities,
       cityShopMap,
-      hasExplicitNoStoreCitiesMessage: this.hasExplicitNoStoreCitiesMessage(),
+      orderCities,
+      orderCityShopMap,
+      hasExplicitNoStoreCitiesMessage: this.hasExplicitNoStoreCitiesMessage(root),
     };
+  }
+
+  private static addCityDataEntry(
+    cityData: Map<string, { displayCity: string; shopIds: number[] }>,
+    normalizedCity: string,
+    displayCity: string,
+    shopIds: number[],
+  ): void {
+    if (!cityData.has(normalizedCity)) {
+      cityData.set(normalizedCity, { displayCity, shopIds: [] });
+    }
+
+    const entry = cityData.get(normalizedCity);
+    if (!entry) {
+      return;
+    }
+
+    shopIds.forEach((shopId) => {
+      if (!entry.shopIds.includes(shopId)) {
+        entry.shopIds.push(shopId);
+      }
+    });
   }
 
   private static getUserCity(): string | undefined {
@@ -450,10 +603,11 @@ export class SkroutzClient {
     return city;
   }
 
-  private static hasExplicitNoStoreCitiesMessage(): boolean {
+  private static hasExplicitNoStoreCitiesMessage(root: ParentNode = document): boolean {
+    const pricesElement = root.querySelector('#prices');
     const drawerRoot =
-      document.querySelector('#prices')?.closest('.bottom-drawer-content') ??
-      document.querySelector('.bottom-drawer-content');
+      pricesElement?.parentElement?.closest('.bottom-drawer-content') ??
+      root.querySelector('.bottom-drawer-content');
     const drawerText = drawerRoot?.textContent?.replace(/\s+/g, ' ').trim();
 
     if (!drawerText) {

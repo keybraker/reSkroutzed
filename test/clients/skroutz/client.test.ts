@@ -199,6 +199,13 @@ describe('SkroutzClient', () => {
         });
       }
 
+      if (url.includes('refresh_show')) {
+        return Promise.resolve({
+          ok: true,
+          text: vi.fn().mockResolvedValue('<div></div>'),
+        });
+      }
+
       return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
     });
 
@@ -284,13 +291,22 @@ describe('SkroutzClient', () => {
       });
 
       expect(result.storeAvailability).toEqual({
-        cities: ['Θεσσαλονίκη', 'Μαρούσι'],
+        availableShopCount: 3,
+        cities: ['Αθήνα', 'Ηράκλειο', 'Πάτρα'],
         userCity: undefined,
         matchingCities: [],
         cityShopMap: {
-          Θεσσαλονίκη: [101],
-          Μαρούσι: [102],
+          Αθήνα: [101],
+          Ηράκλειο: [102],
+          Πάτρα: [103],
         },
+        orderCities: ['Αθήνα', 'Ηράκλειο', 'Πάτρα'],
+        orderCityShopMap: {
+          Αθήνα: [101],
+          Ηράκλειο: [102],
+          Πάτρα: [103],
+        },
+        onlineOnlyShopCount: 0,
       });
     });
 
@@ -371,13 +387,22 @@ describe('SkroutzClient', () => {
       const result = await SkroutzClient.getCurrentProductData();
 
       expect(result.storeAvailability).toEqual({
-        cities: ['Αθήνα', 'Ηράκλειο'],
+        availableShopCount: 3,
+        cities: ['Αθήνα', 'Ηράκλειο', 'Πάτρα'],
         userCity: 'Ηρακλειο Κρήτης',
         matchingCities: ['Ηράκλειο'],
         cityShopMap: {
-          Αθήνα: [102],
-          Ηράκλειο: [101],
+          Αθήνα: [101],
+          Ηράκλειο: [102],
+          Πάτρα: [103],
         },
+        orderCities: ['Αθήνα', 'Ηράκλειο', 'Πάτρα'],
+        orderCityShopMap: {
+          Αθήνα: [101],
+          Ηράκλειο: [102],
+          Πάτρα: [103],
+        },
+        onlineOnlyShopCount: 0,
       });
     });
 
@@ -418,10 +443,14 @@ describe('SkroutzClient', () => {
         shopId: 103,
       });
       expect(result.storeAvailability).toEqual({
+        availableShopCount: 3,
         cities: [],
         userCity: undefined,
         matchingCities: [],
         cityShopMap: {},
+        orderCities: [],
+        orderCityShopMap: {},
+        onlineOnlyShopCount: 3,
       });
       expect(console.warn).toHaveBeenCalled();
     });
@@ -446,20 +475,48 @@ describe('SkroutzClient', () => {
         </article>
       `;
 
+      global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+        const url = String(input);
+
+        if (url.includes('filter_products.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue(mockProductData),
+          });
+        }
+
+        if (url.includes('product_cards_nearest_location.json')) {
+          return Promise.resolve({
+            ok: false,
+            status: 500,
+          });
+        }
+
+        return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+      }) as unknown as typeof global.fetch;
+
       const result = await SkroutzClient.getCurrentProductData();
 
       expect(result.storeAvailability).toEqual({
+        availableShopCount: 3,
         cities: ['Αχαρνές'],
         userCity: undefined,
         matchingCities: [],
         cityShopMap: {
           Αχαρνές: [102],
         },
+        orderCities: ['Αχαρνές', 'Θεσσαλονίκη'],
+        orderCityShopMap: {
+          Αχαρνές: [102],
+          Θεσσαλονίκη: [],
+        },
+        onlineOnlyShopCount: 2,
       });
-      expect(fetch).not.toHaveBeenCalledWith(
+      expect(fetch).toHaveBeenCalledWith(
         'https://www.skroutz.gr/s/product_cards_nearest_location.json',
-        expect.anything(),
+        expect.any(Object),
       );
+      expect(console.warn).toHaveBeenCalled();
     });
 
     it('should prefer the drawer city and keep explicit no-store-city results from the DOM', async () => {
@@ -493,15 +550,116 @@ describe('SkroutzClient', () => {
       const result = await SkroutzClient.getCurrentProductData();
 
       expect(result.storeAvailability).toEqual({
+        availableShopCount: 3,
         cities: [],
         userCity: 'Αθήνα',
         matchingCities: [],
         cityShopMap: {},
+        orderCities: ['Θεσσαλονίκη'],
+        orderCityShopMap: {
+          Θεσσαλονίκη: [],
+        },
+        onlineOnlyShopCount: 3,
       });
       expect(fetch).not.toHaveBeenCalledWith(
         'https://www.skroutz.gr/s/product_cards_nearest_location.json',
         expect.anything(),
       );
+    });
+
+    it('should use refresh_show markup when API and initial DOM do not expose locations', async () => {
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <div data-sku-page--index-refresh-show-url-value="/s/12345678/refresh_show"></div>
+        <article class="offering-card">
+          <div class="price">1.028<span class="comma">,</span><span>89</span></div>
+        </article>
+      `;
+
+      global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+        const url = String(input);
+
+        if (url.includes('filter_products.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue(mockProductData),
+          });
+        }
+
+        if (url.includes('product_cards_nearest_location.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn().mockResolvedValue([
+              {
+                stores_count: 1,
+                store_location_id: 10,
+                store_location_address: {
+                  city: '',
+                  country: 'GR',
+                  region: '',
+                  street: '',
+                  postcode: '',
+                  full: '',
+                },
+                display_full_store_address: false,
+                show_added_delay_message: false,
+              },
+            ]),
+          });
+        }
+
+        if (url.includes('refresh_show')) {
+          return Promise.resolve({
+            ok: true,
+            text: vi.fn().mockResolvedValue(`
+              <div class="product-cards-drawer-wrapper">
+                <div class="bottom-drawer open side-bar right product-cards-drawer">
+                  <div class="bottom-drawer-content">
+                    <div class="bottom-drawer-body">
+                      <ol id="prices" class="sku-list">
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Αθήνα, Ελλάδα</span></div>
+                            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+                            <a class="storefront-link" href="/shop/101/TestShop/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+                          </div>
+                        </li>
+                        <li class="product-card-redesigned">
+                          <div class="merchant-box-bottom-content">
+                            <div class="location"><span>Πάτρα, Ελλάδα</span></div>
+                            <a class="storefront-link" href="/shop/102/TestShop2/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+                          </div>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `),
+          });
+        }
+
+        return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+      }) as unknown as typeof global.fetch;
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability).toEqual({
+        availableShopCount: 3,
+        cities: ['Αθήνα'],
+        userCity: undefined,
+        matchingCities: [],
+        cityShopMap: {
+          Αθήνα: [101],
+        },
+        orderCities: ['Αθήνα', 'Πάτρα'],
+        orderCityShopMap: {
+          Αθήνα: [101],
+          Πάτρα: [102],
+        },
+        onlineOnlyShopCount: 2,
+      });
+      expect(fetch).toHaveBeenCalledWith('/s/12345678/refresh_show', expect.any(Object));
     });
 
     it('should throw an error if SKU meta tag is missing', async () => {

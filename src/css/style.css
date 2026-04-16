@@ -1654,7 +1654,9 @@ text-black {
 /* reSkroutzed badge removed; availability card now visually continues the price checker */
 
 .store-availability-status,
-.store-availability-summary {
+.store-availability-shops-summary,
+.store-availability-summary,
+.store-availability-online-summary {
   margin: 0 !important;
   font-size: 13px !important;
   line-height: 1.35 !important;
@@ -1669,13 +1671,17 @@ text-black {
   color: #111 !important;
 }
 
-.store-availability-summary {
+.store-availability-shops-summary,
+.store-availability-summary,
+.store-availability-online-summary {
   font-weight: 400 !important;
   color: rgba(23, 32, 25, 0.82) !important;
 }
 
 .dark-mode .store-availability-status,
-.dark-mode .store-availability-summary {
+.dark-mode .store-availability-shops-summary,
+.dark-mode .store-availability-summary,
+.dark-mode .store-availability-online-summary {
   color: #f3f3f3 !important;
 }
 
@@ -1683,7 +1689,9 @@ text-black {
   color: #fff !important;
 }
 
-.dark-mode .store-availability-summary {
+.dark-mode .store-availability-shops-summary,
+.dark-mode .store-availability-summary,
+.dark-mode .store-availability-online-summary {
   color: rgba(243, 243, 243, 0.82) !important;
 }
 

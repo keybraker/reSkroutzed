@@ -117,6 +117,7 @@ describe('PriceCheckerDecorator', () => {
       shopId: 202,
     },
     storeAvailability: {
+      availableShopCount: 3,
       cities: ['Athens', 'Patras'],
       userCity: 'Athens',
       matchingCities: ['Athens'],
@@ -124,6 +125,13 @@ describe('PriceCheckerDecorator', () => {
         Athens: [202],
         Patras: [303],
       },
+      orderCities: ['Athens', 'Patras', 'Heraklion'],
+      orderCityShopMap: {
+        Athens: [202],
+        Patras: [303],
+        Heraklion: [404, 405],
+      },
+      onlineOnlyShopCount: 1,
     },
   };
 
@@ -231,6 +239,16 @@ describe('PriceCheckerDecorator', () => {
     expect(
       document.querySelector('.price-display-wrapper .shipping-cost-text')?.textContent,
     ).toContain('(+3,00€ shipping)');
+    expect(document.querySelector('.store-availability-status')?.textContent).toContain(
+      'This product is available in your city, Athens.',
+    );
+    expect(document.querySelector('.store-availability-shops-summary')?.textContent).toContain(
+      'You can get this directly in Athens, Patras.',
+    );
+    expect(document.querySelector('.store-availability-summary')?.textContent).toContain(
+      'You can order this right away from 3 shops: Athens, Patras, Heraklion (1, 2).',
+    );
+    expect(document.querySelector('.store-availability-online-summary')).toBeNull();
 
     bestPriceDeferred.resolve(mockBestPriceData);
     await flushPromises();

@@ -894,31 +894,50 @@ function createStoreAvailabilityElement(
 
   DomClient.appendElementToElement(availabilityStatus, availabilityContainer);
 
-  const citiesSummary = document.createElement('p');
-  citiesSummary.className = 'store-availability-summary';
-
   if (availability.cities.length > 0) {
+    const shopsSummary = document.createElement('p');
+    shopsSummary.className = 'store-availability-shops-summary';
     const prefix =
       language === Language.ENGLISH
-        ? 'This product is in stores in '
-        : 'Το προϊόν βρίσκεται σε καταστήματα σε ';
-    citiesSummary.appendChild(document.createTextNode(prefix));
+        ? 'You can get this directly in '
+        : 'Μπορείς να το παραλάβεις απευθείας σε ';
+    shopsSummary.appendChild(document.createTextNode(prefix));
 
     availability.cities.forEach((city, index) => {
       if (index > 0) {
-        citiesSummary.appendChild(document.createTextNode(', '));
+        shopsSummary.appendChild(document.createTextNode(', '));
       }
       const shopIds = availability.cityShopMap?.[city] ?? [];
-      citiesSummary.appendChild(createCityElement(city, shopIds));
+      shopsSummary.appendChild(createCityElement(city, shopIds));
     });
 
-    citiesSummary.appendChild(document.createTextNode('.'));
-  } else {
-    citiesSummary.textContent =
-      language === Language.ENGLISH
-        ? 'This product does not currently have any store cities available.'
-        : 'Το προϊόν δεν έχει αυτή τη στιγμή διαθέσιμες πόλεις καταστημάτων.';
+    shopsSummary.appendChild(document.createTextNode('.'));
+    DomClient.appendElementToElement(shopsSummary, availabilityContainer);
   }
+
+  const citiesSummary = document.createElement('p');
+  citiesSummary.className = 'store-availability-summary';
+
+  const orderSummaryPrefix =
+    language === Language.ENGLISH
+      ? `You can order this right away from ${availability.availableShopCount} shops`
+      : `Μπορείς να το παραγγείλεις άμεσα από ${availability.availableShopCount} καταστήματα`;
+
+  citiesSummary.appendChild(document.createTextNode(orderSummaryPrefix));
+
+  if (availability.orderCities.length > 0) {
+    citiesSummary.appendChild(document.createTextNode(': '));
+
+    availability.orderCities.forEach((city, index) => {
+      if (index > 0) {
+        citiesSummary.appendChild(document.createTextNode(', '));
+      }
+      const shopIds = availability.orderCityShopMap?.[city] ?? [];
+      citiesSummary.appendChild(createCityElement(city, shopIds));
+    });
+  }
+
+  citiesSummary.appendChild(document.createTextNode('.'));
 
   DomClient.appendElementToElement(citiesSummary, availabilityContainer);
 
