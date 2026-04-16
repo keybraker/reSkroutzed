@@ -7,6 +7,7 @@ import type {
 } from './messages';
 
 const BEST_PRICE_BASE_URL = 'https://www.bestprice.gr';
+const BEST_PRICE_REQUEST_TIMEOUT_MS = 5000;
 
 const BEST_PRICE_COLOR_HINTS = [
   'natural titanium',
@@ -354,7 +355,8 @@ export class BestPriceClient {
       if (productData) {
         return productData;
       }
-    } catch {
+    } catch (error) {
+      console.warn('[reSkroutzed] BestPrice direct lookup failed', error);
       // Fall back to BestPrice search when the direct product lookup is unavailable.
     }
 
@@ -367,7 +369,11 @@ export class BestPriceClient {
         if (searchData) {
           return searchData;
         }
-      } catch {
+      } catch (error) {
+        console.warn('[reSkroutzed] BestPrice search fallback failed', {
+          query: searchQuery,
+          error,
+        });
         // Continue to the next fallback when search is unavailable.
       }
     }
@@ -382,7 +388,12 @@ export class BestPriceClient {
     try {
       const payload = await this.fetchDealsPayload(bestPriceCategoryId);
       return parseBestPriceDealsPayload(payload, query);
-    } catch {
+    } catch (error) {
+      console.warn('[reSkroutzed] BestPrice category fallback failed', {
+        skroutzCategoryId,
+        bestPriceCategoryId,
+        error,
+      });
       return undefined;
     }
   }
@@ -750,7 +761,13 @@ export class BestPriceClient {
     }
 
     return await new Promise<BestPriceBridgeSuccess<T>>((resolve, reject) => {
+      const timeout = window.setTimeout(() => {
+        reject(new Error(`BestPrice request timed out after ${BEST_PRICE_REQUEST_TIMEOUT_MS}ms`));
+      }, BEST_PRICE_REQUEST_TIMEOUT_MS);
+
       runtime.sendMessage(request, (response?: BestPriceBridgeResponse<unknown>) => {
+        window.clearTimeout(timeout);
+
         if (runtime.lastError) {
           reject(new Error(runtime.lastError.message));
           return;

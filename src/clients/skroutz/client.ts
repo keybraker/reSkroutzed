@@ -339,20 +339,19 @@ export class SkroutzClient {
 
   private static getStoreAvailabilityFromDom(): DomStoreAvailability {
     const cityData = new Map<string, { displayCity: string; shopIds: number[] }>();
-    const offerCards = Array.from(document.querySelectorAll('#prices .product-card-redesigned'));
 
-    offerCards.forEach((offerCard) => {
-      const merchantContent = offerCard.querySelector('.merchant-box-bottom-content');
-      if (!merchantContent) {
-        return;
-      }
+    // Scan all .merchant-box-bottom-content elements on the page.
+    // On page load these are present inside the buybox area; when the stores drawer
+    // is open they are also present inside the bottom-drawer, so this handles both cases.
+    const merchantContents = Array.from(document.querySelectorAll('.merchant-box-bottom-content'));
 
-      const hasStorePickup = !!merchantContent.querySelector('.store-pickup');
+    merchantContents.forEach((content) => {
+      const hasStorePickup = !!content.querySelector('.store-pickup');
       if (!hasStorePickup) {
         return;
       }
 
-      const locationText = merchantContent.querySelector('.location span')?.textContent?.trim();
+      const locationText = content.querySelector('.location span')?.textContent?.trim();
       const city = this.extractCityFromLocation(locationText);
       if (!city) {
         return;
@@ -363,8 +362,10 @@ export class SkroutzClient {
         cityData.set(normalizedCity, { displayCity: city, shopIds: [] });
       }
 
-      const idAttr = (offerCard as HTMLElement).id || offerCard.closest('[id^="shop-"]')?.id || '';
-      const shopIdMatch = idAttr.match(/^shop-(\d+)$/);
+      // Extract shop ID from the storefront link href: /shop/{id}/...
+      // This link is present in both buybox and drawer card layouts.
+      const href = content.querySelector('.storefront-link')?.getAttribute('href') ?? '';
+      const shopIdMatch = href.match(/\/shop\/(\d+)\//);
       if (shopIdMatch) {
         const shopId = parseInt(shopIdMatch[1], 10);
         const entry = cityData.get(normalizedCity)!;

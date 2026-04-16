@@ -214,25 +214,25 @@ describe('SkroutzClient', () => {
     // Mock document body and elements
     document.body.innerHTML = `
       <meta itemprop="sku" content="12345678">
-      <ol id="prices" class="sku-list">
-        <li id="shop-101" class="product-card-redesigned">
-          <div class="merchant-box-bottom-content">
-            <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
-            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
-          </div>
-        </li>
-        <li id="shop-102" class="product-card-redesigned">
-          <div class="merchant-box-bottom-content">
-            <div class="location"><span>Μαρούσι, Ελλάδα</span></div>
-            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
-          </div>
-        </li>
-        <li class="product-card-redesigned">
-          <div class="merchant-box-bottom-content">
-            <div class="location"><span>Βουλγαρία</span></div>
-          </div>
-        </li>
-      </ol>
+      <div class="merchant-box">
+        <div class="merchant-box-bottom-content">
+          <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+          <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+          <a class="storefront-link" href="/shop/101/TestShop/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+        </div>
+      </div>
+      <div class="merchant-box">
+        <div class="merchant-box-bottom-content">
+          <div class="location"><span>Μαρούσι, Ελλάδα</span></div>
+          <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+          <a class="storefront-link" href="/shop/102/TestShop2/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+        </div>
+      </div>
+      <div class="merchant-box">
+        <div class="merchant-box-bottom-content">
+          <div class="location"><span>Βουλγαρία</span></div>
+        </div>
+      </div>
       <article class="offering-card">
         <div class="price">1.028<span class="comma">,</span><span>89</span></div>
       </article>
@@ -297,20 +297,20 @@ describe('SkroutzClient', () => {
     it('should match the buybox against ecommerce_final_price when Skroutz shows the discounted price', async () => {
       document.body.innerHTML = `
         <meta itemprop="sku" content="12345678">
-        <ol id="prices" class="sku-list">
-          <li id="shop-101" class="product-card-redesigned">
-            <div class="merchant-box-bottom-content">
-              <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
-              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
-            </div>
-          </li>
-          <li id="shop-103" class="product-card-redesigned">
-            <div class="merchant-box-bottom-content">
-              <div class="location"><span>Πάτρα, Ελλάδα</span></div>
-              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
-            </div>
-          </li>
-        </ol>
+        <div class="merchant-box">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            <a class="storefront-link" href="/shop/101/TestShop/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+          </div>
+        </div>
+        <div class="merchant-box">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Πάτρα, Ελλάδα</span></div>
+            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            <a class="storefront-link" href="/shop/103/TestShop3/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+          </div>
+        </div>
         <article class="buybox">
           <div class="price-box">
             <div class="price-and-installments"></div>
@@ -349,20 +349,20 @@ describe('SkroutzClient', () => {
         <div class="header-user-actions">
           <span class="country-picker-text js-cp-link" tabindex="0">Ηρακλειο Κρήτης 71305</span>
         </div>
-        <ol id="prices" class="sku-list">
-          <li id="shop-101" class="product-card-redesigned">
-            <div class="merchant-box-bottom-content">
-              <div class="location"><span>Ηράκλειο, Ελλάδα</span></div>
-              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
-            </div>
-          </li>
-          <li id="shop-102" class="product-card-redesigned">
-            <div class="merchant-box-bottom-content">
-              <div class="location"><span>Αθήνα, Ελλάδα</span></div>
-              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
-            </div>
-          </li>
-        </ol>
+        <div class="merchant-box">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Ηράκλειο, Ελλάδα</span></div>
+            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            <a class="storefront-link" href="/shop/101/TestShop/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+          </div>
+        </div>
+        <div class="merchant-box">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Αθήνα, Ελλάδα</span></div>
+            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            <a class="storefront-link" href="/shop/102/TestShop2/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+          </div>
+        </div>
         <article class="offering-card">
           <div class="price">1.028<span class="comma">,</span><span>89</span></div>
         </article>
@@ -429,19 +429,18 @@ describe('SkroutzClient', () => {
     it('should ignore locations that do not offer store pickup', async () => {
       document.body.innerHTML = `
         <meta itemprop="sku" content="12345678">
-        <ol id="prices" class="sku-list">
-          <li id="shop-101" class="product-card-redesigned">
-            <div class="merchant-box-bottom-content">
-              <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
-            </div>
-          </li>
-          <li id="shop-102" class="product-card-redesigned">
-            <div class="merchant-box-bottom-content">
-              <div class="location"><span>Αχαρνές, Ελλάδα</span></div>
-              <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
-            </div>
-          </li>
-        </ol>
+        <div class="merchant-box">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+          </div>
+        </div>
+        <div class="merchant-box">
+          <div class="merchant-box-bottom-content">
+            <div class="location"><span>Αχαρνές, Ελλάδα</span></div>
+            <div class="store-pickup"><span>Δυνατότητα παραλαβής από το κατάστημα</span></div>
+            <a class="storefront-link" href="/shop/102/TestShop2/products.html?from=sku_page">Δες όλα τα προϊόντα</a>
+          </div>
+        </div>
         <article class="offering-card">
           <div class="price">1.028<span class="comma">,</span><span>89</span></div>
         </article>
@@ -479,13 +478,11 @@ describe('SkroutzClient', () => {
               <p>Το προϊόν δεν είναι διαθέσιμο στην πόλη σου, Αθήνα.</p>
               <p>Το προϊόν δεν έχει αυτή τη στιγμή διαθέσιμες πόλεις καταστημάτων.</p>
             </div>
-            <ol id="prices" class="sku-list">
-              <li id="shop-101" class="product-card-redesigned">
-                <div class="merchant-box-bottom-content">
-                  <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
-                </div>
-              </li>
-            </ol>
+            <div class="merchant-box">
+              <div class="merchant-box-bottom-content">
+                <div class="location"><span>Θεσσαλονίκη, Ελλάδα</span></div>
+              </div>
+            </div>
           </div>
         </div>
         <article class="offering-card">
