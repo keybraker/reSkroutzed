@@ -22,14 +22,11 @@ export class LogoHatDecorator implements FeatureInstance {
     hat.src = chrome.runtime.getURL('icons/48.png');
     hat.alt = 'reSkroutzed hat';
 
-    hat.style.position = 'absolute';
-    hat.style.top = '0px';
-    hat.style.left = '12px';
-    hat.style.width = '20px';
-    hat.style.height = '20px';
-    hat.style.transform = 'rotate(-15deg)';
-    hat.style.zIndex = '10';
-    hat.style.pointerEvents = 'none';
+    this.applyHatStyles(hat);
+
+    window.matchMedia('(max-width: 767px)').addEventListener('change', () => {
+      this.applyHatStyles(hat);
+    });
 
     const observer = new MutationObserver((_mutations, _obs) => {
       if (!document.contains(wrapper)) {
@@ -51,5 +48,18 @@ export class LogoHatDecorator implements FeatureInstance {
     logoParent.insertBefore(wrapper, logoLink);
     wrapper.appendChild(logoLink);
     wrapper.appendChild(hat);
+  }
+
+  private applyHatStyles(hat: HTMLImageElement): void {
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+
+    hat.style.position = 'absolute';
+    hat.style.top = isMobile ? '-4px' : '0px';
+    hat.style.left = isMobile ? '6px' : '12px';
+    hat.style.width = isMobile ? '18px' : '20px';
+    hat.style.height = isMobile ? '18px' : '20px';
+    hat.style.transform = 'rotate(-15deg)';
+    hat.style.zIndex = '10';
+    hat.style.pointerEvents = 'none';
   }
 }
