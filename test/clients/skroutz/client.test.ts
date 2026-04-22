@@ -347,6 +347,96 @@ describe('SkroutzClient', () => {
       });
     });
 
+    it('should match the buybox against raw_price when ecommerce_final_price equals raw_price plus shipping', async () => {
+      // Mirrors real Skroutz API behaviour where ecommerce_final_price = raw_price + shipping_cost
+      // and the buybox .final-price shows the net/raw price, not the total.
+      const ecProductData: ProductData = {
+        product_card_ids: [10],
+        sponsored_product_card_ids: [],
+        disabled_product_ids: [],
+        product_cards: {
+          '10': {
+            id: 10,
+            shop_id: 5527,
+            price: '20,96 €',
+            shipping_cost: 3.5,
+            raw_price: 20.96,
+            sponsored: false,
+            ecommerce_final_price: 24.46, // raw_price + shipping_cost
+            marketplace: false,
+            shop_details_icons: [],
+            products: [],
+            ecommerce_available: true,
+            only_available_through_fbs: false,
+            official_reseller: false,
+            expert_seller: false,
+            sponsored_by_merchant_tracking_url: '',
+            merchant_funded_installments: false,
+            sponsored_by_merchant_follow_cookie_link_data_cart: {},
+            discount_voucher_active: false,
+            fbs_active: false,
+            force_cargo_shipping_benefits: false,
+            ecommerce_final_price_formatted: '24,46 €',
+            ecommerce_payment_method_cost_formatted: null,
+            ecommerce_payment_method_cost_supported: null,
+            ecommerce_shipping_cost_formatted: '3,50 €',
+            fbm: false,
+            final_price: 24.46,
+            final_price_formatted: '24,46 €',
+            final_price_without_payment_cost_formatted: '24,46 €',
+            has_merchant_loyalty_points: false,
+            loyalty_points: '21',
+            net_price_formatted: '20,96 €',
+            no_credit_card: false,
+            payment_method_cost_formatted: null,
+            payment_method_cost_supported: null,
+            shipping_cost_formatted: '+ 3,50 €',
+            untracked_redirect_supported: true,
+            coupon_info: null,
+          },
+        },
+        shop_count: 1,
+        price_min: '20,96 €',
+        price_drop_percentage: null,
+      };
+
+      global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes('filter_products.json')) {
+          return Promise.resolve({ ok: true, json: vi.fn().mockResolvedValue(ecProductData) });
+        }
+        if (url.includes('product_cards_nearest_location.json')) {
+          return Promise.resolve({ ok: true, json: vi.fn().mockResolvedValue([]) });
+        }
+        if (url.includes('refresh_show')) {
+          return Promise.resolve({ ok: true, text: vi.fn().mockResolvedValue('<div></div>') });
+        }
+        return Promise.reject(new Error(`Unexpected fetch URL: ${url}`));
+      }) as unknown as typeof global.fetch;
+
+      document.body.innerHTML = `
+        <meta itemprop="sku" content="12345678">
+        <article class="buybox">
+          <div class="price-box">
+            <div class="price-and-installments"></div>
+            <div class="final-price">
+              <span class="integer-part">20</span>
+              <span class="decimal-part">96</span>
+            </div>
+          </div>
+        </article>
+      `;
+
+      const result: ProductPriceData = await SkroutzClient.getCurrentProductData();
+
+      expect(result.buyThroughSkroutz).toEqual({
+        price: 20.96,
+        shippingCost: 3.5,
+        totalPrice: 24.46,
+        shopId: 5527,
+      });
+    });
+
     it('should throw an error if fetch fails', async () => {
       // Mock failed fetch response
       global.fetch = vi.fn().mockResolvedValue({

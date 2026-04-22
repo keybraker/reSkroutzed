@@ -797,15 +797,25 @@ export class SkroutzClient {
   private static getSkroutzPriceData(productData: ProductData, skroutzRawPrice: number): PriceData {
     const productCards = productData.product_cards;
 
+    // Primary match: raw_price (the net/base price shown in the ecommerce buybox)
+    const cardByRawPrice = Object.values(productCards).find(
+      (card) => card.raw_price === skroutzRawPrice,
+    );
+    if (cardByRawPrice) {
+      return {
+        price: cardByRawPrice.raw_price,
+        shippingCost: cardByRawPrice.shipping_cost,
+        totalPrice: cardByRawPrice.raw_price + cardByRawPrice.shipping_cost,
+        shopId: cardByRawPrice.shop_id,
+      };
+    }
+
+    // Fallback match: ecommerce_final_price (Skroutz-subsidised/discounted price)
     const firstCard = Object.values(productCards).find(
       (card) => this.getEffectiveCardPrice(card) === skroutzRawPrice,
     );
     if (!firstCard) {
       throw new Error('No product cards found');
-    }
-
-    if (!firstCard) {
-      throw new Error('No sponsored product cards found');
     }
 
     return {
