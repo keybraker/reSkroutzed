@@ -3,7 +3,12 @@ import { State } from '../common/types/State.type';
 import { AdHandlerInterface } from './common/interfaces/adHandler.interface';
 
 export class VideoAdHandler implements AdHandlerInterface {
-  private readonly videoAdClasses = ['listing-reels-shelf', 'video-promo', 'tl-reels'];
+  private readonly videoAdSelectors = [
+    '.listing-reels-shelf',
+    '.video-promo',
+    '.tl-reels',
+    '.user-help-shelf.default-layout',
+  ];
   private readonly flaggedVideoAdClass = 'flagged-video';
 
   constructor(private state: State) {}
@@ -18,8 +23,8 @@ export class VideoAdHandler implements AdHandlerInterface {
       this.updateCountAndVisibility(element),
     );
 
-    this.videoAdClasses.forEach((adClass) => {
-      this.flagElementsBySelector(`.${adClass}:not(.${this.flaggedVideoAdClass})`);
+    this.videoAdSelectors.forEach((selector) => {
+      this.flagElementsBySelector(`${selector}:not(.${this.flaggedVideoAdClass})`);
     });
   }
 
@@ -31,7 +36,7 @@ export class VideoAdHandler implements AdHandlerInterface {
 
   private updateCountAndVisibility(element: Element): void {
     if (
-      this.videoAdClasses.some((adClass) => element.classList.contains(adClass)) &&
+      this.videoAdSelectors.some((selector) => element.matches(selector)) &&
       !element.classList.contains(this.flaggedVideoAdClass)
     ) {
       this.state.videoAdCount++;

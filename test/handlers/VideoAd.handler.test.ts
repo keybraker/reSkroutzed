@@ -1,9 +1,9 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\handlers\VideoAd.handler.test.ts
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { VideoAdHandler } from '../../src/handlers/VideoAd.handler';
 import { DomClient } from '../../src/clients/dom/client';
 import { State } from '../../src/common/types/State.type';
+import { VideoAdHandler } from '../../src/handlers/VideoAd.handler';
 
 // Mock the DomClient
 vi.mock('../../src/clients/dom/client', () => ({
@@ -137,7 +137,6 @@ describe('VideoAdHandler', () => {
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[1], 'show');
     });
   });
-
   describe('updateCountAndVisibility', () => {
     it('should increment count and update visibility when element matches criteria', () => {
       // Create private method test helper
@@ -170,6 +169,22 @@ describe('VideoAdHandler', () => {
       expect(mockState.videoAdCount).toBe(1);
       expect(DomClient.addClassesToElement).toHaveBeenCalledWith(element, 'flagged-video');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(element, 'show');
+    });
+
+    it('should flag compound video shelf layouts', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updateCountAndVisibility = (videoAdHandler as any).updateCountAndVisibility.bind(
+        videoAdHandler,
+      );
+
+      const element = document.createElement('section');
+      element.classList.add('user-help-shelf', 'default-layout');
+
+      updateCountAndVisibility(element);
+
+      expect(mockState.videoAdCount).toBe(1);
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(element, 'flagged-video');
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(element, 'hide');
     });
 
     it('should not update count or visibility when element does not match criteria', () => {

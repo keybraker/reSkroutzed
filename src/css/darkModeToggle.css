@@ -156,6 +156,10 @@
   background-color: #34b84a71 !important;
 }
 
+.dark-mode .spec-item {
+  background-color: #333333 !important;
+}
+
 .dark-mode .no-opacity {
   padding: 10px, 10px, 10px, 10px !important;
   content: '🌙' !important;

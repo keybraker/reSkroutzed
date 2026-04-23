@@ -170,7 +170,14 @@ html.dark-mode {
   border-bottom: 1px solid var(--color-border-primary) !important;
 }
 
+.dark-mode-toggle:search-bar-input,
+.dark-mode-toggle:sku-navigation,
+.dark-mode-toggle:modal-content {
+  border: 1px solid #505050 !important;
+}
+
 .dark-mode .site-header .site-header.is-visible,
+.dark-mode #site-header .js-header-content,
 .dark-mode .remain-sticky {
   background-color: var(--color-background-highlight) !important;
   color: var(--color-text-primary) !important;
