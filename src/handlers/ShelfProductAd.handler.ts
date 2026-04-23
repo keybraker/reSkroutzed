@@ -10,6 +10,7 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
     'placement-shelf',
     'polymorphic-brand-shelf',
   ];
+  private readonly recommendedSkusShelfSelector = '#js-recommended-skus-shelf';
   private readonly flaggedShelfAdClass = 'flagged-shelf';
 
   constructor(private state: State) {}
@@ -23,6 +24,8 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
     DomClient.getElementsByClass(`li:not(.${this.flaggedShelfAdClass})`).forEach((element) =>
       this.updateCountAndVisibility(element),
     );
+
+    this.flagElementsBySelector(this.recommendedSkusShelfSelector);
 
     this.shelfAdClass.forEach((adClass) => {
       this.flagElementsBySelector(`.${adClass}:not(.${this.flaggedShelfAdClass})`);

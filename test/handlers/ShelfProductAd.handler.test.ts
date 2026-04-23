@@ -106,7 +106,6 @@ describe('ShelfProductAdHandler', () => {
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(3);
       expect(mockState.ShelfAdCount).toBe(3);
     });
-
     it('should flag placement shelf advertisements', () => {
       // Initial flagged elements
       vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
@@ -135,6 +134,32 @@ describe('ShelfProductAdHandler', () => {
         'flagged-shelf',
       );
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(placementShelfElement, 'hide');
+      expect(mockState.ShelfAdCount).toBe(1);
+    });
+
+    it('should flag recommended skus shelf advertisements', () => {
+      // Initial flagged elements
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+
+      // Mock li elements that don't match shelf classes
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      // Mock the recommended skus shelf container
+      const recommendedShelfElement = document.createElement('section');
+      recommendedShelfElement.id = 'js-recommended-skus-shelf';
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([recommendedShelfElement]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+
+      shelfProductAdHandler.flag();
+
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
+        recommendedShelfElement,
+        'flagged-shelf',
+      );
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(
+        recommendedShelfElement,
+        'hide',
+      );
+      expect(DomClient.getElementsByClass).toHaveBeenCalledWith('#js-recommended-skus-shelf');
       expect(mockState.ShelfAdCount).toBe(1);
     });
   });
