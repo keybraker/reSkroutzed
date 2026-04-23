@@ -11,6 +11,11 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
     'polymorphic-brand-shelf',
   ];
   private readonly recommendedSkusShelfSelector = '#js-recommended-skus-shelf';
+  private readonly crossSellShelfSelectors = [
+    '#cross-sell',
+    '.secondary-sku-card-shelf',
+    '.content.top-area.cross-sell-shelf.sponsored-shelf',
+  ];
   private readonly flaggedShelfAdClass = 'flagged-shelf';
 
   constructor(private state: State) {}
@@ -26,6 +31,7 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
     );
 
     this.flagElementsBySelector(this.recommendedSkusShelfSelector);
+    this.crossSellShelfSelectors.forEach((selector) => this.flagElementsBySelector(selector));
 
     this.shelfAdClass.forEach((adClass) => {
       this.flagElementsBySelector(`.${adClass}:not(.${this.flaggedShelfAdClass})`);

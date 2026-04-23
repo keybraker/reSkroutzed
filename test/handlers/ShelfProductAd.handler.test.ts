@@ -1,11 +1,9 @@
-// filepath: c:\Users\Keybraker\Github\reSkroutzed\test\handlers\ShelfProductAd.handler.test.ts
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DomClient } from '../../src/clients/dom/client';
 import { State } from '../../src/common/types/State.type';
 import { ShelfProductAdHandler } from '../../src/handlers/ShelfProductAd.handler';
 
-// Mock the DomClient
 vi.mock('../../src/clients/dom/client', () => ({
   DomClient: {
     getElementsByClass: vi.fn(),
@@ -17,13 +15,16 @@ vi.mock('../../src/clients/dom/client', () => ({
 describe('ShelfProductAdHandler', () => {
   let shelfProductAdHandler: ShelfProductAdHandler;
   let mockState: State;
-  let mockShelfElement: Element;
+
+  const mockSelectorResults = (selectorResults: Record<string, Element[]>) => {
+    vi.mocked(DomClient.getElementsByClass).mockImplementation(
+      (selector: string) => selectorResults[selector] ?? [],
+    );
+  };
 
   beforeEach(() => {
-    // Reset all mocks
     vi.resetAllMocks();
 
-    // Create mock state
     mockState = {
       hideVideoAds: false,
       hideProductAds: false,
@@ -38,11 +39,6 @@ describe('ShelfProductAdHandler', () => {
       minimumPriceDifference: 0,
     };
 
-    // Create a mock element
-    mockShelfElement = document.createElement('div');
-    mockShelfElement.classList.add('selected-product-cards');
-
-    // Create instance of ShelfProductAdHandler with mock state
     shelfProductAdHandler = new ShelfProductAdHandler(mockState);
   });
 
@@ -52,15 +48,19 @@ describe('ShelfProductAdHandler', () => {
 
   describe('flag', () => {
     it('should set ShelfAdCount to 0 initially', () => {
-      // Mock returning empty array for flagged shelf elements
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-
-      // Mock li elements that don't match shelf classes
-      const mockLiElement = document.createElement('li');
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockLiElement]);
-
-      // Mock returning empty arrays for shelf ad classes
-      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+      mockSelectorResults({
+        '.flagged-shelf': [],
+        'li:not(.flagged-shelf)': [],
+        '#js-recommended-skus-shelf': [],
+        '#cross-sell': [],
+        '.secondary-sku-card-shelf': [],
+        '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
+        '.selected-product-cards:not(.flagged-shelf)': [],
+        '.sponsored-shelf:not(.flagged-shelf)': [],
+        '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
+        '.placement-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+      });
 
       shelfProductAdHandler.flag();
 
@@ -68,15 +68,21 @@ describe('ShelfProductAdHandler', () => {
     });
 
     it('should increment ShelfAdCount for each flagged shelf element', () => {
-      // Mock existing flagged elements
       const flaggedElements = [document.createElement('div'), document.createElement('div')];
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(flaggedElements);
 
-      // Mock li elements that don't match shelf classes
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-
-      // Mock empty arrays for additional shelf elements
-      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+      mockSelectorResults({
+        '.flagged-shelf': flaggedElements,
+        'li:not(.flagged-shelf)': [],
+        '#js-recommended-skus-shelf': [],
+        '#cross-sell': [],
+        '.secondary-sku-card-shelf': [],
+        '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
+        '.selected-product-cards:not(.flagged-shelf)': [],
+        '.sponsored-shelf:not(.flagged-shelf)': [],
+        '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
+        '.placement-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+      });
 
       shelfProductAdHandler.flag();
 
@@ -84,48 +90,50 @@ describe('ShelfProductAdHandler', () => {
     });
 
     it('should flag and count shelf elements that match shelfAdClasses', () => {
-      // Initial flagged elements
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      const liElement = document.createElement('li');
+      liElement.classList.add('selected-product-cards');
+      const selectedProductCards = document.createElement('div');
+      const sponsoredShelf = document.createElement('div');
 
-      // Mock li elements that match shelf classes but aren't flagged yet
-      const mockLiElement = document.createElement('li');
-      mockLiElement.classList.add('selected-product-cards');
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockLiElement]);
-
-      // Mock additional shelf elements
-      const mockSelectedProductCards = document.createElement('div');
-      const mockSponsoredShelf = document.createElement('div');
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockSelectedProductCards]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockSponsoredShelf]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+      mockSelectorResults({
+        '.flagged-shelf': [],
+        'li:not(.flagged-shelf)': [liElement],
+        '#js-recommended-skus-shelf': [],
+        '#cross-sell': [],
+        '.secondary-sku-card-shelf': [],
+        '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
+        '.selected-product-cards:not(.flagged-shelf)': [selectedProductCards],
+        '.sponsored-shelf:not(.flagged-shelf)': [sponsoredShelf],
+        '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
+        '.placement-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+      });
 
       shelfProductAdHandler.flag();
 
-      // Should have called addClassesToElement for each shelf element
       expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(3);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(3);
       expect(mockState.ShelfAdCount).toBe(3);
     });
+
     it('should flag placement shelf advertisements', () => {
-      // Initial flagged elements
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-
-      // Mock li elements that don't match shelf classes
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-
-      // Mock the new placement shelf variant
       const placementShelfElement = document.createElement('div');
       placementShelfElement.classList.add('placement-shelf');
       placementShelfElement.classList.add('polymorphic-brand-shelf');
-      vi.mocked(DomClient.addClassesToElement).mockImplementation((element, ...flagClasses) => {
-        element.classList.add(...flagClasses);
+
+      mockSelectorResults({
+        '.flagged-shelf': [],
+        'li:not(.flagged-shelf)': [],
+        '#js-recommended-skus-shelf': [],
+        '#cross-sell': [],
+        '.secondary-sku-card-shelf': [],
+        '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
+        '.selected-product-cards:not(.flagged-shelf)': [],
+        '.sponsored-shelf:not(.flagged-shelf)': [],
+        '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
+        '.placement-shelf:not(.flagged-shelf)': [placementShelfElement],
+        '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
       });
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([placementShelfElement]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([placementShelfElement]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
 
       shelfProductAdHandler.flag();
 
@@ -138,16 +146,22 @@ describe('ShelfProductAdHandler', () => {
     });
 
     it('should flag recommended skus shelf advertisements', () => {
-      // Initial flagged elements
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-
-      // Mock li elements that don't match shelf classes
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-      // Mock the recommended skus shelf container
       const recommendedShelfElement = document.createElement('section');
       recommendedShelfElement.id = 'js-recommended-skus-shelf';
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([recommendedShelfElement]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+
+      mockSelectorResults({
+        '.flagged-shelf': [],
+        'li:not(.flagged-shelf)': [],
+        '#js-recommended-skus-shelf': [recommendedShelfElement],
+        '#cross-sell': [],
+        '.secondary-sku-card-shelf': [],
+        '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
+        '.selected-product-cards:not(.flagged-shelf)': [],
+        '.sponsored-shelf:not(.flagged-shelf)': [],
+        '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
+        '.placement-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+      });
 
       shelfProductAdHandler.flag();
 
@@ -159,35 +173,81 @@ describe('ShelfProductAdHandler', () => {
         recommendedShelfElement,
         'hide',
       );
-      expect(DomClient.getElementsByClass).toHaveBeenCalledWith('#js-recommended-skus-shelf');
       expect(mockState.ShelfAdCount).toBe(1);
+    });
+
+    it('should flag cross-sell shelf containers', () => {
+      const crossSellElement = document.createElement('section');
+      crossSellElement.id = 'cross-sell';
+      const secondarySkuCardShelf = document.createElement('section');
+      secondarySkuCardShelf.classList.add('secondary-sku-card-shelf');
+      const crossSellShelfElement = document.createElement('section');
+      crossSellShelfElement.classList.add(
+        'content',
+        'top-area',
+        'cross-sell-shelf',
+        'sponsored-shelf',
+      );
+
+      mockSelectorResults({
+        '.flagged-shelf': [],
+        'li:not(.flagged-shelf)': [],
+        '#js-recommended-skus-shelf': [],
+        '#cross-sell': [crossSellElement],
+        '.secondary-sku-card-shelf': [secondarySkuCardShelf],
+        '.content.top-area.cross-sell-shelf.sponsored-shelf': [crossSellShelfElement],
+        '.selected-product-cards:not(.flagged-shelf)': [],
+        '.sponsored-shelf:not(.flagged-shelf)': [],
+        '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
+        '.placement-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+      });
+
+      shelfProductAdHandler.flag();
+
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(crossSellElement, 'flagged-shelf');
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
+        secondarySkuCardShelf,
+        'flagged-shelf',
+      );
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
+        crossSellShelfElement,
+        'flagged-shelf',
+      );
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(crossSellElement, 'hide');
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(secondarySkuCardShelf, 'hide');
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(crossSellShelfElement, 'hide');
+      expect(DomClient.getElementsByClass).toHaveBeenCalledWith('#cross-sell');
+      expect(DomClient.getElementsByClass).toHaveBeenCalledWith('.secondary-sku-card-shelf');
+      expect(DomClient.getElementsByClass).toHaveBeenCalledWith(
+        '.content.top-area.cross-sell-shelf.sponsored-shelf',
+      );
+      expect(mockState.ShelfAdCount).toBe(3);
     });
   });
 
   describe('visibilityUpdate', () => {
     it('should update visibility for all flagged shelf elements', () => {
-      // Mock flagged shelf elements
       const flaggedElements = [document.createElement('div'), document.createElement('div')];
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(flaggedElements);
+      mockSelectorResults({
+        '.flagged-shelf': flaggedElements,
+      });
 
-      // Test with hideShelfProductAds set to false
       mockState.hideShelfProductAds = false;
       shelfProductAdHandler.visibilityUpdate();
 
-      // Should call updateElementVisibility with 'hide' for each element
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[0], 'hide');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[1], 'hide');
 
-      // Reset calls
       vi.mocked(DomClient.updateElementVisibility).mockClear();
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(flaggedElements);
+      mockSelectorResults({
+        '.flagged-shelf': flaggedElements,
+      });
 
-      // Test with hideShelfProductAds set to true
       mockState.hideShelfProductAds = true;
       shelfProductAdHandler.visibilityUpdate();
 
-      // Should call updateElementVisibility with 'show' for each element
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[0], 'show');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[1], 'show');
@@ -196,17 +256,14 @@ describe('ShelfProductAdHandler', () => {
 
   describe('updateCountAndVisibility', () => {
     it('should increment count and update visibility when element matches criteria', () => {
-      // Create private method test helper
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (shelfProductAdHandler as any).updateCountAndVisibility.bind(
         shelfProductAdHandler,
       );
 
-      // Create element with matching class
       const element = document.createElement('div');
       element.classList.add('selected-product-cards');
 
-      // Test with hideShelfProductAds set to false
       mockState.hideShelfProductAds = false;
       updateCountAndVisibility(element);
 
@@ -214,12 +271,10 @@ describe('ShelfProductAdHandler', () => {
       expect(DomClient.addClassesToElement).toHaveBeenCalledWith(element, 'flagged-shelf');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(element, 'hide');
 
-      // Reset state and mocks
       mockState.ShelfAdCount = 0;
       vi.mocked(DomClient.addClassesToElement).mockClear();
       vi.mocked(DomClient.updateElementVisibility).mockClear();
 
-      // Test with hideShelfProductAds set to true
       mockState.hideShelfProductAds = true;
       updateCountAndVisibility(element);
 
@@ -229,13 +284,11 @@ describe('ShelfProductAdHandler', () => {
     });
 
     it('should not update count or visibility when element does not match criteria', () => {
-      // Create private method test helper
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (shelfProductAdHandler as any).updateCountAndVisibility.bind(
         shelfProductAdHandler,
       );
 
-      // Create element without matching class
       const element = document.createElement('div');
       element.classList.add('not-a-shelf');
 
@@ -247,13 +300,11 @@ describe('ShelfProductAdHandler', () => {
     });
 
     it('should not update already flagged elements', () => {
-      // Create private method test helper
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (shelfProductAdHandler as any).updateCountAndVisibility.bind(
         shelfProductAdHandler,
       );
 
-      // Create element that's already flagged
       const element = document.createElement('div');
       element.classList.add('selected-product-cards');
       element.classList.add('flagged-shelf');
@@ -268,17 +319,14 @@ describe('ShelfProductAdHandler', () => {
 
   describe('flagElementsBySelector', () => {
     it('should flag all elements matching the selector', () => {
-      // Create private method test helper
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flagElementsBySelector = (shelfProductAdHandler as any).flagElementsBySelector.bind(
         shelfProductAdHandler,
       );
 
-      // Mock elements to be returned by getElementsByClass
       const elements = [document.createElement('div'), document.createElement('div')];
       vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(elements);
 
-      // Test with hideShelfProductAds set to false
       mockState.hideShelfProductAds = false;
       flagElementsBySelector('.test-selector');
 
@@ -287,7 +335,6 @@ describe('ShelfProductAdHandler', () => {
       expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
 
-      // Test with hideShelfProductAds set to true
       mockState.ShelfAdCount = 0;
       vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(elements);
       vi.mocked(DomClient.addClassesToElement).mockClear();
