@@ -43,6 +43,10 @@ type DomStoreAvailability = {
 export class SkroutzClient {
   private static readonly productDataCache = new Map<string, Promise<ProductData>>();
 
+  private static pricesMatch(left: number, right: number): boolean {
+    return Math.round(left * 100) === Math.round(right * 100);
+  }
+
   public static async getCurrentProductData(): Promise<ProductPriceData> {
     try {
       const productCode = this.getSku();
@@ -798,8 +802,8 @@ export class SkroutzClient {
     const productCards = productData.product_cards;
 
     // Primary match: raw_price (the net/base price shown in the ecommerce buybox)
-    const cardByRawPrice = Object.values(productCards).find(
-      (card) => card.raw_price === skroutzRawPrice,
+    const cardByRawPrice = Object.values(productCards).find((card) =>
+      this.pricesMatch(card.raw_price, skroutzRawPrice),
     );
     if (cardByRawPrice) {
       return {
@@ -811,19 +815,53 @@ export class SkroutzClient {
     }
 
     // Fallback match: ecommerce_final_price (Skroutz-subsidised/discounted price)
-    const firstCard = Object.values(productCards).find(
-      (card) => this.getEffectiveCardPrice(card) === skroutzRawPrice,
+    const firstCard = Object.values(productCards).find((card) =>
+      this.pricesMatch(this.getEffectiveCardPrice(card), skroutzRawPrice),
     );
-    if (!firstCard) {
-      throw new Error('No product cards found');
+    if (firstCard) {
+      return {
+        price: this.getEffectiveCardPrice(firstCard),
+        shippingCost: firstCard.shipping_cost,
+        totalPrice: this.getEffectiveCardPrice(firstCard) + firstCard.shipping_cost,
+        shopId: firstCard.shop_id,
+      };
     }
 
-    return {
-      price: this.getEffectiveCardPrice(firstCard),
-      shippingCost: firstCard.shipping_cost,
-      totalPrice: this.getEffectiveCardPrice(firstCard) + firstCard.shipping_cost,
-      shopId: firstCard.shop_id,
-    };
+    const currentBuyboxShopId = this.getCurrentBuyboxShopId();
+    if (currentBuyboxShopId !== undefined) {
+      const cardByBuyboxShop = Object.values(productCards).find(
+        (card) => card.shop_id === currentBuyboxShopId,
+      );
+
+      if (cardByBuyboxShop) {
+        return {
+          price: skroutzRawPrice,
+          shippingCost: cardByBuyboxShop.shipping_cost,
+          totalPrice: skroutzRawPrice + cardByBuyboxShop.shipping_cost,
+          shopId: cardByBuyboxShop.shop_id,
+        };
+      }
+    }
+
+    throw new Error('No product cards found');
+  }
+
+  private static getCurrentBuyboxShopId(): number | undefined {
+    const buybox = document.querySelector('article.buybox');
+    if (!buybox) {
+      return undefined;
+    }
+
+    const shopHref = buybox.querySelector('.merchant-box a[href*="/shop/"]')?.getAttribute('href');
+
+    if (shopHref) {
+      const shopIdMatch = shopHref.match(/\/shop\/(\d+)\//);
+      if (shopIdMatch?.[1]) {
+        return parseInt(shopIdMatch[1], 10);
+      }
+    }
+
+    return undefined;
   }
 
   private static getStorePriceData(productData: ProductData): PriceData {
