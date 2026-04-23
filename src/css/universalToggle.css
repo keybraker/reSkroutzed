@@ -24,7 +24,9 @@
   padding: 8px !important;
   border: 2px solid #ffffff !important;
   border-radius: 50% !important;
-  background: linear-gradient(145deg, rgba(230, 99, 0, 0.5), rgba(217, 85, 0, 0.75)) !important;
+  background: linear-gradient(145deg, rgba(230, 99, 0, 0.34), rgba(217, 85, 0, 0.58)) !important;
+  backdrop-filter: blur(10px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
   color: #ffffff !important;
   cursor: pointer !important;
   z-index: 10000 !important;
@@ -44,9 +46,14 @@
 }
 
 .universal-toggle-button .logo-image {
-  width: 100% !important;
-  height: 100% !important;
+  width: 82% !important;
+  height: 82% !important;
   object-fit: contain !important;
+  transition: transform 0.3s ease !important;
+}
+
+.universal-toggle-button:hover .logo-image {
+  transform: scale(0.91) !important;
 }
 
 .universal-toggle-button:hover {
