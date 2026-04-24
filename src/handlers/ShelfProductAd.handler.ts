@@ -12,7 +12,6 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
   ];
   private readonly crossSellShelfSelectors = [
     '#cross-sell',
-    '.secondary-sku-card-shelf',
     '.content.top-area.cross-sell-shelf.sponsored-shelf',
   ];
   private readonly flaggedShelfAdClass = 'flagged-shelf';

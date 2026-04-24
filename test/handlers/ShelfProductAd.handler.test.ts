@@ -54,7 +54,6 @@ describe('ShelfProductAdHandler', () => {
         '.flagged-shelf': [],
         'li:not(.flagged-shelf)': [],
         '#cross-sell': [],
-        '.secondary-sku-card-shelf': [],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
         '.selected-product-cards:not(.flagged-shelf)': [],
         '.sponsored-shelf:not(.flagged-shelf)': [],
@@ -75,7 +74,6 @@ describe('ShelfProductAdHandler', () => {
         '.flagged-shelf': flaggedElements,
         'li:not(.flagged-shelf)': [],
         '#cross-sell': [],
-        '.secondary-sku-card-shelf': [],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
         '.selected-product-cards:not(.flagged-shelf)': [],
         '.sponsored-shelf:not(.flagged-shelf)': [],
@@ -99,7 +97,6 @@ describe('ShelfProductAdHandler', () => {
         '.flagged-shelf': [],
         'li:not(.flagged-shelf)': [liElement],
         '#cross-sell': [],
-        '.secondary-sku-card-shelf': [],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
         '.selected-product-cards:not(.flagged-shelf)': [selectedProductCards],
         '.sponsored-shelf:not(.flagged-shelf)': [sponsoredShelf],
@@ -124,7 +121,6 @@ describe('ShelfProductAdHandler', () => {
         '.flagged-shelf': [],
         'li:not(.flagged-shelf)': [],
         '#cross-sell': [],
-        '.secondary-sku-card-shelf': [],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
         '.selected-product-cards:not(.flagged-shelf)': [],
         '.sponsored-shelf:not(.flagged-shelf)': [],
@@ -146,8 +142,6 @@ describe('ShelfProductAdHandler', () => {
     it('should flag cross-sell shelf containers', () => {
       const crossSellElement = document.createElement('section');
       crossSellElement.id = 'cross-sell';
-      const secondarySkuCardShelf = document.createElement('section');
-      secondarySkuCardShelf.classList.add('secondary-sku-card-shelf');
       const crossSellShelfElement = document.createElement('section');
       crossSellShelfElement.classList.add(
         'content',
@@ -160,7 +154,6 @@ describe('ShelfProductAdHandler', () => {
         '.flagged-shelf': [],
         'li:not(.flagged-shelf)': [],
         '#cross-sell': [crossSellElement],
-        '.secondary-sku-card-shelf': [secondarySkuCardShelf],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [crossSellShelfElement],
         '.selected-product-cards:not(.flagged-shelf)': [],
         '.sponsored-shelf:not(.flagged-shelf)': [],
@@ -173,15 +166,10 @@ describe('ShelfProductAdHandler', () => {
 
       expect(DomClient.addClassesToElement).toHaveBeenCalledWith(crossSellElement, 'flagged-shelf');
       expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
-        secondarySkuCardShelf,
-        'flagged-shelf',
-      );
-      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
         crossSellShelfElement,
         'flagged-shelf',
       );
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(crossSellElement, 'hide');
-      expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(secondarySkuCardShelf, 'hide');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(crossSellShelfElement, 'hide');
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith('#cross-sell');
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith('.secondary-sku-card-shelf');
