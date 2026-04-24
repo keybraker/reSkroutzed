@@ -1,7 +1,24 @@
 .flagged-video {
-  opacity: 0.85 !important;
-  padding: 16px !important;
+  position: relative !important;
+  opacity: 0.92 !important;
+  padding: 24px !important;
   border: 2px solid rgba(255, 89, 89, 0.678) !important;
-  box-shadow: 0 0 0 2px rgba(255, 89, 89, 0.678) !important;
-  border-radius: 12px;
+  box-shadow:
+    0 0 0 2px rgba(255, 89, 89, 0.22) !important,
+    0 14px 30px rgba(163, 48, 48, 0.14) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 245, 245, 0.94),
+    rgba(255, 255, 255, 0.96)
+  ) !important;
+  overflow: visible !important;
+}
+
+.dark-mode .flagged-video {
+  border-color: rgba(255, 117, 117, 0.78) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 117, 117, 0.14) !important,
+    0 14px 30px rgba(0, 0, 0, 0.36) !important;
+  background: linear-gradient(180deg, rgba(72, 20, 20, 0.82), rgba(29, 23, 23, 0.98)) !important;
 }
