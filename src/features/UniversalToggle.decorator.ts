@@ -5,6 +5,7 @@ import { getConditionalTranslation, getTranslation } from '../common/functions/t
 import { State } from '../common/types/State.type';
 import { CampaignAdHandler } from '../handlers/Campaign.handler';
 import { ListProductAdHandler } from '../handlers/ListProductAd.handler';
+import { RecommendationAdHandler } from '../handlers/RecommendationAd.handler';
 import { ShelfProductAdHandler } from '../handlers/ShelfProductAd.handler';
 import { SponsorshipAdHandler } from '../handlers/SponsorshipAd.handler';
 import { VideoAdHandler } from '../handlers/VideoAd.handler';
@@ -18,6 +19,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
   private readonly videoHandler: VideoAdHandler;
   private readonly listProductAdHandler: ListProductAdHandler;
+  private readonly recommendationAdHandler: RecommendationAdHandler;
   private readonly shelfProductAdHandler: ShelfProductAdHandler;
   private readonly sponsorshipAdHandler: SponsorshipAdHandler;
   private readonly campaignAdHandler: CampaignAdHandler;
@@ -27,6 +29,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     this.videoHandler = new VideoAdHandler(this.state);
     this.listProductAdHandler = new ListProductAdHandler(this.state);
+    this.recommendationAdHandler = new RecommendationAdHandler(this.state);
     this.shelfProductAdHandler = new ShelfProductAdHandler(this.state);
     this.sponsorshipAdHandler = new SponsorshipAdHandler(this.state);
     this.campaignAdHandler = new CampaignAdHandler(this.state);
@@ -55,6 +58,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const videoToggleButton = this.createVideoToggleButton();
     const sponsorshipToggleButton = this.createSponsorshipToggleButton();
     const shelfProductAdToggleButton = this.createShelfProductAdToggleButton();
+    const recommendationAdToggleButton = this.createRecommendationAdToggleButton();
     const aiSlopToggleButton = this.createAISlopToggleButton();
 
     DomClient.appendElementToElement(priceDifferenceButton, buttonsContainer);
@@ -63,6 +67,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     DomClient.appendElementToElement(videoToggleButton, buttonsContainer);
     DomClient.appendElementToElement(sponsorshipToggleButton, buttonsContainer);
     DomClient.appendElementToElement(shelfProductAdToggleButton, buttonsContainer);
+    DomClient.appendElementToElement(recommendationAdToggleButton, buttonsContainer);
     DomClient.appendElementToElement(aiSlopToggleButton, buttonsContainer);
 
     mainToggle.addEventListener('click', () => this.toggleMenu(container));
@@ -102,6 +107,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
     )) as boolean;
     this.state.hideShelfProductAds = (await BrowserClient.getValueAsync(
       StorageKey.SHELF_PRODUCT_AD_VISIBILITY,
+    )) as boolean;
+    this.state.hideRecommendationAds = (await BrowserClient.getValueAsync(
+      StorageKey.RECOMMENDATION_AD_VISIBILITY,
     )) as boolean;
     this.state.hideSponsorships = (await BrowserClient.getValueAsync(
       StorageKey.SPONSORSHIP_VISIBILITY,
@@ -244,6 +252,34 @@ export class UniversalToggleDecorator implements FeatureInstance {
           shelfPath.setAttribute(
             'd',
             'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
+          );
+        }
+      }
+    }
+
+    const recommendationToggleButton = container.querySelector(
+      '.recommendation-ad-toggle-option',
+    ) as HTMLButtonElement;
+    if (recommendationToggleButton) {
+      recommendationToggleButton.classList.toggle('active', !this.state.hideRecommendationAds);
+      recommendationToggleButton.title = getConditionalTranslation(
+        this.state.language,
+        this.state.hideRecommendationAds ?? false,
+        'recommendationAdHide',
+        'recommendationAdShow',
+      );
+
+      const recommendationPath = recommendationToggleButton.querySelector('path');
+      if (recommendationPath) {
+        if (this.state.hideRecommendationAds) {
+          recommendationPath.setAttribute(
+            'd',
+            'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
+          );
+        } else {
+          recommendationPath.setAttribute(
+            'd',
+            'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z M12.854 1.146a.5.5 0 0 0-.708 0L1.146 12.146a.5.5 0 1 0 .708.708l11-11a.5.5 0 0 0 0-.708z',
           );
         }
       }
@@ -1017,6 +1053,102 @@ export class UniversalToggleDecorator implements FeatureInstance {
       apply();
       button.classList.toggle('active');
       button.title = this.state.hideAISlop ? 'Hide AI Slop' : 'Show AI Slop';
+    });
+
+    return button;
+  }
+
+  private createRecommendationAdToggleButton(): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.classList.add('toggle-option-button', 'recommendation-ad-toggle-option');
+    button.title = this.state.hideRecommendationAds
+      ? 'Hide Recommendation Ads'
+      : 'Show Recommendation Ads';
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '16');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    if (this.state.hideRecommendationAds) {
+      path.setAttribute(
+        'd',
+        'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
+      );
+    } else {
+      path.setAttribute(
+        'd',
+        'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z M12.854 1.146a.5.5 0 0 0-.708 0L1.146 12.146a.5.5 0 1 0 .708.708l11-11a.5.5 0 0 0 0-.708z',
+      );
+    }
+    path.setAttribute('fill', 'currentColor');
+
+    DomClient.appendElementToElement(path, svg);
+    DomClient.appendElementToElement(svg, button);
+
+    const recommendationNotificationBubble = document.createElement('div');
+    recommendationNotificationBubble.classList.add(
+      'notification-bubble',
+      'recommendation-notification',
+    );
+    recommendationNotificationBubble.textContent = `${this.state.recommendationAdCount ?? 0}`;
+    DomClient.appendElementToElement(recommendationNotificationBubble, button);
+
+    const updateRecommendationNotificationCount = (): void => {
+      const flaggedRecommendationElements = document.querySelectorAll('.flagged-recommendation');
+
+      if (flaggedRecommendationElements.length !== (this.state.recommendationAdCount ?? 0)) {
+        this.state.recommendationAdCount = flaggedRecommendationElements.length;
+      }
+
+      recommendationNotificationBubble.textContent = `${this.state.recommendationAdCount ?? 0}`;
+      recommendationNotificationBubble.style.display =
+        (this.state.recommendationAdCount ?? 0) === 0 ? 'none' : 'flex';
+    };
+
+    updateRecommendationNotificationCount();
+    setInterval(updateRecommendationNotificationCount, 2000);
+
+    if (!(this.state.hideRecommendationAds ?? false)) {
+      button.classList.add('active');
+    }
+
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.state.hideRecommendationAds = !(this.state.hideRecommendationAds ?? false);
+
+      BrowserClient.setValue(
+        StorageKey.RECOMMENDATION_AD_VISIBILITY,
+        this.state.hideRecommendationAds,
+      );
+
+      this.recommendationAdHandler.visibilityUpdate();
+      button.classList.toggle('active');
+
+      const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      if (this.state.hideRecommendationAds) {
+        newPath.setAttribute(
+          'd',
+          'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
+        );
+      } else {
+        newPath.setAttribute(
+          'd',
+          'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z M12.854 1.146a.5.5 0 0 0-.708 0L1.146 12.146a.5.5 0 1 0 .708.708l11-11a.5.5 0 0 0 0-.708z',
+        );
+      }
+      newPath.setAttribute('fill', 'currentColor');
+
+      const oldPath = svg.querySelector('path');
+      if (oldPath) {
+        svg.removeChild(oldPath);
+      }
+      DomClient.appendElementToElement(newPath, svg);
+
+      button.title = this.state.hideRecommendationAds
+        ? 'Hide Recommendation Ads'
+        : 'Show Recommendation Ads';
     });
 
     return button;

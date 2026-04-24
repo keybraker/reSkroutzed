@@ -8,6 +8,7 @@ import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
 import { themeSync } from './features/functions/themeSync';
 import { CampaignAdHandler } from './handlers/Campaign.handler';
 import { ListProductAdHandler } from './handlers/ListProductAd.handler';
+import { RecommendationAdHandler } from './handlers/RecommendationAd.handler';
 import { ShelfProductAdHandler } from './handlers/ShelfProductAd.handler';
 import { SponsorshipAdHandler } from './handlers/SponsorshipAd.handler';
 import { VideoAdHandler } from './handlers/VideoAd.handler';
@@ -17,11 +18,13 @@ const state: State = {
   hideVideoAds: false,
   hideSponsorships: false,
   hideShelfProductAds: false,
+  hideRecommendationAds: false,
   hideAISlop: false,
   hideUniversalToggle: false,
   language: Language.GREEK,
   productAdCount: 0,
   ShelfAdCount: 0,
+  recommendationAdCount: 0,
   videoAdCount: 0,
   sponsorshipAdCount: 0,
   darkMode: false,
@@ -71,6 +74,9 @@ function loadStorage(): void {
   state.hideShelfProductAds = BrowserClient.getValue<boolean>(
     StorageKey.SHELF_PRODUCT_AD_VISIBILITY,
   );
+  state.hideRecommendationAds = BrowserClient.getValue<boolean>(
+    StorageKey.RECOMMENDATION_AD_VISIBILITY,
+  );
   state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
@@ -91,6 +97,7 @@ loadStorage();
 const videoAdHandler = new VideoAdHandler(state);
 const listProductAdHandler = new ListProductAdHandler(state);
 const shelfProductAdHandler = new ShelfProductAdHandler(state);
+const recommendationAdHandler = new RecommendationAdHandler(state);
 const sponsorshipAdHandler = new SponsorshipAdHandler(state);
 const campaignAdHandler = new CampaignAdHandler(state);
 // Decorators
@@ -120,6 +127,7 @@ const logoHatDecorator = new LogoHatDecorator();
     videoAdHandler.flag();
     listProductAdHandler.flag();
     shelfProductAdHandler.flag();
+    recommendationAdHandler.flag();
     sponsorshipAdHandler.flag();
     campaignAdHandler.flag();
   }
@@ -128,6 +136,7 @@ const logoHatDecorator = new LogoHatDecorator();
     videoAdHandler.visibilityUpdate();
     listProductAdHandler.visibilityUpdate();
     shelfProductAdHandler.visibilityUpdate();
+    recommendationAdHandler.visibilityUpdate();
     sponsorshipAdHandler.visibilityUpdate();
     campaignAdHandler.visibilityUpdate();
     applyAISlopVisibility();
@@ -188,6 +197,7 @@ chrome.runtime.onMessage.addListener(
         | {
             sponsoredCount: number;
             sponsoredShelfCount: number;
+            recommendationCount?: number;
             videoCount: number;
             isMobile?: boolean;
           }
@@ -198,6 +208,7 @@ chrome.runtime.onMessage.addListener(
       sendResponse({
         sponsoredCount: state.productAdCount,
         sponsoredShelfCount: state.ShelfAdCount,
+        recommendationCount: state.recommendationAdCount,
         videoCount: state.videoAdCount,
         isMobile: state.isMobile,
       });
@@ -220,6 +231,11 @@ chrome.runtime.onMessage.addListener(
       state.hideShelfProductAds = request.value as boolean;
       BrowserClient.setValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, state.hideShelfProductAds);
       shelfProductAdHandler.visibilityUpdate();
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleRecommendationAds' && request.value !== undefined) {
+      state.hideRecommendationAds = request.value as boolean;
+      BrowserClient.setValue(StorageKey.RECOMMENDATION_AD_VISIBILITY, state.hideRecommendationAds);
+      recommendationAdHandler.visibilityUpdate();
       sendResponse({ success: true });
     } else if (request.action === 'toggleSponsorships' && request.value !== undefined) {
       state.hideSponsorships = request.value as boolean;

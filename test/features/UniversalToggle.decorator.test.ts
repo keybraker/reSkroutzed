@@ -17,8 +17,10 @@ vi.mock('../../src/clients/browser/client', () => ({
     PRODUCT_AD_VISIBILITY: 'hideProductAds',
     VIDEO_AD_VISIBILITY: 'hideVideoAds',
     SHELF_PRODUCT_AD_VISIBILITY: 'hideShelfProductAds',
+    RECOMMENDATION_AD_VISIBILITY: 'hideRecommendationAds',
     SPONSORSHIP_VISIBILITY: 'hideSponsorships',
     MINIMUM_PRICE_DIFFERENCE: 'minimumPriceDifference',
+    AI_SLOP_VISIBILITY: 'hideAISlop',
   },
 }));
 
@@ -31,6 +33,12 @@ vi.mock('../../src/handlers/ListProductAd.handler', () => ({
 
 vi.mock('../../src/handlers/ShelfProductAd.handler', () => ({
   ShelfProductAdHandler: vi.fn().mockImplementation(() => ({
+    visibilityUpdate: vi.fn(),
+  })),
+}));
+
+vi.mock('../../src/handlers/RecommendationAd.handler', () => ({
+  RecommendationAdHandler: vi.fn().mockImplementation(() => ({
     visibilityUpdate: vi.fn(),
   })),
 }));
@@ -71,10 +79,12 @@ describe('UniversalToggleDecorator', () => {
       hideProductAds: false,
       hideVideoAds: false,
       hideShelfProductAds: false,
+      hideRecommendationAds: false,
       hideSponsorships: false,
       productAdCount: 3,
       videoAdCount: 2,
       ShelfAdCount: 1,
+      recommendationAdCount: 4,
       minimumPriceDifference: 1,
       sponsorshipAdCount: 0,
     };
@@ -112,6 +122,7 @@ describe('UniversalToggleDecorator', () => {
       expect(document.querySelector('.video-toggle-option')).not.toBeNull();
       expect(document.querySelector('.sponsorship-toggle-option')).not.toBeNull();
       expect(document.querySelector('.shelf-ad-toggle-option')).not.toBeNull();
+      expect(document.querySelector('.recommendation-ad-toggle-option')).not.toBeNull();
     });
 
     it('should display product ad count in notification bubble', () => {
@@ -150,6 +161,18 @@ describe('UniversalToggleDecorator', () => {
       expect(shelfNotification).not.toBeNull();
       if (shelfNotification?.textContent) {
         expect(['1', '0']).toContain(shelfNotification.textContent);
+      }
+    });
+
+    it('should display recommendation ad count in notification bubble', () => {
+      universalToggleDecorator.execute();
+
+      const recommendationNotification = document.querySelector(
+        '.recommendation-ad-toggle-option .notification-bubble',
+      );
+      expect(recommendationNotification).not.toBeNull();
+      if (recommendationNotification?.textContent) {
+        expect(['4', '0']).toContain(recommendationNotification.textContent);
       }
     });
 

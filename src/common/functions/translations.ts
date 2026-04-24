@@ -93,6 +93,22 @@ export const translations = {
     [Language.GERMAN]: 'Regalwerbung anzeigen',
   },
 
+  // Recommendation ad toggle
+  recommendationAdHide: {
+    [Language.ENGLISH]: 'Hide Recommendation Ads',
+    [Language.GREEK]: 'Απόκρυψη Διαφημίσεων Προτάσεων',
+    [Language.ROMANIAN]: 'Ascunde Recomandările Publicitare',
+    [Language.BULGARIAN]: 'Скриване на Реклами за Препоръки',
+    [Language.GERMAN]: 'Empfehlungswerbung ausblenden',
+  },
+  recommendationAdShow: {
+    [Language.ENGLISH]: 'Show Recommendation Ads',
+    [Language.GREEK]: 'Εμφάνιση Διαφημίσεων Προτάσεων',
+    [Language.ROMANIAN]: 'Afișează Recomandările Publicitare',
+    [Language.BULGARIAN]: 'Показване на Реклами за Препоръки',
+    [Language.GERMAN]: 'Empfehlungswerbung anzeigen',
+  },
+
   // AI Slop toggle
   aiSlopHide: {
     [Language.ENGLISH]: 'Hide AI Slop',

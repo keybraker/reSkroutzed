@@ -10,7 +10,6 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
     'placement-shelf',
     'polymorphic-brand-shelf',
   ];
-  private readonly recommendedSkusShelfSelector = '#js-recommended-skus-shelf';
   private readonly crossSellShelfSelectors = [
     '#cross-sell',
     '.secondary-sku-card-shelf',
@@ -30,7 +29,6 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
       this.updateCountAndVisibility(element),
     );
 
-    this.flagElementsBySelector(this.recommendedSkusShelfSelector);
     this.crossSellShelfSelectors.forEach((selector) => this.flagElementsBySelector(selector));
 
     this.shelfAdClass.forEach((adClass) => {

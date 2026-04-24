@@ -4,13 +4,14 @@ const StorageKey = {
   PRODUCT_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-product-ad-visibility',
   VIDEO_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-video-ad-visibility',
   SHELF_PRODUCT_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-shelf-product-ad-visibility',
+  RECOMMENDATION_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-recommendation-ad-visibility',
   SPONSORSHIP_VISIBILITY: STORAGE_KEY_PREFIX + '-sponsorship-visibility',
   AI_SLOP_VISIBILITY: STORAGE_KEY_PREFIX + '-ai-slop-visibility',
   UNIVERSAL_TOGGLE_VISIBILITY: STORAGE_KEY_PREFIX + '-universal-toggle-visibility',
   MINIMUM_PRICE_DIFFERENCE: STORAGE_KEY_PREFIX + '-minimum-difference',
   TOTAL_ADS_BLOCKED: STORAGE_KEY_PREFIX + '-total-ads-blocked',
   TOTAL_SHELVES_BLOCKED: STORAGE_KEY_PREFIX + '-total-shelves-blocked',
-  TOTAL_VIDEOS_BLOCKED: STORAGE_KEY_PREFIX + '-total-videos-blocked'
+  TOTAL_VIDEOS_BLOCKED: STORAGE_KEY_PREFIX + '-total-videos-blocked',
 };
 
 function getStorageValue(key, defaultValue, callback) {
@@ -78,6 +79,11 @@ function loadSettings() {
     aiSlopToggle.checked = value;
   });
 
+  const recommendationsToggle = document.getElementById('toggleRecommendations');
+  getStorageValue(StorageKey.RECOMMENDATION_AD_VISIBILITY, true, (value) => {
+    recommendationsToggle.checked = !value;
+  });
+
   const sponsorshipsToggle = document.getElementById('toggleSponsorships');
   getStorageValue(StorageKey.SPONSORSHIP_VISIBILITY, true, (value) => {
     sponsorshipsToggle.checked = !value;
@@ -114,12 +120,16 @@ function setupEventListeners() {
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'toggleDarkMode',
-          value: isDarkMode
-        }, function (response) {
-          console.log('Dark mode response:', response);
-        });
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleDarkMode',
+            value: isDarkMode,
+          },
+          function (response) {
+            console.log('Dark mode response:', response);
+          },
+        );
       }
     });
 
@@ -137,12 +147,16 @@ function setupEventListeners() {
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'toggleUniversalToggle',
-          value: hideUniversal
-        }, function (response) {
-          console.log('Universal toggle visibility response:', response);
-        });
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleUniversalToggle',
+            value: hideUniversal,
+          },
+          function (response) {
+            console.log('Universal toggle visibility response:', response);
+          },
+        );
       }
     });
   });
@@ -153,12 +167,16 @@ function setupEventListeners() {
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'toggleProductAds',
-          value: hideAds
-        }, function (response) {
-          console.log('Product ads response:', response);
-        });
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleProductAds',
+            value: hideAds,
+          },
+          function (response) {
+            console.log('Product ads response:', response);
+          },
+        );
       }
     });
   });
@@ -169,12 +187,16 @@ function setupEventListeners() {
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'toggleVideoAds',
-          value: hideVideos
-        }, function (response) {
-          console.log('Video ads response:', response);
-        });
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleVideoAds',
+            value: hideVideos,
+          },
+          function (response) {
+            console.log('Video ads response:', response);
+          },
+        );
       }
     });
   });
@@ -185,12 +207,36 @@ function setupEventListeners() {
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'toggleShelfProductAds',
-          value: hideShelves
-        }, function (response) {
-          console.log('Shelf ads response:', response);
-        });
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleShelfProductAds',
+            value: hideShelves,
+          },
+          function (response) {
+            console.log('Shelf ads response:', response);
+          },
+        );
+      }
+    });
+  });
+
+  document.getElementById('toggleRecommendations').addEventListener('change', (e) => {
+    const hideRecommendations = !e.target.checked;
+    setStorageValue(StorageKey.RECOMMENDATION_AD_VISIBILITY, hideRecommendations);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleRecommendationAds',
+            value: hideRecommendations,
+          },
+          function (response) {
+            console.log('Recommendation ads response:', response);
+          },
+        );
       }
     });
   });
@@ -209,7 +255,7 @@ function setupEventListeners() {
           },
           function (response) {
             console.log('AI slop response:', response);
-          }
+          },
         );
       }
     });
@@ -221,12 +267,16 @@ function setupEventListeners() {
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'toggleSponsorships',
-          value: hideSponsorships
-        }, function (response) {
-          console.log('Sponsorships response:', response);
-        });
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleSponsorships',
+            value: hideSponsorships,
+          },
+          function (response) {
+            console.log('Sponsorships response:', response);
+          },
+        );
       }
     });
   });
@@ -238,18 +288,22 @@ function setupEventListeners() {
 
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs && tabs.length > 0) {
-          chrome.tabs.sendMessage(tabs[0].id, {
-            action: 'updatePriceDifference',
-            value: priceDifference
-          }, function (response) {
-            console.log('Price difference response:', response);
-          });
+          chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              action: 'updatePriceDifference',
+              value: priceDifference,
+            },
+            function (response) {
+              console.log('Price difference response:', response);
+            },
+          );
         }
       });
 
       const button = document.getElementById('updatePriceBtn');
       const originalText = button.textContent;
-      button.textContent = "Updated!";
+      button.textContent = 'Updated!';
       button.classList.add('action-success');
 
       setTimeout(() => {

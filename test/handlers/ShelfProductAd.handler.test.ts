@@ -30,8 +30,10 @@ describe('ShelfProductAdHandler', () => {
       hideProductAds: false,
       hideSponsorships: false,
       hideShelfProductAds: false,
+      hideRecommendationAds: false,
       productAdCount: 0,
       ShelfAdCount: 0,
+      recommendationAdCount: 0,
       videoAdCount: 0,
       sponsorshipAdCount: 0,
       language: 0,
@@ -51,7 +53,6 @@ describe('ShelfProductAdHandler', () => {
       mockSelectorResults({
         '.flagged-shelf': [],
         'li:not(.flagged-shelf)': [],
-        '#js-recommended-skus-shelf': [],
         '#cross-sell': [],
         '.secondary-sku-card-shelf': [],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
@@ -73,7 +74,6 @@ describe('ShelfProductAdHandler', () => {
       mockSelectorResults({
         '.flagged-shelf': flaggedElements,
         'li:not(.flagged-shelf)': [],
-        '#js-recommended-skus-shelf': [],
         '#cross-sell': [],
         '.secondary-sku-card-shelf': [],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
@@ -98,7 +98,6 @@ describe('ShelfProductAdHandler', () => {
       mockSelectorResults({
         '.flagged-shelf': [],
         'li:not(.flagged-shelf)': [liElement],
-        '#js-recommended-skus-shelf': [],
         '#cross-sell': [],
         '.secondary-sku-card-shelf': [],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
@@ -124,7 +123,6 @@ describe('ShelfProductAdHandler', () => {
       mockSelectorResults({
         '.flagged-shelf': [],
         'li:not(.flagged-shelf)': [],
-        '#js-recommended-skus-shelf': [],
         '#cross-sell': [],
         '.secondary-sku-card-shelf': [],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
@@ -145,37 +143,6 @@ describe('ShelfProductAdHandler', () => {
       expect(mockState.ShelfAdCount).toBe(1);
     });
 
-    it('should flag recommended skus shelf advertisements', () => {
-      const recommendedShelfElement = document.createElement('section');
-      recommendedShelfElement.id = 'js-recommended-skus-shelf';
-
-      mockSelectorResults({
-        '.flagged-shelf': [],
-        'li:not(.flagged-shelf)': [],
-        '#js-recommended-skus-shelf': [recommendedShelfElement],
-        '#cross-sell': [],
-        '.secondary-sku-card-shelf': [],
-        '.content.top-area.cross-sell-shelf.sponsored-shelf': [],
-        '.selected-product-cards:not(.flagged-shelf)': [],
-        '.sponsored-shelf:not(.flagged-shelf)': [],
-        '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
-        '.placement-shelf:not(.flagged-shelf)': [],
-        '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
-      });
-
-      shelfProductAdHandler.flag();
-
-      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
-        recommendedShelfElement,
-        'flagged-shelf',
-      );
-      expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(
-        recommendedShelfElement,
-        'hide',
-      );
-      expect(mockState.ShelfAdCount).toBe(1);
-    });
-
     it('should flag cross-sell shelf containers', () => {
       const crossSellElement = document.createElement('section');
       crossSellElement.id = 'cross-sell';
@@ -192,7 +159,6 @@ describe('ShelfProductAdHandler', () => {
       mockSelectorResults({
         '.flagged-shelf': [],
         'li:not(.flagged-shelf)': [],
-        '#js-recommended-skus-shelf': [],
         '#cross-sell': [crossSellElement],
         '.secondary-sku-card-shelf': [secondarySkuCardShelf],
         '.content.top-area.cross-sell-shelf.sponsored-shelf': [crossSellShelfElement],

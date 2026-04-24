@@ -179,6 +179,10 @@
   background: #4a4a4a !important;
 }
 
+.recommendation-ad-toggle-option {
+  background: #4a4a4a !important;
+}
+
 .dark-mode .dark-mode-option.active,
 .dark-mode-option.active,
 .dark-mode .sponsorship-toggle-option.active,
@@ -189,6 +193,8 @@
 .ad-toggle-option.active,
 .dark-mode .shelf-ad-toggle-option.active,
 .shelf-ad-toggle-option.active,
+.dark-mode .recommendation-ad-toggle-option.active,
+.recommendation-ad-toggle-option.active,
 .ai-slop-toggle-option.active {
   background: linear-gradient(145deg, #e66300, #d95500) !important;
 }
@@ -230,6 +236,10 @@
 
 .notification-bubble.video-notification {
   background-color: #5856d6 !important;
+}
+
+.notification-bubble.recommendation-notification {
+  background-color: #2d9c86 !important;
 }
 
 .price-difference-option {
