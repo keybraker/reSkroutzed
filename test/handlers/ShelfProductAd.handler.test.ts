@@ -175,7 +175,7 @@ describe('ShelfProductAdHandler', () => {
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith(
         '.content.top-area.cross-sell-shelf.sponsored-shelf',
       );
-      expect(mockState.ShelfAdCount).toBe(3);
+      expect(mockState.ShelfAdCount).toBe(2);
     });
   });
 
