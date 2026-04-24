@@ -13,21 +13,92 @@
   border-radius: 12px;
 }
 
+.card.tracking-img-container.flagged-product {
+  position: relative !important;
+  opacity: 0.92 !important;
+  padding: 36px 12px 12px !important;
+  border: 2px solid rgba(255, 89, 89, 0.678) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 89, 89, 0.22) !important,
+    0 14px 30px rgba(163, 48, 48, 0.14) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 245, 245, 0.94),
+    rgba(255, 255, 255, 0.96)
+  ) !important;
+  overflow: visible !important;
+}
+
+.card.tracking-img-container.flagged-product::before {
+  content: attr(data-reskroutzed-label) !important;
+  position: absolute !important;
+  top: 10px !important;
+  left: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 24px !important;
+  padding: 4px 10px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #ff6f6f, #e14545) !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: lowercase !important;
+  box-shadow: 0 8px 16px rgba(225, 69, 69, 0.24) !important;
+  z-index: 2 !important;
+}
+
+.card.tracking-img-container.flagged-product .image-link,
+.card.tracking-img-container.flagged-product .image,
+.card.tracking-img-container.flagged-product .card-media,
+.card.tracking-img-container.flagged-product .card-image {
+  border-radius: 14px !important;
+}
+
+.dark-mode .card.tracking-img-container.flagged-product {
+  border-color: rgba(255, 117, 117, 0.78) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 117, 117, 0.14) !important,
+    0 14px 30px rgba(0, 0, 0, 0.36) !important;
+  background: linear-gradient(180deg, rgba(72, 20, 20, 0.82), rgba(29, 23, 23, 0.98)) !important;
+}
+
+.dark-mode .card.tracking-img-container.flagged-product::before {
+  background: linear-gradient(135deg, #ff8b8b, #d94b4b) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 16px rgba(168, 56, 56, 0.36) !important;
+}
+
 .flagged-product-image {
   border-radius: 5px !important;
   box-shadow: inset var(--flagged-item-box-shadow, 0px 0px 5px 2px) !important;
 }
 
 .flagged-shelf {
-  padding: 24px !important;
-  border-radius: 8px !important;
-  border: 1px solid var(--flagged-item-box-shadow, #ff0000) !important;
-  box-shadow: var(--flagged-item-box-shadow, 1px 1px 1px 1px) !important;
-  background-color: var(--flagged-item-background, #ffcccc) !important;
+  position: relative !important;
+  padding: 42px 24px 24px !important;
+  border-radius: 18px !important;
+  border: 2px solid rgba(255, 89, 89, 0.678) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 89, 89, 0.22) !important,
+    0 14px 30px rgba(163, 48, 48, 0.14) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 245, 245, 0.94),
+    rgba(255, 255, 255, 0.96)
+  ) !important;
+  overflow: visible !important;
 }
 
 .dark-mode .flagged-shelf {
-  background-color: var(--flagged-item-background, #946868) !important;
+  border-color: rgba(255, 117, 117, 0.78) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 117, 117, 0.14) !important,
+    0 14px 30px rgba(0, 0, 0, 0.36) !important;
+  background: linear-gradient(180deg, rgba(72, 20, 20, 0.82), rgba(29, 23, 23, 0.98)) !important;
 }
 
 .flagged-sponsorship {

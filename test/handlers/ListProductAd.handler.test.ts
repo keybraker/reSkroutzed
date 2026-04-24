@@ -1,11 +1,9 @@
-// filepath: c:\Users\Keybraker\Github\reSkroutzed\test\handlers\ListProductAd.handler.test.ts
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ListProductAdHandler } from '../../src/handlers/ListProductAd.handler';
 import { DomClient } from '../../src/clients/dom/client';
 import { State } from '../../src/common/types/State.type';
+import { ListProductAdHandler } from '../../src/handlers/ListProductAd.handler';
 
-// Mock the DomClient
 vi.mock('../../src/clients/dom/client', () => ({
   DomClient: {
     getElementsByClass: vi.fn(),
@@ -17,20 +15,25 @@ vi.mock('../../src/clients/dom/client', () => ({
 describe('ListProductAdHandler', () => {
   let listProductAdHandler: ListProductAdHandler;
   let mockState: State;
-  let mockProductElement: Element;
+
+  const mockSelectorResults = (selectorResults: Record<string, Element[]>) => {
+    vi.mocked(DomClient.getElementsByClass).mockImplementation(
+      (selector: string) => selectorResults[selector] ?? [],
+    );
+  };
 
   beforeEach(() => {
-    // Reset all mocks
     vi.resetAllMocks();
 
-    // Create mock state
     mockState = {
       hideVideoAds: false,
       hideProductAds: false,
       hideSponsorships: false,
       hideShelfProductAds: false,
+      hideRecommendationAds: false,
       productAdCount: 0,
       ShelfAdCount: 0,
+      recommendationAdCount: 0,
       videoAdCount: 0,
       sponsorshipAdCount: 0,
       language: 0,
@@ -38,11 +41,6 @@ describe('ListProductAdHandler', () => {
       minimumPriceDifference: 0,
     };
 
-    // Create a mock element
-    mockProductElement = document.createElement('div');
-    mockProductElement.classList.add('labeled-item');
-
-    // Create instance of ListProductAdHandler with mock state
     listProductAdHandler = new ListProductAdHandler(mockState);
   });
 
@@ -52,15 +50,14 @@ describe('ListProductAdHandler', () => {
 
   describe('flag', () => {
     it('should set productAdCount to 0 initially', () => {
-      // Mock returning empty array for flagged product elements
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-
-      // Mock li elements that don't match product classes
       const mockLiElement = document.createElement('li');
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockLiElement]);
-
-      // Mock returning empty arrays for product ad classes
-      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+      mockSelectorResults({
+        '.flagged-product': [],
+        'li:not(.flagged-product)': [mockLiElement],
+        '.labeled-item:not(.flagged-product)': [],
+        '.labeled-product:not(.flagged-product)': [],
+        '.card.tracking-img-container:not(.flagged-product)': [],
+      });
 
       listProductAdHandler.flag();
 
@@ -68,70 +65,94 @@ describe('ListProductAdHandler', () => {
     });
 
     it('should increment productAdCount for each flagged product element', () => {
-      // Mock existing flagged elements
       const flaggedElements = [document.createElement('div'), document.createElement('div')];
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(flaggedElements);
-
-      // Mock li elements that don't match product classes
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-
-      // Mock empty arrays for additional product elements
-      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+      mockSelectorResults({
+        '.flagged-product': flaggedElements,
+        'li:not(.flagged-product)': [],
+        '.labeled-item:not(.flagged-product)': [],
+        '.labeled-product:not(.flagged-product)': [],
+        '.card.tracking-img-container:not(.flagged-product)': [],
+      });
 
       listProductAdHandler.flag();
 
       expect(mockState.productAdCount).toBe(2);
     });
 
-    it('should flag and count product elements that match productAdClasses', () => {
-      // Initial flagged elements
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
-
-      // Mock li elements that match product classes but aren't flagged yet
+    it('should flag and count product and tracked recommendation cards separately', () => {
       const mockLiElement = document.createElement('li');
       mockLiElement.classList.add('labeled-item');
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockLiElement]);
 
-      // Mock additional product elements
       const mockLabeledItem = document.createElement('div');
       const mockLabeledProduct = document.createElement('div');
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockLabeledItem]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockLabeledProduct]);
-      vi.mocked(DomClient.getElementsByClass).mockReturnValue([]);
+      mockLabeledItem.classList.add('labeled-item');
+      mockLabeledProduct.classList.add('labeled-product');
+      const trackedProductCard = document.createElement('div');
+      trackedProductCard.classList.add('card', 'tracking-img-container');
+
+      mockSelectorResults({
+        '.flagged-product': [],
+        'li:not(.flagged-product)': [mockLiElement],
+        '.labeled-item:not(.flagged-product)': [mockLabeledItem],
+        '.labeled-product:not(.flagged-product)': [mockLabeledProduct],
+        '.card.tracking-img-container:not(.flagged-product)': [trackedProductCard],
+      });
 
       listProductAdHandler.flag();
 
-      // Should have called addClassesToElement for each product element
-      expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(3);
-      expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(3);
-      expect(mockState.productAdCount).toBe(3);
+      expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(4);
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
+        trackedProductCard,
+        'flagged-product',
+      );
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(4);
+      expect(mockState.productAdCount).toBe(4);
+    });
+
+    it('should flag tracked recommendation cards with the tracked class only', () => {
+      const trackedProductCard = document.createElement('div');
+      trackedProductCard.classList.add('card', 'tracking-img-container');
+      mockSelectorResults({
+        '.flagged-product': [],
+        'li:not(.flagged-product)': [],
+        '.labeled-item:not(.flagged-product)': [],
+        '.labeled-product:not(.flagged-product)': [],
+        '.card.tracking-img-container:not(.flagged-product)': [trackedProductCard],
+      });
+
+      listProductAdHandler.flag();
+
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
+        trackedProductCard,
+        'flagged-product',
+      );
+      expect(trackedProductCard.getAttribute('data-reskroutzed-label')).toBe('advertisement');
     });
   });
 
   describe('visibilityUpdate', () => {
     it('should update visibility for all flagged product elements', () => {
-      // Mock flagged product elements
       const flaggedElements = [document.createElement('div'), document.createElement('div')];
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(flaggedElements);
 
-      // Test with hideProductAds set to false
+      mockSelectorResults({
+        '.flagged-product': flaggedElements,
+      });
+
       mockState.hideProductAds = false;
       listProductAdHandler.visibilityUpdate();
 
-      // Should call updateElementVisibility with 'hide' for each element
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[0], 'hide');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[1], 'hide');
 
-      // Reset calls
       vi.mocked(DomClient.updateElementVisibility).mockClear();
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(flaggedElements);
+      mockSelectorResults({
+        '.flagged-product': flaggedElements,
+      });
 
-      // Test with hideProductAds set to true
       mockState.hideProductAds = true;
       listProductAdHandler.visibilityUpdate();
 
-      // Should call updateElementVisibility with 'show' for each element
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[0], 'show');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(flaggedElements[1], 'show');
@@ -140,17 +161,14 @@ describe('ListProductAdHandler', () => {
 
   describe('updateCountAndVisibility', () => {
     it('should increment count and update visibility when element matches criteria', () => {
-      // Create private method test helper
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (listProductAdHandler as any).updateCountAndVisibility.bind(
         listProductAdHandler,
       );
 
-      // Create element with matching class
       const element = document.createElement('div');
       element.classList.add('labeled-item');
 
-      // Test with hideProductAds set to false
       mockState.hideProductAds = false;
       updateCountAndVisibility(element);
 
@@ -158,12 +176,10 @@ describe('ListProductAdHandler', () => {
       expect(DomClient.addClassesToElement).toHaveBeenCalledWith(element, 'flagged-product');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(element, 'hide');
 
-      // Reset state and mocks
       mockState.productAdCount = 0;
       vi.mocked(DomClient.addClassesToElement).mockClear();
       vi.mocked(DomClient.updateElementVisibility).mockClear();
 
-      // Test with hideProductAds set to true
       mockState.hideProductAds = true;
       updateCountAndVisibility(element);
 
@@ -173,13 +189,11 @@ describe('ListProductAdHandler', () => {
     });
 
     it('should not update count or visibility when element does not match criteria', () => {
-      // Create private method test helper
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (listProductAdHandler as any).updateCountAndVisibility.bind(
         listProductAdHandler,
       );
 
-      // Create element without matching class
       const element = document.createElement('div');
       element.classList.add('not-a-product');
 
@@ -191,16 +205,29 @@ describe('ListProductAdHandler', () => {
     });
 
     it('should not update already flagged elements', () => {
-      // Create private method test helper
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (listProductAdHandler as any).updateCountAndVisibility.bind(
         listProductAdHandler,
       );
 
-      // Create element that's already flagged
       const element = document.createElement('div');
-      element.classList.add('labeled-item');
-      element.classList.add('flagged-product');
+      element.classList.add('labeled-item', 'flagged-product');
+
+      updateCountAndVisibility(element);
+
+      expect(mockState.productAdCount).toBe(0);
+      expect(DomClient.addClassesToElement).not.toHaveBeenCalled();
+      expect(DomClient.updateElementVisibility).not.toHaveBeenCalled();
+    });
+
+    it('should not update already flagged tracked elements', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updateCountAndVisibility = (listProductAdHandler as any).updateCountAndVisibility.bind(
+        listProductAdHandler,
+      );
+
+      const element = document.createElement('div');
+      element.classList.add('labeled-item', 'flagged-product');
 
       updateCountAndVisibility(element);
 
@@ -211,27 +238,24 @@ describe('ListProductAdHandler', () => {
   });
 
   describe('flagElementsBySelector', () => {
-    it('should flag all elements matching the selector', () => {
-      // Create private method test helper
+    it('should flag all generic elements matching the selector', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flagElementsBySelector = (listProductAdHandler as any).flagElementsBySelector.bind(
         listProductAdHandler,
       );
 
-      // Mock elements to be returned by getElementsByClass
       const elements = [document.createElement('div'), document.createElement('div')];
       vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(elements);
 
-      // Test with hideProductAds set to false
       mockState.hideProductAds = false;
       flagElementsBySelector('.test-selector');
 
       expect(mockState.productAdCount).toBe(2);
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith('.test-selector');
       expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(2);
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(elements[0], 'flagged-product');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
 
-      // Test with hideProductAds set to true
       mockState.productAdCount = 0;
       vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(elements);
       vi.mocked(DomClient.addClassesToElement).mockClear();
@@ -241,11 +265,24 @@ describe('ListProductAdHandler', () => {
       flagElementsBySelector('.test-selector');
 
       expect(mockState.productAdCount).toBe(2);
-      expect(DomClient.getElementsByClass).toHaveBeenCalledWith('.test-selector');
-      expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(2);
-      expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(elements[0], 'show');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(elements[1], 'show');
+    });
+
+    it('should flag tracked recommendation selector matches with the tracked class', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const flagElementsBySelector = (listProductAdHandler as any).flagElementsBySelector.bind(
+        listProductAdHandler,
+      );
+
+      const trackedElement = document.createElement('div');
+      trackedElement.classList.add('card', 'tracking-img-container');
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([trackedElement]);
+
+      flagElementsBySelector('.card.tracking-img-container');
+
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(trackedElement, 'flagged-product');
+      expect(trackedElement.getAttribute('data-reskroutzed-label')).toBe('advertisement');
     });
   });
 });

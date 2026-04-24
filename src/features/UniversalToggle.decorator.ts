@@ -655,7 +655,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     const updateNotificationCount = (): void => {
       const flaggedElements = document.querySelectorAll(
-        'li.flagged-product, div.flagged-bought-together, .card.flagged-product, .card.tracking-img-container.flagged-product',
+        'li.flagged-product, div.flagged-bought-together, .card.flagged-product',
       );
 
       if (flaggedElements.length !== this.state.productAdCount) {

@@ -1,6 +1,15 @@
 .flagged-shelf {
-  border-radius: 8px !important;
-  border: 1px solid var(--flagged-item-box-shadow, #ff0000) !important;
-  box-shadow: var(--flagged-item-box-shadow, 1px 1px 1px 1px) !important;
-  background-color: var(--flagged-item-background, #ffcccc) !important;
+  position: relative !important;
+  padding: 42px 24px 24px !important;
+  border-radius: 18px !important;
+  border: 2px solid rgba(255, 89, 89, 0.678) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 89, 89, 0.22) !important,
+    0 14px 30px rgba(163, 48, 48, 0.14) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 245, 245, 0.94),
+    rgba(255, 255, 255, 0.96)
+  ) !important;
+  overflow: visible !important;
 }
