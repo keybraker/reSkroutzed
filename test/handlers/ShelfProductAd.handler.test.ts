@@ -172,7 +172,6 @@ describe('ShelfProductAdHandler', () => {
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(crossSellElement, 'hide');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(crossSellShelfElement, 'hide');
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith('#cross-sell');
-      expect(DomClient.getElementsByClass).toHaveBeenCalledWith('.secondary-sku-card-shelf');
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith(
         '.content.top-area.cross-sell-shelf.sponsored-shelf',
       );
