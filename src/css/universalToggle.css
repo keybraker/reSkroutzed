@@ -211,6 +211,13 @@
   letter-spacing: 0.5px !important;
 }
 
+.ai-text-icon {
+  font-size: 12px !important;
+  font-weight: bold !important;
+  color: white !important;
+  letter-spacing: 0.5px !important;
+}
+
 .ad-text-disabled {
   opacity: 0.8 !important;
 }

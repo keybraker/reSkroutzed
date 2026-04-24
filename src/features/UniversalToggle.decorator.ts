@@ -195,7 +195,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
         } else {
           videoPath.setAttribute(
             'd',
-            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
+            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
           );
         }
       }
@@ -223,7 +223,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
         } else {
           sponsorshipPath.setAttribute(
             'd',
-            'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z M13.354 3.354a.5.5 0 0 0-.708-.708L2.646 12.646a.5.5 0 0 0 .708.708L13.354 3.354z',
+            'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
           );
         }
       }
@@ -279,7 +279,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
         } else {
           recommendationPath.setAttribute(
             'd',
-            'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z M12.854 1.146a.5.5 0 0 0-.708 0L1.146 12.146a.5.5 0 1 0 .708.708l11-11a.5.5 0 0 0 0-.708z',
+            'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
           );
         }
       }
@@ -732,7 +732,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     } else {
       path.setAttribute(
         'd',
-        'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
+        'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
       );
     }
     path.setAttribute('fill', 'currentColor');
@@ -781,7 +781,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       } else {
         newPath.setAttribute(
           'd',
-          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z M10.707 5.293a1 1 0 0 0-1.414 0L7 7.586 5.707 6.293a1 1 0 0 0-1.414 1.414L5.586 9 4.293 10.293a1 1 0 1 0 1.414 1.414L7 10.414l1.293 1.293a1 1 0 0 0 1.414-1.414L8.414 9l1.293-1.293a1 1 0 0 0 0-1.414z',
+          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
         );
       }
       newPath.setAttribute('fill', 'currentColor');
@@ -817,7 +817,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     } else {
       path.setAttribute(
         'd',
-        'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z M13.354 3.354a.5.5 0 0 0-.708-.708L2.646 12.646a.5.5 0 0 0 .708.708L13.354 3.354z',
+        'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
       );
     }
     path.setAttribute('fill', 'currentColor');
@@ -862,7 +862,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       } else {
         newPath.setAttribute(
           'd',
-          'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z M13.354 3.354a.5.5 0 0 0-.708-.708L2.646 12.646a.5.5 0 0 0 .708.708L13.354 3.354z',
+          'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
         );
       }
       newPath.setAttribute('fill', 'currentColor');
@@ -1079,7 +1079,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     } else {
       path.setAttribute(
         'd',
-        'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z M12.854 1.146a.5.5 0 0 0-.708 0L1.146 12.146a.5.5 0 1 0 .708.708l11-11a.5.5 0 0 0 0-.708z',
+        'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
       );
     }
     path.setAttribute('fill', 'currentColor');
@@ -1135,7 +1135,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       } else {
         newPath.setAttribute(
           'd',
-          'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z M12.854 1.146a.5.5 0 0 0-.708 0L1.146 12.146a.5.5 0 1 0 .708.708l11-11a.5.5 0 0 0 0-.708z',
+          'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
         );
       }
       newPath.setAttribute('fill', 'currentColor');
