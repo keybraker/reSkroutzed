@@ -95,12 +95,17 @@ describe('PriceCheckerDecorator', () => {
     hideProductAds: false,
     hideVideoAds: false,
     hideShelfProductAds: false,
+    hideRecommendationAds: false,
+    hideAISlop: false,
+    hideUniversalToggle: false,
     hideSponsorships: false,
     productAdCount: 0,
     videoAdCount: 0,
-    ShelfAdCount: 0,
+    shelfAdCount: 0,
+    recommendationAdCount: 0,
     sponsorshipAdCount: 0,
     minimumPriceDifference: 5,
+    isMobile: false,
   };
 
   const mockProductPriceData: ProductPriceData = {

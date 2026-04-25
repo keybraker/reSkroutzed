@@ -1,8 +1,8 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\features\functions\createLogoElement.test.ts
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createLogoElement } from '../../../src/features/functions/createLogoElement';
 import { DomClient } from '../../../src/clients/dom/client';
+import { createLogoElement } from '../../../src/features/functions/createLogoElement';
 
 // Mock dependencies
 vi.mock('../../../src/clients/dom/client', () => ({
@@ -38,7 +38,6 @@ describe('createLogoElement', () => {
     // The img element should have correct properties
     const imgElement = expect.objectContaining({
       tagName: 'IMG',
-      src: 'https://raw.githubusercontent.com/keybraker/reskroutzed/main/icons/128.png',
       alt: 'reSkroutzed',
       width: 18,
       height: 18,

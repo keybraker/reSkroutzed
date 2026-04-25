@@ -5,15 +5,15 @@ export type State = {
   hideProductAds: boolean;
   hideVideoAds: boolean;
   hideSponsorships: boolean;
-  hideShelfProductAds: boolean; // New property for shelf product ads
-  hideRecommendationAds?: boolean;
-  hideAISlop?: boolean;
+  hideShelfProductAds: boolean;
+  hideRecommendationAds: boolean;
+  hideAISlop: boolean;
   // ui
-  hideUniversalToggle?: boolean;
+  hideUniversalToggle: boolean;
   // counters
   productAdCount: number;
-  ShelfAdCount: number;
-  recommendationAdCount?: number;
+  shelfAdCount: number;
+  recommendationAdCount: number;
   videoAdCount: number;
   sponsorshipAdCount: number;
   // config
@@ -22,5 +22,5 @@ export type State = {
   // price checker
   minimumPriceDifference: number;
   // platform detection
-  isMobile?: boolean;
+  isMobile: boolean;
 };

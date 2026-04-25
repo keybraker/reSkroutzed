@@ -31,14 +31,17 @@ describe('ShelfProductAdHandler', () => {
       hideSponsorships: false,
       hideShelfProductAds: false,
       hideRecommendationAds: false,
+      hideAISlop: false,
+      hideUniversalToggle: false,
       productAdCount: 0,
-      ShelfAdCount: 0,
+      shelfAdCount: 0,
       recommendationAdCount: 0,
       videoAdCount: 0,
       sponsorshipAdCount: 0,
       language: 0,
       darkMode: false,
       minimumPriceDifference: 0,
+      isMobile: false,
     };
 
     shelfProductAdHandler = new ShelfProductAdHandler(mockState);
@@ -64,7 +67,7 @@ describe('ShelfProductAdHandler', () => {
 
       shelfProductAdHandler.flag();
 
-      expect(mockState.ShelfAdCount).toBe(0);
+      expect(mockState.shelfAdCount).toBe(0);
     });
 
     it('should increment ShelfAdCount for each flagged shelf element', () => {
@@ -84,7 +87,7 @@ describe('ShelfProductAdHandler', () => {
 
       shelfProductAdHandler.flag();
 
-      expect(mockState.ShelfAdCount).toBe(2);
+      expect(mockState.shelfAdCount).toBe(2);
     });
 
     it('should flag and count shelf elements that match shelfAdClasses', () => {
@@ -109,7 +112,7 @@ describe('ShelfProductAdHandler', () => {
 
       expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(3);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(3);
-      expect(mockState.ShelfAdCount).toBe(3);
+      expect(mockState.shelfAdCount).toBe(3);
     });
 
     it('should flag placement shelf advertisements', () => {
@@ -136,7 +139,7 @@ describe('ShelfProductAdHandler', () => {
         'flagged-shelf',
       );
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(placementShelfElement, 'hide');
-      expect(mockState.ShelfAdCount).toBe(1);
+      expect(mockState.shelfAdCount).toBe(1);
     });
 
     it('should flag cross-sell shelf containers', () => {
@@ -175,7 +178,7 @@ describe('ShelfProductAdHandler', () => {
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith(
         '.content.top-area.cross-sell-shelf.sponsored-shelf',
       );
-      expect(mockState.ShelfAdCount).toBe(2);
+      expect(mockState.shelfAdCount).toBe(2);
     });
   });
 
@@ -220,18 +223,18 @@ describe('ShelfProductAdHandler', () => {
       mockState.hideShelfProductAds = false;
       updateCountAndVisibility(element);
 
-      expect(mockState.ShelfAdCount).toBe(1);
+      expect(mockState.shelfAdCount).toBe(1);
       expect(DomClient.addClassesToElement).toHaveBeenCalledWith(element, 'flagged-shelf');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(element, 'hide');
 
-      mockState.ShelfAdCount = 0;
+      mockState.shelfAdCount = 0;
       vi.mocked(DomClient.addClassesToElement).mockClear();
       vi.mocked(DomClient.updateElementVisibility).mockClear();
 
       mockState.hideShelfProductAds = true;
       updateCountAndVisibility(element);
 
-      expect(mockState.ShelfAdCount).toBe(1);
+      expect(mockState.shelfAdCount).toBe(1);
       expect(DomClient.addClassesToElement).toHaveBeenCalledWith(element, 'flagged-shelf');
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(element, 'show');
     });
@@ -247,7 +250,7 @@ describe('ShelfProductAdHandler', () => {
 
       updateCountAndVisibility(element);
 
-      expect(mockState.ShelfAdCount).toBe(0);
+      expect(mockState.shelfAdCount).toBe(0);
       expect(DomClient.addClassesToElement).not.toHaveBeenCalled();
       expect(DomClient.updateElementVisibility).not.toHaveBeenCalled();
     });
@@ -264,7 +267,7 @@ describe('ShelfProductAdHandler', () => {
 
       updateCountAndVisibility(element);
 
-      expect(mockState.ShelfAdCount).toBe(0);
+      expect(mockState.shelfAdCount).toBe(0);
       expect(DomClient.addClassesToElement).not.toHaveBeenCalled();
       expect(DomClient.updateElementVisibility).not.toHaveBeenCalled();
     });
@@ -283,12 +286,12 @@ describe('ShelfProductAdHandler', () => {
       mockState.hideShelfProductAds = false;
       flagElementsBySelector('.test-selector');
 
-      expect(mockState.ShelfAdCount).toBe(2);
+      expect(mockState.shelfAdCount).toBe(2);
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith('.test-selector');
       expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
 
-      mockState.ShelfAdCount = 0;
+      mockState.shelfAdCount = 0;
       vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce(elements);
       vi.mocked(DomClient.addClassesToElement).mockClear();
       vi.mocked(DomClient.updateElementVisibility).mockClear();
@@ -296,7 +299,7 @@ describe('ShelfProductAdHandler', () => {
       mockState.hideShelfProductAds = true;
       flagElementsBySelector('.test-selector');
 
-      expect(mockState.ShelfAdCount).toBe(2);
+      expect(mockState.shelfAdCount).toBe(2);
       expect(DomClient.getElementsByClass).toHaveBeenCalledWith('.test-selector');
       expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);

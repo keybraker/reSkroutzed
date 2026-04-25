@@ -15,6 +15,7 @@ document.body.innerHTML = '';
 global.chrome = {
   runtime: {
     sendMessage: vi.fn(),
+    getURL: vi.fn((path: string) => `chrome-extension://test-extension-id/${path}`),
     lastError: undefined,
   },
   storage: {

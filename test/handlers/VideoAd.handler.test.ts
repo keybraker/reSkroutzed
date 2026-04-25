@@ -29,13 +29,18 @@ describe('VideoAdHandler', () => {
       hideProductAds: false,
       hideSponsorships: false,
       hideShelfProductAds: false,
+      hideRecommendationAds: false,
+      hideAISlop: false,
+      hideUniversalToggle: false,
       productAdCount: 0,
-      ShelfAdCount: 0,
+      shelfAdCount: 0,
+      recommendationAdCount: 0,
       videoAdCount: 0,
       sponsorshipAdCount: 0,
       language: 0,
       darkMode: false,
       minimumPriceDifference: 0,
+      isMobile: false,
     };
 
     // Create a mock element

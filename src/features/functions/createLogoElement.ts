@@ -6,6 +6,7 @@ export function createLogoElement(): HTMLDivElement {
   icon.classList.add('align-center', 'icon-border');
 
   const img = document.createElement('img');
+  // img.src = chrome.runtime.getURL('icons/128.png');
   img.src = 'https://raw.githubusercontent.com/keybraker/reskroutzed/main/icons/128.png';
   img.alt = 'reSkroutzed';
   img.width = 18;

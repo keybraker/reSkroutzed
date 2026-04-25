@@ -1,9 +1,9 @@
 // filepath: c:\Users\Keybraker\Github\reSkroutzed\test\handlers\SponsorshipAd.handler.test.ts
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SponsorshipAdHandler } from '../../src/handlers/SponsorshipAd.handler';
 import { DomClient } from '../../src/clients/dom/client';
 import { State } from '../../src/common/types/State.type';
+import { SponsorshipAdHandler } from '../../src/handlers/SponsorshipAd.handler';
 
 // Mock the DomClient
 vi.mock('../../src/clients/dom/client', () => ({
@@ -29,13 +29,18 @@ describe('SponsorshipAdHandler', () => {
       hideProductAds: false,
       hideSponsorships: false,
       hideShelfProductAds: false,
+      hideRecommendationAds: false,
+      hideAISlop: false,
+      hideUniversalToggle: false,
       productAdCount: 0,
-      ShelfAdCount: 0,
+      shelfAdCount: 0,
+      recommendationAdCount: 0,
       videoAdCount: 0,
       sponsorshipAdCount: 0,
       language: 0,
       darkMode: false,
       minimumPriceDifference: 0,
+      isMobile: false,
     };
 
     // Create a mock element

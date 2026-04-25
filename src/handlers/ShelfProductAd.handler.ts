@@ -19,10 +19,10 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
   constructor(private state: State) {}
 
   public flag(): void {
-    this.state.ShelfAdCount = 0;
+    this.state.shelfAdCount = 0;
 
     const allFlaggedShelfElements = DomClient.getElementsByClass(`.${this.flaggedShelfAdClass}`);
-    this.state.ShelfAdCount = allFlaggedShelfElements.length;
+    this.state.shelfAdCount = allFlaggedShelfElements.length;
 
     DomClient.getElementsByClass(`li:not(.${this.flaggedShelfAdClass})`).forEach((element) =>
       this.updateCountAndVisibility(element),
@@ -46,7 +46,7 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
       this.shelfAdClass.some((adClass) => element.classList.contains(adClass)) &&
       !element.classList.contains(this.flaggedShelfAdClass)
     ) {
-      this.state.ShelfAdCount++;
+      this.state.shelfAdCount++;
       DomClient.addClassesToElement(element, this.flaggedShelfAdClass);
       DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
     }
@@ -58,7 +58,7 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
         return;
       }
 
-      this.state.ShelfAdCount++;
+      this.state.shelfAdCount++;
       DomClient.addClassesToElement(element, this.flaggedShelfAdClass);
       DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
     });

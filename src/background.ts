@@ -23,7 +23,7 @@ const state: State = {
   hideUniversalToggle: false,
   language: Language.GREEK,
   productAdCount: 0,
-  ShelfAdCount: 0,
+  shelfAdCount: 0,
   recommendationAdCount: 0,
   videoAdCount: 0,
   sponsorshipAdCount: 0,
@@ -59,8 +59,8 @@ function applyAISlopVisibility(): void {
       element.classList.add('resk-hide-ai');
     } else {
       element.classList.remove('resk-hide-ai');
-      if ((element as HTMLElement).style && (element as HTMLElement).style.display === 'none') {
-        (element as HTMLElement).style.display = '';
+      if (element.style.display === 'none') {
+        element.style.display = '';
       }
     }
   });
@@ -143,7 +143,9 @@ const logoHatDecorator = new LogoHatDecorator();
   }
 
   function applyMobileOptimizations(): void {
+    if (document.getElementById('resk-mobile-style')) return;
     const style = document.createElement('style');
+    style.id = 'resk-mobile-style';
     style.textContent = `
       /* Mobile optimizations for Skroutz */
       .reskroutzed-tag {
@@ -207,7 +209,7 @@ chrome.runtime.onMessage.addListener(
     if (request.action === 'getCount') {
       sendResponse({
         sponsoredCount: state.productAdCount,
-        sponsoredShelfCount: state.ShelfAdCount,
+        sponsoredShelfCount: state.shelfAdCount,
         recommendationCount: state.recommendationAdCount,
         videoCount: state.videoAdCount,
         isMobile: state.isMobile,
@@ -261,20 +263,17 @@ chrome.runtime.onMessage.addListener(
         }
       } else {
         if (!existing) {
-          const universalToggleDecorator = new UniversalToggleDecorator(state);
-          universalToggleDecorator.execute();
+          const newToggleDecorator = new UniversalToggleDecorator(state);
+          newToggleDecorator.execute();
         }
       }
       sendResponse({ success: true });
     } else if (request.action === 'toggleAISlop' && request.value !== undefined) {
       state.hideAISlop = request.value as boolean;
       BrowserClient.setValue(StorageKey.AI_SLOP_VISIBILITY, state.hideAISlop);
-      // Apply immediately
-      (function runTwice() {
-        applyAISlopVisibility();
-        // Schedule a follow-up to catch late inserts
-        setTimeout(applyAISlopVisibility, 300);
-      })();
+      // Apply immediately, then again to catch late inserts
+      applyAISlopVisibility();
+      setTimeout(applyAISlopVisibility, 300);
       sendResponse({ success: true });
     }
 

@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { FinalPriceFixerDecorator } from '../../src/features/FinalPriceFixer.decorator';
 import { Language } from '../../src/common/enums/Language.enum';
 import { State } from '../../src/common/types/State.type';
+import { FinalPriceFixerDecorator } from '../../src/features/FinalPriceFixer.decorator';
 
 describe('FinalPriceFixerDecorator', (): void => {
   let finalPriceFixerDecorator: FinalPriceFixerDecorator;
@@ -15,12 +15,17 @@ describe('FinalPriceFixerDecorator', (): void => {
       hideProductAds: false,
       hideVideoAds: false,
       hideShelfProductAds: false,
+      hideRecommendationAds: false,
+      hideAISlop: false,
+      hideUniversalToggle: false,
       hideSponsorships: false,
       productAdCount: 0,
       videoAdCount: 0,
-      ShelfAdCount: 0,
+      shelfAdCount: 0,
+      recommendationAdCount: 0,
       minimumPriceDifference: 1,
       sponsorshipAdCount: 0,
+      isMobile: false,
     };
 
     document.body.innerHTML = `

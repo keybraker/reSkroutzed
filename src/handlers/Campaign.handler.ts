@@ -15,10 +15,10 @@ export class CampaignAdHandler implements AdHandlerInterface {
   constructor(private state: State) {}
 
   public flag(): void {
-    this.state.ShelfAdCount = 0;
+    this.state.shelfAdCount = 0;
 
     const allFlaggedShelfElements = DomClient.getElementsByClass(`.${this.flaggedShelfAdClass}`);
-    this.state.ShelfAdCount = allFlaggedShelfElements.length;
+    this.state.shelfAdCount = allFlaggedShelfElements.length;
 
     DomClient.getElementsByClass(`li:not(.${this.flaggedShelfAdClass})`).forEach((element) =>
       this.updateCountAndVisibility(element),
@@ -42,7 +42,7 @@ export class CampaignAdHandler implements AdHandlerInterface {
     ) {
       const parentElement = element.parentElement;
       if (parentElement && !parentElement.classList.contains(this.flaggedShelfAdClass)) {
-        this.state.ShelfAdCount++;
+        this.state.shelfAdCount++;
         DomClient.addClassesToElement(parentElement, this.flaggedShelfAdClass);
         DomClient.updateElementVisibility(
           parentElement,
@@ -56,7 +56,7 @@ export class CampaignAdHandler implements AdHandlerInterface {
     DomClient.getElementsByClass(selector).forEach((element) => {
       const parentElement = element.parentElement;
       if (parentElement && !parentElement.classList.contains(this.flaggedShelfAdClass)) {
-        this.state.ShelfAdCount++;
+        this.state.shelfAdCount++;
         DomClient.addClassesToElement(parentElement, this.flaggedShelfAdClass);
         DomClient.updateElementVisibility(
           parentElement,

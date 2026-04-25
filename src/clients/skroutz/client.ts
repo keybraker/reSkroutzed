@@ -1,4 +1,3 @@
-// import { removeOutliers } from '../../common/functions/removeOutliers';
 import { PriceChart, PriceChartValue, ProductData, Store } from './types';
 
 type PriceData = {
@@ -92,8 +91,8 @@ export class SkroutzClient {
         .filter((value) => value.value > 0)
         .map((v) => ({ ...v, timestamp: v.timestamp * 1000 }));
 
-      const allFilteredPrices = allPrices; //removeOutliers(allPrices);
-      const sixFilteredPrices = sixMonthPrices; //removeOutliers(sixMonthPrices);
+      const allFilteredPrices = allPrices;
+      const sixFilteredPrices = sixMonthPrices;
 
       const allPriceAmounts = allFilteredPrices.map((v) => v.value);
 

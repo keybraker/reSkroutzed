@@ -80,13 +80,16 @@ describe('UniversalToggleDecorator', () => {
       hideVideoAds: false,
       hideShelfProductAds: false,
       hideRecommendationAds: false,
+      hideAISlop: false,
+      hideUniversalToggle: false,
       hideSponsorships: false,
       productAdCount: 3,
       videoAdCount: 2,
-      ShelfAdCount: 1,
+      shelfAdCount: 1,
       recommendationAdCount: 4,
       minimumPriceDifference: 1,
       sponsorshipAdCount: 0,
+      isMobile: false,
     };
 
     // Setup mock DOM environment

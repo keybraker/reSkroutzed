@@ -5,8 +5,6 @@ import { FeatureInstance } from './common/FeatureInstance';
  * All styling is included inline to eliminate the need for an external CSS file
  */
 export class LogoHatDecorator implements FeatureInstance {
-  constructor() {}
-
   public execute(): void {
     const logoLink = document.querySelector('h1 a#index-link');
 

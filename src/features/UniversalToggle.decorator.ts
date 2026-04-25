@@ -910,12 +910,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     const shelfNotificationBubble = document.createElement('div');
     shelfNotificationBubble.classList.add('notification-bubble', 'shelf-notification');
-    shelfNotificationBubble.textContent = `${this.state.ShelfAdCount}`;
+    shelfNotificationBubble.textContent = `${this.state.shelfAdCount}`;
     DomClient.appendElementToElement(shelfNotificationBubble, button);
 
     const updateShelfNotificationCount = (): void => {
-      shelfNotificationBubble.textContent = `${this.state.ShelfAdCount}`;
-      if (this.state.ShelfAdCount === 0) {
+      shelfNotificationBubble.textContent = `${this.state.shelfAdCount}`;
+      if (this.state.shelfAdCount === 0) {
         shelfNotificationBubble.style.display = 'none';
       } else {
         shelfNotificationBubble.style.display = 'flex';
