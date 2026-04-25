@@ -1,0 +1,106 @@
+---
+description: Use when writing or editing test files in test/. Covers Vitest patterns, mock State construction, DomClient mocking, chrome API mocks, and AAA structure.
+globs: ['test/**']
+alwaysApply: false
+---
+
+# Test Conventions
+
+## Framework
+
+All tests use **Vitest**. Run with `npm test` (single pass) or `npm run test:watch` (watch mode).
+
+## File Location
+
+Test files mirror the source tree under `test/`:
+
+| Source                                        | Test                                                |
+| --------------------------------------------- | --------------------------------------------------- |
+| `src/handlers/ListProductAd.handler.ts`       | `test/handlers/ListProductAd.handler.test.ts`       |
+| `src/features/PriceChecker.decorator.ts`      | `test/features/PriceChecker.decorator.test.ts`      |
+| `src/features/functions/createLogoElement.ts` | `test/features/functions/createLogoElement.test.ts` |
+
+## Structure (AAA)
+
+```ts
+describe('MyClass', () => {
+  let subject: MyClass;
+  let mockState: State;
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    mockState = { /* all required fields */ };
+    subject = new MyClass(mockState);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should <expected behaviour>', () => {
+    // Arrange
+    vi.mocked(DomClient.getElementsByClass).mockReturnValue([...]);
+    // Act
+    subject.flag();
+    // Assert
+    expect(mockState.productAdCount).toBe(2);
+  });
+});
+```
+
+## Mock State
+
+`State` has **no optional fields** — every property must be provided. Use these defaults:
+
+```ts
+mockState = {
+  hideProductAds: false,
+  hideVideoAds: false,
+  hideSponsorships: false,
+  hideShelfProductAds: false,
+  hideRecommendationAds: false,
+  hideAISlop: false,
+  hideUniversalToggle: false,
+  productAdCount: 0,
+  shelfAdCount: 0,
+  recommendationAdCount: 0,
+  videoAdCount: 0,
+  sponsorshipAdCount: 0,
+  language: Language.GREEK,
+  darkMode: false,
+  minimumPriceDifference: 0,
+  isMobile: false,
+};
+```
+
+If TypeScript reports a missing property, add it here — do not make the `State` type optional.
+
+## Mocking DomClient
+
+```ts
+vi.mock('../../src/clients/dom/client', () => ({
+  DomClient: {
+    getElementsByClass: vi.fn(),
+    addClassesToElement: vi.fn(),
+    updateElementVisibility: vi.fn(),
+    appendElementToElement: vi.fn(),
+  },
+}));
+```
+
+## Chrome API
+
+The `chrome` global is set up in `test/setup.ts`:
+
+- `chrome.runtime.sendMessage`
+- `chrome.runtime.getURL` — returns `chrome-extension://test-extension-id/<path>`
+- `chrome.storage.local.get` / `.set`
+
+Do not re-mock these per test file unless overriding a specific return value.
+
+## Visibility Logic Tests
+
+| `hideX` | Expected `updateElementVisibility` call |
+| ------- | --------------------------------------- |
+| `false` | `'hide'`                                |
+| `true`  | `'show'`                                |

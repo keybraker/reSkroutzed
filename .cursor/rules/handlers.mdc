@@ -1,0 +1,77 @@
+---
+description: Use when creating, editing, or debugging ad handler files in src/handlers/. Covers AdHandlerInterface, flag/visibilityUpdate contracts, State counter conventions, and visibility logic semantics.
+globs: ['src/handlers/**']
+alwaysApply: false
+---
+
+# Ad Handler Conventions
+
+## Interface Contract
+
+Every handler implements `AdHandlerInterface` (`src/handlers/common/interfaces/adHandler.interface.ts`):
+
+```ts
+interface AdHandlerInterface {
+  flag(): void;
+  visibilityUpdate(): void;
+}
+```
+
+Handlers receive `state: State` via constructor and hold a reference — always read `this.state.*` live, never copy values.
+
+## `flag()` Pattern
+
+```ts
+flag(): void {
+  this.state.productAdCount = 0;
+
+  const flagged = DomClient.getElementsByClass('flagged-product');
+  this.state.productAdCount += flagged.length;
+
+  const items = DomClient.getElementsByClass('js-product-list-item');
+  items.forEach((item) => {
+    if (this.isSponsored(item)) {
+      DomClient.addClassesToElement(item, ['flagged-product']);
+      this.state.productAdCount++;
+    }
+  });
+}
+```
+
+## `visibilityUpdate()` Pattern — do not invert this logic
+
+```ts
+visibilityUpdate(): void {
+  const elements = DomClient.getElementsByClass('flagged-product');
+  elements.forEach((el) => {
+    DomClient.updateElementVisibility(el, !this.state.hideProductAds ? 'hide' : 'show');
+  });
+}
+```
+
+| `hideX` value     | Meaning                                     | Element state |
+| ----------------- | ------------------------------------------- | ------------- |
+| `false` (default) | Ads are **blocked** — filtered from view    | `'hide'`      |
+| `true`            | User turned filtering **off** — ads visible | `'show'`      |
+
+The naming is misleading but the logic is correct and backed by tests. Do not change this polarity.
+
+## State Counter Properties
+
+| Handler                   | Counter                       | Visibility flag         |
+| ------------------------- | ----------------------------- | ----------------------- |
+| `ListProductAdHandler`    | `productAdCount`              | `hideProductAds`        |
+| `ShelfProductAdHandler`   | `shelfAdCount`                | `hideShelfProductAds`   |
+| `RecommendationAdHandler` | `recommendationAdCount`       | `hideRecommendationAds` |
+| `VideoAdHandler`          | `videoAdCount`                | `hideVideoAds`          |
+| `SponsorshipAdHandler`    | `sponsorshipAdCount`          | `hideSponsorships`      |
+| `CampaignAdHandler`       | `sponsorshipAdCount` (shared) | `hideSponsorships`      |
+
+## Adding a New Handler
+
+1. Create `src/handlers/<Name>.handler.ts` implementing `AdHandlerInterface`.
+2. Add a required counter and a required visibility boolean to `State`.
+3. Initialize both in `background.ts` (`loadStorage()` + the `state` literal).
+4. Wire into `flagContent()` and `toggleVisibility()` in `background.ts`.
+5. Add a `chrome.runtime.onMessage` branch for the popup toggle.
+6. Write `test/handlers/<Name>.handler.test.ts`.

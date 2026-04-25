@@ -1,0 +1,75 @@
+---
+description: Use when creating, editing, or debugging feature decorator files in src/features/. Covers FeatureInstance interface, execute/destroy lifecycle, chrome.runtime.getURL for assets, and helper function placement.
+globs: ['src/features/**']
+alwaysApply: false
+---
+
+# Feature Decorator Conventions
+
+## Interface Contract
+
+Every feature implements `FeatureInstance` (`src/features/common/FeatureInstance.ts`):
+
+```ts
+interface FeatureInstance {
+  execute(): void; // called once on window.onload
+  destroy?(): void; // optional — clean up DOM nodes / listeners
+}
+```
+
+## Instantiation
+
+Stateful features accept `state: State`; stateless ones take no arguments. Never add an empty `constructor() {}`.
+
+```ts
+// Stateful
+export class PriceCheckerDecorator implements FeatureInstance {
+  constructor(private readonly state: State) {}
+  execute(): void { ... }
+}
+
+// Stateless — no constructor needed
+export class LogoHatDecorator implements FeatureInstance {
+  execute(): void { ... }
+}
+```
+
+## Extension Assets
+
+Always reference bundled assets with `chrome.runtime.getURL()`. The resource must be listed in the manifest's `web_accessible_resources`.
+
+```ts
+img.src = chrome.runtime.getURL('icons/128.png');
+```
+
+## DOM Helpers
+
+Use `DomClient` for DOM manipulation:
+
+```ts
+DomClient.appendElementToElement(child, parent);
+DomClient.addClassesToElement(el, ['my-class']);
+```
+
+## Helper Functions
+
+Small pure functions used by a single feature go in `src/features/functions/`, one file per function, with a matching test file.
+
+## Style Injection Guards
+
+Guard injected `<style>` tags against duplicates:
+
+```ts
+if (document.getElementById('resk-my-feature-style')) return;
+const style = document.createElement('style');
+style.id = 'resk-my-feature-style';
+document.head.appendChild(style);
+```
+
+## Adding a New Feature
+
+1. Create `src/features/<Name>.decorator.ts` implementing `FeatureInstance`.
+2. Accept `state: State` in the constructor if state is needed.
+3. Instantiate and call `execute()` inside `initializer()` in `background.ts`.
+4. If toggleable, wire a `chrome.runtime.onMessage` branch and call `destroy()` when hidden.
+5. Write `test/features/<Name>.decorator.test.ts`.
