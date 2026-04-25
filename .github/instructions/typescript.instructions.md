@@ -1,0 +1,55 @@
+---
+description: 'TypeScript coding conventions for reSkroutzed. Apply when writing or editing any .ts source file: naming, typing, casts, State usage, DomClient vs direct DOM access.'
+applyTo: 'src/**/*.ts'
+---
+
+# TypeScript Conventions
+
+## Naming
+
+| Construct                        | Convention         | Example                                  |
+| -------------------------------- | ------------------ | ---------------------------------------- |
+| Variables, properties, functions | `camelCase`        | `productAdCount`, `loadStorage`          |
+| Classes, types, interfaces       | `PascalCase`       | `State`, `AdHandlerInterface`            |
+| Constants, enum values           | `UPPER_SNAKE_CASE` | `StorageKey.DARK_MODE`, `Language.GREEK` |
+
+## Typing Rules
+
+- **No `any`** — use `unknown` when a type is unavailable, then narrow explicitly.
+- **No redundant casts** — if a `NodeListOf<HTMLElement>` is declared, elements inside `forEach` are already `HTMLElement`; do not cast again.
+- **All `State` properties are required** — never add `?` to `State` fields. If a new property is needed, add it as required and initialize it in `background.ts`'s `loadStorage()` before use.
+- Use `type` for plain data shapes (`State`, response DTOs). Use `interface` for contracts that classes implement (`AdHandlerInterface`, `FeatureInstance`).
+
+## DOM Access
+
+Never call `document.querySelector` / `document.querySelectorAll` directly inside handlers or features. Use `DomClient` static methods instead:
+
+```ts
+// Correct
+const elements = DomClient.getElementsByClass('flagged-product');
+DomClient.updateElementVisibility(el, 'hide');
+DomClient.appendElementToElement(child, parent);
+
+// Wrong — direct DOM access
+const elements = document.querySelectorAll('.flagged-product');
+```
+
+## Extension Assets
+
+Use `chrome.runtime.getURL()` for any bundled file path (icons, CSS, HTML). Never embed raw external URLs (e.g., raw GitHub URLs):
+
+```ts
+// Correct
+img.src = chrome.runtime.getURL('icons/128.png');
+
+// Wrong
+img.src = 'https://raw.githubusercontent.com/...';
+```
+
+## Constructors
+
+Omit empty constructors entirely. TypeScript classes do not need `constructor() {}`.
+
+## Dead Code
+
+Do not leave commented-out code in source files. Remove it.
