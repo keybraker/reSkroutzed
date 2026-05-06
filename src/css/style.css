@@ -539,6 +539,11 @@ text-black {
   color: inherit !important;
   text-decoration: none !important;
   width: 100% !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  font: inherit !important;
 }
 
 .buy-me-coffee {
@@ -633,6 +638,170 @@ text-black {
     0 8px 24px rgba(220, 20, 60, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   transform: none !important;
+}
+
+/* Buy Me Coffee Modal */
+.buy-me-coffee-modal {
+  display: none !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  z-index: 10000 !important;
+  justify-content: center !important;
+  align-items: center !important;
+  animation: fadeIn 0.2s ease-in !important;
+}
+
+.buy-me-coffee-modal.active {
+  display: flex !important;
+}
+
+.buy-me-coffee-modal-content {
+  position: relative !important;
+  background: var(--color-background-secondary, #1a1a1a) !important;
+  border: 1px solid var(--color-border-primary, #404040) !important;
+  border-radius: 8px !important;
+  padding: 24px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  text-align: center !important;
+  max-width: 400px !important;
+  width: 90% !important;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.buy-me-coffee-modal-content h3 {
+  margin: 0 0 20px 0 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.buy-me-coffee-options {
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: center !important;
+  margin-bottom: 16px !important;
+  flex-direction: column !important;
+}
+
+.buy-me-coffee-option {
+  display: inline-block !important;
+  padding: 12px 24px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  border: none !important;
+}
+
+.buy-me-coffee-option.paypal {
+  background: linear-gradient(135deg, #ffc115, #ffb300) !important;
+  color: #242424 !important;
+}
+
+.buy-me-coffee-option.paypal:hover {
+  background: linear-gradient(135deg, #ffb300, #ffa500) !important;
+  box-shadow: 0 4px 12px rgba(255, 193, 21, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+.buy-me-coffee-option.revolut {
+  background: linear-gradient(135deg, #627eea, #5568d3) !important;
+  color: #ffffff !important;
+}
+
+.buy-me-coffee-option.revolut:hover {
+  background: linear-gradient(135deg, #5568d3, #4454b8) !important;
+  box-shadow: 0 4px 12px rgba(98, 126, 234, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+.buy-me-coffee-close {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  background: var(--color-border-primary, #404040) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  color: var(--color-text-secondary, #cccccc) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.buy-me-coffee-close:hover {
+  background: var(--color-card-background, #1f1f1f) !important;
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.dark-mode .buy-me-coffee-modal-content {
+  background: var(--color-background-secondary, #1a1a1a) !important;
+  border-color: var(--color-border-primary, #404040) !important;
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.dark-mode .buy-me-coffee-modal-content h3 {
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.dark-mode .buy-me-coffee-close {
+  background: var(--color-border-primary, #404040) !important;
+  color: var(--color-text-secondary, #cccccc) !important;
+}
+
+.dark-mode .buy-me-coffee-close:hover {
+  background: var(--color-card-background, #1f1f1f) !important;
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.light-mode .buy-me-coffee-modal-content {
+  background: #ffffff !important;
+  border-color: #e0e0e0 !important;
+  color: #242424 !important;
+}
+
+.light-mode .buy-me-coffee-modal-content h3 {
+  color: #242424 !important;
+}
+
+.light-mode .buy-me-coffee-close {
+  background: #f0f0f0 !important;
+  color: #333333 !important;
+}
+
+.light-mode .buy-me-coffee-close:hover {
+  background: #e0e0e0 !important;
+  color: #242424 !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0 !important;
+  }
+  to {
+    opacity: 1 !important;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px) !important;
+    opacity: 0 !important;
+  }
+  to {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+  }
 }
 
 .reskroutzed-tag {

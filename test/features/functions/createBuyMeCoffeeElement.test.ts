@@ -29,53 +29,102 @@ describe('createBuyMeCoffeeElement', () => {
     expect(element.classList.contains('buy-me-coffee')).toBe(true);
   });
 
-  it('should create a link with correct attributes', () => {
+  it('should create a trigger button with correct attributes', () => {
     const element = createBuyMeCoffeeElement();
-    const link = element.querySelector('a');
+    const button = element.querySelector('button.buy-me-coffee-link') as HTMLButtonElement | null;
 
-    expect(link).not.toBeNull();
-    expect(link?.href).toBe('https://paypal.me/tsiakkas');
-    expect(link?.target).toBe('_blank');
-    expect(link?.rel).toBe('noopener noreferrer');
-    expect(link?.title).toBe('Buy Me A Coffee');
+    expect(button).not.toBeNull();
+    expect(button?.type).toBe('button');
+    expect(button?.title).toBe('Buy Me A Coffee');
   });
 
-  it('should create a coffee icon with correct class and content', () => {
+  it('should create PayPal option with correct link', () => {
     const element = createBuyMeCoffeeElement();
-    const span = element.querySelector('span.coffee-icon');
+    const paypalLink = element.querySelector('a.buy-me-coffee-option.paypal');
 
-    expect(span).not.toBeNull();
-    expect(span?.classList.contains('coffee-icon')).toBe(true);
-    expect(span?.innerHTML).toBe('☕');
+    expect(paypalLink).not.toBeNull();
+    expect(paypalLink?.getAttribute('href')).toBe('https://paypal.me/tsiakkas');
+    expect(paypalLink?.getAttribute('target')).toBe('_blank');
+    expect(paypalLink?.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(paypalLink?.textContent).toBe('PayPal');
   });
 
-  it('should append the coffee icon to the link', () => {
-    createBuyMeCoffeeElement();
+  it('should create Revolut option with correct link', () => {
+    const element = createBuyMeCoffeeElement();
+    const revolutLink = element.querySelector('a.buy-me-coffee-option.revolut');
 
-    // The calls to appendElementToElement are:
-    // 1. coffeeLabel -> buyMeCoffeeLink
-    // 2. coffeeIcon -> buyMeCoffeeLink
-    // 3. buyMeCoffeeLink -> buyMeCoffeeElement
-    expect(DomClient.appendElementToElement).toHaveBeenCalledTimes(3);
-    expect(DomClient.appendElementToElement).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        classList: expect.objectContaining({
-          contains: expect.any(Function),
-        }),
-      }),
-      expect.any(HTMLAnchorElement),
-    );
+    expect(revolutLink).not.toBeNull();
+    expect(revolutLink?.getAttribute('href')).toBe('https://revolut.me/keybraker');
+    expect(revolutLink?.getAttribute('target')).toBe('_blank');
+    expect(revolutLink?.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(revolutLink?.textContent).toBe('Revolut');
   });
 
-  it('should append the link to the main element', () => {
+  it('should create a modal with close button', () => {
     const element = createBuyMeCoffeeElement();
+    const modal = element.querySelector('.buy-me-coffee-modal');
+    const closeButton = element.querySelector(
+      'button.buy-me-coffee-close',
+    ) as HTMLButtonElement | null;
 
-    // Third call to appendElementToElement should be appending the link to the main element
-    expect(DomClient.appendElementToElement).toHaveBeenNthCalledWith(
-      3,
-      expect.any(HTMLAnchorElement),
-      element,
-    );
+    expect(modal).not.toBeNull();
+    expect(closeButton).not.toBeNull();
+    expect(closeButton?.type).toBe('button');
+    expect(closeButton?.textContent).toBe('✕');
+  });
+
+  it('should display the correct modal title', () => {
+    const element = createBuyMeCoffeeElement();
+    const modalTitle = element.querySelector('.buy-me-coffee-modal-content h3');
+
+    expect(modalTitle?.textContent).toBe('Buy me a coffee');
+  });
+
+  it('should toggle modal active class on button click', () => {
+    const element = createBuyMeCoffeeElement();
+    const button = element.querySelector('button.buy-me-coffee-link') as HTMLButtonElement;
+    const modal = element.querySelector('.buy-me-coffee-modal') as HTMLDivElement;
+
+    expect(modal.classList.contains('active')).toBe(false);
+
+    button.click();
+    expect(modal.classList.contains('active')).toBe(true);
+  });
+
+  it('should close modal on close button click', () => {
+    const element = createBuyMeCoffeeElement();
+    const button = element.querySelector('button.buy-me-coffee-link') as HTMLButtonElement;
+    const closeButton = element.querySelector('button.buy-me-coffee-close') as HTMLButtonElement;
+    const modal = element.querySelector('.buy-me-coffee-modal') as HTMLDivElement;
+
+    button.click();
+    expect(modal.classList.contains('active')).toBe(true);
+
+    closeButton.click();
+    expect(modal.classList.contains('active')).toBe(false);
+  });
+
+  it('should close modal when clicking on modal overlay', () => {
+    const element = createBuyMeCoffeeElement();
+    const button = element.querySelector('button.buy-me-coffee-link') as HTMLButtonElement;
+    const modal = element.querySelector('.buy-me-coffee-modal') as HTMLDivElement;
+
+    button.click();
+    expect(modal.classList.contains('active')).toBe(true);
+
+    modal.dispatchEvent(new MouseEvent('click', { bubbles: false }));
+    expect(modal.classList.contains('active')).toBe(false);
+  });
+
+  it('should contain coffee icon and label in button', () => {
+    const element = createBuyMeCoffeeElement();
+    const button = element.querySelector('button.buy-me-coffee-link');
+    const coffeeIcon = button?.querySelector('span.coffee-icon');
+    const coffeeLabel = button?.querySelector('span.coffee-label');
+
+    expect(coffeeIcon).not.toBeNull();
+    expect(coffeeLabel).not.toBeNull();
+    expect(coffeeIcon?.textContent).toBe('☕');
+    expect(coffeeLabel?.textContent).toBe('Buy me a coffee');
   });
 });
