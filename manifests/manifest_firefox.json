@@ -39,7 +39,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["icons/48.png"],
+      "resources": ["icons/48.png", "externalPaymentProviders/*.webp"],
       "matches": [
         "https://www.skroutz.gr/*",
         "https://www.skroutz.ro/*",

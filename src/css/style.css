@@ -520,9 +520,6 @@ text-black {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 18px !important;
-  height: 18px !important;
-  font-size: 14px !important;
   line-height: 1 !important;
   flex-shrink: 0 !important;
 }
@@ -554,65 +551,51 @@ text-black {
   box-shadow:
     0 4px 12px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-  padding: 8px 12px !important;
-  border-radius: 999px !important;
-  font-size: 12px !important;
+  font-size: 13px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.6px !important;
+  letter-spacing: 0.5px !important;
   text-transform: none !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
+  gap: 10px !important;
   z-index: 5 !important;
   transition:
     box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
     background 0.22s ease,
     border-color 0.22s ease !important;
-  cursor: pointer !important;
+  cursor: default !important;
   text-decoration: none !important;
   backdrop-filter: none !important;
   position: relative !important;
-  overflow: hidden !important;
-  min-height: 44px !important;
-  padding: 8px 14px !important;
+  overflow: visible !important;
+  min-height: 48px !important;
+  height: 48px !important;
+  padding: 6px 12px !important;
   border-radius: 999px !important;
   flex-shrink: 0 !important;
-  width: 100% !important;
+  width: auto !important;
+  white-space: nowrap !important;
 }
 
 .buy-me-coffee::before {
   content: '' !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: -140% !important;
-  width: 70% !important;
-  height: 100% !important;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.24),
-    transparent
-  ) !important;
-  transform: skewX(-20deg) !important;
-  opacity: 0 !important;
-  transition:
-    left 0.42s ease,
-    opacity 0.18s ease !important;
+  /* disable animated sheen for the coffee pill */
+  display: none !important;
 }
 
 .buy-me-coffee:hover::before {
-  left: 170% !important;
-  opacity: 1 !important;
+  /* no animation */
 }
 
 .buy-me-coffee:hover {
-  background: linear-gradient(135deg, #ff8c69, #ffb347) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  /* keep static appearance on hover */
+  background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+  border-color: rgba(101, 52, 17, 0.18) !important;
   box-shadow:
-    0 8px 24px rgba(255, 107, 53, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    0 4px 12px rgba(255, 107, 53, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   transform: none !important;
 }
 
@@ -679,46 +662,101 @@ text-black {
   color: var(--color-text-primary, #ffffff) !important;
 }
 
+.buy-me-coffee-label-container {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+}
+
 .buy-me-coffee-options {
-  display: flex !important;
-  gap: 12px !important;
+  display: inline-flex !important;
+  gap: 6px !important;
   justify-content: center !important;
-  margin-bottom: 16px !important;
-  flex-direction: column !important;
+  margin-bottom: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* make payment buttons circular and icon-only visually */
+.buy-me-coffee-option {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  padding: 5px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+}
+
+.buy-me-coffee-option .payment-icon {
+  width: 24px !important;
+  height: 24px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  border-radius: 0 !important;
+  display: block !important;
+}
+
+/* Inline SVG fallback when raster images fail to load */
+.buy-me-coffee-option .payment-svg {
+  width: 24px !important;
+  height: 24px !important;
+  display: none !important;
+  line-height: 0 !important;
+}
+.buy-me-coffee-option .payment-svg svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  border-radius: 50% !important;
+}
+
+/* keep text for screen readers but hide visually */
+.payment-text {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 .buy-me-coffee-option {
-  display: inline-block !important;
-  padding: 12px 24px !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  border-radius: 6px !important;
-  text-decoration: none !important;
-  transition: all 0.2s ease !important;
-  cursor: pointer !important;
-  border: none !important;
+  /* Base appearance for payment option buttons is defined earlier
+     to make them circular and icon-only. Keep this selector present
+     but avoid overriding the circular sizing rules defined above. */
 }
 
 .buy-me-coffee-option.paypal {
   background: linear-gradient(135deg, #ffc115, #ffb300) !important;
   color: #242424 !important;
+  box-shadow: 0 2px 6px rgba(255, 193, 21, 0.3) !important;
 }
 
 .buy-me-coffee-option.paypal:hover {
   background: linear-gradient(135deg, #ffb300, #ffa500) !important;
-  box-shadow: 0 4px 12px rgba(255, 193, 21, 0.4) !important;
-  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(255, 193, 21, 0.5) !important;
+  transform: scale(1.08) !important;
 }
 
 .buy-me-coffee-option.revolut {
   background: linear-gradient(135deg, #627eea, #5568d3) !important;
   color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(98, 126, 234, 0.3) !important;
 }
 
 .buy-me-coffee-option.revolut:hover {
   background: linear-gradient(135deg, #5568d3, #4454b8) !important;
-  box-shadow: 0 4px 12px rgba(98, 126, 234, 0.4) !important;
-  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(98, 126, 234, 0.5) !important;
+  transform: scale(1.08) !important;
 }
 
 .buy-me-coffee-close {
