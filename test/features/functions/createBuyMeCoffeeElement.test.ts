@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DomClient } from '../../../src/clients/dom/client';
 import { createBuyMeCoffeeElement } from '../../../src/features/functions/createBuyMeCoffeeElement';
+import { Language } from '../../../src/common/enums/Language.enum';
 
 // Mock dependencies
 vi.mock('../../../src/clients/dom/client');
@@ -21,14 +22,14 @@ describe('createBuyMeCoffeeElement', () => {
   });
 
   it('should create a buy me coffee element with correct classes', () => {
-    const element = createBuyMeCoffeeElement();
+    const element = createBuyMeCoffeeElement(Language.ENGLISH);
 
     expect(element.tagName).toBe('DIV');
     expect(element.classList.contains('buy-me-coffee')).toBe(true);
   });
 
   it('should create a label container with text only', () => {
-    const element = createBuyMeCoffeeElement();
+    const element = createBuyMeCoffeeElement(Language.ENGLISH);
     const labelContainer = element.querySelector('.buy-me-coffee-label-container');
     const coffeeIcon = element.querySelector('span.coffee-icon');
     const coffeeLabel = element.querySelector('span.coffee-label');
@@ -36,11 +37,11 @@ describe('createBuyMeCoffeeElement', () => {
     expect(labelContainer).not.toBeNull();
     expect(coffeeIcon).toBeNull();
     expect(coffeeLabel).not.toBeNull();
-    expect(coffeeLabel?.textContent).toBe('Buy me a coffee');
+    expect(coffeeLabel?.textContent).toBe('Support me');
   });
 
   it('should create PayPal option with correct link', () => {
-    const element = createBuyMeCoffeeElement();
+    const element = createBuyMeCoffeeElement(Language.ENGLISH);
     const paypalLink = element.querySelector('a.buy-me-coffee-option.paypal');
 
     expect(paypalLink).not.toBeNull();
@@ -54,7 +55,7 @@ describe('createBuyMeCoffeeElement', () => {
   });
 
   it('should create Revolut option with correct link', () => {
-    const element = createBuyMeCoffeeElement();
+    const element = createBuyMeCoffeeElement(Language.ENGLISH);
     const revolutLink = element.querySelector('a.buy-me-coffee-option.revolut');
 
     expect(revolutLink).not.toBeNull();
@@ -68,7 +69,7 @@ describe('createBuyMeCoffeeElement', () => {
   });
 
   it('should create an inline actions container with both support options', () => {
-    const element = createBuyMeCoffeeElement();
+    const element = createBuyMeCoffeeElement(Language.ENGLISH);
     const optionsContainer = element.querySelector('.buy-me-coffee-options');
     const paypalLink = element.querySelector('a.buy-me-coffee-option.paypal');
     const revolutLink = element.querySelector('a.buy-me-coffee-option.revolut');

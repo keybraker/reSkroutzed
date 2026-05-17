@@ -1,4 +1,5 @@
 import { DomClient } from '../../clients/dom/client';
+import { Language } from '../../common/enums/Language.enum';
 
 // Use chrome.runtime.getURL to resolve bundled asset paths in MV3
 function getAssetUrl(path: string): string {
@@ -11,7 +12,7 @@ function getAssetUrl(path: string): string {
   }
 }
 
-export function createBuyMeCoffeeElement(): HTMLDivElement {
+export function createBuyMeCoffeeElement(language: Language): HTMLDivElement {
   const buyMeCoffeeElement = document.createElement('div');
   buyMeCoffeeElement.classList.add('buy-me-coffee');
 
@@ -20,7 +21,7 @@ export function createBuyMeCoffeeElement(): HTMLDivElement {
 
   const coffeeLabel = document.createElement('span');
   coffeeLabel.classList.add('coffee-label');
-  coffeeLabel.textContent = 'Buy me a coffee';
+  coffeeLabel.textContent = language === Language.GREEK ? 'Υποστήριξε με' : 'Support me';
 
   DomClient.appendElementToElement(coffeeLabel, labelContainer);
 

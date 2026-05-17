@@ -558,7 +558,7 @@ text-black {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
   display: inline-flex !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: space-between !important;
   gap: 10px !important;
   z-index: 5 !important;
   transition:
@@ -570,12 +570,11 @@ text-black {
   backdrop-filter: none !important;
   position: relative !important;
   overflow: visible !important;
-  min-height: 48px !important;
-  height: 48px !important;
-  padding: 6px 12px !important;
+  min-height: 38px !important;
+  padding: 4px 12px !important;
   border-radius: 999px !important;
   flex-shrink: 0 !important;
-  width: auto !important;
+  width: 100% !important;
   white-space: nowrap !important;
 }
 
@@ -671,9 +670,10 @@ text-black {
 
 .buy-me-coffee-options {
   display: inline-flex !important;
-  gap: 6px !important;
-  justify-content: center !important;
-  margin-bottom: 0 !important;
+  gap: 6px flex !important;
+  flex-direction: row !important;
+  gap: 4px !important;
+  /* justify-content: space-aroundtant; */
   flex-shrink: 0 !important;
 }
 
@@ -681,9 +681,9 @@ text-black {
 .buy-me-coffee-option {
   display: inline-flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  width: 38px !important;
-  height: 38px !important;
+  justify-content: space-between !important;
+  height: 32px !important;
+  padding: 32px !important;
   padding: 5px !important;
   border-radius: 50% !important;
   overflow: hidden !important;
@@ -694,7 +694,8 @@ text-black {
 }
 
 .buy-me-coffee-option .payment-icon {
-  width: 24px !important;
+  width: 18px !important;
+  height: 18px !important;
   height: 24px !important;
   object-fit: contain !important;
   object-position: center !important;
@@ -704,8 +705,8 @@ text-black {
 
 /* Inline SVG fallback when raster images fail to load */
 .buy-me-coffee-option .payment-svg {
-  width: 24px !important;
-  height: 24px !important;
+  width: 18px !important;
+  height: 18px !important;
   display: none !important;
   line-height: 0 !important;
 }
@@ -1726,21 +1727,21 @@ text-black {
 }
 
 .own-promotion-left {
-  flex: 0 0 45% !important;
+  flex: 0 0 48% !important;
   display: flex !important;
   justify-content: flex-start !important;
   align-items: center !important;
   min-width: 0 !important;
-  max-width: 45% !important;
+  max-width: 48% !important;
   overflow: visible !important;
 }
 
 .own-promotion-right {
-  flex: 0 0 45% !important;
+  flex: 0 0 48% !important;
   display: flex !important;
   justify-content: flex-end !important;
   align-items: center !important;
-  max-width: 45% !important;
+  max-width: 48% !important;
 }
 
 .own-promotion-review-link {
@@ -2505,25 +2506,54 @@ text-black {
   }
 
   .own-promotion .store-availability-row {
-    flex-direction: row !important;
-    justify-content: space-between !important;
+    flex-direction: column !important;
     align-items: stretch !important;
+    gap: 12px !important;
   }
 
-  .own-promotion .store-availability-left {
-    width: 45% !important;
-    max-width: 45% !important;
-    justify-content: flex-start !important;
-  }
-
+  .own-promotion .store-availability-left,
   .own-promotion .store-availability-right {
-    width: 45% !important;
-    max-width: 45% !important;
-    justify-content: flex-end !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .own-promotion-review-link {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Rating buttons: stack stars, review count, and actions vertically */
+  .sku-info-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .rating.big_stars {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  .rating .rating-wrapper {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+
+  .rating-with-count {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  .reviews-count {
+    display: block !important;
+    width: 100% !important;
   }
 
   .buy-me-coffee {
-    justify-content: center !important;
+    justify-content: space-between !important;
     width: 100% !important;
   }
 

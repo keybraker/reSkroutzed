@@ -951,7 +951,7 @@ function createPriceIndicationElement(
     DomClient.appendElementToElement(tagsContainer, priceIndication);
 
     const reSkroutzedReview = createReSkoutzedReviewElement(language);
-    const buyMeCoffeeElement = createBuyMeCoffeeElement();
+    const buyMeCoffeeElement = createBuyMeCoffeeElement(language);
     const actionPlaceholder = reSkroutzedReview.querySelector('.own-promotion-right');
     if (actionPlaceholder) {
       actionPlaceholder.appendChild(buyMeCoffeeElement);
