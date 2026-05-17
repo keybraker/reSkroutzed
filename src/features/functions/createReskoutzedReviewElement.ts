@@ -32,7 +32,6 @@ export function createReSkoutzedReviewElement(language: Language): HTMLDivElemen
   reSkoutzedReviewLink.classList.add('icon-border', 'own-promotion-review-link');
 
   prefixText.className = 'own-promotion-review-prefix';
-  prefixText.textContent = language === Language.ENGLISH ? 'By' : '';
 
   reviewCopy.className = 'own-promotion-review-copy';
 
@@ -42,6 +41,7 @@ export function createReSkoutzedReviewElement(language: Language): HTMLDivElemen
 
   logoSlot.className = 'own-promotion-brand-logo-slot';
 
+  prefixText.textContent = language === Language.GREEK ? 'Αξιολόγησε το ' : 'Rate ';
   brandName.textContent = 'reSkroutzed';
   DomClient.appendElementToElement(prefixText, reviewCopy);
   DomClient.appendElementToElement(brandName, reviewCopy);
