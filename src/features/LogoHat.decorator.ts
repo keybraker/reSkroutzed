@@ -13,8 +13,8 @@ export class LogoHatDecorator implements FeatureInstance {
     }
 
     const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.display = 'inline-block';
+    wrapper.style.display = 'inline-flex';
+    wrapper.style.alignItems = 'center';
 
     const hat = document.createElement('img');
     hat.src = chrome.runtime.getURL('icons/48.png');
@@ -44,20 +44,20 @@ export class LogoHatDecorator implements FeatureInstance {
     }
 
     logoParent.insertBefore(wrapper, logoLink);
-    wrapper.appendChild(logoLink);
     wrapper.appendChild(hat);
+    wrapper.appendChild(logoLink);
   }
 
   private applyHatStyles(hat: HTMLImageElement): void {
     const isMobile = window.matchMedia('(max-width: 767px)').matches;
 
-    hat.style.position = 'absolute';
-    hat.style.top = isMobile ? '-4px' : '0px';
-    hat.style.left = isMobile ? '6px' : '12px';
+    hat.style.position = 'relative';
+    hat.style.top = isMobile ? '-9px' : '-12px';
+    hat.style.marginRight = isMobile ? '-9px' : '-12px';
     hat.style.width = isMobile ? '18px' : '20px';
     hat.style.height = isMobile ? '18px' : '20px';
     hat.style.transform = 'rotate(-15deg)';
-    hat.style.zIndex = '10';
     hat.style.pointerEvents = 'none';
+    hat.style.flexShrink = '0';
   }
 }
