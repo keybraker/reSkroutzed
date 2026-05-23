@@ -5,6 +5,7 @@ import { FinalPriceFixerDecorator } from './features/FinalPriceFixer.decorator';
 import { LogoHatDecorator } from './features/LogoHat.decorator';
 import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
 import { UniversalToggleDecorator } from './features/UniversalToggle.decorator';
+import { WideModeDecorator } from './features/WideMode.decorator';
 import { themeSync } from './features/functions/themeSync';
 import { CampaignAdHandler } from './handlers/Campaign.handler';
 import { ListProductAdHandler } from './handlers/ListProductAd.handler';
@@ -28,6 +29,7 @@ const state: State = {
   videoAdCount: 0,
   sponsorshipAdCount: 0,
   darkMode: false,
+  wideMode: false,
   minimumPriceDifference: 0,
   isMobile: false,
 };
@@ -85,6 +87,7 @@ function loadStorage(): void {
     StorageKey.UNIVERSAL_TOGGLE_VISIBILITY,
   );
   state.hideAISlop = BrowserClient.getValue<boolean>(StorageKey.AI_SLOP_VISIBILITY);
+  state.wideMode = BrowserClient.getValue<boolean>(StorageKey.WIDE_MODE);
   state.isMobile = BrowserClient.detectMobile();
 
   if (state.darkMode) {
@@ -105,6 +108,7 @@ const priceCheckerIndicator = new PriceCheckerDecorator(state);
 const finalPriceFixerDecorator = new FinalPriceFixerDecorator(state);
 const universalToggleDecorator = new UniversalToggleDecorator(state);
 const logoHatDecorator = new LogoHatDecorator();
+const wideModeDecorator = new WideModeDecorator(state);
 
 (function () {
   async function initializer(): Promise<void> {
@@ -114,6 +118,7 @@ const logoHatDecorator = new LogoHatDecorator();
       universalToggleDecorator.execute();
     }
     logoHatDecorator.execute();
+    wideModeDecorator.execute();
 
     flagContent();
     toggleVisibility();
@@ -274,6 +279,11 @@ chrome.runtime.onMessage.addListener(
       // Apply immediately, then again to catch late inserts
       applyAISlopVisibility();
       setTimeout(applyAISlopVisibility, 300);
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleWideMode' && request.value !== undefined) {
+      state.wideMode = request.value as boolean;
+      BrowserClient.setValue(StorageKey.WIDE_MODE, state.wideMode);
+      wideModeDecorator.visibilityUpdate();
       sendResponse({ success: true });
     }
 

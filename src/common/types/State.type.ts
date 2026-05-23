@@ -19,6 +19,7 @@ export type State = {
   // config
   language: Language;
   darkMode: boolean;
+  wideMode: boolean;
   // price checker
   minimumPriceDifference: number;
   // platform detection

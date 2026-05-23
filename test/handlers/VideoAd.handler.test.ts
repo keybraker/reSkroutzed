@@ -31,6 +31,7 @@ describe('VideoAdHandler', () => {
       hideShelfProductAds: false,
       hideRecommendationAds: false,
       hideAISlop: false,
+      wideMode: false,
       hideUniversalToggle: false,
       productAdCount: 0,
       shelfAdCount: 0,

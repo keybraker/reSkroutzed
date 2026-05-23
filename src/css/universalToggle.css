@@ -195,12 +195,18 @@
 .shelf-ad-toggle-option.active,
 .dark-mode .recommendation-ad-toggle-option.active,
 .recommendation-ad-toggle-option.active,
-.ai-slop-toggle-option.active {
+.ai-slop-toggle-option.active,
+.dark-mode .wide-mode-option.active,
+.wide-mode-option.active {
   background: linear-gradient(145deg, #e66300, #d95500) !important;
 }
 
 /* AI button default (inactive) state should be black like others */
 .ai-slop-toggle-option {
+  background: #4a4a4a !important;
+}
+
+.wide-mode-option {
   background: #4a4a4a !important;
 }
 

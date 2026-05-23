@@ -12,6 +12,7 @@ import { VideoAdHandler } from '../handlers/VideoAd.handler';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createLogoElement } from './functions/createLogoElement';
 import { themeSync } from './functions/themeSync';
+import { WideModeDecorator } from './WideMode.decorator';
 
 export class UniversalToggleDecorator implements FeatureInstance {
   private isMenuOpen: boolean = false;
@@ -23,6 +24,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
   private readonly shelfProductAdHandler: ShelfProductAdHandler;
   private readonly sponsorshipAdHandler: SponsorshipAdHandler;
   private readonly campaignAdHandler: CampaignAdHandler;
+  private readonly wideModeDecorator: WideModeDecorator;
 
   constructor(state: State) {
     this.state = state;
@@ -33,6 +35,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     this.shelfProductAdHandler = new ShelfProductAdHandler(this.state);
     this.sponsorshipAdHandler = new SponsorshipAdHandler(this.state);
     this.campaignAdHandler = new CampaignAdHandler(this.state);
+    this.wideModeDecorator = new WideModeDecorator(this.state);
   }
 
   public execute(): void {
@@ -54,6 +57,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     const priceDifferenceButton = this.createPriceDifferenceOption();
     const darkModeButton = this.createDarkModeToggleButton();
+    const wideModeButton = this.createWideModeToggleButton();
     const adToggleButton = this.createAdToggleButton();
     const videoToggleButton = this.createVideoToggleButton();
     const sponsorshipToggleButton = this.createSponsorshipToggleButton();
@@ -63,6 +67,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     DomClient.appendElementToElement(priceDifferenceButton, buttonsContainer);
     DomClient.appendElementToElement(darkModeButton, buttonsContainer);
+    DomClient.appendElementToElement(wideModeButton, buttonsContainer);
     DomClient.appendElementToElement(adToggleButton, buttonsContainer);
     DomClient.appendElementToElement(videoToggleButton, buttonsContainer);
     DomClient.appendElementToElement(sponsorshipToggleButton, buttonsContainer);
@@ -117,6 +122,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     this.state.hideAISlop = (await BrowserClient.getValueAsync(
       StorageKey.AI_SLOP_VISIBILITY,
     )) as boolean;
+    this.state.wideMode = (await BrowserClient.getValueAsync(StorageKey.WIDE_MODE)) as boolean;
     this.state.minimumPriceDifference = (await BrowserClient.getValueAsync(
       StorageKey.MINIMUM_PRICE_DIFFERENCE,
     )) as number;
@@ -157,6 +163,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
           );
         }
       }
+    }
+
+    const wideModeButton = container.querySelector('.wide-mode-option') as HTMLButtonElement;
+    if (wideModeButton) {
+      wideModeButton.classList.toggle('active', this.state.wideMode);
+      wideModeButton.title = this.state.wideMode ? 'Disable Wide Mode' : 'Enable Wide Mode';
     }
 
     const adToggleButton = container.querySelector('.ad-toggle-option') as HTMLButtonElement;
@@ -627,6 +639,45 @@ export class UniversalToggleDecorator implements FeatureInstance {
       DomClient.appendElementToElement(newPath, svg);
 
       button.title = this.state.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+    });
+
+    return button;
+  }
+
+  private createWideModeToggleButton(): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.classList.add('toggle-option-button', 'wide-mode-option');
+    button.title = this.state.wideMode ? 'Disable Wide Mode' : 'Enable Wide Mode';
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '16');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    // Two diagonal arrows facing away: top-right ↗ and bottom-left ↙
+    path.setAttribute(
+      'd',
+      'M11 1.5a.5.5 0 0 1 .5-.5h3.5a.5.5 0 0 1 .5.5V5a.5.5 0 0 1-1 0V2.707L9.854 7.354a.5.5 0 1 1-.708-.708L13.793 2H11.5a.5.5 0 0 1-.5-.5zM1.5 11a.5.5 0 0 1 .5.5v1.293l4.646-4.647a.5.5 0 0 1 .708.708L2.707 13.5H4.5a.5.5 0 0 1 0 1H1.5a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5z',
+    );
+    path.setAttribute('fill', 'currentColor');
+
+    DomClient.appendElementToElement(path, svg);
+    DomClient.appendElementToElement(svg, button);
+
+    if (this.state.wideMode) {
+      button.classList.add('active');
+    }
+
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      this.state.wideMode = !this.state.wideMode;
+      BrowserClient.setValue(StorageKey.WIDE_MODE, this.state.wideMode);
+      this.wideModeDecorator.visibilityUpdate();
+
+      button.classList.toggle('active');
+      button.title = this.state.wideMode ? 'Disable Wide Mode' : 'Enable Wide Mode';
     });
 
     return button;

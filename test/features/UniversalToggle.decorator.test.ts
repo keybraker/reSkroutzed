@@ -21,7 +21,17 @@ vi.mock('../../src/clients/browser/client', () => ({
     SPONSORSHIP_VISIBILITY: 'hideSponsorships',
     MINIMUM_PRICE_DIFFERENCE: 'minimumPriceDifference',
     AI_SLOP_VISIBILITY: 'hideAISlop',
+    WIDE_MODE: 'wideMode',
   },
+}));
+
+// Mock WideModeDecorator
+vi.mock('../../src/features/WideMode.decorator', () => ({
+  WideModeDecorator: vi.fn().mockImplementation(() => ({
+    visibilityUpdate: vi.fn(),
+    execute: vi.fn(),
+    destroy: vi.fn(),
+  })),
 }));
 
 // Mock ad handler classes
@@ -76,6 +86,7 @@ describe('UniversalToggleDecorator', () => {
     mockState = {
       language: Language.ENGLISH,
       darkMode: false,
+      wideMode: false,
       hideProductAds: false,
       hideVideoAds: false,
       hideShelfProductAds: false,

@@ -14,6 +14,7 @@ export enum StorageKey {
   DARK_MODE = STORAGE_KEY_PREFIX + '-dark-mode',
   MINIMUM_PRICE_DIFFERENCE = STORAGE_KEY_PREFIX + '-minimum-difference',
   AI_SLOP_VISIBILITY = STORAGE_KEY_PREFIX + '-ai-slop-visibility',
+  WIDE_MODE = STORAGE_KEY_PREFIX + '-wide-mode',
 }
 
 const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
@@ -28,6 +29,7 @@ const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
   [StorageKey.MINIMUM_PRICE_DIFFERENCE]: 0,
   // false means AI content (sofos*) is visible by default
   [StorageKey.AI_SLOP_VISIBILITY]: false,
+  [StorageKey.WIDE_MODE]: false,
 };
 
 export class BrowserClient {

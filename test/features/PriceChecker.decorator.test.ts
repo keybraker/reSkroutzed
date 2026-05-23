@@ -97,6 +97,7 @@ describe('PriceCheckerDecorator', () => {
     hideShelfProductAds: false,
     hideRecommendationAds: false,
     hideAISlop: false,
+    wideMode: false,
     hideUniversalToggle: false,
     hideSponsorships: false,
     productAdCount: 0,
