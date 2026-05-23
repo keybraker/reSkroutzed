@@ -36,15 +36,6 @@
   pointer-events: none !important;
 }
 
-.dark-mode .bottom-drawer-content::before,
-.dark-mode .bottom-drawer-content::after,
-.dark-mode .tl-shelf::before,
-.dark-mode .tl-shelf::after,
-.dark-mode .scroll-area::after,
-.dark-mode .scroll-area::before,
-.dark-mode .timeline-card::before {
-  opacity: 0 !important;
-}
 
 .dark-mode-toggle:hover::after {
   opacity: 1 !important;
@@ -80,31 +71,8 @@
   transition: all 0.3s ease !important;
 }
 
-.dark-mode .dark-mode-toggle::before {
-  content: '🌙' !important;
-  background: #333 !important;
-  border-color: #555 !important;
-}
 
-.dark-mode .dark-mode-toggle {
-  border-color: var(--dark-mode-border) !important;
-  background: var(--dark-mode-hover) !important;
-  color: var(--dark-mode-text) !important;
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1) !important;
-}
 
-.dark-mode .add-to-cart-btn {
-  background-color: #488544 !important;
-  color: #ffffff !important;
-  border-color: #38703c !important;
-  transition:
-    background-color 0.3s ease,
-    transform 0.2s ease !important;
-
-  &:hover {
-    background-color: #5a9b5a !important;
-  }
-}
 
 .dark-mode-toggle svg {
   width: 24px !important;
@@ -113,67 +81,13 @@
   fill: currentColor !important;
 }
 
-.dark-mode .user-action-icons .rc-icon-btn {
-  background-color: var(--dark-mode-text) !important;
-  color: var(--dark-mode-text) !important;
-  border-color: var(--dark-mode-border) !important;
-  transition:
-    background-color 0.3s ease,
-    transform 0.2s ease !important;
 
-  &:hover {
-    background-color: var(--dark-mode-hover) !important;
-  }
-}
 
-.dark-mode .vertical-gallery,
-.dark-mode .qna-intro-button {
-  background-color: var(--dark-mode-hover) !important;
-}
 
-.dark-mode .user-action-icons .favorite-button-counter {
-  color: var(--dark-mode-text) !important;
-}
 
-.dark-mode .user-action-icons {
-  color: #ff6b6b !important;
-}
 
-.dark-mode .user-action-icons .compare-me,
-.dark-mode .user-action-icons .notify-me {
-  color: var(--dark-mode-text) !important;
-}
 
-.dark-mode .user-action-icons .share {
-  color: #3498db !important;
-}
 
-.dark-mode .mymarket-cta {
-  background-color: #2797e270 !important;
-}
 
-.dark-mode .efresh-cta {
-  background-color: #34b84a71 !important;
-}
 
-.dark-mode .spec-item {
-  background-color: #333333 !important;
-}
 
-.dark-mode .no-opacity {
-  padding: 10px, 10px, 10px, 10px !important;
-  content: '🌙' !important;
-  background: #333 !important;
-  border-color: #555 !important;
-}
-
-.dark-mode #lightbox_freak {
-  background-color: #121212 !important;
-  color: var(--dark-mode-text, #e6e6e6) !important;
-  border: 1px solid var(--dark-mode-border, #444) !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease !important;
-}
