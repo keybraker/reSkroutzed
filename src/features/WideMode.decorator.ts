@@ -61,19 +61,19 @@ export class WideModeDecorator implements FeatureInstance {
         max-width: 80% !important;
       }
       .resk-wide-mode .main-content {
-        max-width: 80% !important;
+        width: auto !important;
       }
       .resk-wide-mode .listing-list {
-        max-width: 80% !important;
+        width: auto !important;
       }
       .resk-wide-mode .page-title-wrapper {
-        max-width: 80% !important;
+        width: auto !important;
       }
       .resk-wide-mode .controls-wrapper {
-        max-width: 80% !important;
+        width: auto !important;
       }
       .resk-wide-mode .filter-tags-wrapper {
-        max-width: 80% !important;
+        width: auto !important;
       }
       .resk-wide-mode .top-section {
         max-width: 80% !important;
@@ -88,13 +88,13 @@ export class WideModeDecorator implements FeatureInstance {
         max-width: 80% !important;
       }
       .resk-wide-mode .content-scrollable {
-        max-width: 80% !important;
+        max-width: none !important;
       }
       .resk-wide-mode .sticky-wrapper {
-        max-width: 80% !important;
+        max-width: none !important;
       }
       .resk-wide-mode #sku-list {
-        max-width: 80% !important;
+        width: auto !important;
       }
       .resk-wide-mode .site-header .content {
         max-width: 80% !important;

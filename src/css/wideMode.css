@@ -1,21 +1,21 @@
-/* Wide Mode — limits max-width to 80% of the viewport */
+/* Wide Mode — removes fixed-width constraints so content fills up to 80% of the viewport */
 .resk-wide-mode .content {
   max-width: 80% !important;
 }
 .resk-wide-mode .main-content {
-  max-width: 80% !important;
+  width: auto !important;
 }
 .resk-wide-mode .listing-list {
-  max-width: 80% !important;
+  width: auto !important;
 }
 .resk-wide-mode .page-title-wrapper {
-  max-width: 80% !important;
+  width: auto !important;
 }
 .resk-wide-mode .controls-wrapper {
-  max-width: 80% !important;
+  width: auto !important;
 }
 .resk-wide-mode .filter-tags-wrapper {
-  max-width: 80% !important;
+  width: auto !important;
 }
 .resk-wide-mode .top-section {
   max-width: 80% !important;
@@ -30,13 +30,13 @@
   max-width: 80% !important;
 }
 .resk-wide-mode .content-scrollable {
-  max-width: 80% !important;
+  max-width: none !important;
 }
 .resk-wide-mode .sticky-wrapper {
-  max-width: 80% !important;
+  max-width: none !important;
 }
 .resk-wide-mode #sku-list {
-  max-width: 80% !important;
+  width: auto !important;
 }
 .resk-wide-mode .site-header .content {
   max-width: 80% !important;
