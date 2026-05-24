@@ -1526,6 +1526,18 @@ text-black {
   flex: 0 0 auto !important;
 }
 
+.store-logo {
+  width: 22px !important;
+  height: 22px !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+}
+
+.store-logo path {
+  fill: currentColor !important;
+  color: rgba(0, 0, 0, 0.55) !important;
+}
+
 .bestprice-badge-logo path,
 .icon.logo,
 .icon.logo svg,
