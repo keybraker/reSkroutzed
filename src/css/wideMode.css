@@ -41,3 +41,27 @@
 .resk-wide-mode .site-header .content {
   max-width: 80% !important;
 }
+.resk-wide-mode .simple-description {
+  max-width: none !important;
+  width: auto !important;
+}
+.resk-wide-mode .js-description-html {
+  max-width: none !important;
+  width: auto !important;
+}
+.resk-wide-mode .review-body {
+  max-width: none !important;
+  width: auto !important;
+}
+.resk-wide-mode .js-review-body-content {
+  max-width: none !important;
+  width: auto !important;
+}
+.resk-wide-mode .rich-components {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+.resk-wide-mode .rich-components .inner-item {
+  align-self: center !important;
+}
