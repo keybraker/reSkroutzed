@@ -11,6 +11,7 @@ import { CampaignAdHandler } from './handlers/Campaign.handler';
 import { ListProductAdHandler } from './handlers/ListProductAd.handler';
 import { RecommendationAdHandler } from './handlers/RecommendationAd.handler';
 import { ShelfProductAdHandler } from './handlers/ShelfProductAd.handler';
+import { SkoopHandler } from './handlers/Skoop.handler';
 import { SponsorshipAdHandler } from './handlers/SponsorshipAd.handler';
 import { VideoAdHandler } from './handlers/VideoAd.handler';
 
@@ -20,12 +21,14 @@ const state: State = {
   hideSponsorships: false,
   hideShelfProductAds: false,
   hideRecommendationAds: false,
+  hideSkoopAds: false,
   hideAISlop: false,
   hideUniversalToggle: false,
   language: Language.GREEK,
   productAdCount: 0,
   shelfAdCount: 0,
   recommendationAdCount: 0,
+  skoopAdCount: 0,
   videoAdCount: 0,
   sponsorshipAdCount: 0,
   darkMode: false,
@@ -79,6 +82,7 @@ function loadStorage(): void {
   state.hideRecommendationAds = BrowserClient.getValue<boolean>(
     StorageKey.RECOMMENDATION_AD_VISIBILITY,
   );
+  state.hideSkoopAds = BrowserClient.getValue<boolean>(StorageKey.SKOOP_AD_VISIBILITY);
   state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
@@ -101,6 +105,7 @@ const videoAdHandler = new VideoAdHandler(state);
 const listProductAdHandler = new ListProductAdHandler(state);
 const shelfProductAdHandler = new ShelfProductAdHandler(state);
 const recommendationAdHandler = new RecommendationAdHandler(state);
+const skoopHandler = new SkoopHandler(state);
 const sponsorshipAdHandler = new SponsorshipAdHandler(state);
 const campaignAdHandler = new CampaignAdHandler(state);
 // Decorators
@@ -133,6 +138,7 @@ const wideModeDecorator = new WideModeDecorator(state);
     listProductAdHandler.flag();
     shelfProductAdHandler.flag();
     recommendationAdHandler.flag();
+    skoopHandler.flag();
     sponsorshipAdHandler.flag();
     campaignAdHandler.flag();
   }
@@ -142,6 +148,7 @@ const wideModeDecorator = new WideModeDecorator(state);
     listProductAdHandler.visibilityUpdate();
     shelfProductAdHandler.visibilityUpdate();
     recommendationAdHandler.visibilityUpdate();
+    skoopHandler.visibilityUpdate();
     sponsorshipAdHandler.visibilityUpdate();
     campaignAdHandler.visibilityUpdate();
     applyAISlopVisibility();
@@ -243,6 +250,11 @@ chrome.runtime.onMessage.addListener(
       state.hideRecommendationAds = request.value as boolean;
       BrowserClient.setValue(StorageKey.RECOMMENDATION_AD_VISIBILITY, state.hideRecommendationAds);
       recommendationAdHandler.visibilityUpdate();
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleSkoopAds' && request.value !== undefined) {
+      state.hideSkoopAds = request.value as boolean;
+      BrowserClient.setValue(StorageKey.SKOOP_AD_VISIBILITY, state.hideSkoopAds);
+      skoopHandler.visibilityUpdate();
       sendResponse({ success: true });
     } else if (request.action === 'toggleSponsorships' && request.value !== undefined) {
       state.hideSponsorships = request.value as boolean;

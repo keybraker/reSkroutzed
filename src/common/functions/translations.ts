@@ -109,6 +109,22 @@ export const translations = {
     [Language.GERMAN]: 'Empfehlungswerbung anzeigen',
   },
 
+  // Skoop toggle
+  skoopHide: {
+    [Language.ENGLISH]: 'Hide Skoop Recommendations',
+    [Language.GREEK]: 'Απόκρυψη Skoop Προτάσεων',
+    [Language.ROMANIAN]: 'Ascunde Recomandările Skoop',
+    [Language.BULGARIAN]: 'Скриване на Skoop Препоръки',
+    [Language.GERMAN]: 'Skoop-Empfehlungen ausblenden',
+  },
+  skoopShow: {
+    [Language.ENGLISH]: 'Show Skoop Recommendations',
+    [Language.GREEK]: 'Εμφάνιση Skoop Προτάσεων',
+    [Language.ROMANIAN]: 'Afișează Recomandările Skoop',
+    [Language.BULGARIAN]: 'Показване на Skoop Препоръки',
+    [Language.GERMAN]: 'Skoop-Empfehlungen anzeigen',
+  },
+
   // AI Slop toggle
   aiSlopHide: {
     [Language.ENGLISH]: 'Hide AI Slop',

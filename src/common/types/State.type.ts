@@ -7,12 +7,14 @@ export type State = {
   hideSponsorships: boolean;
   hideShelfProductAds: boolean;
   hideRecommendationAds: boolean;
+  hideSkoopAds: boolean;
   hideAISlop: boolean;
   // ui
   hideUniversalToggle: boolean;
   // counters
   productAdCount: number;
   shelfAdCount: number;
+  skoopAdCount: number;
   recommendationAdCount: number;
   videoAdCount: number;
   sponsorshipAdCount: number;

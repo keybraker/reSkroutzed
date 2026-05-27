@@ -5,6 +5,7 @@ const StorageKey = {
   VIDEO_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-video-ad-visibility',
   SHELF_PRODUCT_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-shelf-product-ad-visibility',
   RECOMMENDATION_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-recommendation-ad-visibility',
+  SKOOP_AD_VISIBILITY: STORAGE_KEY_PREFIX + '-skoop-ad-visibility',
   SPONSORSHIP_VISIBILITY: STORAGE_KEY_PREFIX + '-sponsorship-visibility',
   AI_SLOP_VISIBILITY: STORAGE_KEY_PREFIX + '-ai-slop-visibility',
   UNIVERSAL_TOGGLE_VISIBILITY: STORAGE_KEY_PREFIX + '-universal-toggle-visibility',
@@ -82,6 +83,11 @@ function loadSettings() {
   const recommendationsToggle = document.getElementById('toggleRecommendations');
   getStorageValue(StorageKey.RECOMMENDATION_AD_VISIBILITY, true, (value) => {
     recommendationsToggle.checked = !value;
+  });
+
+  const skoopToggle = document.getElementById('toggleSkoop');
+  getStorageValue(StorageKey.SKOOP_AD_VISIBILITY, true, (value) => {
+    skoopToggle.checked = !value;
   });
 
   const sponsorshipsToggle = document.getElementById('toggleSponsorships');
@@ -235,6 +241,26 @@ function setupEventListeners() {
           },
           function (response) {
             console.log('Recommendation ads response:', response);
+          },
+        );
+      }
+    });
+  });
+
+  document.getElementById('toggleSkoop').addEventListener('change', (e) => {
+    const hideSkoop = !e.target.checked;
+    setStorageValue(StorageKey.SKOOP_AD_VISIBILITY, hideSkoop);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleSkoopAds',
+            value: hideSkoop,
+          },
+          function (response) {
+            console.log('Skoop ads response:', response);
           },
         );
       }

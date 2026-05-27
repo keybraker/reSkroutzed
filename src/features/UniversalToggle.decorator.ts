@@ -7,6 +7,7 @@ import { CampaignAdHandler } from '../handlers/Campaign.handler';
 import { ListProductAdHandler } from '../handlers/ListProductAd.handler';
 import { RecommendationAdHandler } from '../handlers/RecommendationAd.handler';
 import { ShelfProductAdHandler } from '../handlers/ShelfProductAd.handler';
+import { SkoopHandler } from '../handlers/Skoop.handler';
 import { SponsorshipAdHandler } from '../handlers/SponsorshipAd.handler';
 import { VideoAdHandler } from '../handlers/VideoAd.handler';
 import { FeatureInstance } from './common/FeatureInstance';
@@ -23,6 +24,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
   private readonly recommendationAdHandler: RecommendationAdHandler;
   private readonly shelfProductAdHandler: ShelfProductAdHandler;
   private readonly sponsorshipAdHandler: SponsorshipAdHandler;
+  private readonly skoopHandler: SkoopHandler;
   private readonly campaignAdHandler: CampaignAdHandler;
   private readonly wideModeDecorator: WideModeDecorator;
 
@@ -34,6 +36,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     this.recommendationAdHandler = new RecommendationAdHandler(this.state);
     this.shelfProductAdHandler = new ShelfProductAdHandler(this.state);
     this.sponsorshipAdHandler = new SponsorshipAdHandler(this.state);
+    this.skoopHandler = new SkoopHandler(this.state);
     this.campaignAdHandler = new CampaignAdHandler(this.state);
     this.wideModeDecorator = new WideModeDecorator(this.state);
   }
@@ -63,6 +66,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const sponsorshipToggleButton = this.createSponsorshipToggleButton();
     const shelfProductAdToggleButton = this.createShelfProductAdToggleButton();
     const recommendationAdToggleButton = this.createRecommendationAdToggleButton();
+    const skoopToggleButton = this.createSkoopToggleButton();
     const aiSlopToggleButton = this.createAISlopToggleButton();
 
     DomClient.appendElementToElement(priceDifferenceButton, buttonsContainer);
@@ -73,6 +77,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     DomClient.appendElementToElement(sponsorshipToggleButton, buttonsContainer);
     DomClient.appendElementToElement(shelfProductAdToggleButton, buttonsContainer);
     DomClient.appendElementToElement(recommendationAdToggleButton, buttonsContainer);
+    DomClient.appendElementToElement(skoopToggleButton, buttonsContainer);
     DomClient.appendElementToElement(aiSlopToggleButton, buttonsContainer);
 
     mainToggle.addEventListener('click', () => this.toggleMenu(container));
@@ -115,6 +120,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
     )) as boolean;
     this.state.hideRecommendationAds = (await BrowserClient.getValueAsync(
       StorageKey.RECOMMENDATION_AD_VISIBILITY,
+    )) as boolean;
+    this.state.hideSkoopAds = (await BrowserClient.getValueAsync(
+      StorageKey.SKOOP_AD_VISIBILITY,
     )) as boolean;
     this.state.hideSponsorships = (await BrowserClient.getValueAsync(
       StorageKey.SPONSORSHIP_VISIBILITY,
@@ -294,6 +302,22 @@ export class UniversalToggleDecorator implements FeatureInstance {
             'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
           );
         }
+      }
+    }
+
+    const skoopToggleButton = container.querySelector('.skoop-toggle-option') as HTMLButtonElement;
+    if (skoopToggleButton) {
+      skoopToggleButton.classList.toggle('active', !this.state.hideSkoopAds);
+      skoopToggleButton.title = getConditionalTranslation(
+        this.state.language,
+        this.state.hideSkoopAds,
+        'skoopHide',
+        'skoopShow',
+      );
+
+      const skoopText = skoopToggleButton.querySelector('.skoop-text-icon');
+      if (skoopText) {
+        skoopText.classList.toggle('ad-text-disabled', !this.state.hideSkoopAds);
       }
     }
 
@@ -1200,6 +1224,62 @@ export class UniversalToggleDecorator implements FeatureInstance {
       button.title = this.state.hideRecommendationAds
         ? 'Hide Recommendation Ads'
         : 'Show Recommendation Ads';
+    });
+
+    return button;
+  }
+
+  private createSkoopToggleButton(): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.classList.add('toggle-option-button', 'skoop-toggle-option');
+    button.title = this.state.hideSkoopAds
+      ? 'Hide Skoop Recommendations'
+      : 'Show Skoop Recommendations';
+
+    const skoopTextSpan = document.createElement('span');
+    skoopTextSpan.classList.add('skoop-text-icon');
+    skoopTextSpan.textContent = 'SK';
+
+    if (!this.state.hideSkoopAds) {
+      skoopTextSpan.classList.add('ad-text-disabled');
+      button.classList.add('active');
+    }
+
+    DomClient.appendElementToElement(skoopTextSpan, button);
+
+    const skoopNotificationBubble = document.createElement('div');
+    skoopNotificationBubble.classList.add('notification-bubble', 'skoop-notification');
+    skoopNotificationBubble.textContent = `${this.state.skoopAdCount}`;
+    DomClient.appendElementToElement(skoopNotificationBubble, button);
+
+    const updateSkoopNotificationCount = (): void => {
+      const flaggedSkoopElements = document.querySelectorAll('.flagged-skoop');
+
+      if (flaggedSkoopElements.length !== this.state.skoopAdCount) {
+        this.state.skoopAdCount = flaggedSkoopElements.length;
+      }
+
+      skoopNotificationBubble.textContent = `${this.state.skoopAdCount}`;
+      skoopNotificationBubble.style.display = this.state.skoopAdCount === 0 ? 'none' : 'flex';
+    };
+
+    updateSkoopNotificationCount();
+    setInterval(updateSkoopNotificationCount, 2000);
+
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.state.hideSkoopAds = !this.state.hideSkoopAds;
+
+      BrowserClient.setValue(StorageKey.SKOOP_AD_VISIBILITY, this.state.hideSkoopAds);
+
+      this.skoopHandler.visibilityUpdate();
+      button.classList.toggle('active');
+
+      skoopTextSpan.classList.toggle('ad-text-disabled', !this.state.hideSkoopAds);
+
+      button.title = this.state.hideSkoopAds
+        ? 'Hide Skoop Recommendations'
+        : 'Show Skoop Recommendations';
     });
 
     return button;
