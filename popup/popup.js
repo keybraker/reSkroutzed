@@ -44,9 +44,22 @@ function initializeStatsCounters() {
 }
 
 function updateStatsDisplay(adsBlocked, shelvesBlocked, videosBlocked) {
-  document.getElementById('totalAdsBlocked').textContent = adsBlocked;
-  document.getElementById('totalShelvesBlocked').textContent = shelvesBlocked;
-  document.getElementById('totalVideosBlocked').textContent = videosBlocked;
+  const adsEl = document.getElementById('totalAdsBlocked');
+  const shelvesEl = document.getElementById('totalShelvesBlocked');
+  const videosEl = document.getElementById('totalVideosBlocked');
+
+  const pulseElement = (el, newValue) => {
+    if (el.textContent !== String(newValue)) {
+      el.classList.remove('pulse');
+      void el.offsetWidth;
+      el.classList.add('pulse');
+    }
+    el.textContent = newValue;
+  };
+
+  pulseElement(adsEl, adsBlocked);
+  pulseElement(shelvesEl, shelvesBlocked);
+  pulseElement(videosEl, videosBlocked);
 }
 
 function loadSettings() {
@@ -126,6 +139,27 @@ function updateCounts(sponsored, sponsoredShelf, video) {
 }
 
 function setupEventListeners() {
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tabName = btn.dataset.tab;
+
+      // Update active tab button
+      document.querySelectorAll('.tab-btn').forEach((b) => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+
+      // Update active panel
+      document.querySelectorAll('.tab-panel').forEach((panel) => {
+        panel.classList.toggle('active', panel.dataset.panel === tabName);
+      });
+    });
+  });
+
+  // Dark mode toggle
   document.getElementById('toggleDarkMode').addEventListener('change', (e) => {
     const isDarkMode = e.target.checked;
     setStorageValue(StorageKey.DARK_MODE, isDarkMode);
@@ -146,9 +180,9 @@ function setupEventListeners() {
     });
 
     if (isDarkMode) {
-      document.body.classList.add('dark-popup');
+      document.body.classList.remove('light-popup');
     } else {
-      document.body.classList.remove('dark-popup');
+      document.body.classList.add('light-popup');
     }
   });
 
@@ -356,11 +390,11 @@ function setupEventListeners() {
       const button = document.getElementById('updatePriceBtn');
       const originalText = button.textContent;
       button.textContent = 'Updated!';
-      button.classList.add('action-success');
+      button.classList.add('btn-success');
 
       setTimeout(() => {
         button.textContent = originalText;
-        button.classList.remove('action-success');
+        button.classList.remove('btn-success');
       }, 1500);
     }
   });
@@ -394,10 +428,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
   getCurrentPageCounts();
 
-  // Apply dark mode if needed
+  // Apply dark mode if needed (popup is dark by default; add light-popup when dark mode is off)
   getStorageValue(StorageKey.DARK_MODE, false, (value) => {
-    if (value) {
-      document.body.classList.add('dark-popup');
+    if (!value) {
+      document.body.classList.add('light-popup');
     }
   });
 });

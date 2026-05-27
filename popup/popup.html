@@ -10,159 +10,330 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>reSkroutzed</title>
     <link rel="stylesheet" href="popup.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
   <body class="popup-body">
+    <!-- Header -->
     <header class="header">
-      <div class="logo-container">
-        <a
-          href="https://github.com/keybraker/reskroutzed"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="https://raw.githubusercontent.com/keybraker/reskroutzed/main/icons/128.png"
-            alt="reSkroutzed icon"
-            class="logo-image"
-          />
-        </a>
-        <h1 class="app-title">reSkroutzed</h1>
+      <div class="header-inner">
+        <div class="brand">
+          <img src="../icons/128.png" alt="reSkroutzed" class="logo-image" />
+          <div class="brand-text">
+            <h1 class="app-title">reSkroutzed</h1>
+            <a
+              href="https://github.com/keybraker/keybraker"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="app-subtitle"
+              >by Keybraker</a
+            >
+          </div>
+        </div>
+        <span class="version-badge">v2.1.0</span>
       </div>
     </header>
 
     <main class="content">
-      <!-- Quick Settings Section -->
-      <div class="settings-container">
-        <h2 class="section-title">Quick Settings</h2>
-        <div class="settings-grid">
-          <div class="setting-item">
-            <label class="setting-label" for="toggleUniversalToggle">Toggle</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleUniversalToggle" class="toggle-input" checked />
-              <label for="toggleUniversalToggle" class="toggle-label"></label>
-            </div>
+      <!-- Compact Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat-pill" data-stat="ads">
+          <div class="stat-pill-icon ads-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M18 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M10 9v6M14 9v2"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
           </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleAds">Ads</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleAds" class="toggle-input" checked />
-              <label for="toggleAds" class="toggle-label"></label>
-            </div>
+          <span class="stat-pill-value" id="totalAdsBlocked">0</span>
+          <span class="stat-pill-label">Ads</span>
+        </div>
+        <div class="stat-pill" data-stat="shelves">
+          <div class="stat-pill-icon shelves-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect
+                x="3"
+                y="3"
+                width="7"
+                height="7"
+                rx="1"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <rect
+                x="14"
+                y="3"
+                width="7"
+                height="7"
+                rx="1"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <rect
+                x="3"
+                y="14"
+                width="7"
+                height="7"
+                rx="1"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <rect
+                x="14"
+                y="14"
+                width="7"
+                height="7"
+                rx="1"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
           </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleShelves">Shelves</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleShelves" class="toggle-input" checked />
-              <label for="toggleShelves" class="toggle-label"></label>
-            </div>
+          <span class="stat-pill-value" id="totalShelvesBlocked">0</span>
+          <span class="stat-pill-label">Shelves</span>
+        </div>
+        <div class="stat-pill" data-stat="videos">
+          <div class="stat-pill-icon videos-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <polygon points="5,3 19,12 5,21" fill="currentColor" opacity="0.8" />
+            </svg>
           </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleRecommendations">Recommendations</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleRecommendations" class="toggle-input" checked />
-              <label for="toggleRecommendations" class="toggle-label"></label>
-            </div>
-          </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleSkoop">Skoop</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleSkoop" class="toggle-input" checked />
-              <label for="toggleSkoop" class="toggle-label"></label>
-            </div>
-          </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleAISlop">AI Features</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleAISlop" class="toggle-input" />
-              <label for="toggleAISlop" class="toggle-label"></label>
-            </div>
-          </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleVideos">Videos</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleVideos" class="toggle-input" checked />
-              <label for="toggleVideos" class="toggle-label"></label>
-            </div>
-          </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleSponsorships">Sponsorships</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleSponsorships" class="toggle-input" checked />
-              <label for="toggleSponsorships" class="toggle-label"></label>
-            </div>
-          </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleDarkMode">Dark Mode</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleDarkMode" class="toggle-input" />
-              <label for="toggleDarkMode" class="toggle-label"></label>
-            </div>
-          </div>
-          <div class="setting-item">
-            <label class="setting-label" for="toggleWideMode">Wide Mode</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="toggleWideMode" class="toggle-input" />
-              <label for="toggleWideMode" class="toggle-label"></label>
-            </div>
-          </div>
+          <span class="stat-pill-value" id="totalVideosBlocked">0</span>
+          <span class="stat-pill-label">Videos</span>
         </div>
       </div>
 
-      <!-- Price Difference Settings -->
-      <div class="price-settings compact">
-        <h2 class="section-title compact">Price Difference Alert</h2>
-        <div class="price-input-container compact">
-          <label for="priceDifference" class="price-label">Min (€)</label>
-          <input
-            type="number"
-            id="priceDifference"
-            min="0"
-            step="0.5"
-            value="0"
-            class="price-input"
-          />
-          <button id="updatePriceBtn" class="action-button price-update">Save</button>
+      <!-- Tab Navigation -->
+      <nav class="tab-bar" role="tablist">
+        <button class="tab-btn active" data-tab="filtering" role="tab" aria-selected="true">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 6h16M7 12h10M10 18h4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          Filtering
+        </button>
+        <button class="tab-btn" data-tab="appearance" role="tab" aria-selected="false">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          Appearance
+        </button>
+        <button class="tab-btn" data-tab="price" role="tab" aria-selected="false">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none">
+            <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          Price Checker
+        </button>
+      </nav>
+
+      <!-- Tab Panels -->
+      <div class="tab-panels">
+        <!-- Filtering Panel -->
+        <div class="tab-panel active" data-panel="filtering">
+          <div class="settings-grid">
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Product ads</span>
+                <span class="setting-hint">Sponsored listings in search</span>
+              </div>
+              <label class="toggle" for="toggleAds">
+                <input type="checkbox" id="toggleAds" class="toggle-input" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Shelf ads</span>
+                <span class="setting-hint">Sponsored product shelves</span>
+              </div>
+              <label class="toggle" for="toggleShelves">
+                <input type="checkbox" id="toggleShelves" class="toggle-input" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Recommendations</span>
+                <span class="setting-hint">"You may also like" sections</span>
+              </div>
+              <label class="toggle" for="toggleRecommendations">
+                <input type="checkbox" id="toggleRecommendations" class="toggle-input" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Videos</span>
+                <span class="setting-hint">Video ads &amp; product videos</span>
+              </div>
+              <label class="toggle" for="toggleVideos">
+                <input type="checkbox" id="toggleVideos" class="toggle-input" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Sponsorships</span>
+                <span class="setting-hint">Sponsored banners &amp; promos</span>
+              </div>
+              <label class="toggle" for="toggleSponsorships">
+                <input type="checkbox" id="toggleSponsorships" class="toggle-input" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Skoop</span>
+                <span class="setting-hint">Skroutz's own second hand</span>
+              </div>
+              <label class="toggle" for="toggleSkoop">
+                <input type="checkbox" id="toggleSkoop" class="toggle-input" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">AI features</span>
+                <span class="setting-hint">AI-generated slop &amp; summaries</span>
+              </div>
+              <label class="toggle" for="toggleAISlop">
+                <input type="checkbox" id="toggleAISlop" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+          </div>
         </div>
-        <p class="price-hint">
-          Only alert when the alternative price differs at least this amount.
-        </p>
+
+        <!-- Appearance Panel -->
+        <div class="tab-panel" data-panel="appearance">
+          <div class="settings-grid">
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Dark mode</span>
+                <span class="setting-hint">Toggle dark color scheme</span>
+              </div>
+              <label class="toggle" for="toggleDarkMode">
+                <input type="checkbox" id="toggleDarkMode" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Wide mode</span>
+                <span class="setting-hint">Full-width page layout</span>
+              </div>
+              <label class="toggle" for="toggleWideMode">
+                <input type="checkbox" id="toggleWideMode" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Universal toggle</span>
+                <span class="setting-hint">Show quick toggle on page</span>
+              </div>
+              <label class="toggle" for="toggleUniversalToggle">
+                <input type="checkbox" id="toggleUniversalToggle" class="toggle-input" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Price Checker Panel -->
+        <div class="tab-panel" data-panel="price">
+          <p class="panel-description">
+            Get alerts when you can find a better price elsewhere. Set the minimum difference to
+            avoid noise.
+          </p>
+          <div class="price-row">
+            <div class="price-input-group">
+              <label for="priceDifference" class="price-label">Minimum difference</label>
+              <div class="price-input-wrapper">
+                <input
+                  type="number"
+                  id="priceDifference"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                  class="price-input"
+                  placeholder="0"
+                />
+                <span class="price-currency">€</span>
+              </div>
+            </div>
+            <button id="updatePriceBtn" class="btn-primary">Apply</button>
+          </div>
+        </div>
       </div>
     </main>
 
     <footer class="footer">
-      <div class="rate-section">
-        <p>Rate this extension on</p>
+      <div class="footer-links">
+        <span class="footer-label">Rate us on</span>
         <div class="store-links">
           <a
             href="https://addons.mozilla.org/en-US/firefox/addon/reskroutzed/reviews/"
             target="_blank"
             rel="noopener noreferrer"
-            class="store-link"
+            class="store-pill"
+            title="Rate on Firefox Add-ons"
           >
-            <img
-              src="https://raw.githubusercontent.com/keybraker/reskroutzed/main/imagery/store_images/firefox.png"
-              alt="Firefox Add-ons"
-              class="store-icon"
-            />
+            Firefox
           </a>
           <a
             href="https://chrome.google.com/webstore/detail/reskroutzed/amglnkndjeoojnjjeepeheobhneeogcl?hl=en&authuser=0"
             target="_blank"
             rel="noopener noreferrer"
-            class="store-link"
+            class="store-pill"
+            title="Rate on Chrome Web Store"
           >
-            <img
-              src="https://raw.githubusercontent.com/keybraker/reskroutzed/main/imagery/store_images/chrome.png"
-              alt="Chrome Web Store"
-              class="store-icon"
-            />
+            Chrome
           </a>
         </div>
       </div>
-      <span class="version-info">Version 2.1.0</span>
+      <a
+        href="https://github.com/keybraker/reskroutzed"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="github-link"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+          <path
+            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"
+          />
+        </svg>
+        GitHub
+      </a>
     </footer>
     <script src="../popup.js"></script>
   </body>
