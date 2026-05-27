@@ -115,6 +115,51 @@ export class WideModeDecorator implements FeatureInstance {
         max-width: none !important;
         width: auto !important;
       }
+      .resk-wide-mode .js-slidable {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .tl-shelf {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .tl-shelf-content {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .tl-shelf-wrapper {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .js-timeline-card {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .navigation-menu {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .scrollable {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .tiles-shelf {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .timeline-card {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .tracking-img-container {
+        max-width: none !important;
+        width: auto !important;
+      }
+      .resk-wide-mode .details-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+      }
       .resk-wide-mode .rich-components {
         display: flex !important;
         flex-direction: column !important;
