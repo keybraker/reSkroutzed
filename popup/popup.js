@@ -10,6 +10,7 @@ const StorageKey = {
   AI_SLOP_VISIBILITY: STORAGE_KEY_PREFIX + '-ai-slop-visibility',
   UNIVERSAL_TOGGLE_VISIBILITY: STORAGE_KEY_PREFIX + '-universal-toggle-visibility',
   MINIMUM_PRICE_DIFFERENCE: STORAGE_KEY_PREFIX + '-minimum-difference',
+  WIDE_MODE: STORAGE_KEY_PREFIX + '-wide-mode',
   TOTAL_ADS_BLOCKED: STORAGE_KEY_PREFIX + '-total-ads-blocked',
   TOTAL_SHELVES_BLOCKED: STORAGE_KEY_PREFIX + '-total-shelves-blocked',
   TOTAL_VIDEOS_BLOCKED: STORAGE_KEY_PREFIX + '-total-videos-blocked',
@@ -52,6 +53,11 @@ function loadSettings() {
   const darkModeToggle = document.getElementById('toggleDarkMode');
   getStorageValue(StorageKey.DARK_MODE, false, (value) => {
     darkModeToggle.checked = value;
+  });
+
+  const wideModeToggle = document.getElementById('toggleWideMode');
+  getStorageValue(StorageKey.WIDE_MODE, false, (value) => {
+    wideModeToggle.checked = value;
   });
 
   const adsToggle = document.getElementById('toggleAds');
@@ -144,6 +150,26 @@ function setupEventListeners() {
     } else {
       document.body.classList.remove('dark-popup');
     }
+  });
+
+  document.getElementById('toggleWideMode').addEventListener('change', (e) => {
+    const isWideMode = e.target.checked;
+    setStorageValue(StorageKey.WIDE_MODE, isWideMode);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            action: 'toggleWideMode',
+            value: isWideMode,
+          },
+          function (response) {
+            console.log('Wide mode response:', response);
+          },
+        );
+      }
+    });
   });
 
   document.getElementById('toggleUniversalToggle').addEventListener('change', (e) => {
