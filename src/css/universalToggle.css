@@ -423,6 +423,25 @@
   opacity: 0.8 !important;
 }
 
+/* Mobile: price-difference option spans full width horizontally */
+@media (max-width: 768px) {
+  .price-difference-option {
+    width: 100% !important;
+    border-radius: var(--ut-radius-md) !important;
+    flex-direction: row !important;
+    gap: 4px !important;
+  }
+
+  .price-difference-mobile-container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    width: 100% !important;
+  }
+}
+
 /* ---------- DARK MODE OVERRIDES (skroutz.gr dark mode hardening) ---------- */
 /* Skroutz dark mode applies aggressive overrides to injected elements.
    These rules lock down every surface so nothing turns blinding white. */
