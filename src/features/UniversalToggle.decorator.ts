@@ -12,6 +12,7 @@ import { SponsorshipAdHandler } from '../handlers/SponsorshipAd.handler';
 import { VideoAdHandler } from '../handlers/VideoAd.handler';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createLogoElement } from './functions/createLogoElement';
+import { buildSvg, ICON } from './functions/icons';
 import { themeSync } from './functions/themeSync';
 import { WideModeDecorator } from './WideMode.decorator';
 
@@ -154,23 +155,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'darkModeOn',
         'darkModeOff',
       );
-
-      const darkModePath = darkModeButton.querySelector('path');
-      if (darkModePath) {
-        if (this.state.darkMode) {
-          // Moon icon
-          darkModePath.setAttribute(
-            'd',
-            'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z',
-          );
-        } else {
-          // Sun icon
-          darkModePath.setAttribute(
-            'd',
-            'M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z',
-          );
-        }
-      }
     }
 
     const wideModeButton = container.querySelector('.wide-mode-option') as HTMLButtonElement;
@@ -188,11 +172,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'adHide',
         'adShow',
       );
-
-      const adText = adToggleButton.querySelector('.ad-text-icon');
-      if (adText) {
-        adText.classList.toggle('ad-text-disabled', !this.state.hideProductAds);
-      }
     }
 
     const videoToggleButton = container.querySelector('.video-toggle-option') as HTMLButtonElement;
@@ -204,21 +183,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'videoHide',
         'videoShow',
       );
-
-      const videoPath = videoToggleButton.querySelector('path');
-      if (videoPath) {
-        if (this.state.hideVideoAds) {
-          videoPath.setAttribute(
-            'd',
-            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
-          );
-        } else {
-          videoPath.setAttribute(
-            'd',
-            'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
-          );
-        }
-      }
     }
 
     const sponsorshipToggleButton = container.querySelector(
@@ -232,21 +196,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'sponsorshipHide',
         'sponsorshipShow',
       );
-
-      const sponsorshipPath = sponsorshipToggleButton.querySelector('path');
-      if (sponsorshipPath) {
-        if (this.state.hideSponsorships) {
-          sponsorshipPath.setAttribute(
-            'd',
-            'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
-          );
-        } else {
-          sponsorshipPath.setAttribute(
-            'd',
-            'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
-          );
-        }
-      }
     }
 
     const shelfToggleButton = container.querySelector(
@@ -260,21 +209,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'shelfAdHide',
         'shelfAdShow',
       );
-
-      const shelfPath = shelfToggleButton.querySelector('path');
-      if (shelfPath) {
-        if (this.state.hideShelfProductAds) {
-          shelfPath.setAttribute(
-            'd',
-            'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z',
-          );
-        } else {
-          shelfPath.setAttribute(
-            'd',
-            'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
-          );
-        }
-      }
     }
 
     const recommendationToggleButton = container.querySelector(
@@ -288,21 +222,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'recommendationAdHide',
         'recommendationAdShow',
       );
-
-      const recommendationPath = recommendationToggleButton.querySelector('path');
-      if (recommendationPath) {
-        if (this.state.hideRecommendationAds) {
-          recommendationPath.setAttribute(
-            'd',
-            'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
-          );
-        } else {
-          recommendationPath.setAttribute(
-            'd',
-            'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
-          );
-        }
-      }
     }
 
     const skoopToggleButton = container.querySelector('.skoop-toggle-option') as HTMLButtonElement;
@@ -314,11 +233,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'skoopHide',
         'skoopShow',
       );
-
-      const skoopText = skoopToggleButton.querySelector('.skoop-text-icon');
-      if (skoopText) {
-        skoopText.classList.toggle('ad-text-disabled', !this.state.hideSkoopAds);
-      }
     }
 
     const aiSlopToggleButton = container.querySelector(
@@ -333,10 +247,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'aiSlopHide',
         'aiSlopShow',
       );
-      const aiText = aiSlopToggleButton.querySelector('.ai-text-icon');
-      if (aiText) {
-        aiText.classList.toggle('ad-text-disabled', !this.state.hideAISlop);
-      }
     }
 
     const priceDifferenceButton = container.querySelector(
@@ -605,28 +515,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     button.classList.add('toggle-option-button', 'dark-mode-option');
     button.title = this.state.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode';
 
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 24 24');
-    svg.setAttribute('width', '16');
-    svg.setAttribute('height', '16');
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-
-    if (this.state.darkMode) {
-      path.setAttribute(
-        'd',
-        'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z',
-      );
-    } else {
-      path.setAttribute(
-        'd',
-        'M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z',
-      );
-    }
-
-    path.setAttribute('fill', 'currentColor');
-
-    DomClient.appendElementToElement(path, svg);
+    const svg = buildSvg(ICON.moon);
     DomClient.appendElementToElement(svg, button);
 
     if (this.state.darkMode) {
@@ -641,27 +530,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       themeSync(this.state);
 
       button.classList.toggle('active');
-
-      const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      if (this.state.darkMode) {
-        newPath.setAttribute(
-          'd',
-          'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z',
-        );
-      } else {
-        newPath.setAttribute(
-          'd',
-          'M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z',
-        );
-      }
-      newPath.setAttribute('fill', 'currentColor');
-
-      const oldPath = svg.querySelector('path');
-      if (oldPath) {
-        svg.removeChild(oldPath);
-      }
-      DomClient.appendElementToElement(newPath, svg);
-
       button.title = this.state.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode';
     });
 
@@ -712,16 +580,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     button.classList.add('toggle-option-button', 'ad-toggle-option');
     button.title = this.state.hideProductAds ? 'Hide Ads' : 'Show Ads';
 
-    const adTextSpan = document.createElement('span');
-    adTextSpan.classList.add('ad-text-icon');
-    adTextSpan.textContent = 'AD';
+    const svg = buildSvg(ICON.tag);
+    DomClient.appendElementToElement(svg, button);
 
     if (!this.state.hideProductAds) {
-      adTextSpan.classList.add('ad-text-disabled');
       button.classList.add('active');
     }
-
-    DomClient.appendElementToElement(adTextSpan, button);
 
     const notificationBubble = document.createElement('div');
     notificationBubble.classList.add('notification-bubble');
@@ -758,15 +622,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       BrowserClient.setValue(StorageKey.PRODUCT_AD_VISIBILITY, this.state.hideProductAds);
 
-      const adText = button.querySelector('.ad-text-icon');
-      if (adText) {
-        if (this.state.hideProductAds) {
-          adText.classList.remove('ad-text-disabled');
-        } else {
-          adText.classList.add('ad-text-disabled');
-        }
-      }
-
       const sponsoredFlagButton = document.getElementById('sponsored-flagger-button');
       if (sponsoredFlagButton) {
         const activeButtonClass = 'flagger-toggle-product-active';
@@ -799,17 +654,10 @@ export class UniversalToggleDecorator implements FeatureInstance {
     svg.setAttribute('height', '16');
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    if (this.state.hideVideoAds) {
-      path.setAttribute(
-        'd',
-        'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
-      );
-    } else {
-      path.setAttribute(
-        'd',
-        'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
-      );
-    }
+    path.setAttribute(
+      'd',
+      'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
+    );
     path.setAttribute('fill', 'currentColor');
     DomClient.appendElementToElement(path, svg);
     DomClient.appendElementToElement(svg, button);
@@ -847,26 +695,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       this.videoHandler.visibilityUpdate();
       button.classList.toggle('active');
 
-      const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      if (this.state.hideVideoAds) {
-        newPath.setAttribute(
-          'd',
-          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
-        );
-      } else {
-        newPath.setAttribute(
-          'd',
-          'M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2V13z',
-        );
-      }
-      newPath.setAttribute('fill', 'currentColor');
-
-      const oldPath = svg.querySelector('path');
-      if (oldPath) {
-        svg.removeChild(oldPath);
-      }
-      DomClient.appendElementToElement(newPath, svg);
-
       button.title = this.state.hideVideoAds ? 'Hide Videos' : 'Show Videos';
     });
 
@@ -884,17 +712,10 @@ export class UniversalToggleDecorator implements FeatureInstance {
     svg.setAttribute('height', '16');
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    if (this.state.hideSponsorships) {
-      path.setAttribute(
-        'd',
-        'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
-      );
-    } else {
-      path.setAttribute(
-        'd',
-        'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
-      );
-    }
+    path.setAttribute(
+      'd',
+      'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
+    );
     path.setAttribute('fill', 'currentColor');
 
     DomClient.appendElementToElement(path, svg);
@@ -928,26 +749,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       this.campaignAdHandler.visibilityUpdate();
       button.classList.toggle('active');
 
-      const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      if (!button.classList.contains('active')) {
-        newPath.setAttribute(
-          'd',
-          'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
-        );
-      } else {
-        newPath.setAttribute(
-          'd',
-          'M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2z',
-        );
-      }
-      newPath.setAttribute('fill', 'currentColor');
-
-      const oldPath = svg.querySelector('path');
-      if (oldPath) {
-        svg.removeChild(oldPath);
-      }
-      DomClient.appendElementToElement(newPath, svg);
-
       button.title = button.classList.contains('active')
         ? 'Show Sponsorships'
         : 'Hide Sponsorships';
@@ -967,17 +768,10 @@ export class UniversalToggleDecorator implements FeatureInstance {
     svg.setAttribute('height', '16');
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    if (this.state.hideShelfProductAds) {
-      path.setAttribute(
-        'd',
-        'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z',
-      );
-    } else {
-      path.setAttribute(
-        'd',
-        'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
-      );
-    }
+    path.setAttribute(
+      'd',
+      'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
+    );
     path.setAttribute('fill', 'currentColor');
 
     DomClient.appendElementToElement(path, svg);
@@ -1019,26 +813,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
       this.shelfProductAdHandler.visibilityUpdate();
       button.classList.toggle('active');
 
-      const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      if (this.state.hideShelfProductAds) {
-        newPath.setAttribute(
-          'd',
-          'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z',
-        );
-      } else {
-        newPath.setAttribute(
-          'd',
-          'M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z M10 7a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.5A.25.25 0 0 0 10.75 7.75v-.5A.25.25 0 0 0 10.5 7h-.5z',
-        );
-      }
-      newPath.setAttribute('fill', 'currentColor');
-
-      const oldPath = svg.querySelector('path');
-      if (oldPath) {
-        svg.removeChild(oldPath);
-      }
-      DomClient.appendElementToElement(newPath, svg);
-
       button.title = this.state.hideShelfProductAds ? 'Hide Shelf Ads' : 'Show Shelf Ads';
     });
 
@@ -1050,17 +824,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     button.classList.add('toggle-option-button', 'ai-slop-toggle-option');
     button.title = this.state.hideAISlop ? 'Hide AI Slop' : 'Show AI Slop';
 
-    const aiTextSpan = document.createElement('span');
-    aiTextSpan.classList.add('ai-text-icon');
-    aiTextSpan.textContent = 'AI';
+    const svg = buildSvg(ICON.cpu);
+    DomClient.appendElementToElement(svg, button);
 
-    if (!this.state.hideAISlop) {
-      aiTextSpan.classList.add('ad-text-disabled');
-    } else {
+    if (this.state.hideAISlop) {
       button.classList.add('active');
     }
-
-    DomClient.appendElementToElement(aiTextSpan, button);
 
     const notificationBubble = document.createElement('div');
     notificationBubble.classList.add('notification-bubble', 'ai-notification');
@@ -1116,15 +885,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       BrowserClient.setValue(StorageKey.AI_SLOP_VISIBILITY, this.state.hideAISlop);
 
-      const aiText = button.querySelector('.ai-text-icon');
-      if (aiText) {
-        if (this.state.hideAISlop) {
-          aiText.classList.remove('ad-text-disabled');
-        } else {
-          aiText.classList.add('ad-text-disabled');
-        }
-      }
-
       apply();
       button.classList.toggle('active');
       button.title = this.state.hideAISlop ? 'Hide AI Slop' : 'Show AI Slop';
@@ -1140,26 +900,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       ? 'Hide Recommendation Ads'
       : 'Show Recommendation Ads';
 
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 16 16');
-    svg.setAttribute('width', '16');
-    svg.setAttribute('height', '16');
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    if (this.state.hideRecommendationAds) {
-      path.setAttribute(
-        'd',
-        'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
-      );
-    } else {
-      path.setAttribute(
-        'd',
-        'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
-      );
-    }
-    path.setAttribute('fill', 'currentColor');
-
-    DomClient.appendElementToElement(path, svg);
+    const svg = buildSvg(ICON.sparkle);
     DomClient.appendElementToElement(svg, button);
 
     const recommendationNotificationBubble = document.createElement('div');
@@ -1200,27 +941,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       this.recommendationAdHandler.visibilityUpdate();
       button.classList.toggle('active');
-
-      const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      if (this.state.hideRecommendationAds) {
-        newPath.setAttribute(
-          'd',
-          'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
-        );
-      } else {
-        newPath.setAttribute(
-          'd',
-          'M8 0l1.469 4.07L13.5 5.5l-4.031 1.43L8 11l-1.469-4.07L2.5 5.5l4.031-1.43L8 0zm-5.5 9 1.01 2.49L6 12.5l-2.49 1.01L2.5 16l-1.01-2.49L-1 12.5l2.49-1.01L2.5 9zm11 0 1.01 2.49L17 12.5l-2.49 1.01L13.5 16l-1.01-2.49L10 12.5l2.49-1.01L13.5 9z',
-        );
-      }
-      newPath.setAttribute('fill', 'currentColor');
-
-      const oldPath = svg.querySelector('path');
-      if (oldPath) {
-        svg.removeChild(oldPath);
-      }
-      DomClient.appendElementToElement(newPath, svg);
-
       button.title = this.state.hideRecommendationAds
         ? 'Hide Recommendation Ads'
         : 'Show Recommendation Ads';
@@ -1236,16 +956,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
       ? 'Hide Skoop Recommendations'
       : 'Show Skoop Recommendations';
 
-    const skoopTextSpan = document.createElement('span');
-    skoopTextSpan.classList.add('skoop-text-icon');
-    skoopTextSpan.textContent = 'SK';
+    const svg = buildSvg(ICON.newspaper);
+    DomClient.appendElementToElement(svg, button);
 
     if (!this.state.hideSkoopAds) {
-      skoopTextSpan.classList.add('ad-text-disabled');
       button.classList.add('active');
     }
-
-    DomClient.appendElementToElement(skoopTextSpan, button);
 
     const skoopNotificationBubble = document.createElement('div');
     skoopNotificationBubble.classList.add('notification-bubble', 'skoop-notification');
@@ -1274,9 +990,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       this.skoopHandler.visibilityUpdate();
       button.classList.toggle('active');
-
-      skoopTextSpan.classList.toggle('ad-text-disabled', !this.state.hideSkoopAds);
-
       button.title = this.state.hideSkoopAds
         ? 'Hide Skoop Recommendations'
         : 'Show Skoop Recommendations';

@@ -1,3 +1,32 @@
+/* ============================================================
+   reSkroutzed — Universal Toggle v3 (Premium Redesign)
+   Injected into skroutz.gr pages. Uses !important to override
+   site styles. Matches popup design system tokens.
+   ============================================================ */
+
+/* ---------- DESIGN TOKENS (scoped, isolated) ---------- */
+.universal-toggle-container {
+  --ut-surface-0: #4e4e58;
+  --ut-surface-1: #f68b2495;
+  --ut-surface-2: #444456;
+  --ut-surface-3: #54546a;
+  --ut-border: #64647c;
+  --ut-text: #f2f2f6;
+  --ut-text-secondary: #c4c4d2;
+  --ut-accent: #f68b24;
+  --ut-accent-soft: rgba(246, 139, 36, 0.15);
+  --ut-accent-glow: rgba(246, 139, 36, 0.35);
+  --ut-radius-sm: 6px;
+  --ut-radius-md: 10px;
+  --ut-radius-lg: 14px;
+  --ut-radius-full: 9999px;
+  --ut-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ut-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ut-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --ut-shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- CONTAINER ---------- */
 .universal-toggle-container {
   display: flex !important;
   align-items: center !important;
@@ -6,36 +35,110 @@
   bottom: 32px !important;
   left: 20px !important;
   z-index: 9999 !important;
+  isolation: isolate !important;
 }
 
 @media (max-width: 768px) {
   .universal-toggle-container {
     bottom: 72px !important;
     left: 15px !important;
+    flex-direction: column-reverse !important;
+    align-items: flex-start !important;
+    justify-content: flex-end !important;
   }
 }
 
+/* ---------- MAIN TOGGLE BUTTON ---------- */
 .universal-toggle-button {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 50px !important;
-  height: 50px !important;
-  padding: 8px !important;
-  border: 2px solid #ffffff !important;
+  width: 52px !important;
+  height: 52px !important;
+  padding: 10px !important;
+  border: 1.5px solid rgba(246, 139, 36, 0.3) !important;
   border-radius: 50% !important;
-  background: linear-gradient(145deg, rgba(230, 99, 0, 0.34), rgba(217, 85, 0, 0.58)) !important;
-  backdrop-filter: blur(10px) saturate(120%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
-  color: #ffffff !important;
+  background: var(--ut-surface-1) !important;
+  color: var(--ut-text) !important;
   cursor: pointer !important;
   z-index: 10000 !important;
+  position: relative !important;
   transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease !important;
-  box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.4) !important;
+    transform 0.35s var(--ut-ease-spring),
+    box-shadow 0.3s var(--ut-ease),
+    border-color 0.3s var(--ut-ease) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.3),
+    var(--ut-shadow-lg) !important;
 }
 
+@media (min-width: 769px) {
+  .universal-toggle-button {
+    backdrop-filter: blur(5px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(5px) saturate(160%) !important;
+  }
+
+  /* Frost overlay on the icon */
+  .universal-toggle-button::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: 50% !important;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.25) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.1) 100%
+    ) !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+    transition: opacity 0.3s var(--ut-ease) !important;
+  }
+}
+
+.universal-toggle-button::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: -3px !important;
+  border-radius: 50% !important;
+  background: conic-gradient(
+    from 0deg,
+    var(--ut-accent),
+    transparent 60%,
+    var(--ut-accent)
+  ) !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s var(--ut-ease) !important;
+  z-index: -1 !important;
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 1.5px)
+  ) !important;
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 1.5px)
+  ) !important;
+}
+
+.universal-toggle-button:hover {
+  transform: scale(1.08) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.3),
+    0 4px 24px var(--ut-accent-glow) !important;
+  border-color: var(--ut-accent) !important;
+}
+
+.universal-toggle-button:hover::after {
+  opacity: 0.6 !important;
+}
+
+.universal-toggle-button:active {
+  transform: scale(0.94) !important;
+}
+
+/* Logo image inside the button */
 .universal-toggle-button .icon-border {
   display: flex !important;
   align-items: center !important;
@@ -43,412 +146,355 @@
   width: 100% !important;
   height: 100% !important;
   padding: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
 }
 
 .universal-toggle-button .logo-image {
-  width: 82% !important;
-  height: 82% !important;
+  width: 80% !important;
+  height: 80% !important;
   object-fit: contain !important;
-  transition: transform 0.3s ease !important;
+  transition: transform 0.3s var(--ut-ease) !important;
+  border-radius: 50% !important;
 }
 
 .universal-toggle-button:hover .logo-image {
-  transform: scale(0.91) !important;
+  transform: scale(0.88) !important;
 }
 
-.universal-toggle-button:hover {
-  transform: scale(1.1) !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
-}
-
-.universal-toggle-button:active {
-  transform: scale(0.95) !important;
-}
-
+/* Menu-open state: rotate and glow the main button */
 .menu-open .universal-toggle-button {
-  transform: rotate(180deg) scale(1.05) !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
-  transition:
-    transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    box-shadow 0.3s ease !important;
+  transform: rotate(45deg) scale(1.05) !important;
+  border-color: var(--ut-accent) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.3),
+    0 0 20px var(--ut-accent-glow) !important;
 }
 
+.menu-open .universal-toggle-button::after {
+  opacity: 0.85 !important;
+}
+
+/* ---------- BUTTONS CONTAINER (the horizontal bar) ---------- */
 .toggle-buttons-container {
   position: absolute !important;
   display: flex !important;
   flex-direction: row !important;
-  left: 25px !important;
+  align-items: center !important;
+  gap: 6px !important;
+  left: 0 !important;
+  padding: 6px 6px 6px 58px !important;
+  background: rgba(54, 54, 68, 0.82) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  border: 1px solid var(--ut-border) !important;
+  border-radius: var(--ut-radius-full) !important;
   opacity: 0 !important;
   pointer-events: none !important;
+  transform: scale(0.85) !important;
+  transform-origin: left center !important;
   transition:
-    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    opacity 0.3s ease !important;
-  transform: translateX(-20px) !important;
-}
-
-.menu-open .toggle-buttons-container::before {
-  content: '' !important;
-  position: absolute !important;
-  top: -10px !important;
-  left: -10px !important;
-  right: -10px !important;
-  bottom: -10px !important;
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  border-radius: 10px 25px 25px 10px !important;
-  z-index: -1 !important;
-  animation: fadeIn 0.3s ease forwards !important;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.dark-mode .menu-open .toggle-buttons-container::before {
-  background-color: rgba(255, 255, 255, 0.4) !important;
+    transform 0.4s var(--ut-ease-spring),
+    opacity 0.25s var(--ut-ease) !important;
+  box-shadow: var(--ut-shadow-lg) !important;
+  white-space: nowrap !important;
 }
 
 .menu-open .toggle-buttons-container {
-  left: 70px !important;
   opacity: 1 !important;
   pointer-events: auto !important;
-  transform: translateX(0) !important;
+  transform: scale(1) !important;
 }
 
+/* Mobile: vertical layout above the button */
+@media (max-width: 768px) {
+  .toggle-buttons-container {
+    flex-direction: column !important;
+    left: 0 !important;
+    bottom: 60px !important;
+    padding: 58px 6px 6px 6px !important;
+    transform-origin: bottom center !important;
+    transform: scale(0.85) !important;
+  }
+
+  .menu-open .toggle-buttons-container {
+    transform: scale(1) !important;
+  }
+}
+
+/* ---------- INDIVIDUAL TOGGLE BUTTONS ---------- */
 .toggle-option-button {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   width: 40px !important;
   height: 40px !important;
-  margin-right: 10px !important;
   padding: 8px !important;
-  border: 2px solid #000000 !important;
+  border: 1px solid var(--ut-border) !important;
   border-radius: 50% !important;
-  background: #4a4a4a !important;
-  color: #ffffff !important;
+  background: var(--ut-surface-2) !important;
+  color: var(--ut-text-secondary) !important;
   cursor: pointer !important;
   position: relative !important;
+  flex-shrink: 0 !important;
   transition:
-    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    opacity 0.3s ease,
-    box-shadow 0.3s ease !important;
-  transform: scale(0) translateY(10px) !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+    transform 0.35s var(--ut-ease-spring),
+    opacity 0.25s var(--ut-ease),
+    background 0.25s var(--ut-ease),
+    border-color 0.25s var(--ut-ease),
+    color 0.25s var(--ut-ease),
+    box-shadow 0.25s var(--ut-ease) !important;
+  box-shadow: var(--ut-shadow-sm) !important;
   opacity: 0 !important;
+  transform: scale(0.5) translateX(-8px) !important;
 }
 
+/* Staggered entrance */
 .menu-open .toggle-option-button.button-active {
-  transform: scale(1) translateY(0) !important;
   opacity: 1 !important;
+  transform: scale(1) translateX(0) !important;
 }
 
 .toggle-option-button:hover {
-  transform: scale(1.15) translateY(-3px) !important;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
-  transition:
-    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    box-shadow 0.3s ease !important;
+  background: var(--ut-surface-3) !important;
+  border-color: var(--ut-accent) !important;
+  color: var(--ut-text) !important;
+  transform: scale(1.12) !important;
+  box-shadow:
+    var(--ut-shadow-sm),
+    0 0 12px var(--ut-accent-glow) !important;
+  z-index: 2 !important;
 }
 
+.toggle-option-button:active {
+  transform: scale(0.92) !important;
+}
+
+/* Active state: accent background */
 .toggle-option-button.active {
-  background: linear-gradient(145deg, #e66300, #d95500) !important;
-  transition:
-    background 0.3s ease,
-    transform 0.3s ease !important;
+  background: var(--ut-accent) !important;
+  border-color: var(--ut-accent) !important;
+  color: #fff !important;
+  box-shadow:
+    var(--ut-shadow-sm),
+    0 0 12px var(--ut-accent-glow) !important;
 }
 
-.dark-mode-option {
-  background: #333333 !important;
-  border-radius: 35% !important;
+.toggle-option-button.active:hover {
+  background: #e07d1a !important;
+  box-shadow:
+    var(--ut-shadow-sm),
+    0 0 18px var(--ut-accent-glow) !important;
 }
 
-.dark-mode .toggle-option-button {
-  background: #4d4d4d !important;
+/* Mobile: buttons animate from below */
+@media (max-width: 768px) {
+  .toggle-option-button {
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+    transform: scale(0.5) translateY(8px) !important;
+  }
 }
 
-.ad-toggle-option {
-  background: #4a4a4a !important;
+/* ---------- SVG ICONS ---------- */
+.toggle-option-button svg {
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+  color: inherit !important;
+  fill: currentColor !important;
 }
 
-.video-toggle-option {
-  background: #4a4a4a !important;
-}
-
-.recommendation-ad-toggle-option {
-  background: #4a4a4a !important;
-}
-
-.dark-mode .dark-mode-option.active,
-.dark-mode-option.active,
-.dark-mode .sponsorship-toggle-option.active,
-.sponsorship-toggle-option.active,
-.dark-mode .video-toggle-option.active,
-.video-toggle-option.active,
-.dark-mode .ad-toggle-option.active,
-.ad-toggle-option.active,
-.dark-mode .shelf-ad-toggle-option.active,
-.shelf-ad-toggle-option.active,
-.dark-mode .recommendation-ad-toggle-option.active,
-.recommendation-ad-toggle-option.active,
-.ai-slop-toggle-option.active,
-.dark-mode .wide-mode-option.active,
-.wide-mode-option.active {
-  background: linear-gradient(145deg, #e66300, #d95500) !important;
-}
-
-/* AI button default (inactive) state should be black like others */
-.ai-slop-toggle-option {
-  background: #4a4a4a !important;
-}
-
-.wide-mode-option {
-  background: #4a4a4a !important;
-}
-
-.ad-text-icon {
-  font-size: 12px !important;
-  font-weight: bold !important;
-  color: white !important;
-  letter-spacing: 0.5px !important;
-}
-
-.ai-text-icon {
-  font-size: 12px !important;
-  font-weight: bold !important;
-  color: white !important;
-  letter-spacing: 0.5px !important;
-}
-
-.ad-text-disabled {
-  opacity: 0.8 !important;
-}
-
+/* ---------- NOTIFICATION BUBBLES ---------- */
 .notification-bubble {
   position: absolute !important;
   top: -5px !important;
   right: -5px !important;
-  background-color: #ff3b30 !important;
-  color: white !important;
-  border-radius: 50% !important;
-  width: 18px !important;
+  min-width: 18px !important;
   height: 18px !important;
+  padding: 0 4px !important;
+  background: var(--ut-accent) !important;
+  color: #fff !important;
+  border-radius: var(--ut-radius-full) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 10px !important;
-  font-weight: bold !important;
-  border: 2px solid white !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-  transition: opacity 0.3s ease !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif !important;
+  border: 2px solid var(--ut-surface-1) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+  line-height: 1 !important;
+  letter-spacing: 0.02em !important;
 }
 
+/* Colored variants for different ad types */
 .notification-bubble.video-notification {
-  background-color: #5856d6 !important;
+  background: #5856d6 !important;
 }
 
 .notification-bubble.recommendation-notification {
-  background-color: #2d9c86 !important;
+  background: #2d9c86 !important;
 }
 
+.notification-bubble.shelf-notification {
+  background: #a78bfa !important;
+}
+
+.notification-bubble.sponsorship-notification {
+  background: #ec4899 !important;
+}
+
+.notification-bubble.skoop-notification {
+  background: #6366f1 !important;
+}
+
+.notification-bubble.ai-notification {
+  background: #ef4444 !important;
+}
+
+/* ---------- PRICE DIFFERENCE BUTTON ---------- */
 .price-difference-option {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
-  width: 80px !important;
-  height: 40px !important;
-  padding: 4px !important;
-  border: 2px solid #000000 !important;
-  border-radius: 4px !important;
-  background: linear-gradient(145deg, #e66300, #d95500) !important;
-  color: white !important;
-  cursor: pointer !important;
-  transition: background-color 0.2s ease !important;
+  width: 72px !important;
+  border-radius: var(--ut-radius-full) !important;
+  flex-direction: row !important;
+  gap: 1px !important;
+}
+
+.price-difference-option.active {
+  background: var(--ut-accent) !important;
+  color: #fff !important;
+}
+
+.price-difference-option span {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: inherit !important;
+  line-height: 1 !important;
 }
 
 .price-difference-option svg {
   display: none !important;
 }
 
-.price-difference-option span {
-  font-size: 18px !important;
-  font-weight: bold !important;
-  color: white !important;
+/* Inline price input (desktop) */
+.price-inline-input {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: var(--ut-radius-sm) !important;
+  color: #fff !important;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
   text-align: center !important;
+  padding: 2px !important;
+  width: 70% !important;
+  height: 60% !important;
+  outline: none !important;
 }
 
-.price-difference-popup {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: 100% !important;
-  margin-bottom: 10px !important;
-  transform: translateX(-50%) !important;
-  width: 150px !important;
-  padding: 10px !important;
-  background-color: #ffffff !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
-  border-radius: 8px !important;
-  z-index: 10001 !important;
+.price-inline-input:focus {
+  border-color: #fff !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
 }
 
-.price-difference-popup::after {
-  content: '' !important;
-  position: absolute !important;
-  top: 100% !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  border-width: 8px !important;
-  border-style: solid !important;
-  border-color: #ffffff transparent transparent transparent !important;
+/* Mobile price display */
+.price-value-mobile {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: inherit !important;
+  line-height: 1 !important;
 }
 
-.dark-mode .price-difference-popup::after {
-  border-color: #333 transparent transparent transparent !important;
+.price-currency-symbol,
+.price-currency-symbol-mobile {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  opacity: 0.8 !important;
 }
 
-.dark-mode .price-difference-popup {
-  background-color: #333 !important;
+/* ---------- DARK MODE OVERRIDES (skroutz.gr dark mode hardening) ---------- */
+/* Skroutz dark mode applies aggressive overrides to injected elements.
+   These rules lock down every surface so nothing turns blinding white. */
+
+.dark-mode .universal-toggle-button {
+  background: var(--ut-surface-2) !important;
+  color: var(--ut-text) !important;
+  border-color: rgba(246, 139, 36, 0.3) !important;
+}
+
+.dark-mode .universal-toggle-button .logo-image {
+  filter: none !important;
+}
+
+.dark-mode .toggle-buttons-container {
+  background: rgba(68, 68, 86, 0.86) !important;
+  border-color: var(--ut-border) !important;
+}
+
+.dark-mode .toggle-option-button {
+  background: var(--ut-surface-3) !important;
+  color: var(--ut-text) !important;
+  border-color: var(--ut-border) !important;
+}
+
+.dark-mode .toggle-option-button:hover {
+  background: #6a6a82 !important;
   color: #fff !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-color: var(--ut-accent) !important;
 }
 
-.price-difference-popup label {
-  display: block !important;
-  margin-bottom: 5px !important;
-  font-weight: bold !important;
-}
-
-.price-difference-popup input {
-  width: 100% !important;
-  padding: 5px !important;
-  margin-bottom: 10px !important;
-  border-radius: 4px !important;
-  border: 1px solid #ccc !important;
-}
-
-.dark-mode .price-difference-popup input {
-  background-color: #444 !important;
+.dark-mode .toggle-option-button.active {
+  background: var(--ut-accent) !important;
   color: #fff !important;
-  border: 1px solid #555 !important;
+  border-color: var(--ut-accent) !important;
 }
 
-@media (max-width: 768px) {
-  .toggle-buttons-container {
-    flex-direction: column !important;
-    left: 0 !important;
-    bottom: 25px !important;
-    transform: translateY(20px) !important;
-  }
+.dark-mode .toggle-option-button.active:hover {
+  background: #e07d1a !important;
+}
 
-  .menu-open .toggle-buttons-container {
-    left: 5px !important;
-    bottom: 70px !important;
-    transform: translateY(0) !important;
-  }
+.dark-mode .notification-bubble {
+  border-color: var(--ut-surface-3) !important;
+}
 
-  .menu-open .toggle-buttons-container::before {
-    border-radius: 25px 25px 10px 10px !important;
-  }
+.dark-mode .toggle-option-button svg {
+  color: inherit !important;
+  fill: currentColor !important;
+}
 
-  .toggle-option-button {
-    margin-right: 0 !important;
-    margin-bottom: 10px !important;
-    transform: scale(0) translateX(10px) !important;
-  }
+.dark-mode .price-difference-option {
+  background: var(--ut-surface-3) !important;
+  color: var(--ut-text) !important;
+}
 
-  .menu-open .toggle-option-button.button-active {
-    transform: scale(1) translateX(0) !important;
-  }
+.dark-mode .price-difference-option.active {
+  background: var(--ut-accent) !important;
+  color: #fff !important;
+}
 
-  .toggle-option-button:hover {
-    transform: scale(1.15) translateX(3px) !important;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
+/* ---------- ANIMATIONS ---------- */
+@keyframes utFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  .dark-mode-option::after {
-    right: 50% !important;
-    bottom: -15px !important;
-    top: auto !important;
-    transform: translateX(50%) !important;
-    width: 24px !important;
-    height: 1px !important;
-  }
-
-  .price-value-mobile {
-    font-size: 22px !important;
-    font-weight: bold !important;
-    color: white !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 100% !important;
-    text-align: center !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .price-difference-option {
-    width: 40px !important;
-    min-width: 40px !important;
-    height: 40px !important;
-    flex-direction: row !important;
-    margin-bottom: 10px !important;
-    border-radius: 4px !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    position: relative !important;
-    border: 2px solid #000000 !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-  }
-
-  .price-difference-option::after,
-  .price-difference-option span:not(.price-value-mobile),
-  .price-difference-option svg {
-    display: none !important;
-  }
-
-  .price-difference-option:active {
-    transform: scale(0.95) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
-  }
-
-  .price-difference-value {
-    right: -2px !important;
-    bottom: -2px !important;
-    font-size: 7px !important;
-    padding: 1px 3px !important;
-  }
-
-  .price-difference-popup {
-    width: 120px !important;
-    left: 65px !important;
-    bottom: 0 !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    margin-bottom: 0 !important;
-  }
-
-  .price-difference-popup::after {
-    top: 50% !important;
-    left: -8px !important;
-    transform: translateY(-50%) !important;
-    border-width: 8px 8px 8px 0 !important;
-    border-color: transparent #fff transparent transparent !important;
-  }
-
-  .dark-mode .price-difference-popup::after {
-    border-color: transparent #333 transparent transparent !important;
-  }
+.universal-toggle-container {
+  animation: utFadeIn 0.4s var(--ut-ease) both !important;
 }

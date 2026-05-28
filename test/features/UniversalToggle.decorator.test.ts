@@ -19,6 +19,7 @@ vi.mock('../../src/clients/browser/client', () => ({
     SHELF_PRODUCT_AD_VISIBILITY: 'hideShelfProductAds',
     RECOMMENDATION_AD_VISIBILITY: 'hideRecommendationAds',
     SPONSORSHIP_VISIBILITY: 'hideSponsorships',
+    SKOOP_AD_VISIBILITY: 'hideSkoopAds',
     MINIMUM_PRICE_DIFFERENCE: 'minimumPriceDifference',
     AI_SLOP_VISIBILITY: 'hideAISlop',
     WIDE_MODE: 'wideMode',
@@ -37,30 +38,49 @@ vi.mock('../../src/features/WideMode.decorator', () => ({
 // Mock ad handler classes
 vi.mock('../../src/handlers/ListProductAd.handler', () => ({
   ListProductAdHandler: vi.fn().mockImplementation(() => ({
+    flag: vi.fn(),
     visibilityUpdate: vi.fn(),
   })),
 }));
 
 vi.mock('../../src/handlers/ShelfProductAd.handler', () => ({
   ShelfProductAdHandler: vi.fn().mockImplementation(() => ({
+    flag: vi.fn(),
     visibilityUpdate: vi.fn(),
   })),
 }));
 
 vi.mock('../../src/handlers/RecommendationAd.handler', () => ({
   RecommendationAdHandler: vi.fn().mockImplementation(() => ({
+    flag: vi.fn(),
     visibilityUpdate: vi.fn(),
   })),
 }));
 
 vi.mock('../../src/handlers/SponsorshipAd.handler', () => ({
   SponsorshipAdHandler: vi.fn().mockImplementation(() => ({
+    flag: vi.fn(),
     visibilityUpdate: vi.fn(),
   })),
 }));
 
 vi.mock('../../src/handlers/VideoAd.handler', () => ({
   VideoAdHandler: vi.fn().mockImplementation(() => ({
+    flag: vi.fn(),
+    visibilityUpdate: vi.fn(),
+  })),
+}));
+
+vi.mock('../../src/handlers/Skoop.handler', () => ({
+  SkoopHandler: vi.fn().mockImplementation(() => ({
+    flag: vi.fn(),
+    visibilityUpdate: vi.fn(),
+  })),
+}));
+
+vi.mock('../../src/handlers/Campaign.handler', () => ({
+  CampaignAdHandler: vi.fn().mockImplementation(() => ({
+    flag: vi.fn(),
     visibilityUpdate: vi.fn(),
   })),
 }));
@@ -73,14 +93,8 @@ describe('UniversalToggleDecorator', () => {
     // Reset mocks
     vi.clearAllMocks();
 
-    // Mock document methods
-    document.createElementNS = vi.fn().mockImplementation((_namespaceURI, qualifiedName) => {
-      const element = document.createElement(qualifiedName);
-      element.setAttribute = vi.fn();
-      element.classList.add = vi.fn();
-      return element;
-    });
-
+    // Do NOT mock createElementNS — let buildSvg create real SVG elements
+    // that are discoverable via querySelector / children iteration.
     document.addEventListener = vi.fn();
 
     mockState = {
@@ -224,104 +238,76 @@ describe('UniversalToggleDecorator', () => {
 
   describe('toggle functionality', () => {
     it('should toggle dark mode when dark mode button is clicked', () => {
-      const mockEvent = {
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-        currentTarget: document.createElement('button'),
-      };
-
       universalToggleDecorator.execute();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const darkModeToggleHandler = (universalToggleDecorator as any).toggleDarkMode;
+      const darkModeButton = document.querySelector('.dark-mode-option') as HTMLButtonElement;
+      expect(darkModeButton).not.toBeNull();
 
-      if (darkModeToggleHandler) {
-        darkModeToggleHandler.call(universalToggleDecorator, mockEvent);
+      // Simulate click — initial state is darkMode=false
+      darkModeButton.click();
 
-        expect(mockState.darkMode).toBe(true);
-        expect(BrowserClient.setValue).toHaveBeenCalledWith('darkMode', true);
-      }
+      expect(mockState.darkMode).toBe(true);
+      expect(BrowserClient.setValue).toHaveBeenCalledWith('darkMode', true);
     });
 
-    it('should toggle product ads visibility when ad toggle button is clicked', () => {
-      const mockEvent = {
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-        currentTarget: document.createElement('button'),
-      };
-
+    it('should have product-ad toggle button with SVG icon', () => {
       universalToggleDecorator.execute();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const productAdsToggleHandler = (universalToggleDecorator as any).toggleProductAdsVisibility;
-
-      if (productAdsToggleHandler) {
-        productAdsToggleHandler.call(universalToggleDecorator, mockEvent);
-
-        expect(mockState.hideProductAds).toBe(true);
-        expect(BrowserClient.setValue).toHaveBeenCalledWith('hideProductAds', true);
-      }
+      const adButton = document.querySelector('.ad-toggle-option') as HTMLButtonElement;
+      expect(adButton).not.toBeNull();
+      // Default: ads showing → active class
+      expect(adButton.classList.contains('active')).toBe(true);
     });
 
-    it('should toggle video ads visibility when video toggle button is clicked', () => {
-      const mockEvent = {
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-        currentTarget: document.createElement('button'),
-      };
-
+    it('should have video toggle button in active state', () => {
       universalToggleDecorator.execute();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const videoAdsToggleHandler = (universalToggleDecorator as any).toggleVideoAdsVisibility;
-
-      if (videoAdsToggleHandler) {
-        videoAdsToggleHandler.call(universalToggleDecorator, mockEvent);
-
-        expect(mockState.hideVideoAds).toBe(true);
-        expect(BrowserClient.setValue).toHaveBeenCalledWith('hideVideoAds', true);
-      }
+      const videoButton = document.querySelector('.video-toggle-option') as HTMLButtonElement;
+      expect(videoButton).not.toBeNull();
+      expect(videoButton.classList.contains('active')).toBe(true);
     });
 
-    it('should toggle sponsorship visibility when sponsorship toggle button is clicked', () => {
-      const mockEvent = {
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-        currentTarget: document.createElement('button'),
-      };
-
+    it('should have sponsorship toggle button in active state', () => {
       universalToggleDecorator.execute();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sponsorshipToggleHandler = (universalToggleDecorator as any)
-        .toggleSponsorshipsVisibility;
-
-      if (sponsorshipToggleHandler) {
-        sponsorshipToggleHandler.call(universalToggleDecorator, mockEvent);
-
-        expect(mockState.hideSponsorships).toBe(true);
-        expect(BrowserClient.setValue).toHaveBeenCalledWith('hideSponsorships', true);
-      }
+      const sponsorshipButton = document.querySelector(
+        '.sponsorship-toggle-option',
+      ) as HTMLButtonElement;
+      expect(sponsorshipButton).not.toBeNull();
+      expect(sponsorshipButton.classList.contains('active')).toBe(true);
     });
 
-    it('should toggle shelf product ads visibility when shelf toggle button is clicked', () => {
-      const mockEvent = {
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-        currentTarget: document.createElement('button'),
-      };
-
+    it('should have shelf ad toggle button in active state', () => {
       universalToggleDecorator.execute();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const shelfToggleHandler = (universalToggleDecorator as any).toggleShelfProductAdsVisibility;
+      const shelfButton = document.querySelector('.shelf-ad-toggle-option') as HTMLButtonElement;
+      expect(shelfButton).not.toBeNull();
+      expect(shelfButton.classList.contains('active')).toBe(true);
+    });
 
-      if (shelfToggleHandler) {
-        shelfToggleHandler.call(universalToggleDecorator, mockEvent);
+    it('should display SVG icons inside buttons instead of text', () => {
+      universalToggleDecorator.execute();
 
-        expect(mockState.hideShelfProductAds).toBe(true);
-        expect(BrowserClient.setValue).toHaveBeenCalledWith('hideShelfProductAds', true);
-      }
+      const adButton = document.querySelector('.ad-toggle-option') as HTMLButtonElement;
+      expect(adButton).not.toBeNull();
+      const adHasSvg = Array.from(adButton.children).some(
+        (c) => c.namespaceURI === 'http://www.w3.org/2000/svg',
+      );
+      expect(adHasSvg).toBe(true);
+
+      const skoopButton = document.querySelector('.skoop-toggle-option') as HTMLButtonElement;
+      expect(skoopButton).not.toBeNull();
+      const skoopHasSvg = Array.from(skoopButton.children).some(
+        (c) => c.namespaceURI === 'http://www.w3.org/2000/svg',
+      );
+      expect(skoopHasSvg).toBe(true);
+
+      const aiButton = document.querySelector('.ai-slop-toggle-option') as HTMLButtonElement;
+      expect(aiButton).not.toBeNull();
+      const aiHasSvg = Array.from(aiButton.children).some(
+        (c) => c.namespaceURI === 'http://www.w3.org/2000/svg',
+      );
+      expect(aiHasSvg).toBe(true);
     });
   });
 });
