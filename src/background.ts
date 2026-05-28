@@ -123,7 +123,7 @@ const wideModeDecorator = new WideModeDecorator(state);
       universalToggleDecorator.execute();
     }
     logoHatDecorator.execute();
-    wideModeDecorator.execute();
+    wideModeDecorator.sync();
 
     flagContent();
     toggleVisibility();
@@ -295,7 +295,7 @@ chrome.runtime.onMessage.addListener(
     } else if (request.action === 'toggleWideMode' && request.value !== undefined) {
       state.wideMode = request.value as boolean;
       BrowserClient.setValue(StorageKey.WIDE_MODE, state.wideMode);
-      wideModeDecorator.visibilityUpdate();
+      wideModeDecorator.sync();
       sendResponse({ success: true });
     }
 

@@ -1,112 +1,114 @@
-/* Wide Mode — removes fixed-width constraints so content fills up to 80% of the viewport */
-.resk-wide-mode .content {
-  max-width: 80% !important;
-}
-.resk-wide-mode .main-content {
-  width: auto !important;
-}
-.resk-wide-mode .listing-list {
-  width: auto !important;
-}
-.resk-wide-mode .page-title-wrapper {
-  width: auto !important;
-}
-.resk-wide-mode .controls-wrapper {
-  width: auto !important;
-}
-.resk-wide-mode .filter-tags-wrapper {
-  width: auto !important;
-}
-.resk-wide-mode .top-section {
-  max-width: 80% !important;
-}
-.resk-wide-mode .main-sidebar {
-  max-width: 80% !important;
-}
-.resk-wide-mode .sidebar-overlay {
-  max-width: 80% !important;
-}
-.resk-wide-mode footer .content {
-  max-width: 80% !important;
-}
-.resk-wide-mode .content-scrollable {
-  max-width: none !important;
-}
-.resk-wide-mode .sticky-wrapper {
-  max-width: none !important;
-}
-.resk-wide-mode #sku-list {
-  width: auto !important;
-}
-.resk-wide-mode .site-header .content {
-  max-width: 80% !important;
-}
-.resk-wide-mode .simple-description {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .js-description-html {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .review-body {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .js-review-body-content {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .js-slidable {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .tl-shelf {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .tl-shelf-content {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .tl-shelf-wrapper {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .js-timeline-card {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .navigation-menu {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .scrollable {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .tiles-shelf {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .timeline-card {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .tracking-img-container {
-  max-width: none !important;
-  width: auto !important;
-}
-.resk-wide-mode .details-wrapper {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-}
-.resk-wide-mode .rich-components {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-}
-.resk-wide-mode .rich-components .inner-item {
-  align-self: center !important;
+/* Wide Mode — expands content to ~80% of the viewport on large screens (≥1600px). */
+@media (min-width: 1600px) {
+  .resk-wide-mode .content {
+    max-width: 80% !important;
+  }
+  .resk-wide-mode .main-content {
+    width: auto !important;
+  }
+  .resk-wide-mode .listing-list {
+    width: auto !important;
+  }
+  .resk-wide-mode .page-title-wrapper {
+    width: auto !important;
+  }
+  .resk-wide-mode .controls-wrapper {
+    width: auto !important;
+  }
+  .resk-wide-mode .filter-tags-wrapper {
+    width: auto !important;
+  }
+  .resk-wide-mode .top-section {
+    max-width: 80% !important;
+  }
+  .resk-wide-mode .main-sidebar {
+    max-width: 80% !important;
+  }
+  .resk-wide-mode .sidebar-overlay {
+    max-width: 80% !important;
+  }
+  .resk-wide-mode footer .content {
+    max-width: 80% !important;
+  }
+  .resk-wide-mode .content-scrollable {
+    max-width: none !important;
+  }
+  .resk-wide-mode .sticky-wrapper {
+    max-width: none !important;
+  }
+  .resk-wide-mode #sku-list {
+    width: auto !important;
+  }
+  .resk-wide-mode .site-header .content {
+    max-width: 80% !important;
+  }
+  .resk-wide-mode .simple-description {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .js-description-html {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .review-body {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .js-review-body-content {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .js-slidable {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .tl-shelf {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .tl-shelf-content {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .tl-shelf-wrapper {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .js-timeline-card {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .navigation-menu {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .scrollable {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .tiles-shelf {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .timeline-card {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .tracking-img-container {
+    max-width: none !important;
+    width: auto !important;
+  }
+  .resk-wide-mode .details-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .resk-wide-mode .rich-components {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .resk-wide-mode .rich-components .inner-item {
+    align-self: center !important;
+  }
 }

@@ -2,61 +2,62 @@ import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
 
 export class WideModeDecorator implements FeatureInstance {
-  private state: State;
+  private static readonly STYLE_ID = 'resk-wide-mode-style';
+  private static readonly CLASS_NAME = 'resk-wide-mode';
 
-  constructor(state: State) {
-    this.state = state;
+  constructor(private readonly state: State) {}
+
+  /**
+   * Injects the wide-mode stylesheet and applies the body class.
+   * Idempotent — safe to call multiple times.
+   */
+  public execute(): void {
+    this.injectStyle();
+    document.body.classList.add(WideModeDecorator.CLASS_NAME);
   }
 
-  public execute(): void {
-    if (document.getElementById('resk-wide-mode-style')) return;
+  /**
+   * Removes the wide-mode body class and stylesheet.
+   * Safe to call even if wide mode was never enabled.
+   */
+  public destroy(): void {
+    document.body.classList.remove(WideModeDecorator.CLASS_NAME);
+    this.removeStyle();
+  }
+
+  /**
+   * Enables or disables wide mode based on current state.
+   * Call this from the popup toggle handler.
+   */
+  public sync(): void {
+    if (this.state.wideMode) {
+      this.execute();
+    } else {
+      this.destroy();
+    }
+  }
+
+  private injectStyle(): void {
+    if (document.getElementById(WideModeDecorator.STYLE_ID)) {
+      return;
+    }
 
     const style = document.createElement('style');
-    style.id = 'resk-wide-mode-style';
+    style.id = WideModeDecorator.STYLE_ID;
     style.textContent = this.getStyleContent();
     document.head.appendChild(style);
-
-    this.apply();
   }
 
-  public destroy(): void {
-    const style = document.getElementById('resk-wide-mode-style');
-    if (style) {
-      style.remove();
-    }
-
-    document.body.classList.remove('resk-wide-mode');
-  }
-
-  public visibilityUpdate(): void {
-    const style = document.getElementById('resk-wide-mode-style');
-
-    if (this.state.wideMode) {
-      if (!style) {
-        const newStyle = document.createElement('style');
-        newStyle.id = 'resk-wide-mode-style';
-        newStyle.textContent = this.getStyleContent();
-        document.head.appendChild(newStyle);
-      }
-      document.body.classList.add('resk-wide-mode');
-    } else {
-      if (style) {
-        style.remove();
-      }
-      document.body.classList.remove('resk-wide-mode');
-    }
-  }
-
-  private apply(): void {
-    if (this.state.wideMode) {
-      document.body.classList.add('resk-wide-mode');
-    } else {
-      document.body.classList.remove('resk-wide-mode');
+  private removeStyle(): void {
+    const el = document.getElementById(WideModeDecorator.STYLE_ID);
+    if (el) {
+      el.remove();
     }
   }
 
   private getStyleContent(): string {
     return `
+      @media (min-width: 1600px) {
       .resk-wide-mode .content {
         max-width: 80% !important;
       }
@@ -167,6 +168,7 @@ export class WideModeDecorator implements FeatureInstance {
       }
       .resk-wide-mode .rich-components .inner-item {
         align-self: center !important;
+      }
       }
     `;
   }

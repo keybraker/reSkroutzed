@@ -566,7 +566,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
       this.state.wideMode = !this.state.wideMode;
       BrowserClient.setValue(StorageKey.WIDE_MODE, this.state.wideMode);
-      this.wideModeDecorator.visibilityUpdate();
+      this.wideModeDecorator.sync();
 
       button.classList.toggle('active');
       button.title = this.state.wideMode ? 'Disable Wide Mode' : 'Enable Wide Mode';
