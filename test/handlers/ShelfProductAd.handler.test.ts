@@ -66,6 +66,7 @@ describe('ShelfProductAdHandler', () => {
         '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
         '.placement-shelf:not(.flagged-shelf)': [],
         '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf-wrapper:not(.flagged-shelf)': [],
       });
 
       shelfProductAdHandler.flag();
@@ -86,6 +87,7 @@ describe('ShelfProductAdHandler', () => {
         '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
         '.placement-shelf:not(.flagged-shelf)': [],
         '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf-wrapper:not(.flagged-shelf)': [],
       });
 
       shelfProductAdHandler.flag();
@@ -109,6 +111,7 @@ describe('ShelfProductAdHandler', () => {
         '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
         '.placement-shelf:not(.flagged-shelf)': [],
         '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf-wrapper:not(.flagged-shelf)': [],
       });
 
       shelfProductAdHandler.flag();
@@ -133,6 +136,7 @@ describe('ShelfProductAdHandler', () => {
         '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
         '.placement-shelf:not(.flagged-shelf)': [placementShelfElement],
         '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf-wrapper:not(.flagged-shelf)': [],
       });
 
       shelfProductAdHandler.flag();
@@ -166,6 +170,7 @@ describe('ShelfProductAdHandler', () => {
         '.js-recently-viewed-skus-shelf:not(.flagged-shelf)': [],
         '.placement-shelf:not(.flagged-shelf)': [],
         '.polymorphic-brand-shelf:not(.flagged-shelf)': [],
+        '.polymorphic-brand-shelf-wrapper:not(.flagged-shelf)': [],
       });
 
       shelfProductAdHandler.flag();

@@ -9,6 +9,7 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
     'js-recently-viewed-skus-shelf',
     'placement-shelf',
     'polymorphic-brand-shelf',
+    'polymorphic-brand-shelf-wrapper',
   ];
   private readonly crossSellShelfSelectors = [
     '#cross-sell',
