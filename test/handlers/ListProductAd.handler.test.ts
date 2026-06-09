@@ -7,6 +7,7 @@ import { ListProductAdHandler } from '../../src/handlers/ListProductAd.handler';
 vi.mock('../../src/clients/dom/client', () => ({
   DomClient: {
     getElementsByClass: vi.fn(),
+    getElementByClass: vi.fn(),
     addClassesToElement: vi.fn(),
     updateElementVisibility: vi.fn(),
   },
@@ -18,7 +19,13 @@ describe('ListProductAdHandler', () => {
 
   const mockSelectorResults = (selectorResults: Record<string, Element[]>) => {
     vi.mocked(DomClient.getElementsByClass).mockImplementation(
-      (selector: string) => selectorResults[selector] ?? [],
+      (selector: string, _searchElement?: Element) => selectorResults[selector] ?? [],
+    );
+  };
+
+  const mockGetElementByClass = (results: Map<string, Element | null>) => {
+    vi.mocked(DomClient.getElementByClass).mockImplementation(
+      (className: string, _searchElement?: Element) => results.get(className) ?? null,
     );
   };
 
@@ -60,10 +67,11 @@ describe('ListProductAdHandler', () => {
       mockSelectorResults({
         '.flagged-product': [],
         'li:not(.flagged-product)': [mockLiElement],
-        '.labeled-item:not(.flagged-product)': [],
-        '.labeled-product:not(.flagged-product)': [],
-        '.card.tracking-img-container:not(.flagged-product)': [],
+        '.item-mark:not(.flagged-product)': [],
+        '.product-mark:not(.flagged-product)': [],
+        '.tracking-img': [],
       });
+      mockGetElementByClass(new Map());
 
       listProductAdHandler.flag();
 
@@ -75,64 +83,62 @@ describe('ListProductAdHandler', () => {
       mockSelectorResults({
         '.flagged-product': flaggedElements,
         'li:not(.flagged-product)': [],
-        '.labeled-item:not(.flagged-product)': [],
-        '.labeled-product:not(.flagged-product)': [],
-        '.card.tracking-img-container:not(.flagged-product)': [],
+        '.item-mark:not(.flagged-product)': [],
+        '.product-mark:not(.flagged-product)': [],
+        '.tracking-img': [],
       });
+      mockGetElementByClass(new Map());
 
       listProductAdHandler.flag();
 
       expect(mockState.productAdCount).toBe(2);
     });
 
-    it('should flag and count product and tracked recommendation cards separately', () => {
+    it('should flag and count product cards with item-mark and product-mark classes', () => {
       const mockLiElement = document.createElement('li');
-      mockLiElement.classList.add('labeled-item');
+      mockLiElement.classList.add('item-mark');
 
-      const mockLabeledItem = document.createElement('div');
-      const mockLabeledProduct = document.createElement('div');
-      mockLabeledItem.classList.add('labeled-item');
-      mockLabeledProduct.classList.add('labeled-product');
-      const trackedProductCard = document.createElement('div');
-      trackedProductCard.classList.add('card', 'tracking-img-container');
+      const mockItemMark = document.createElement('div');
+      const mockProductMark = document.createElement('div');
+      mockItemMark.classList.add('item-mark');
+      mockProductMark.classList.add('product-mark');
 
       mockSelectorResults({
         '.flagged-product': [],
         'li:not(.flagged-product)': [mockLiElement],
-        '.labeled-item:not(.flagged-product)': [mockLabeledItem],
-        '.labeled-product:not(.flagged-product)': [mockLabeledProduct],
-        '.card.tracking-img-container:not(.flagged-product)': [trackedProductCard],
+        '.item-mark:not(.flagged-product)': [mockItemMark],
+        '.product-mark:not(.flagged-product)': [mockProductMark],
+        '.tracking-img': [],
       });
+      mockGetElementByClass(new Map());
 
       listProductAdHandler.flag();
 
-      expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(4);
-      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
-        trackedProductCard,
-        'flagged-product',
-      );
-      expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(4);
-      expect(mockState.productAdCount).toBe(4);
+      expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(3);
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(3);
+      expect(mockState.productAdCount).toBe(3);
     });
 
-    it('should flag tracked recommendation cards with the tracked class only', () => {
-      const trackedProductCard = document.createElement('div');
-      trackedProductCard.classList.add('card', 'tracking-img-container');
+    it('should flag parent li of tracking-img elements', () => {
+      const liElement = document.createElement('li');
+      const trackingImg = document.createElement('img');
+      trackingImg.classList.add('tracking-img');
+      liElement.appendChild(trackingImg);
+
       mockSelectorResults({
         '.flagged-product': [],
         'li:not(.flagged-product)': [],
-        '.labeled-item:not(.flagged-product)': [],
-        '.labeled-product:not(.flagged-product)': [],
-        '.card.tracking-img-container:not(.flagged-product)': [trackedProductCard],
+        '.item-mark:not(.flagged-product)': [],
+        '.product-mark:not(.flagged-product)': [],
+        '.tracking-img': [trackingImg],
       });
+      mockGetElementByClass(new Map());
 
       listProductAdHandler.flag();
 
-      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
-        trackedProductCard,
-        'flagged-product',
-      );
-      expect(trackedProductCard.getAttribute('data-reskroutzed-label')).toBe('advertisement');
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(liElement, 'flagged-product');
+      expect(liElement.getAttribute('data-reskroutzed-label')).toBe('advertisement');
+      expect(mockState.productAdCount).toBe(1);
     });
   });
 
@@ -166,14 +172,15 @@ describe('ListProductAdHandler', () => {
   });
 
   describe('updateCountAndVisibility', () => {
-    it('should increment count and update visibility when element matches criteria', () => {
+    it('should increment count and update visibility when element has item-mark class', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateCountAndVisibility = (listProductAdHandler as any).updateCountAndVisibility.bind(
         listProductAdHandler,
       );
 
       const element = document.createElement('div');
-      element.classList.add('labeled-item');
+      element.classList.add('item-mark');
+      mockGetElementByClass(new Map());
 
       mockState.hideProductAds = false;
       updateCountAndVisibility(element);
@@ -202,6 +209,7 @@ describe('ListProductAdHandler', () => {
 
       const element = document.createElement('div');
       element.classList.add('not-a-product');
+      mockGetElementByClass(new Map());
 
       updateCountAndVisibility(element);
 
@@ -217,7 +225,7 @@ describe('ListProductAdHandler', () => {
       );
 
       const element = document.createElement('div');
-      element.classList.add('labeled-item', 'flagged-product');
+      element.classList.add('item-mark', 'flagged-product');
 
       updateCountAndVisibility(element);
 
@@ -233,7 +241,7 @@ describe('ListProductAdHandler', () => {
       );
 
       const element = document.createElement('div');
-      element.classList.add('labeled-item', 'flagged-product');
+      element.classList.add('item-mark', 'flagged-product');
 
       updateCountAndVisibility(element);
 
@@ -275,20 +283,20 @@ describe('ListProductAdHandler', () => {
       expect(DomClient.updateElementVisibility).toHaveBeenCalledWith(elements[1], 'show');
     });
 
-    it('should flag tracked recommendation selector matches with the tracked class', () => {
+    it('should set data-reskroutzed-label on all flagged elements', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flagElementsBySelector = (listProductAdHandler as any).flagElementsBySelector.bind(
         listProductAdHandler,
       );
 
-      const trackedElement = document.createElement('div');
-      trackedElement.classList.add('card', 'tracking-img-container');
-      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([trackedElement]);
+      const adElement = document.createElement('div');
+      adElement.classList.add('item-mark');
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([adElement]);
 
-      flagElementsBySelector('.card.tracking-img-container');
+      flagElementsBySelector('.item-mark');
 
-      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(trackedElement, 'flagged-product');
-      expect(trackedElement.getAttribute('data-reskroutzed-label')).toBe('advertisement');
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(adElement, 'flagged-product');
+      expect(adElement.getAttribute('data-reskroutzed-label')).toBe('advertisement');
     });
   });
 });
