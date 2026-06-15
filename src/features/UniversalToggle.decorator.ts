@@ -824,7 +824,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     button.classList.add('toggle-option-button', 'ai-slop-toggle-option');
     button.title = this.state.hideAISlop ? 'Hide AI Slop' : 'Show AI Slop';
 
-    const svg = buildSvg(ICON.cpu);
+    const svg = buildSvg(ICON.aiSlop);
     DomClient.appendElementToElement(svg, button);
 
     if (this.state.hideAISlop) {

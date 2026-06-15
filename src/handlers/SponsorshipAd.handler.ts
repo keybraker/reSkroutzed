@@ -3,7 +3,7 @@ import { State } from '../common/types/State.type';
 import { AdHandlerInterface } from './common/interfaces/adHandler.interface';
 
 export class SponsorshipAdHandler implements AdHandlerInterface {
-  private readonly sponsorshipAdSelectors = ['#sponsorship'];
+  private readonly sponsorshipAdSelectors = ['#sponsorship', '.js-sponsorship-handler'];
   private readonly flaggedSponsorshipAdClass = 'flagged-sponsorship';
 
   constructor(private state: State) {}

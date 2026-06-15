@@ -124,13 +124,9 @@ export const ICON = {
 
   // ── AI Slop ────────────────────────────────────────────────────────────
 
-  cpu: {
-    // CPU / chip
-    path:
-      'M5 1v1.5M11 1v1.5M5 13.5V15M11 13.5V15' +
-      'M1 5h1.5M1 11h1.5M13.5 5H15M13.5 11H15' +
-      'M3.5 4h9a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5z' +
-      'M5 5.5v5M8 5.5v5M11 5.5v5',
+  aiSlop: {
+    // Monogram "AI" — left stroke is the 'A', right stroke is the 'I'
+    path: 'M3.5 13.5 L7 2.5 M7 2.5 L10.5 13.5 M5 9.5 L9 9.5' + 'M12.5 3.5 V12.5',
     label: 'AI slop visible',
   },
 } as const satisfies Record<string, IconDef>;

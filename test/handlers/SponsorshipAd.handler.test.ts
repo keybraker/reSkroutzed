@@ -100,7 +100,8 @@ describe('SponsorshipAdHandler', () => {
       mockLiElement.id = 'sponsorship';
 
       // Add the matches method to the element for selector testing
-      mockLiElement.matches = (selector: string) => selector === '#sponsorship';
+      mockLiElement.matches = (selector: string) =>
+        selector === '#sponsorship' || selector === '.js-sponsorship-handler';
 
       vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([mockLiElement]);
 
@@ -161,7 +162,8 @@ describe('SponsorshipAdHandler', () => {
       element.id = 'sponsorship';
 
       // Add the matches method to the element for selector testing
-      element.matches = (selector: string) => selector === '#sponsorship';
+      element.matches = (selector: string) =>
+        selector === '#sponsorship' || selector === '.js-sponsorship-handler';
 
       // Test with hideSponsorships set to false
       mockState.hideSponsorships = false;
@@ -219,7 +221,8 @@ describe('SponsorshipAdHandler', () => {
       element.classList.add('flagged-sponsorship');
 
       // Add the matches method to the element for selector testing
-      element.matches = (selector: string) => selector === '#sponsorship';
+      element.matches = (selector: string) =>
+        selector === '#sponsorship' || selector === '.js-sponsorship-handler';
 
       updateCountAndVisibility(element);
 
