@@ -117,7 +117,7 @@ const { execSync } = require('child_process');
 
 execSync('git add -A', { stdio: 'inherit' });
 execSync(`git commit -m "chore: bump version to v${newVersion}"`, { stdio: 'inherit' });
-execSync(`git tag v${newVersion}`, { stdio: 'inherit' });
+execSync(`git tag -a v${newVersion} -m "Version ${newVersion}"`, { stdio: 'inherit' });
 
 console.log(`\nDone, now push:`);
 console.log(`  git push --follow-tags`);
