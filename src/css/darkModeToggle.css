@@ -36,7 +36,6 @@
   pointer-events: none !important;
 }
 
-
 .dark-mode-toggle:hover::after {
   opacity: 1 !important;
 }
@@ -71,23 +70,9 @@
   transition: all 0.3s ease !important;
 }
 
-
-
-
 .dark-mode-toggle svg {
   width: 24px !important;
   height: 24px !important;
   margin: 0 !important;
   fill: currentColor !important;
 }
-
-
-
-
-
-
-
-
-
-
-
