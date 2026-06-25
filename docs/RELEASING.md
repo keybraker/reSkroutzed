@@ -61,6 +61,7 @@ Configure these in **Settings > Secrets and variables > Actions**:
 | Secret                 | Description                                      |
 | ---------------------- | ------------------------------------------------ |
 | `CHROME_EXTENSION_ID`  | Extension ID from the Chrome Web Store dashboard |
+| `CHROME_PUBLISHER_ID`  | Publisher UUID from the Chrome Web Store URL     |
 | `CHROME_CLIENT_ID`     | OAuth2 Client ID from Google Cloud Console       |
 | `CHROME_CLIENT_SECRET` | OAuth2 Client Secret from Google Cloud Console   |
 | `CHROME_REFRESH_TOKEN` | Refresh token for uploading on your behalf       |
@@ -78,5 +79,7 @@ Configure these in **Settings > Secrets and variables > Actions**:
 
 - **Version Mismatch**: The workflow fails if the git tag doesn't match the `version` field in all three files. Run `npm run version:set -- X.Y.Z` to sync them, commit, and re-tag.
 - **403 Forbidden (Chrome)**: Ensure the **Chrome Web Store API** is enabled in your Google Cloud Project and the refresh token hasn't expired.
+- **`publisherId` is required (Chrome)**: Add the `CHROME_PUBLISHER_ID` secret. Your Publisher ID is the UUID in the Chrome Web Store Developer Dashboard URL: `chrome.google.com/webstore/devconsole/<PUBLISHER_ID>`.
+- **JWT Errors (Firefox)**: Ensure your AMO API keys are active and haven't been revoked.
 - **JWT Errors (Firefox)**: Ensure your AMO API keys are active and haven't been revoked.
 - **Test failures**: The workflow runs `npm test` as a gate. Fix failing tests before attempting to release.
