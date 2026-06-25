@@ -19,12 +19,35 @@ const TARGETS = [
   path.join(ROOT, 'manifests', 'manifest_firefox.json'),
 ];
 
+const POPUP_HTML = path.join(ROOT, 'popup', 'popup.html');
+
 function readJSON(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
 function writeJSON(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf-8');
+}
+
+/**
+ * Update the version badge in popup/popup.html.
+ * Looks for: <span ... id="versionBadge">vX.Y.Z</span>
+ */
+function updatePopupHtml(newVersion) {
+  let html = fs.readFileSync(POPUP_HTML, 'utf-8');
+  const regex = /(id="versionBadge"[^>]*>v?\d+\.\d+\.\d+<)/;
+  const match = html.match(regex);
+  if (!match) {
+    console.warn(`  SKIP popup/popup.html — could not find version badge`);
+    return;
+  }
+  const oldText = match[1];
+  const oldVersionMatch = oldText.match(/v?(\d+\.\d+\.\d+)/);
+  const oldVersion = oldVersionMatch ? oldVersionMatch[1] : '?';
+  const newText = oldText.replace(/v?\d+\.\d+\.\d+/, 'v' + newVersion);
+  html = html.replace(oldText, newText);
+  fs.writeFileSync(POPUP_HTML, html, 'utf-8');
+  console.log(`  popup/popup.html: ${oldVersion} → ${newVersion}`);
 }
 
 function parseSemver(version) {
@@ -86,6 +109,8 @@ for (const filePath of TARGETS) {
   writeJSON(filePath, data);
   console.log(`  ${path.relative(ROOT, filePath)}: ${oldVersion} → ${newVersion}`);
 }
+
+updatePopupHtml(newVersion);
 
 console.log('\nDone. Now commit, tag, and push:');
 console.log(`  git add -A`);

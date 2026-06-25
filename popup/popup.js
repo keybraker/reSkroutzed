@@ -422,13 +422,6 @@ function getCurrentPageCounts() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Display the version from the extension manifest
-  const version = chrome.runtime.getManifest().version;
-  const badge = document.getElementById('versionBadge');
-  if (badge) {
-    badge.textContent = 'v' + version;
-  }
-
   // Initialize the UI based on stored preferences
   initializeStatsCounters();
   loadSettings();
