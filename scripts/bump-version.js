@@ -112,8 +112,12 @@ for (const filePath of TARGETS) {
 
 updatePopupHtml(newVersion);
 
-console.log('\nDone. Now commit, tag, and push:');
-console.log(`  git add -A`);
-console.log(`  git commit -m "chore: bump version to v${newVersion}"`);
-console.log(`  git tag v${newVersion}`);
+// Commit and tag automatically
+const { execSync } = require('child_process');
+
+execSync('git add -A', { stdio: 'inherit' });
+execSync(`git commit -m "chore: bump version to v${newVersion}"`, { stdio: 'inherit' });
+execSync(`git tag v${newVersion}`, { stdio: 'inherit' });
+
+console.log(`\nDone, now push:`);
 console.log(`  git push --follow-tags`);
