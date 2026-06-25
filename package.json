@@ -26,13 +26,18 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "analyze": "webpack --env chrome --analyze"
+    "analyze": "webpack --env chrome --analyze",
+    "version:patch": "node scripts/bump-version.js patch",
+    "version:minor": "node scripts/bump-version.js minor",
+    "version:major": "node scripts/bump-version.js major",
+    "version:set": "node scripts/bump-version.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
     "@vitest/coverage-v8": "^1.2.2",
     "@vitest/ui": "^1.2.2",
+    "chrome-webstore-upload-cli": "^4.0.1",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^5.0.1",

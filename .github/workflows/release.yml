@@ -1,5 +1,7 @@
-name: Release
+name: Release & Publish
 
+# Triggered when a version tag (v1.2.3) is pushed.
+# Builds, tests, creates a GitHub Release, and publishes to both stores.
 on:
   push:
     tags:
@@ -12,28 +14,28 @@ on:
 
 jobs:
   release:
+    name: Release & Publish
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # needed to create GitHub Releases
 
     steps:
-      - name: Determine Tag
+      # ── Resolve the tag (manual dispatch or tag push) ──
+      - name: Resolve Tag
         id: tag
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "tag=${{ github.event.inputs.tag_name }}" >> $GITHUB_OUTPUT
-            echo "ref=refs/tags/${{ github.event.inputs.tag_name }}" >> $GITHUB_OUTPUT
           else
             echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-            echo "ref=${{ github.ref }}" >> $GITHUB_OUTPUT
           fi
 
+      # ── Checkout the tagged commit ──
       - uses: actions/checkout@v4
         with:
-          ref: ${{ steps.tag.outputs.ref }}
+          ref: refs/tags/${{ steps.tag.outputs.tag }}
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -41,40 +43,48 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Verify Version (Chrome)
+      # ── Version sanity check ──
+      - name: Verify Version Consistency
         run: |
-          TAG_VERSION=${{ steps.tag.outputs.tag }}
-          # Remove 'v' prefix if present for comparison
-          CLEAN_VERSION=${TAG_VERSION#v}
-          MANIFEST_VERSION=$(node -p "require('./manifests/manifest_chrome.json').version")
+          TAG_VERSION="${{ steps.tag.outputs.tag }}"
+          CLEAN_TAG="${TAG_VERSION#v}"
 
-          if [ "$CLEAN_VERSION" != "$MANIFEST_VERSION" ]; then
-            echo "::error::Tag version ($CLEAN_VERSION) does not match manifest_chrome.json version ($MANIFEST_VERSION)"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          CHROME_VERSION=$(node -p "require('./manifests/manifest_chrome.json').version")
+          FIREFOX_VERSION=$(node -p "require('./manifests/manifest_firefox.json').version")
+
+          FAIL=0
+
+          if [ "$CLEAN_TAG" != "$PKG_VERSION" ]; then
+            echo "::error::Tag ($CLEAN_TAG) != package.json ($PKG_VERSION)"
+            FAIL=1
+          fi
+          if [ "$CLEAN_TAG" != "$CHROME_VERSION" ]; then
+            echo "::error::Tag ($CLEAN_TAG) != manifest_chrome.json ($CHROME_VERSION)"
+            FAIL=1
+          fi
+          if [ "$CLEAN_TAG" != "$FIREFOX_VERSION" ]; then
+            echo "::error::Tag ($CLEAN_TAG) != manifest_firefox.json ($FIREFOX_VERSION)"
+            FAIL=1
+          fi
+
+          if [ "$FAIL" -ne 0 ]; then
+            echo "::error::Version mismatch. Run: npm run version:set -- $CLEAN_TAG"
             exit 1
           fi
-          echo "Chrome version verified: $CLEAN_VERSION"
 
-      - name: Verify Version (Firefox)
-        run: |
-          TAG_VERSION=${{ steps.tag.outputs.tag }}
-          # Remove 'v' prefix if present for comparison
-          CLEAN_VERSION=${TAG_VERSION#v}
-          MANIFEST_VERSION=$(node -p "require('./manifests/manifest_firefox.json').version")
+          echo "✅ All version fields match: $CLEAN_TAG"
 
-          if [ "$CLEAN_VERSION" != "$MANIFEST_VERSION" ]; then
-            echo "::error::Tag version ($CLEAN_VERSION) does not match manifest_firefox.json version ($MANIFEST_VERSION)"
-            exit 1
-          fi
-          echo "Firefox version verified: $CLEAN_VERSION"
+      # ── Quality gate: tests must pass ──
+      - name: Run Tests
+        run: npm test
 
-      - name: Build Chrome Extension
-        run: npm run build:chrome
+      # ── Build both browsers ──
+      - name: Build Extensions
+        run: npm run build
 
-      - name: Build Firefox Extension
-        run: npm run build:firefox
-
-      - name: Create Release
-        id: create_release
+      # ── GitHub Release with both zips ──
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
@@ -85,3 +95,25 @@ jobs:
             build/chrome_build.zip
             build/firefox_build.zip
           generate_release_notes: true
+
+      # ── Chrome Web Store ──
+      - name: Publish to Chrome Web Store
+        env:
+          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+        run: |
+          npx chrome-webstore-upload \
+            --source build/chrome_build.zip \
+            --extension-id "$EXTENSION_ID"
+
+      # ── Firefox Add-ons (AMO) ──
+      - name: Publish to Firefox Add-ons
+        run: |
+          npx web-ext sign \
+            --channel=listed \
+            --api-key="${{ secrets.FIREFOX_JWT_ISSUER }}" \
+            --api-secret="${{ secrets.FIREFOX_JWT_SECRET }}" \
+            --source-dir=build/firefox_build \
+            --artifacts-dir=build/web-ext-artifacts
