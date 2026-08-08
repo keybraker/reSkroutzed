@@ -52,6 +52,7 @@ function queryAISlopNodes(): NodeListOf<HTMLElement> {
     '.sofos-listing-shelf',
     '.sofos-chat-button-wrapper',
     '.sofos-chat-button',
+    '.shifu-chat-button',
   ].join(',');
   return document.querySelectorAll(selector) as NodeListOf<HTMLElement>;
 }
