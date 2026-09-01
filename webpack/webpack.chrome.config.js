@@ -23,7 +23,6 @@ module.exports = (env = {}, argv = {}) => {
     plugins: [
       new CopyWebpackPlugin({
         patterns: [
-          { from: 'popup/popup.js', to: 'popup.js' },
           { from: 'popup/popup.html', to: 'popup/popup.html' },
           { from: 'popup/popup.css', to: 'popup/popup.css' },
           { from: 'manifests/manifest_chrome.json', to: 'manifest.json' },

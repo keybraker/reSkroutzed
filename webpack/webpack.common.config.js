@@ -9,7 +9,7 @@ module.exports = {
   entry: {
     background: './src/background.ts',
     service_worker: './src/service_worker.ts',
-    popup: './popup/popup.js',
+    popup: './popup/popup.ts',
   },
   output: {
     filename: '[name].js',

@@ -207,27 +207,9 @@ chrome.runtime.onMessage.addListener(
   (
     request: { action: string; value?: boolean | number },
     sender: chrome.runtime.MessageSender,
-    sendResponse: (
-      response:
-        | {
-            sponsoredCount: number;
-            sponsoredShelfCount: number;
-            recommendationCount?: number;
-            videoCount: number;
-            isMobile?: boolean;
-          }
-        | { success: boolean },
-    ) => void,
+    sendResponse: (response: { success: boolean }) => void,
   ) => {
-    if (request.action === 'getCount') {
-      sendResponse({
-        sponsoredCount: state.productAdCount,
-        sponsoredShelfCount: state.shelfAdCount,
-        recommendationCount: state.recommendationAdCount,
-        videoCount: state.videoAdCount,
-        isMobile: state.isMobile,
-      });
-    } else if (request.action === 'toggleDarkMode' && request.value !== undefined) {
+    if (request.action === 'toggleDarkMode' && request.value !== undefined) {
       state.darkMode = request.value as boolean;
       BrowserClient.setValue(StorageKey.DARK_MODE, state.darkMode);
       themeSync(state);
