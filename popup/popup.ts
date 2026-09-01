@@ -1,21 +1,13 @@
 import { StorageKey } from '../src/clients/browser/client';
 
-function getBool(
-  key: StorageKey,
-  defaultValue: boolean,
-  callback: (value: boolean) => void,
-): void {
+function getBool(key: StorageKey, defaultValue: boolean, callback: (value: boolean) => void): void {
   chrome.storage.local.get([key], (result) => {
     const value = result[key];
     callback(value === undefined ? defaultValue : value === true);
   });
 }
 
-function getNumber(
-  key: StorageKey,
-  defaultValue: number,
-  callback: (value: number) => void,
-): void {
+function getNumber(key: StorageKey, defaultValue: number, callback: (value: number) => void): void {
   chrome.storage.local.get([key], (result) => {
     const value = result[key];
     callback(value === undefined ? defaultValue : Number(value));

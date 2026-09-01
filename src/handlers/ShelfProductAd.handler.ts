@@ -1,8 +1,10 @@
-import { DomClient } from '../clients/dom/client';
-import { State } from '../common/types/State.type';
-import { AdHandlerInterface } from './common/interfaces/adHandler.interface';
+import { BaseAdHandler } from './common/BaseAdHandler';
 
-export class ShelfProductAdHandler implements AdHandlerInterface {
+export class ShelfProductAdHandler extends BaseAdHandler {
+  protected readonly flaggedClass = 'flagged-shelf';
+  protected readonly counterKey = 'shelfAdCount' as const;
+  protected readonly visibilityKey = 'hideShelfProductAds' as const;
+
   private readonly shelfAdClass = [
     'selected-product-cards',
     'sponsored-shelf',
@@ -15,53 +17,18 @@ export class ShelfProductAdHandler implements AdHandlerInterface {
     '#cross-sell',
     '.content.top-area.cross-sell-shelf.sponsored-shelf',
   ];
-  private readonly flaggedShelfAdClass = 'flagged-shelf';
-
-  constructor(private state: State) {}
 
   public flag(): void {
-    this.state.shelfAdCount = 0;
+    this.resetCount();
 
-    const allFlaggedShelfElements = DomClient.getElementsByClass(`.${this.flaggedShelfAdClass}`);
-    this.state.shelfAdCount = allFlaggedShelfElements.length;
-
-    DomClient.getElementsByClass(`li:not(.${this.flaggedShelfAdClass})`).forEach((element) =>
-      this.updateCountAndVisibility(element),
+    this.scanListItems((element) =>
+      this.shelfAdClass.some((adClass) => element.classList.contains(adClass)),
     );
 
-    this.crossSellShelfSelectors.forEach((selector) => this.flagElementsBySelector(selector));
+    this.crossSellShelfSelectors.forEach((selector) => this.flagBySelector(selector));
 
     this.shelfAdClass.forEach((adClass) => {
-      this.flagElementsBySelector(`.${adClass}:not(.${this.flaggedShelfAdClass})`);
-    });
-  }
-
-  public visibilityUpdate(): void {
-    DomClient.getElementsByClass(`.${this.flaggedShelfAdClass}`).forEach((element) => {
-      DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
-    });
-  }
-
-  private updateCountAndVisibility(element: Element): void {
-    if (
-      this.shelfAdClass.some((adClass) => element.classList.contains(adClass)) &&
-      !element.classList.contains(this.flaggedShelfAdClass)
-    ) {
-      this.state.shelfAdCount++;
-      DomClient.addClassesToElement(element, this.flaggedShelfAdClass);
-      DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
-    }
-  }
-
-  private flagElementsBySelector(selector: string): void {
-    DomClient.getElementsByClass(selector).forEach((element) => {
-      if (element.classList.contains(this.flaggedShelfAdClass)) {
-        return;
-      }
-
-      this.state.shelfAdCount++;
-      DomClient.addClassesToElement(element, this.flaggedShelfAdClass);
-      DomClient.updateElementVisibility(element, !this.state.hideShelfProductAds ? 'hide' : 'show');
+      this.flagBySelector(`.${adClass}:not(.${this.flaggedClass})`);
     });
   }
 }
