@@ -176,10 +176,27 @@ const wideModeDecorator = new WideModeDecorator(state);
   }
 
   function observeMutations(): void {
-    const observer = new MutationObserver(() => {
-      flagContent();
-      applyAISlopVisibility();
+    let debounceTimer: number | undefined;
+
+    const observer = new MutationObserver((mutations) => {
+      const hasAddedElements = mutations.some((mutation) =>
+        Array.from(mutation.addedNodes).some(
+          (node) => node.nodeType === Node.ELEMENT_NODE,
+        ),
+      );
+
+      // Ignore text/attribute churn; only re-flag when new elements arrive.
+      if (!hasAddedElements) {
+        return;
+      }
+
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(() => {
+        flagContent();
+        applyAISlopVisibility();
+      }, 250);
     });
+
     observer.observe(document.body, {
       childList: true,
       subtree: true,
