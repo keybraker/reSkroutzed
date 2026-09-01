@@ -42,7 +42,7 @@
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^5.0.1",
     "eslint": "^8.54.0",
-    "eslint-config-prettier": "^10.1.2",
+    "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-prettier": "^5.2.6",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "happy-dom": "^12.10.3",
