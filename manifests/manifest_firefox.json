@@ -11,6 +11,7 @@
     "*://www.skroutz.ro/*",
     "*://www.skroutz.cy/*",
     "*://www.skroutz.de/*",
+    "*://www.skroutz.bg/*",
     "*://www.skroutz.eu/*",
     "*://www.bestprice.gr/*"
   ],
@@ -26,6 +27,7 @@
         "https://www.skroutz.ro/*",
         "https://www.skroutz.cy/*",
         "https://www.skroutz.de/*",
+        "https://www.skroutz.bg/*",
         "https://www.skroutz.eu/*"
       ],
       "css": [
