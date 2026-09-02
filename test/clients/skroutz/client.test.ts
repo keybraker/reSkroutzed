@@ -694,6 +694,28 @@ describe('SkroutzClient', () => {
       await expect(SkroutzClient.getCurrentProductData()).rejects.toThrow('Failed to fetch');
     });
 
+    it('should read the user zip from the native store pickup button props', async () => {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        `<button type="button" data-sku-page--offerings--offering-service-props-value='{"service":"store_pickup","skuId":12345678,"zip":"71305"}'>Παραλαβή από το κατάστημα</button>`,
+      );
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability.userZip).toBe('71305');
+    });
+
+    it('should ignore offering-service buttons that are not store pickup', async () => {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        `<button type="button" data-sku-page--offerings--offering-service-props-value='{"service":"delivery","zip":"10563"}'>Αποστολή</button>`,
+      );
+
+      const result = await SkroutzClient.getCurrentProductData();
+
+      expect(result.storeAvailability.userZip).toBeUndefined();
+    });
+
     it('should match store cities against the selected user city when available', async () => {
       document.body.innerHTML = `
         <meta itemprop="sku" content="12345678">

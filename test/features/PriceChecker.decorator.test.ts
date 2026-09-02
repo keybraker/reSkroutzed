@@ -248,11 +248,18 @@ describe('PriceCheckerDecorator', () => {
       document.querySelector('.price-display-wrapper .shipping-cost-text')?.textContent,
     ).toContain('(+3,00€ shipping)');
     expect(document.querySelector('.store-availability-status')?.textContent).toContain(
-      'This product is available in your city, Athens.',
+      'Available in your area.',
     );
-    expect(document.querySelector('.store-availability-shops-summary')?.textContent).toContain(
-      'You can get this directly from Athens, Heraklion (1, 2), Patras.',
+    const shopCaptions = Array.from(document.querySelectorAll('.store-location-caption')).map(
+      (element) => element.textContent,
     );
+    expect(shopCaptions).toEqual(['Athens', 'Heraklion 1', 'Heraklion 2', 'Patras']);
+    const locationEntries = Array.from(document.querySelectorAll('.store-location-entry'));
+    expect(locationEntries.length).toBe(4);
+    expect(
+      document.querySelectorAll('.store-location-entry .store-location-icon .store-logo').length,
+    ).toBe(4);
+    expect(document.querySelector('.store-availability-shops-summary')).toBeNull();
     expect(document.querySelector('.store-availability-summary')).toBeNull();
     expect(document.querySelector('.store-availability-online-summary')).toBeNull();
 
@@ -323,6 +330,137 @@ describe('PriceCheckerDecorator', () => {
     expect(sliderClickSpy).toHaveBeenCalledTimes(1);
     expect(scrollIntoViewSpy).toHaveBeenCalledTimes(1);
     expect(secondTarget.classList.contains('lowest-price-store-highlight')).toBe(true);
+  });
+
+  it('shows the not-available link and opens the native pickup modal on click', async () => {
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue({
+      ...mockProductPriceData,
+      storeAvailability: {
+        availableShopCount: 1,
+        cities: ['Athens'],
+        userCity: 'Heraklion',
+        userZip: '71305',
+        matchingCities: [],
+        cityShopMap: {
+          Athens: [202],
+        },
+        orderCities: [],
+        orderCityShopMap: {},
+        onlineOnlyShopCount: 0,
+      },
+    });
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    const nativePickupButton = document.createElement('button');
+    nativePickupButton.setAttribute(
+      'data-sku-page--offerings--offering-service-props-value',
+      JSON.stringify({ service: 'store_pickup', zip: '71305' }),
+    );
+    document.body.appendChild(nativePickupButton);
+    const nativeClickSpy = vi.spyOn(nativePickupButton, 'click');
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    const status = document.querySelector('.store-availability-status') as HTMLElement | null;
+    const moreLink = document.querySelector(
+      '.store-availability-more-link',
+    ) as HTMLButtonElement | null;
+
+    expect(status).not.toBeNull();
+    expect(status?.classList.contains('not-available')).toBe(true);
+    expect(status?.textContent).toContain('Not available in your area.');
+    expect(document.querySelectorAll('.store-location-entry').length).toBe(0);
+    expect(moreLink).not.toBeNull();
+    expect(moreLink?.textContent).toContain('See where you can pick it up.');
+
+    moreLink?.click();
+    expect(nativeClickSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('scrolls to a shop once the async offers list has rendered', async () => {
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue({
+      ...mockProductPriceData,
+      storeAvailability: {
+        availableShopCount: 1,
+        cities: ['Athens'],
+        userCity: 'Athens',
+        userZip: '10563',
+        matchingCities: ['Athens'],
+        cityShopMap: {
+          Athens: [202],
+        },
+        orderCities: [],
+        orderCityShopMap: {},
+        onlineOnlyShopCount: 0,
+      },
+    });
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    const sliderToggleButton = document.createElement('button');
+    sliderToggleButton.className = 'alternative-option-wrapper btn-reset';
+    const sliderClickSpy = vi.spyOn(sliderToggleButton, 'click');
+    document.body.appendChild(sliderToggleButton);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    vi.useFakeTimers();
+
+    const athensEntry = Array.from(document.querySelectorAll('.store-location-entry')).find(
+      (element) => element.textContent?.includes('Athens'),
+    ) as HTMLButtonElement | null;
+    expect(athensEntry).not.toBeNull();
+
+    const scrollIntoViewSpy = vi.fn();
+    const target = document.createElement('div');
+    target.id = 'shop-202';
+    target.scrollIntoView = scrollIntoViewSpy;
+
+    athensEntry?.click();
+    expect(sliderClickSpy).toHaveBeenCalledTimes(1);
+    expect(scrollIntoViewSpy).not.toHaveBeenCalled();
+
+    // The offer row appears after the async list load; the next poll tick finds it.
+    document.body.appendChild(target);
+
+    vi.advanceTimersByTime(150);
+
+    expect(scrollIntoViewSpy).toHaveBeenCalledTimes(1);
+    expect(target.classList.contains('lowest-price-store-highlight')).toBe(true);
+  });
+
+  it('does not render the store availability row when the user is not connected', async () => {
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue({
+      ...mockProductPriceData,
+      storeAvailability: {
+        availableShopCount: 1,
+        cities: ['Athens'],
+        userCity: undefined,
+        userZip: undefined,
+        matchingCities: [],
+        cityShopMap: {
+          Athens: [202],
+        },
+        orderCities: [],
+        orderCityShopMap: {},
+        onlineOnlyShopCount: 0,
+      },
+    });
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    expect(document.querySelector('.store-availability-outline')).toBeNull();
+    expect(document.querySelector('.store-availability-status')).toBeNull();
+    expect(document.querySelector('.store-availability-shops-list')).toBeNull();
   });
 
   it('keeps the store CTA as a button when BestPrice is unavailable', async () => {

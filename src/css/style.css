@@ -1062,7 +1062,7 @@ text-black {
   border: none !important;
   border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
   border-radius: 0 !important;
-  padding: 12px 0 8px !important;
+  padding: 10px 16px 0 !important;
   margin-top: 2px !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -1218,17 +1218,11 @@ text-black {
 
 /* reSkroutzed badge removed; availability card now visually continues the price checker */
 
-.store-availability-status,
-.store-availability-shops-summary,
-.store-availability-summary,
-.store-availability-online-summary {
+.store-availability-status {
   margin: 0 !important;
   font-size: 13px !important;
   line-height: 1.35 !important;
   color: #172019 !important;
-}
-
-.store-availability-status {
   font-weight: 500 !important;
 }
 
@@ -1236,22 +1230,108 @@ text-black {
   color: #111 !important;
 }
 
-.store-availability-shops-summary,
-.store-availability-summary,
-.store-availability-online-summary {
-  font-weight: 400 !important;
+.store-availability-status.not-available {
+  color: #6b6f76 !important;
+}
+
+.store-availability-more-link {
+  display: inline !important;
+  padding: 0 !important;
+  margin: 0 0 0 4px !important;
+  border: none !important;
+  background: transparent !important;
+  font: inherit !important;
+  color: #4a9edd !important;
+  text-decoration: none !important;
+  text-underline-offset: 2px !important;
+  cursor: pointer !important;
+  vertical-align: baseline !important;
+}
+
+.store-availability-more-link:hover {
+  color: #2b7dbf !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+}
+
+.store-availability-more-link:focus-visible {
+  outline: 2px solid rgba(43, 96, 173, 0.35) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+
+.store-availability-shops-list {
+  margin: 2px 0 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  font-size: 13px !important;
+  line-height: 1.25 !important;
   color: rgba(23, 32, 25, 0.82) !important;
 }
 
-.city-shop-link {
+.store-location-entry {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  min-width: 64px !important;
+  padding: 6px 10px !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  color: #172019 !important;
+  font: inherit !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
   cursor: pointer !important;
-  color: #4a9edd !important;
-  text-decoration: underline !important;
-  text-underline-offset: 2px !important;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease !important;
 }
 
-.city-shop-link:hover {
-  color: #2b7dbf !important;
+.store-location-entry:hover,
+.store-location-entry:focus-visible {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(74, 158, 221, 0.6) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  outline: none !important;
+}
+
+.store-location-entry-static {
+  cursor: default !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+.store-location-entry-static .store-location-caption {
+  color: rgba(23, 32, 25, 0.62) !important;
+}
+
+.store-location-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 0 !important;
+}
+
+.store-location-icon .store-logo {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.store-location-icon .store-logo path {
+  fill: currentColor !important;
+  color: rgba(0, 0, 0, 0.55) !important;
+}
+
+.store-location-caption {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
 }
 
 /* layout helpers for reSkroutzed badge to match availability card */

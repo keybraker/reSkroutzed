@@ -11,6 +11,7 @@ export type StoreAvailabilityData = {
   availableShopCount: number;
   cities: string[];
   userCity?: string;
+  userZip?: string;
   matchingCities: string[];
   cityShopMap: Record<string, number[]>;
   orderCities: string[];
@@ -53,7 +54,8 @@ export class SkroutzClient {
 
       const productData = await this.getProductData(productCode);
       const userCity = this.getUserCity();
-      const storeAvailability = await this.getStoreAvailability(productData, userCity);
+      const userZip = this.getConnectedUserZip();
+      const storeAvailability = await this.getStoreAvailability(productData, userCity, userZip);
 
       return {
         buyThroughSkroutz: this.getSkroutzPriceData(productData, skroutzRawPrice),
@@ -242,9 +244,12 @@ export class SkroutzClient {
     return (await response.json()) as PriceChart;
   }
 
-  private static async getStoreData(storeIds: number[]): Promise<Store[]> {
+  private static async getStoreData(storeIds: number[], userZip?: string): Promise<Store[]> {
     const response = await fetch('https://www.skroutz.gr/s/product_cards_nearest_location.json', {
-      body: JSON.stringify({ store_ids: storeIds.map((id) => id.toString()) }),
+      body: JSON.stringify({
+        store_ids: storeIds.map((id) => id.toString()),
+        ...(userZip ? { zip: userZip } : {}),
+      }),
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -286,6 +291,7 @@ export class SkroutzClient {
   private static async getStoreAvailability(
     productData: ProductData,
     userCity?: string,
+    userZip?: string,
   ): Promise<StoreAvailabilityData> {
     const productCode = this.getSku();
     const storeIds = this.getUniqueShopIds(productData);
@@ -302,6 +308,7 @@ export class SkroutzClient {
         availableShopCount: 0,
         cities: [],
         userCity,
+        userZip,
         matchingCities: [],
         cityShopMap: {},
         orderCities: [],
@@ -315,6 +322,7 @@ export class SkroutzClient {
         availableShopCount: storeIds.length,
         cities: [],
         userCity,
+        userZip,
         matchingCities: [],
         cityShopMap: {},
         orderCities: domOrderCities,
@@ -324,7 +332,7 @@ export class SkroutzClient {
     }
 
     try {
-      const stores = await this.getStoreData(storeIds);
+      const stores = await this.getStoreData(storeIds, userZip);
       const apiCities = this.extractUniqueCities(stores);
       const apiCityShopMap = this.buildCityShopMapFromApi(stores, storeIds);
       const onlineOnlyShopCount = this.getOnlineOnlyShopCount(stores, storeIds.length);
@@ -432,6 +440,7 @@ export class SkroutzClient {
         availableShopCount: storeIds.length,
         cities: finalCities,
         userCity,
+        userZip,
         matchingCities: this.getMatchingCities(finalCities, userCity),
         cityShopMap: finalCityShopMap,
         orderCities: finalOrderCities,
@@ -445,6 +454,7 @@ export class SkroutzClient {
         availableShopCount: storeIds.length,
         cities: domCities,
         userCity,
+        userZip,
         matchingCities: this.getMatchingCities(domCities, userCity),
         cityShopMap: domCityShopMap,
         orderCities: domOrderCities,
@@ -717,6 +727,43 @@ export class SkroutzClient {
     }
 
     return city;
+  }
+
+  private static getOfferingServiceProps(
+    element: Element,
+  ): { service?: string; zip?: string } | undefined {
+    const rawProps = element.getAttribute('data-sku-page--offerings--offering-service-props-value');
+    if (!rawProps) {
+      return undefined;
+    }
+
+    try {
+      const parsed = JSON.parse(rawProps) as Record<string, unknown>;
+      return {
+        service: typeof parsed.service === 'string' ? parsed.service : undefined,
+        zip: typeof parsed.zip === 'string' ? parsed.zip : undefined,
+      };
+    } catch {
+      return undefined;
+    }
+  }
+
+  // Skroutz renders a "Παραλαβή από το κατάστημα" button (data-controller
+  // sku-page--offerings--offering-service) only when the user is connected to a
+  // shipping area; its props carry the authoritative `zip` of that area.
+  private static getConnectedUserZip(): string | undefined {
+    const serviceButtons = Array.from(
+      document.querySelectorAll('[data-sku-page--offerings--offering-service-props-value]'),
+    );
+
+    for (const button of serviceButtons) {
+      const props = this.getOfferingServiceProps(button);
+      if (props?.service === 'store_pickup' && props.zip) {
+        return props.zip;
+      }
+    }
+
+    return undefined;
   }
 
   private static hasExplicitNoStoreCitiesMessage(root: ParentNode = document): boolean {
