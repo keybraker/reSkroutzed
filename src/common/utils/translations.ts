@@ -10,7 +10,10 @@ type TranslationKey =
   | 'priceHistory.lifetimeLabel'
   | 'priceHistory.combinedCheap'
   | 'priceHistory.combinedNormal'
-  | 'priceHistory.combinedExpensive';
+  | 'priceHistory.combinedExpensive'
+  | 'verdict.goodPrice'
+  | 'verdict.okPrice'
+  | 'verdict.expensivePrice';
 
 const translations: Record<TranslationKey, Partial<Record<Language, string>>> = {
   'priceHistory.cheap': {
@@ -53,6 +56,27 @@ const translations: Record<TranslationKey, Partial<Record<Language, string>>> = 
   'priceHistory.combinedExpensive': {
     [Language.ENGLISH]: 'High price compared to both the last 6 months and the entire sales period',
     [Language.GREEK]: 'Υψηλή τιμή σε σχέση με το τελευταίο εξάμηνο και όλη τη διάρκεια πώλησης',
+  },
+  'verdict.goodPrice': {
+    [Language.ENGLISH]: 'GOOD PRICE',
+    [Language.GREEK]: 'Καλή τιμή',
+    [Language.ROMANIAN]: 'Preț bun',
+    [Language.BULGARIAN]: 'Добра цена',
+    [Language.GERMAN]: 'Guter Preis',
+  },
+  'verdict.okPrice': {
+    [Language.ENGLISH]: 'OK PRICE',
+    [Language.GREEK]: 'Κανονική τιμή',
+    [Language.ROMANIAN]: 'Preț normal',
+    [Language.BULGARIAN]: 'Нормална цена',
+    [Language.GERMAN]: 'Normaler Preis',
+  },
+  'verdict.expensivePrice': {
+    [Language.ENGLISH]: 'EXPENSIVE PRICE',
+    [Language.GREEK]: 'Ακριβή τιμή',
+    [Language.ROMANIAN]: 'Preț scump',
+    [Language.BULGARIAN]: 'Скъпа цена',
+    [Language.GERMAN]: 'Teurer Preis',
   },
 };
 

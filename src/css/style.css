@@ -497,13 +497,13 @@ text-black {
 }
 
 .buy-me-coffee-option.paypal {
-  background: linear-gradient(135deg, #ffc115, #ffb300) !important;
+  background: linear-gradient(135deg, #ffc115, #ffb800) !important;
   color: #242424 !important;
   box-shadow: 0 2px 6px rgba(255, 193, 21, 0.3) !important;
 }
 
 .buy-me-coffee-option.paypal:hover {
-  background: linear-gradient(135deg, #ffb300, #ffa500) !important;
+  background: linear-gradient(135deg, #ffb800, #ffa500) !important;
   box-shadow: 0 4px 12px rgba(255, 193, 21, 0.5) !important;
   transform: scale(1.08) !important;
 }
@@ -1278,20 +1278,99 @@ text-black {
   align-items: center !important;
 }
 
-.price-history-row .price-history-label {
-  font-size: 13px !important;
-  line-height: 1.3 !important;
-  font-weight: 500 !important;
-  color: #222 !important;
+/* Price history verdict box (BUY / SHORT LIST / DON'T BUY) */
+.price-history-verdict {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.price-history-verdict-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: 44px !important;
+  height: 44px !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.price-history-verdict-icon svg {
+  width: 22px !important;
+  height: 22px !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+}
+
+.price-history-verdict-text {
+  display: flex !important;
+  flex-direction: column !important;
   gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.price-history-verdict-title {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.3px !important;
+  text-transform: uppercase !important;
+  color: #222 !important;
+}
+
+.price-history-verdict-subtitle {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  color: #888 !important;
+}
+
+.price-history-verdict--buy .price-history-verdict-icon {
+  background-color: #398435 !important;
+}
+
+.price-history-verdict--shortlist .price-history-verdict-icon {
+  background-color: #ffb800 !important;
+  color: #5a4300 !important;
+}
+
+.price-history-verdict--dontbuy .price-history-verdict-icon {
+  background-color: #a93331 !important;
+}
+
+/* Split verdict content and controls into two equal halves */
+.price-history-row > .price-history-content-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+.price-history-content-row .price-history-assessments {
+  min-width: 0 !important;
+}
+
+.price-history-content-row .price-history-controls {
+  width: 100% !important;
+  margin-left: 0 !important;
+  align-items: stretch !important;
+}
+
+.price-history-content-row .price-history-controls .analysis-toggle-button {
+  width: 100% !important;
+  justify-content: center !important;
 }
 
 .price-history-controls {
   display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: flex-end !important;
-  gap: 12px !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  gap: 6px !important;
   margin-left: auto !important;
   flex: 0 0 auto !important;
   white-space: nowrap !important;
@@ -1726,14 +1805,37 @@ text-black {
     margin-bottom: 4px !important;
   }
 
-  .price-history-row .price-history-label {
-    width: 100% !important;
-    text-align: center !important;
-    font-size: 12px !important;
+  .price-history-verdict {
+    align-items: flex-start !important;
+  }
+
+  .price-history-verdict-icon {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+  }
+
+  .price-history-verdict-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .price-history-verdict-text {
+    text-align: left !important;
+  }
+
+  .price-history-verdict-title {
+    font-size: 14px !important;
+  }
+
+  .price-history-verdict-subtitle {
+    font-size: 11px !important;
   }
 
   .price-history-controls {
     width: 100% !important;
+    flex-direction: row !important;
+    align-items: center !important;
     justify-content: center !important;
     margin-left: 0 !important;
     flex-wrap: nowrap !important;
@@ -1747,6 +1849,21 @@ text-black {
     min-width: 0 !important;
     padding-left: 10px !important;
     padding-right: 10px !important;
+  }
+
+  .price-history-row > .price-history-content-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .price-history-content-row .price-history-controls {
+    align-items: center !important;
+  }
+
+  .price-history-content-row .price-history-controls .analysis-toggle-button {
+    width: auto !important;
   }
 
   .price-history-header {
