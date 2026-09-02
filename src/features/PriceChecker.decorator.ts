@@ -1,11 +1,6 @@
 import { BestPriceClient, BestPriceProductData } from '../clients/best_price/client';
 import { DomClient } from '../clients/dom/client';
-import {
-  ProductPriceData,
-  ProductPriceHistory,
-  SkroutzClient,
-  StoreAvailabilityData,
-} from '../clients/skroutz/client';
+import { ProductPriceData, ProductPriceHistory, SkroutzClient } from '../clients/skroutz/client';
 import { PriceHistoryComponent } from '../common/components/PriceHistory.component';
 import { Language } from '../common/enums/Language.enum';
 import { State } from '../common/types/State.type';
@@ -925,93 +920,23 @@ function openNativeStorePickupModal(): void {
   findNativeStorePickupButton()?.click();
 }
 
-function createStoreLocationElement(
-  city: string,
-  shopId: number,
-  shopOrdinal: number,
-  shopCount: number,
-): HTMLButtonElement | HTMLSpanElement {
-  const isClickable = shopId > 0;
-  const element = isClickable
-    ? (document.createElement('button') as HTMLButtonElement)
-    : (document.createElement('span') as HTMLSpanElement);
-
-  element.className = isClickable
-    ? 'store-location-entry'
-    : 'store-location-entry store-location-entry-static';
-
-  if (element instanceof HTMLButtonElement) {
-    element.type = 'button';
-  }
-
-  const iconWrapper = document.createElement('span');
-  iconWrapper.className = 'store-location-icon';
-  DomClient.appendElementToElement(createStoreLogo(), iconWrapper);
-  DomClient.appendElementToElement(iconWrapper, element);
-
-  const caption = document.createElement('span');
-  caption.className = 'store-location-caption';
-  const disambiguator = isClickable && shopCount > 1 ? ` ${shopOrdinal}` : '';
-  caption.textContent = `${city}${disambiguator}`;
-  DomClient.appendElementToElement(caption, element);
-
-  if (isClickable) {
-    element.setAttribute('aria-label', caption.textContent);
-    element.addEventListener('click', () => scrollToShop(shopId, element));
-  }
-
-  return element;
-}
-
-function createStoreAvailabilityShopsList(
-  availability: StoreAvailabilityData,
-): HTMLDivElement | null {
-  const cityShops = new Map<string, number[]>();
-
-  [...availability.cities, ...availability.orderCities].forEach((city) => {
-    const pickupShops = availability.cityShopMap?.[city] ?? [];
-    const orderShops = availability.orderCityShopMap?.[city] ?? [];
-    const mergedShops = Array.from(new Set([...pickupShops, ...orderShops]));
-    cityShops.set(city, mergedShops);
-  });
-
-  const sortedCities = Array.from(cityShops.keys()).sort((a, b) => a.localeCompare(b, 'el'));
-  if (sortedCities.length === 0) {
-    return null;
-  }
-
-  const list = DomClient.createElement('div', {
-    className: 'store-availability-shops-list',
-  }) as HTMLDivElement;
-
-  sortedCities.forEach((city) => {
-    const shops = cityShops.get(city) ?? [];
-
-    if (shops.length === 0) {
-      DomClient.appendElementToElement(createStoreLocationElement(city, 0, 0, 1), list);
-      return;
-    }
-
-    shops.forEach((shopId, index) => {
-      DomClient.appendElementToElement(
-        createStoreLocationElement(city, shopId, index + 1, shops.length),
-        list,
-      );
-    });
-  });
-
-  return list;
-}
-
 function createStoreAvailabilityElement(
   productPriceData: ProductPriceData,
   language: Language,
 ): HTMLDivElement | null {
   const availability = productPriceData.storeAvailability;
 
-  // Store-pickup availability is only meaningful for a user who is logged in /
-  // connected to a shipping area. When there is no user area, hide the whole row.
-  if (!availability.userCity && !availability.userZip) {
+  const isConnected = Boolean(availability.userZip);
+  const hasPickupCities = availability.cities.length > 0;
+  const userArea = availability.userCity;
+  const isAvailableInUserArea = isConnected && availability.matchingCities.length > 0;
+  const hasAnyStoreLocations = hasPickupCities || availability.orderCities.length > 0;
+
+  // A connected shipping area (zip on the native store-pickup button) is what
+  // makes "your area" meaningful. Without it (e.g. not logged in) a bare header
+  // city is not enough, so only advertise that pickup exists somewhere. With no
+  // pickup data there is nothing to show, so hide the row entirely.
+  if (!isConnected && !hasPickupCities) {
     return null;
   }
 
@@ -1022,17 +947,13 @@ function createStoreAvailabilityElement(
   const availabilityStatus = document.createElement('p');
   availabilityStatus.className = 'store-availability-status';
 
-  const userArea = availability.userCity;
-  const hasPickupCities = availability.cities.length > 0;
-  const isAvailableInUserArea = availability.matchingCities.length > 0;
-
   if (isAvailableInUserArea) {
     availabilityStatus.textContent =
       language === Language.ENGLISH
         ? `Available in your area.`
         : `Είναι διαθέσιμο στην περιοχή σου.`;
     availabilityStatus.classList.add('matched');
-  } else if (userArea && hasPickupCities) {
+  } else if (isConnected && userArea && hasPickupCities) {
     // No store pickup in the user's area, but the product can be picked up from
     // stores elsewhere - offer to open Skroutz's own store pickup list.
     availabilityStatus.textContent =
@@ -1054,22 +975,19 @@ function createStoreAvailabilityElement(
 
   DomClient.appendElementToElement(availabilityStatus, availabilityContainer);
 
-  if (userArea && hasPickupCities && !isAvailableInUserArea) {
-    const moreLink = document.createElement('button');
-    moreLink.type = 'button';
-    moreLink.className = 'store-availability-more-link';
-    moreLink.textContent =
+  // No per-store chips: the row stays informational and loads the real store
+  // list through Skroutz's native store-pickup view.
+  if (hasAnyStoreLocations) {
+    const loadLink = document.createElement('button');
+    loadLink.type = 'button';
+    loadLink.className = 'store-availability-more-link';
+    loadLink.textContent =
       language === Language.ENGLISH
         ? 'See where you can pick it up.'
         : 'Δες που μπορείς να παραλάβεις.';
-    moreLink.addEventListener('click', openNativeStorePickupModal);
+    loadLink.addEventListener('click', openNativeStorePickupModal);
     availabilityStatus.appendChild(document.createTextNode(' '));
-    DomClient.appendElementToElement(moreLink, availabilityStatus);
-  } else {
-    const shopsList = createStoreAvailabilityShopsList(availability);
-    if (shopsList) {
-      DomClient.appendElementToElement(shopsList, availabilityContainer);
-    }
+    DomClient.appendElementToElement(loadLink, availabilityStatus);
   }
 
   return availabilityContainer;

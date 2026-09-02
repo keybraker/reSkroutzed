@@ -128,6 +128,7 @@ describe('PriceCheckerDecorator', () => {
       availableShopCount: 3,
       cities: ['Athens', 'Patras'],
       userCity: 'Athens',
+      userZip: '10563',
       matchingCities: ['Athens'],
       cityShopMap: {
         Athens: [202],
@@ -250,18 +251,18 @@ describe('PriceCheckerDecorator', () => {
     expect(document.querySelector('.store-availability-status')?.textContent).toContain(
       'Available in your area.',
     );
-    const shopCaptions = Array.from(document.querySelectorAll('.store-location-caption')).map(
-      (element) => element.textContent,
-    );
-    expect(shopCaptions).toEqual(['Athens', 'Heraklion 1', 'Heraklion 2', 'Patras']);
-    const locationEntries = Array.from(document.querySelectorAll('.store-location-entry'));
-    expect(locationEntries.length).toBe(4);
-    expect(
-      document.querySelectorAll('.store-location-entry .store-location-icon .store-logo').length,
-    ).toBe(4);
+    // Store chips were removed: the row is informational and hands the real
+    // store list over to Skroutz's native store-pickup view.
+    expect(document.querySelectorAll('.store-location-entry').length).toBe(0);
+    expect(document.querySelector('.store-availability-shops-list')).toBeNull();
     expect(document.querySelector('.store-availability-shops-summary')).toBeNull();
     expect(document.querySelector('.store-availability-summary')).toBeNull();
     expect(document.querySelector('.store-availability-online-summary')).toBeNull();
+    const moreLink = document.querySelector(
+      '.store-availability-more-link',
+    ) as HTMLButtonElement | null;
+    expect(moreLink).not.toBeNull();
+    expect(moreLink?.textContent).toContain('See where you can pick it up.');
 
     bestPriceDeferred.resolve(mockBestPriceData);
     await flushPromises();
@@ -380,15 +381,17 @@ describe('PriceCheckerDecorator', () => {
     expect(nativeClickSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('scrolls to a shop once the async offers list has rendered', async () => {
+  it('shows a pickup hint and opens the native pickup modal when the user is not logged in', async () => {
+    // A bare header city without a connected zip is treated as "not logged in":
+    // matching cities must be ignored and only the native-loading hint shown.
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue({
       ...mockProductPriceData,
       storeAvailability: {
         availableShopCount: 1,
         cities: ['Athens'],
-        userCity: 'Athens',
-        userZip: '10563',
-        matchingCities: ['Athens'],
+        userCity: 'Thessaloniki',
+        userZip: undefined,
+        matchingCities: ['Thessaloniki'],
         cityShopMap: {
           Athens: [202],
         },
@@ -400,52 +403,47 @@ describe('PriceCheckerDecorator', () => {
     vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
     vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
 
-    const sliderToggleButton = document.createElement('button');
-    sliderToggleButton.className = 'alternative-option-wrapper btn-reset';
-    const sliderClickSpy = vi.spyOn(sliderToggleButton, 'click');
-    document.body.appendChild(sliderToggleButton);
+    const nativePickupButton = document.createElement('button');
+    nativePickupButton.setAttribute(
+      'data-sku-page--offerings--offering-service-props-value',
+      JSON.stringify({ service: 'store_pickup', zip: '10563' }),
+    );
+    document.body.appendChild(nativePickupButton);
+    const nativeClickSpy = vi.spyOn(nativePickupButton, 'click');
 
     decorator = new PriceCheckerDecorator(mockState);
     await decorator.execute();
     await flushPromises();
 
-    vi.useFakeTimers();
-
-    const athensEntry = Array.from(document.querySelectorAll('.store-location-entry')).find(
-      (element) => element.textContent?.includes('Athens'),
+    const status = document.querySelector('.store-availability-status') as HTMLElement | null;
+    const loadLink = document.querySelector(
+      '.store-availability-more-link',
     ) as HTMLButtonElement | null;
-    expect(athensEntry).not.toBeNull();
 
-    const scrollIntoViewSpy = vi.fn();
-    const target = document.createElement('div');
-    target.id = 'shop-202';
-    target.scrollIntoView = scrollIntoViewSpy;
+    expect(status).not.toBeNull();
+    expect(status?.textContent).toContain(
+      'This product is available for store pickup in selected cities.',
+    );
+    expect(loadLink).not.toBeNull();
+    expect(loadLink?.textContent).toContain('See where you can pick it up.');
+    // The unconnected hint must not render the detailed store chip list.
+    expect(document.querySelector('.store-availability-shops-list')).toBeNull();
+    expect(document.querySelectorAll('.store-location-entry').length).toBe(0);
 
-    athensEntry?.click();
-    expect(sliderClickSpy).toHaveBeenCalledTimes(1);
-    expect(scrollIntoViewSpy).not.toHaveBeenCalled();
-
-    // The offer row appears after the async list load; the next poll tick finds it.
-    document.body.appendChild(target);
-
-    vi.advanceTimersByTime(150);
-
-    expect(scrollIntoViewSpy).toHaveBeenCalledTimes(1);
-    expect(target.classList.contains('lowest-price-store-highlight')).toBe(true);
+    loadLink?.click();
+    expect(nativeClickSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('does not render the store availability row when the user is not connected', async () => {
+  it('hides the store availability row when the user is not logged in and there is no pickup data', async () => {
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue({
       ...mockProductPriceData,
       storeAvailability: {
         availableShopCount: 1,
-        cities: ['Athens'],
+        cities: [],
         userCity: undefined,
         userZip: undefined,
         matchingCities: [],
-        cityShopMap: {
-          Athens: [202],
-        },
+        cityShopMap: {},
         orderCities: [],
         orderCityShopMap: {},
         onlineOnlyShopCount: 0,

@@ -78,6 +78,42 @@ npm run dev:firefox
 
 These commands will start the extension in development mode with hot reload enabled, making it easier to see your changes in real-time while developing.
 
+> **⚠️ Live site vs. Cloudflare.** skroutz.gr is protected by a Cloudflare
+> "Verify you are human" check. `web-ext` launches the dev browser with a
+> **remote-debugging session attached** and a **throwaway profile**, and
+> Cloudflare treats such a browser as automated — so the challenge reloads in
+> an endless loop no matter how many times you tick the box. This affects both
+> `dev:chrome` and `dev:firefox`, and is unrelated to the browser being opened.
+
+#### Testing against the live (Cloudflare-protected) site
+
+For real interaction with skroutz.gr, load the built extension into a **normal
+browser window** (no web-ext / no debugger attached) and keep the watcher
+running for rebuilds:
+
+1. **Chrome**
+   ```bash
+   npm run watch:chrome   # rebuilds build/chrome_build on every save
+   ```
+   Open your regular Chrome → `chrome://extensions` → enable **Developer mode** →
+   **Load unpacked** → select the `build/chrome_build` folder.
+2. **Firefox**
+   ```bash
+   npm run watch:firefox  # rebuilds build/firefox_build on every save
+   ```
+   Open your regular Firefox → `about:debugging#/runtime/this-firefox` →
+   **Load Temporary Add-on** → select the `build/firefox_build` folder.
+3. Visit skroutz.gr **once** and tick the Cloudflare checkbox. In a normal,
+   debugger-free browser this passes and stores a clearance cookie in your
+   real profile — it will **not** loop again on later visits.
+4. After each code change the watcher rebuilds automatically; click the ↻ on
+   the extension card (`chrome://extensions` / `about:debugging`) and refresh
+   the skroutz.gr tab to re-inject the content script.
+
+> `dev:chrome` / `dev:firefox` remain handy for quick install/reload smoke
+> checks and for pages without a bot check (e.g. the local preview files at
+> the repo root: `preview-universal-toggle.html`, `bestprice-search-live.html`).
+
 ### Build
 
 #### Build for Chrome
