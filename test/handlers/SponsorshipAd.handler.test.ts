@@ -9,6 +9,7 @@ import { SponsorshipAdHandler } from '../../src/handlers/SponsorshipAd.handler';
 vi.mock('../../src/clients/dom/client', () => ({
   DomClient: {
     getElementsByClass: vi.fn(),
+    getElementByClass: vi.fn(),
     addClassesToElement: vi.fn(),
     updateElementVisibility: vi.fn(),
   },
@@ -116,6 +117,58 @@ describe('SponsorshipAdHandler', () => {
       expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(2);
       expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(2);
       expect(mockState.sponsorshipAdCount).toBe(2);
+    });
+
+    it('should not flag an empty .js-sponsorship-handler shell without sponsorship content', () => {
+      // Arrange: no already-flagged, li, or #sponsorship elements
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+
+      // The empty listing page header shell (breadcrumb/title only, no ad slot)
+      const emptyShell = document.createElement('section');
+      emptyShell.classList.add('top-section', 'js-sponsorship-handler');
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([emptyShell]);
+
+      // No sponsorship content markers inside the shell
+      vi.mocked(DomClient.getElementByClass).mockReturnValue(null);
+
+      // Act
+      sponsorshipAdHandler.flag();
+
+      // Assert: empty shells must not be flagged or highlighted
+      expect(DomClient.addClassesToElement).not.toHaveBeenCalled();
+      expect(DomClient.updateElementVisibility).not.toHaveBeenCalled();
+      expect(mockState.sponsorshipAdCount).toBe(0);
+    });
+
+    it('should flag a .js-sponsorship-handler that contains sponsorship content', () => {
+      // Arrange: no already-flagged, li, or #sponsorship elements
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([]);
+
+      // The populated handler slot that holds a campaign banner
+      const sponsoredStrip = document.createElement('section');
+      sponsoredStrip.classList.add('top-section', 'js-sponsorship-handler');
+      vi.mocked(DomClient.getElementsByClass).mockReturnValueOnce([sponsoredStrip]);
+
+      // A #top-strip campaign banner lives inside -> real sponsorship
+      const topStrip = document.createElement('div');
+      topStrip.id = 'top-strip';
+      vi.mocked(DomClient.getElementByClass).mockReturnValue(topStrip);
+
+      // Act
+      sponsorshipAdHandler.flag();
+
+      // Assert: only the populated handler is flagged
+      expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(1);
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(
+        sponsoredStrip,
+        'flagged-sponsorship',
+      );
+      expect(DomClient.updateElementVisibility).toHaveBeenCalledTimes(1);
+      expect(mockState.sponsorshipAdCount).toBe(1);
     });
   });
 
