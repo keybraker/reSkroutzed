@@ -17,27 +17,25 @@ vi.mock('../../../src/clients/browser/client', () => ({
   },
 }));
 
-const mockWideModeDecorator = {
-  sync: vi.fn(),
-  execute: vi.fn(),
-  destroy: vi.fn(),
-};
-
 describe('createDarkModeToggleButton', () => {
   let ctx: ToggleButtonContext;
   let mockState: State;
 
   const buildContext = (state: State): ToggleButtonContext => ({
     state,
-    wideModeDecorator: mockWideModeDecorator,
-    // The dark-mode factory only touches `state`, so handlers can be minimal.
-    videoHandler: {} as never,
-    listProductAdHandler: {} as never,
-    recommendationAdHandler: {} as never,
-    shelfProductAdHandler: {} as never,
-    sponsorshipAdHandler: {} as never,
-    skoopHandler: {} as never,
-    campaignAdHandler: {} as never,
+    wideModeDecorator: {
+      sync: vi.fn(),
+      execute: vi.fn(),
+      destroy: vi.fn(),
+    },
+    // The dark-mode factory only touches `state`, so handlers can be stubs.
+    videoHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
+    listProductAdHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
+    recommendationAdHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
+    shelfProductAdHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
+    sponsorshipAdHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
+    skoopHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
+    campaignAdHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
   });
 
   beforeEach(() => {

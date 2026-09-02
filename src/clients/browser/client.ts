@@ -60,7 +60,7 @@ export class BrowserClient {
           return;
         }
 
-        if (parseAs) {
+        if (parseAs && typeof item === 'string') {
           resolve(parseAs(item));
           return;
         }

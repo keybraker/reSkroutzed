@@ -1,0 +1,50 @@
+version: 2
+updates:
+  # Keep npm dependencies up to date, grouped to limit PR noise.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    versioning-strategy: increase
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore(deps)
+      prefix-development: chore(deps-dev)
+    groups:
+      # Vitest 4 is a breaking upgrade (advisory GHSA-5xrq-8626-4rwp is
+      # critical); keep all Vitest-related packages in one PR so CI can
+      # validate them together.
+      vitest:
+        patterns:
+          - vitest
+          - '@vitest/*'
+      eslint:
+        patterns:
+          - eslint
+          - '@typescript-eslint/*'
+          - eslint-config-prettier
+          - eslint-plugin-*
+      webpack:
+        patterns:
+          - webpack
+          - '*-webpack-plugin'
+          - ts-loader
+          - css-loader
+          - css-minimizer-webpack-plugin
+          - mini-css-extract-plugin
+    ignore:
+      # web-ext 10+ is a breaking change for the release signing pipeline;
+      # review it manually before adopting.
+      - dependency-name: web-ext
+        update-types:
+          - version-update:semver-major
+
+  # Keep GitHub Actions up to date.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore(ci)

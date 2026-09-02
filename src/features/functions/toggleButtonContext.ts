@@ -1,25 +1,27 @@
 import { State } from '../../common/types/State.type';
-import { CampaignAdHandler } from '../../handlers/Campaign.handler';
-import { ListProductAdHandler } from '../../handlers/ListProductAd.handler';
-import { RecommendationAdHandler } from '../../handlers/RecommendationAd.handler';
-import { ShelfProductAdHandler } from '../../handlers/ShelfProductAd.handler';
-import { SkoopHandler } from '../../handlers/Skoop.handler';
-import { SponsorshipAdHandler } from '../../handlers/SponsorshipAd.handler';
-import { VideoAdHandler } from '../../handlers/VideoAd.handler';
-import { WideModeDecorator } from '../WideMode.decorator';
+import { AdHandlerInterface } from '../../handlers/common/interfaces/adHandler.interface';
+
+/** Wide-mode surface required by the toggle builders. */
+export type WideModeController = {
+  sync(): void;
+  execute(): void;
+  destroy(): void;
+};
 
 /**
  * Dependencies shared by every universal-toggle button factory.
- * Bundled so the button builders stay pure and testable.
+ * Bundled so the button builders stay pure and testable. Dependencies are
+ * declared structurally (interfaces), not as concrete classes, so tests can
+ * provide lightweight stubs.
  */
 export type ToggleButtonContext = {
   state: State;
-  wideModeDecorator: WideModeDecorator;
-  videoHandler: VideoAdHandler;
-  listProductAdHandler: ListProductAdHandler;
-  recommendationAdHandler: RecommendationAdHandler;
-  shelfProductAdHandler: ShelfProductAdHandler;
-  sponsorshipAdHandler: SponsorshipAdHandler;
-  skoopHandler: SkoopHandler;
-  campaignAdHandler: CampaignAdHandler;
+  wideModeDecorator: WideModeController;
+  videoHandler: AdHandlerInterface;
+  listProductAdHandler: AdHandlerInterface;
+  recommendationAdHandler: AdHandlerInterface;
+  shelfProductAdHandler: AdHandlerInterface;
+  sponsorshipAdHandler: AdHandlerInterface;
+  skoopHandler: AdHandlerInterface;
+  campaignAdHandler: AdHandlerInterface;
 };
