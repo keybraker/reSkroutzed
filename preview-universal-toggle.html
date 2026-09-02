@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Universal Toggle — shadcn re-skin preview</title>
+    <link rel="stylesheet" href="src/css/universalToggle.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background: #e9e9ee;
+        color: #18181b;
+        transition: background 0.25s ease;
+      }
+      body.dark-mode {
+        background: #0d0d10;
+        color: #f4f4f6;
+      }
+      .page-content {
+        padding: 40px 32px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .note {
+        font-size: 14px;
+        color: inherit;
+        opacity: 0.75;
+        line-height: 1.6;
+        max-width: 560px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #d9d9df;
+        border-radius: 12px;
+        padding: 18px;
+        margin: 16px 0;
+        max-width: 380px;
+      }
+      body.dark-mode .card {
+        background: #151518;
+        border-color: #26262e;
+      }
+      .controls {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        display: flex;
+        gap: 8px;
+        z-index: 20000;
+      }
+      .controls button {
+        font: inherit;
+        font-size: 13px;
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #2c2c35;
+        background: #1c1c22;
+        color: #f4f4f6;
+        cursor: pointer;
+      }
+      .controls button:hover {
+        background: #26262f;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-content">
+      <h2>reSkroutzed — Universal Toggle preview</h2>
+      <p class="note">
+        The FAB and opened pill below re-skin the in-page quick toggles. Click a control to flip
+        between a light page and the <code>.dark-mode</code> hardening variant, or to open/close the
+        menu.
+      </p>
+      <div class="card">
+        <strong>Skroutz-like product block</strong>
+        <p style="font-size: 13px; opacity: 0.7; margin: 6px 0 0">
+          Context placeholder — the toggle floats bottom-left over the page.
+        </p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="openBtn">Toggle menu</button>
+      <button id="darkBtn">Toggle .dark-mode</button>
+    </div>
+
+    <script>
+      // ------------------------------------------------------------------
+      // Icon paths (stroke-based, mirror src/features/functions/icons.ts)
+      // ------------------------------------------------------------------
+      const PATHS = {
+        moon: 'M13.5 8A5.5 5.5 0 1 1 8 2.5a4.5 4.5 0 0 0 5.5 5.5z',
+        expand: 'M9 1.5h5.5v5.5M14.5 1.5l-6 6' + 'M7 14.5H1.5V9M1.5 14.5l6-6',
+        tag:
+          'M2 3h4.34a1 1 0 0 1 .7.3l5.66 5.66a1 1 0 0 1 0 1.41l-4.95 4.95a1 1 0 0 1-1.41 0L1.3 10.28A1 1 0 0 1 1 9.58V4a1 1 0 0 1 1-1z' +
+          'M4.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z',
+        video:
+          'M2.5 3.5a1 1 0 0 1 1-1H8a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1v-9z' +
+          'M6 7v2l2.5-1L6 7z',
+        megaphone:
+          'M2 5.5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h1.5l-2 5h1.5l2.5-5h1a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5H2z' +
+          'M8 2l2-1v10l-2-1' +
+          'M11 4v4M13 2.5v7',
+        shelf: 'M8 2l6 3.5v5L8 14 2 10.5v-5L8 2z' + 'M2 5.5l6 3.5' + 'M8 9v5' + 'M14 5.5l-6 3.5',
+        sparkle: 'M8 1.5l1.07 3.43L12.5 6l-3.43 1.07L8 10.5l-1.07-3.43L3.5 6l3.43-1.07L8 1.5z',
+        newspaper:
+          'M3 2.5h7v4h3.5a.5.5 0 0 1 .5.5v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1z' +
+          'M4.5 7h5M4.5 9.5h5M4.5 12h3',
+        aiSlop: 'M3.5 13.5 L7 2.5 M7 2.5 L10.5 13.5 M5 9.5 L9 9.5' + 'M12.5 3.5 V12.5',
+      };
+
+      function svg(pathD) {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 16 16');
+        svg.setAttribute('width', '16');
+        svg.setAttribute('height', '16');
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', pathD);
+        p.setAttribute('fill', 'none');
+        p.setAttribute('stroke', 'currentColor');
+        p.setAttribute('stroke-width', '1.5');
+        p.setAttribute('stroke-linecap', 'round');
+        p.setAttribute('stroke-linejoin', 'round');
+        svg.appendChild(p);
+        return svg;
+      }
+
+      // ------------------------------------------------------------------
+      // Build the same DOM the UniversalToggleDecorator builds (open state)
+      // ------------------------------------------------------------------
+      const container = document.createElement('div');
+      container.classList.add('universal-toggle-container');
+
+      const mainToggle = document.createElement('button');
+      mainToggle.classList.add('universal-toggle-button');
+      mainToggle.title = 'ReSkroutzed Options';
+      const iconBorder = document.createElement('div');
+      iconBorder.classList.add('align-center', 'icon-border');
+      const logo = document.createElement('img');
+      logo.src = 'icons/128.png';
+      logo.alt = 'reSkroutzed';
+      logo.classList.add('logo-image');
+      iconBorder.appendChild(logo);
+      mainToggle.appendChild(iconBorder);
+
+      const bar = document.createElement('div');
+      bar.classList.add('toggle-buttons-container');
+
+      const defs = [
+        { cls: 'price-difference-option', special: 'percent', active: true },
+        { cls: 'dark-mode-option', path: 'moon', title: 'Dark mode', active: false },
+        { cls: 'wide-mode-option', path: 'expand', title: 'Wide mode', active: false },
+        { cls: 'ad-toggle-option', path: 'tag', title: 'Product ads', count: 3, active: true },
+        { cls: 'video-toggle-option', path: 'video', title: 'Video ads', count: 2, active: true },
+        {
+          cls: 'sponsorship-toggle-option',
+          path: 'megaphone',
+          title: 'Sponsorships',
+          active: true,
+        },
+        {
+          cls: 'shelf-ad-toggle-option',
+          path: 'shelf',
+          title: 'Shelf ads',
+          count: 1,
+          active: true,
+        },
+        {
+          cls: 'recommendation-ad-toggle-option',
+          path: 'sparkle',
+          title: 'Recommendations',
+          count: 4,
+          active: true,
+        },
+        { cls: 'skoop-toggle-option', path: 'newspaper', title: 'Skoop', active: false },
+        { cls: 'ai-slop-toggle-option', path: 'aiSlop', title: 'AI features', active: false },
+      ];
+
+      defs.forEach((def) => {
+        const btn = document.createElement('button');
+        btn.classList.add('toggle-option-button', def.cls);
+        if (def.active) btn.classList.add('active');
+        if (def.title) btn.title = def.title;
+
+        if (def.special === 'percent') {
+          const inner = document.createElement('span');
+          inner.textContent = '5%';
+          btn.appendChild(inner);
+        } else {
+          btn.appendChild(svg(PATHS[def.path]));
+          if (def.count > 0) {
+            const badge = document.createElement('div');
+            badge.classList.add('notification-bubble');
+            badge.textContent = String(def.count);
+            btn.appendChild(badge);
+          }
+        }
+        bar.appendChild(btn);
+      });
+
+      container.appendChild(bar);
+      container.appendChild(mainToggle);
+      document.body.appendChild(container);
+
+      // ------------------------------------------------------------------
+      // Controls — open/close menu + .dark-mode hardening variant
+      // ------------------------------------------------------------------
+      const menuButtons = () => container.querySelectorAll('.toggle-option-button');
+      let isMenuOpen = false;
+
+      const openMenu = () => {
+        container.classList.add('menu-open');
+        isMenuOpen = true;
+        menuButtons().forEach((button, index) => {
+          setTimeout(() => button.classList.add('button-active'), 60 * index);
+        });
+      };
+      const closeMenu = () => {
+        const buttons = menuButtons();
+        buttons.forEach((button, index) => {
+          setTimeout(() => button.classList.remove('button-active'), 40 * index);
+        });
+        setTimeout(() => container.classList.remove('menu-open'), 40 * buttons.length + 80);
+        isMenuOpen = false;
+      };
+      const toggleMenu = () => (isMenuOpen ? closeMenu() : openMenu());
+
+      document.getElementById('openBtn').addEventListener('click', toggleMenu);
+      mainToggle.addEventListener('click', toggleMenu);
+      document.getElementById('darkBtn').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+      });
+
+      // Start in the open state so the design is immediately visible
+      openMenu();
+    </script>
+  </body>
+</html>

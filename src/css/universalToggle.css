@@ -1,26 +1,38 @@
 /* ============================================================
-   reSkroutzed — Universal Toggle v3 (Premium Redesign)
+   reSkroutzed — Universal Toggle (shadcn-style opened menu)
    Injected into skroutz.gr pages. Uses !important to override
-   site styles. Matches popup design system tokens.
+   site styles. Neutral palette mirrors popup design tokens.
    ============================================================ */
 
 /* ---------- DESIGN TOKENS (scoped, isolated) ---------- */
 .universal-toggle-container {
-  --ut-surface-0: #4e4e58;
+  /* Floating action button (FAB) tokens — keep unchanged */
   --ut-surface-1: #f68b2495;
   --ut-surface-2: #444456;
-  --ut-surface-3: #54546a;
-  --ut-border: #64647c;
-  --ut-text: #f2f2f6;
-  --ut-text-secondary: #c4c4d2;
   --ut-accent: #f68b24;
-  --ut-accent-soft: rgba(246, 139, 36, 0.15);
   --ut-accent-glow: rgba(246, 139, 36, 0.35);
+  --ut-text: #f2f2f6;
+
+  /* Neutral shadcn-like palette for the opened menu */
+  --ut-menu-bg: #141417;
+  --ut-menu-border: #26262e;
+  --ut-btn-bg: #1c1c22;
+  --ut-btn-border: #2c2c35;
+  --ut-btn-hover: #26262f;
+  --ut-on-bg: rgba(242, 242, 246, 0.08);
+  --ut-on-ring: #dcdce4;
+  --ut-icon: #9b9ba6;
+  --ut-icon-strong: #f2f2f6;
+  --ut-badge-bg: #3f3f48;
+  --ut-badge-text: #ececf1;
+  --ut-input-bg: #0f0f13;
+
   --ut-radius-sm: 6px;
   --ut-radius-md: 10px;
   --ut-radius-lg: 14px;
   --ut-radius-full: 9999px;
   --ut-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ut-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --ut-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --ut-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --ut-shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -184,19 +196,17 @@
   gap: 6px !important;
   left: 0 !important;
   padding: 6px 6px 6px 58px !important;
-  background: rgba(54, 54, 68, 0.82) !important;
-  backdrop-filter: blur(16px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
-  border: 1px solid var(--ut-border) !important;
+  background: var(--ut-menu-bg) !important;
+  border: 1px solid var(--ut-menu-border) !important;
   border-radius: var(--ut-radius-full) !important;
   opacity: 0 !important;
   pointer-events: none !important;
-  transform: scale(0.85) !important;
+  transform: scale(0.96) !important;
   transform-origin: left center !important;
   transition:
-    transform 0.4s var(--ut-ease-spring),
-    opacity 0.25s var(--ut-ease) !important;
-  box-shadow: var(--ut-shadow-lg) !important;
+    transform 0.2s var(--ut-ease-smooth),
+    opacity 0.16s var(--ut-ease-smooth) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
   white-space: nowrap !important;
 }
 
@@ -214,7 +224,7 @@
     bottom: 60px !important;
     padding: 58px 6px 6px 6px !important;
     transform-origin: bottom center !important;
-    transform: scale(0.85) !important;
+    transform: scale(0.96) !important;
   }
 
   .menu-open .toggle-buttons-container {
@@ -230,69 +240,57 @@
   width: 40px !important;
   height: 40px !important;
   padding: 8px !important;
-  border: 1px solid var(--ut-border) !important;
+  border: 1px solid var(--ut-btn-border) !important;
   border-radius: 50% !important;
-  background: var(--ut-surface-2) !important;
-  color: var(--ut-text-secondary) !important;
+  background: var(--ut-btn-bg) !important;
+  color: var(--ut-icon) !important;
   cursor: pointer !important;
   position: relative !important;
   flex-shrink: 0 !important;
   transition:
-    transform 0.35s var(--ut-ease-spring),
-    opacity 0.25s var(--ut-ease),
-    background 0.25s var(--ut-ease),
-    border-color 0.25s var(--ut-ease),
-    color 0.25s var(--ut-ease),
-    box-shadow 0.25s var(--ut-ease) !important;
-  box-shadow: var(--ut-shadow-sm) !important;
+    opacity 0.18s var(--ut-ease-smooth),
+    transform 0.18s var(--ut-ease-smooth),
+    background-color 0.18s var(--ut-ease-smooth),
+    border-color 0.18s var(--ut-ease-smooth),
+    color 0.18s var(--ut-ease-smooth) !important;
   opacity: 0 !important;
-  transform: scale(0.5) translateX(-8px) !important;
+  transform: translateY(4px) !important;
 }
 
-/* Staggered entrance */
+/* Calm, staggered entrance */
 .menu-open .toggle-option-button.button-active {
   opacity: 1 !important;
-  transform: scale(1) translateX(0) !important;
+  transform: translateY(0) !important;
 }
 
 .toggle-option-button:hover {
-  background: var(--ut-surface-3) !important;
-  border-color: var(--ut-accent) !important;
-  color: var(--ut-text) !important;
-  transform: scale(1.12) !important;
-  box-shadow:
-    var(--ut-shadow-sm),
-    0 0 12px var(--ut-accent-glow) !important;
-  z-index: 2 !important;
+  background: var(--ut-btn-hover) !important;
+  border-color: var(--ut-icon) !important;
+  color: var(--ut-icon-strong) !important;
 }
 
 .toggle-option-button:active {
-  transform: scale(0.92) !important;
+  transform: translateY(0) scale(0.98) !important;
 }
 
-/* Active state: accent background */
+/* Enabled state: subtle outline ring (no fill) */
 .toggle-option-button.active {
-  background: var(--ut-accent) !important;
-  border-color: var(--ut-accent) !important;
-  color: #fff !important;
-  box-shadow:
-    var(--ut-shadow-sm),
-    0 0 12px var(--ut-accent-glow) !important;
+  background: var(--ut-on-bg) !important;
+  border-color: var(--ut-on-ring) !important;
+  color: var(--ut-icon-strong) !important;
 }
 
 .toggle-option-button.active:hover {
-  background: #e07d1a !important;
-  box-shadow:
-    var(--ut-shadow-sm),
-    0 0 18px var(--ut-accent-glow) !important;
+  background: rgba(242, 242, 246, 0.12) !important;
+  border-color: var(--ut-on-ring) !important;
 }
 
-/* Mobile: buttons animate from below */
+/* Mobile: buttons slide up from below */
 @media (max-width: 768px) {
   .toggle-option-button {
     margin-right: 0 !important;
     margin-bottom: 0 !important;
-    transform: scale(0.5) translateY(8px) !important;
+    transform: translateY(6px) !important;
   }
 }
 
@@ -305,7 +303,7 @@
   fill: currentColor !important;
 }
 
-/* ---------- NOTIFICATION BUBBLES ---------- */
+/* ---------- NOTIFICATION BADGES (neutral) ---------- */
 .notification-bubble {
   position: absolute !important;
   top: -5px !important;
@@ -313,49 +311,24 @@
   min-width: 18px !important;
   height: 18px !important;
   padding: 0 4px !important;
-  background: var(--ut-accent) !important;
-  color: #fff !important;
+  background: var(--ut-badge-bg) !important;
+  color: var(--ut-badge-text) !important;
   border-radius: var(--ut-radius-full) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 9px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   font-family:
     'Inter',
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
     sans-serif !important;
-  border: 2px solid var(--ut-surface-1) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+  border: 2px solid var(--ut-btn-bg) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35) !important;
   line-height: 1 !important;
   letter-spacing: 0.02em !important;
-}
-
-/* Colored variants for different ad types */
-.notification-bubble.video-notification {
-  background: #5856d6 !important;
-}
-
-.notification-bubble.recommendation-notification {
-  background: #2d9c86 !important;
-}
-
-.notification-bubble.shelf-notification {
-  background: #a78bfa !important;
-}
-
-.notification-bubble.sponsorship-notification {
-  background: #ec4899 !important;
-}
-
-.notification-bubble.skoop-notification {
-  background: #6366f1 !important;
-}
-
-.notification-bubble.ai-notification {
-  background: #ef4444 !important;
 }
 
 /* ---------- PRICE DIFFERENCE BUTTON ---------- */
@@ -367,8 +340,9 @@
 }
 
 .price-difference-option.active {
-  background: var(--ut-accent) !important;
-  color: #fff !important;
+  background: var(--ut-on-bg) !important;
+  color: var(--ut-icon-strong) !important;
+  border-color: var(--ut-on-ring) !important;
 }
 
 .price-difference-option span {
@@ -384,10 +358,10 @@
 
 /* Inline price input (desktop) */
 .price-inline-input {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: var(--ut-input-bg) !important;
+  border: 1px solid var(--ut-btn-border) !important;
   border-radius: var(--ut-radius-sm) !important;
-  color: #fff !important;
+  color: var(--ut-icon-strong) !important;
   font-family:
     'Inter',
     -apple-system,
@@ -404,8 +378,8 @@
 }
 
 .price-inline-input:focus {
-  border-color: #fff !important;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+  border-color: var(--ut-on-ring) !important;
+  box-shadow: 0 0 0 2px rgba(242, 242, 246, 0.25) !important;
 }
 
 /* Mobile price display */
@@ -457,34 +431,35 @@
 }
 
 .dark-mode .toggle-buttons-container {
-  background: rgba(68, 68, 86, 0.86) !important;
-  border-color: var(--ut-border) !important;
+  background: var(--ut-menu-bg) !important;
+  border-color: var(--ut-menu-border) !important;
 }
 
 .dark-mode .toggle-option-button {
-  background: var(--ut-surface-3) !important;
-  color: var(--ut-text) !important;
-  border-color: var(--ut-border) !important;
+  background: var(--ut-btn-bg) !important;
+  color: var(--ut-icon) !important;
+  border-color: var(--ut-btn-border) !important;
 }
 
 .dark-mode .toggle-option-button:hover {
-  background: #6a6a82 !important;
-  color: #fff !important;
-  border-color: var(--ut-accent) !important;
+  background: var(--ut-btn-hover) !important;
+  color: var(--ut-icon-strong) !important;
+  border-color: var(--ut-icon) !important;
 }
 
 .dark-mode .toggle-option-button.active {
-  background: var(--ut-accent) !important;
-  color: #fff !important;
-  border-color: var(--ut-accent) !important;
+  background: var(--ut-on-bg) !important;
+  color: var(--ut-icon-strong) !important;
+  border-color: var(--ut-on-ring) !important;
 }
 
 .dark-mode .toggle-option-button.active:hover {
-  background: #e07d1a !important;
+  background: rgba(242, 242, 246, 0.12) !important;
+  border-color: var(--ut-on-ring) !important;
 }
 
 .dark-mode .notification-bubble {
-  border-color: var(--ut-surface-3) !important;
+  border-color: var(--ut-btn-bg) !important;
 }
 
 .dark-mode .toggle-option-button svg {
@@ -493,13 +468,13 @@
 }
 
 .dark-mode .price-difference-option {
-  background: var(--ut-surface-3) !important;
-  color: var(--ut-text) !important;
+  color: var(--ut-icon) !important;
 }
 
 .dark-mode .price-difference-option.active {
-  background: var(--ut-accent) !important;
-  color: #fff !important;
+  background: var(--ut-on-bg) !important;
+  color: var(--ut-icon-strong) !important;
+  border-color: var(--ut-on-ring) !important;
 }
 
 /* ---------- ANIMATIONS ---------- */
