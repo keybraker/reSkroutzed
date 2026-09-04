@@ -3,7 +3,6 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {},
   "scripts": {
     "start:chrome": "web-ext run --source-dir ./build/chrome_build/ --target=chromium",
     "start:firefox": "web-ext run --source-dir ./build/firefox_build/",
@@ -14,6 +13,7 @@
     "watch:firefox": "webpack --env firefox --watch",
     "dev:chrome": "npm-run-all --parallel watch:chrome start:chrome",
     "dev:firefox": "npm-run-all --parallel watch:firefox start:firefox",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.ts\"",
     "lint-fix": "eslint \"**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.{ts,js,json,css}\"",
@@ -27,7 +27,8 @@
     "version:patch": "node scripts/bump-version.js patch",
     "version:minor": "node scripts/bump-version.js minor",
     "version:major": "node scripts/bump-version.js major",
-    "version:set": "node scripts/bump-version.js"
+    "version:set": "node scripts/bump-version.js",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/chrome": "^0.2.7",
@@ -45,7 +46,9 @@
     "eslint-plugin-prettier": "^5.2.6",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "happy-dom": "^12.10.3",
+    "husky": "^9.1.7",
     "jsdom": "^22.1.0",
+    "lint-staged": "^17.4.1",
     "mini-css-extract-plugin": "^2.7.6",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.5.3",
