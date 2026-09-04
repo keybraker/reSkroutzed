@@ -14,6 +14,7 @@ tsconfig.tsbuildinfo
 
 # build
 /build
+/dist
 *.zip
 
 webpack.zip
