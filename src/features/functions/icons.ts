@@ -9,6 +9,8 @@
  *     → crisp at small sizes, like Lucide / Feather icons
  *   - color inherited from parent button via currentColor
  *   - 1px internal padding — content fits within [1.5, 14.5]
+ *   - icons fill that box (bbox ≈ 12-13 units) so they carry equal visual weight
+ *     side by side; a small icon in a big box reads as the odd one out
  *   - Paired "on" / "off" variants; "off" uses a circle-slash for clarity
  *
  * Usage:
@@ -41,19 +43,19 @@ export const ICON = {
   // ── Dark Mode ──────────────────────────────────────────────────────────
 
   sun: {
-    // Circle with 8 rays
+    // Disc with 8 rays (rays meet the disc, so it still reads as a sun at 16px)
     path:
-      'M8 3.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z' +
-      'M8 1v1.5M8 13.5V15' +
-      'M1 8h1.5M13.5 8H15' +
-      'M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06' +
-      'M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06',
+      'M8 3.8a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4z' +
+      'M8 3V1.5M8 14.5v-1.5' +
+      'M3 8H1.5M14.5 8h-1.5' +
+      'M4.46 4.46l-1.06-1.06M11.54 11.54l1.06 1.06' +
+      'M4.46 11.54l-1.06 1.06M11.54 4.46l1.06-1.06',
     label: 'Light mode',
   },
 
   moon: {
-    // Crescent moon
-    path: 'M13.5 8A5.5 5.5 0 1 1 8 2.5a4.5 4.5 0 0 0 5.5 5.5z',
+    // Crescent moon — outer disc arc closed by a deeper bite, leaving sharp horns
+    path: 'M13.75 8A5.75 5.75 0 1 1 8 2.25a5.5 5.5 0 0 0 5.75 5.75z',
     label: 'Dark mode',
   },
 
@@ -68,31 +70,32 @@ export const ICON = {
   // ── Product Ads ────────────────────────────────────────────────────────
 
   tag: {
-    // Price tag
+    // Price tag: rounded head carrying the punch hole, rounded point at the far end
     path:
-      'M2 3h4.34a1 1 0 0 1 .7.3l5.66 5.66a1 1 0 0 1 0 1.41l-4.95 4.95a1 1 0 0 1-1.41 0L1.3 10.28A1 1 0 0 1 1 9.58V4a1 1 0 0 1 1-1z' +
-      'M4.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z',
+      'M8.3 1.8l5.14 5.14a1.5 1.5 0 0 1 0 2.12l-4.38 4.38a1.5 1.5 0 0 1-2.12 0L1.8 8.3V3.3a1.5 1.5 0 0 1 1.5-1.5z' +
+      'M6.2 5.45a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5z',
     label: 'Product ads visible',
   },
 
   // ── Video Ads ──────────────────────────────────────────────────────────
 
   video: {
-    // Play button (rectangle with play triangle)
+    // Video frame (wide rounded rectangle) with a centred play triangle
     path:
-      'M2.5 3.5a1 1 0 0 1 1-1H8a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1v-9z' +
-      'M6 7v2l2.5-1L6 7z',
+      'M4 3h8a2.5 2.5 0 0 1 2.5 2.5v5a2.5 2.5 0 0 1-2.5 2.5H4a2.5 2.5 0 0 1-2.5-2.5v-5A2.5 2.5 0 0 1 4 3z' +
+      'M6.3 5.3L11.3 8l-5 2.7z',
     label: 'Video ads visible',
   },
 
   // ── Sponsorship ────────────────────────────────────────────────────────
 
   megaphone: {
-    // Loudspeaker / announcement
+    // Flared horn: closed cone, hand grip hanging under it, two sound waves
     path:
-      'M2 5.5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h1.5l-2 5h1.5l2.5-5h1a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5H2z' +
-      'M8 2l2-1v10l-2-1' +
-      'M11 4v4M13 2.5v7',
+      'M9 2.5L1.75 5.75v4.5L9 13.5z' +
+      'M6.6 12.42a3.2 3.2 0 0 1-3.5-1.56' +
+      'M11.2 5.75a3 3 0 0 1 0 4.5' +
+      'M13.6 4.3a8.06 8.06 0 0 1 0 7.4',
     label: 'Sponsorships visible',
   },
 
@@ -108,7 +111,7 @@ export const ICON = {
 
   sparkle: {
     // 4-point star / sparkle
-    path: 'M8 1.5l1.07 3.43L12.5 6l-3.43 1.07L8 10.5l-1.07-3.43L3.5 6l3.43-1.07L8 1.5z',
+    path: 'M8 2.4l1.33 4.27L13.6 8l-4.27 1.33L8 13.6l-1.33-4.27L2.4 8l4.27-1.33z',
     label: 'Recommendation ads visible',
   },
 
@@ -125,8 +128,8 @@ export const ICON = {
   // ── AI Slop ────────────────────────────────────────────────────────────
 
   aiSlop: {
-    // Monogram "AI" — left stroke is the 'A', right stroke is the 'I'
-    path: 'M3.5 13.5 L7 2.5 M7 2.5 L10.5 13.5 M5 9.5 L9 9.5' + 'M12.5 3.5 V12.5',
+    // Monogram "AI" — 'A' apex with crossbar, then the 'I' stem at the same cap height
+    path: 'M6.6 2.5l-3.5 11M6.6 2.5l3.5 11M4.25 9.6h4.7M12.9 2.5v11',
     label: 'AI slop visible',
   },
 } as const satisfies Record<string, IconDef>;
