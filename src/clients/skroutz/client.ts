@@ -1,4 +1,5 @@
-import { PriceChart, PriceChartValue, ProductData, Store } from './types';
+import { parseShopCards } from './shopCards';
+import { PriceChart, PriceChartValue, ShopCard, Store } from './types';
 
 type PriceData = {
   price: number;
@@ -41,7 +42,7 @@ type DomStoreAvailability = {
 };
 
 export class SkroutzClient {
-  private static readonly productDataCache = new Map<string, Promise<ProductData>>();
+  private static readonly shopCardsCache = new Map<string, Promise<ShopCard[]>>();
 
   private static pricesMatch(left: number, right: number): boolean {
     return Math.round(left * 100) === Math.round(right * 100);
@@ -52,14 +53,14 @@ export class SkroutzClient {
       const productCode = this.getSku();
       const skroutzRawPrice = this.getSkroutzRawPrice();
 
-      const productData = await this.getProductData(productCode);
+      const shopCards = await this.getShopCards(productCode);
       const userCity = this.getUserCity();
       const userZip = this.getConnectedUserZip();
-      const storeAvailability = await this.getStoreAvailability(productData, userCity, userZip);
+      const storeAvailability = await this.getStoreAvailability(shopCards, userCity, userZip);
 
       return {
-        buyThroughSkroutz: this.getSkroutzPriceData(productData, skroutzRawPrice),
-        buyThroughStore: this.getStorePriceData(productData),
+        buyThroughSkroutz: this.getSkroutzPriceData(shopCards, skroutzRawPrice),
+        buyThroughStore: this.getStorePriceData(shopCards),
         storeAvailability,
       };
     } catch (error) {
@@ -71,9 +72,9 @@ export class SkroutzClient {
   public static async getCurrentProductNames(): Promise<string[]> {
     try {
       const productCode = this.getSku();
-      const productData = await this.getProductData(productCode);
+      const shopCards = await this.getShopCards(productCode);
 
-      return this.extractProductNames(productData);
+      return this.extractProductNames(shopCards);
     } catch (error) {
       console.warn('Failed to fetch Skroutz product names:', error);
 
@@ -172,51 +173,54 @@ export class SkroutzClient {
     throw new Error('Failed to fetch product SKU');
   }
 
-  private static async getProductData(productCode: string): Promise<ProductData> {
-    const cachedProductData = this.productDataCache.get(productCode);
-    if (cachedProductData) {
-      return await cachedProductData;
+  private static async getShopCards(productCode: string): Promise<ShopCard[]> {
+    const cachedShopCards = this.shopCardsCache.get(productCode);
+    if (cachedShopCards) {
+      return await cachedShopCards;
     }
 
-    const productDataPromise = (async (): Promise<ProductData> => {
-      const response = await fetch(`https://www.skroutz.gr/s/${productCode}/filter_products.json`, {
+    const shopCardsPromise = (async (): Promise<ShopCard[]> => {
+      const response = await fetch(`https://www.skroutz.gr/s/${productCode}/shops_list`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
         },
       });
 
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch (HTTP: ${response.status}) price data for product with SKU ${productCode}`,
+          `Failed to fetch (HTTP: ${response.status}) shop data for product with SKU ${productCode}`,
         );
       }
 
-      return (await response.json()) as ProductData;
+      const shopCards = parseShopCards(await response.text());
+      if (shopCards.length === 0) {
+        throw new Error(`No shop data found for product with SKU ${productCode}`);
+      }
+
+      return shopCards;
     })();
 
-    this.productDataCache.set(productCode, productDataPromise);
+    this.shopCardsCache.set(productCode, shopCardsPromise);
 
     try {
-      return await productDataPromise;
+      return await shopCardsPromise;
     } catch (error) {
-      this.productDataCache.delete(productCode);
+      this.shopCardsCache.delete(productCode);
       throw error;
     }
   }
 
-  private static extractProductNames(productData: ProductData): string[] {
+  private static extractProductNames(shopCards: ShopCard[]): string[] {
     const productNameCounts = new Map<string, number>();
 
-    Object.values(productData.product_cards).forEach((productCard) => {
-      productCard.products.forEach((product) => {
-        const name = product.name.trim();
-        if (!name) {
-          return;
-        }
+    shopCards.forEach((shopCard) => {
+      const name = shopCard.productName.trim();
+      if (!name) {
+        return;
+      }
 
-        productNameCounts.set(name, (productNameCounts.get(name) ?? 0) + 1);
-      });
+      productNameCounts.set(name, (productNameCounts.get(name) ?? 0) + 1);
     });
 
     return [...productNameCounts.entries()]
@@ -289,12 +293,12 @@ export class SkroutzClient {
   }
 
   private static async getStoreAvailability(
-    productData: ProductData,
+    shopCards: ShopCard[],
     userCity?: string,
     userZip?: string,
   ): Promise<StoreAvailabilityData> {
     const productCode = this.getSku();
-    const storeIds = this.getUniqueShopIds(productData);
+    const storeIds = this.getUniqueShopIds(shopCards);
     const {
       cities: domCities,
       cityShopMap: domCityShopMap,
@@ -464,14 +468,10 @@ export class SkroutzClient {
     }
   }
 
-  private static getUniqueShopIds(productData: ProductData): number[] {
-    return Array.from(
-      new Set(
-        Object.values(productData.product_cards)
-          .map((card) => card.shop_id)
-          .filter((id) => id > 0),
-      ),
-    ).sort((left, right) => left - right);
+  private static getUniqueShopIds(shopCards: ShopCard[]): number[] {
+    return Array.from(new Set(shopCards.map((card) => card.shopId).filter((id) => id > 0))).sort(
+      (left, right) => left - right,
+    );
   }
 
   private static normalizeStoreResponse(payload: unknown): Store[] {
@@ -844,52 +844,42 @@ export class SkroutzClient {
     return normalizedValue === 'ελλαδα' || normalizedValue === 'greece';
   }
 
-  private static getSkroutzPriceData(productData: ProductData, skroutzRawPrice: number): PriceData {
-    const productCards = productData.product_cards;
-
-    // Primary match: raw_price (the net/base price shown in the ecommerce buybox)
-    const cardByRawPrice = Object.values(productCards).find((card) =>
-      this.pricesMatch(card.raw_price, skroutzRawPrice),
+  private static getSkroutzPriceData(shopCards: ShopCard[], skroutzRawPrice: number): PriceData {
+    // Primary match: the raw price is the net/base price shown in the buybox
+    const cardByRawPrice = shopCards.find((card) =>
+      this.pricesMatch(card.rawPrice, skroutzRawPrice),
     );
     if (cardByRawPrice) {
-      return {
-        price: cardByRawPrice.raw_price,
-        shippingCost: cardByRawPrice.shipping_cost,
-        totalPrice: cardByRawPrice.raw_price + cardByRawPrice.shipping_cost,
-        shopId: cardByRawPrice.shop_id,
-      };
+      return this.buildPriceData(cardByRawPrice, cardByRawPrice.rawPrice);
     }
 
-    // Fallback match: ecommerce_final_price (Skroutz-subsidised/discounted price)
-    const firstCard = Object.values(productCards).find((card) =>
+    // Fallback match: the price the shop card displays (may be Skroutz-subsidised)
+    const cardByFinalPrice = shopCards.find((card) =>
       this.pricesMatch(this.getEffectiveCardPrice(card), skroutzRawPrice),
     );
-    if (firstCard) {
-      return {
-        price: this.getEffectiveCardPrice(firstCard),
-        shippingCost: firstCard.shipping_cost,
-        totalPrice: this.getEffectiveCardPrice(firstCard) + firstCard.shipping_cost,
-        shopId: firstCard.shop_id,
-      };
+    if (cardByFinalPrice) {
+      return this.buildPriceData(cardByFinalPrice, this.getEffectiveCardPrice(cardByFinalPrice));
     }
 
     const currentBuyboxShopId = this.getCurrentBuyboxShopId();
     if (currentBuyboxShopId !== undefined) {
-      const cardByBuyboxShop = Object.values(productCards).find(
-        (card) => card.shop_id === currentBuyboxShopId,
-      );
+      const cardByBuyboxShop = shopCards.find((card) => card.shopId === currentBuyboxShopId);
 
       if (cardByBuyboxShop) {
-        return {
-          price: skroutzRawPrice,
-          shippingCost: cardByBuyboxShop.shipping_cost,
-          totalPrice: skroutzRawPrice + cardByBuyboxShop.shipping_cost,
-          shopId: cardByBuyboxShop.shop_id,
-        };
+        return this.buildPriceData(cardByBuyboxShop, skroutzRawPrice);
       }
     }
 
-    throw new Error('No product cards found');
+    throw new Error('No shop card matched the current buybox price');
+  }
+
+  private static buildPriceData(card: ShopCard, price: number): PriceData {
+    return {
+      price,
+      shippingCost: card.shippingCost,
+      totalPrice: price + card.shippingCost,
+      shopId: card.shopId,
+    };
   }
 
   private static getCurrentBuyboxShopId(): number | undefined {
@@ -910,22 +900,20 @@ export class SkroutzClient {
     return undefined;
   }
 
-  private static getStorePriceData(productData: ProductData): PriceData {
-    const productCards = productData.product_cards;
-
+  private static getStorePriceData(shopCards: ShopCard[]): PriceData {
     let lowestStorePrice = Number.MAX_VALUE;
     let lowestStoreProductPrice = Number.MAX_VALUE;
     let lowestStoreShippingCost = Number.MAX_VALUE;
     let storeShopId = 0;
 
-    Object.values(productCards).forEach((card) => {
+    shopCards.forEach((card) => {
       const effectivePrice = this.getEffectiveCardPrice(card);
-      const totalCost = effectivePrice + card.shipping_cost;
+      const totalCost = effectivePrice + card.shippingCost;
       if (totalCost < lowestStorePrice) {
         lowestStorePrice = totalCost;
         lowestStoreProductPrice = effectivePrice;
-        lowestStoreShippingCost = card.shipping_cost;
-        storeShopId = card.shop_id;
+        lowestStoreShippingCost = card.shippingCost;
+        storeShopId = card.shopId;
       }
     });
 
@@ -937,7 +925,7 @@ export class SkroutzClient {
     };
   }
 
-  private static getEffectiveCardPrice(card: ProductData['product_cards'][string]): number {
-    return card.ecommerce_final_price !== 0 ? card.ecommerce_final_price : card.raw_price;
+  private static getEffectiveCardPrice(card: ShopCard): number {
+    return card.finalPrice !== 0 ? card.finalPrice : card.rawPrice;
   }
 }

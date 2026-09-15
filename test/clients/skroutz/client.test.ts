@@ -1,140 +1,49 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProductPriceData, SkroutzClient } from '../../../src/clients/skroutz/client';
-import { ProductData } from '../../../src/clients/skroutz/types';
+
+type ShopCardFixture = {
+  shopId: number;
+  rawPrice: number;
+  finalPrice?: number;
+  shippingCost?: number;
+  productName?: string;
+};
+
+const formatAmount = (value: number): string => value.toFixed(2).replace('.', ',');
+
+const buildShopCardHtml = (card: ShopCardFixture): string => {
+  const shippingCost = card.shippingCost ?? 0;
+  const feeText =
+    shippingCost === 0
+      ? '<span class="product-card-fee-text">Δωρεάν μεταφορικά</span>'
+      : `<span class="product-card-fee-text"><span class="product-card-fee-value">${formatAmount(
+          shippingCost,
+        )} €</span></span>`;
+  const productName = card.productName ?? `Product of shop ${card.shopId}`;
+
+  return `
+    <li class="product-card-redesigned" data-shop-id="${card.shopId}" data-raw-price="${
+      card.rawPrice
+    }" data-price="${formatAmount(card.finalPrice ?? card.rawPrice)} €">
+      <div class="product-name" title="${productName}">${productName}</div>
+      <div class="product-card-delivery-box">
+        <div class="product-card-fee">${feeText}</div>
+      </div>
+    </li>
+  `;
+};
+
+const buildShopsListHtml = (shopCards: ShopCardFixture[]): string =>
+  `<ol id="prices" class="sku-list">${shopCards.map(buildShopCardHtml).join('')}</ol>`;
 
 describe('SkroutzClient', () => {
-  // Sample product data for tests
-  const mockProductData: ProductData = {
-    product_card_ids: [1, 2, 3],
-    sponsored_product_card_ids: [1],
-    disabled_product_ids: [],
-    product_cards: {
-      '1': {
-        id: 1,
-        shop_id: 101,
-        price: '€1.028,89',
-        shipping_cost: 0,
-        raw_price: 1028.89,
-        sponsored: true,
-        ecommerce_final_price: 0,
-        // Other required fields with default values
-        marketplace: false,
-        shop_details_icons: [],
-        products: [],
-        ecommerce_available: true,
-        only_available_through_fbs: null,
-        official_reseller: false,
-        expert_seller: false,
-        sponsored_by_merchant_tracking_url: '',
-        merchant_funded_installments: false,
-        sponsored_by_merchant_follow_cookie_link_data_cart: {},
-        discount_voucher_active: false,
-        fbs_active: false,
-        force_cargo_shipping_benefits: false,
-        ecommerce_final_price_formatted: '',
-        ecommerce_payment_method_cost_formatted: null,
-        ecommerce_payment_method_cost_supported: null,
-        ecommerce_shipping_cost_formatted: '',
-        fbm: false,
-        final_price: 1028.89,
-        final_price_formatted: '€1.028,89',
-        final_price_without_payment_cost_formatted: '€1.028,89',
-        has_merchant_loyalty_points: false,
-        loyalty_points: '',
-        net_price_formatted: '€1.028,89',
-        no_credit_card: false,
-        payment_method_cost_formatted: null,
-        payment_method_cost_supported: null,
-        shipping_cost_formatted: '€0',
-        untracked_redirect_supported: false,
-        coupon_info: null,
-      },
-      '2': {
-        id: 2,
-        shop_id: 102,
-        price: '€999,99',
-        shipping_cost: 3.5,
-        raw_price: 999.99,
-        sponsored: false,
-        ecommerce_final_price: 0,
-        // Other required fields with default values
-        marketplace: false,
-        shop_details_icons: [],
-        products: [],
-        ecommerce_available: true,
-        only_available_through_fbs: null,
-        official_reseller: false,
-        expert_seller: false,
-        sponsored_by_merchant_tracking_url: '',
-        merchant_funded_installments: false,
-        sponsored_by_merchant_follow_cookie_link_data_cart: {},
-        discount_voucher_active: false,
-        fbs_active: false,
-        force_cargo_shipping_benefits: false,
-        ecommerce_final_price_formatted: '',
-        ecommerce_payment_method_cost_formatted: null,
-        ecommerce_payment_method_cost_supported: null,
-        ecommerce_shipping_cost_formatted: '',
-        fbm: false,
-        final_price: 999.99,
-        final_price_formatted: '€999,99',
-        final_price_without_payment_cost_formatted: '€999,99',
-        has_merchant_loyalty_points: false,
-        loyalty_points: '',
-        net_price_formatted: '€999,99',
-        no_credit_card: false,
-        payment_method_cost_formatted: null,
-        payment_method_cost_supported: null,
-        shipping_cost_formatted: '€3,5',
-        untracked_redirect_supported: false,
-        coupon_info: null,
-      },
-      '3': {
-        id: 3,
-        shop_id: 103,
-        price: '€950,00',
-        shipping_cost: 5,
-        raw_price: 950,
-        sponsored: false,
-        ecommerce_final_price: 945,
-        // Other required fields with default values
-        marketplace: false,
-        shop_details_icons: [],
-        products: [],
-        ecommerce_available: true,
-        only_available_through_fbs: null,
-        official_reseller: false,
-        expert_seller: false,
-        sponsored_by_merchant_tracking_url: '',
-        merchant_funded_installments: false,
-        sponsored_by_merchant_follow_cookie_link_data_cart: {},
-        discount_voucher_active: false,
-        fbs_active: false,
-        force_cargo_shipping_benefits: false,
-        ecommerce_final_price_formatted: '€945',
-        ecommerce_payment_method_cost_formatted: null,
-        ecommerce_payment_method_cost_supported: null,
-        ecommerce_shipping_cost_formatted: '',
-        fbm: false,
-        final_price: 950,
-        final_price_formatted: '€950,00',
-        final_price_without_payment_cost_formatted: '€950,00',
-        has_merchant_loyalty_points: false,
-        loyalty_points: '',
-        net_price_formatted: '€950,00',
-        no_credit_card: false,
-        payment_method_cost_formatted: null,
-        payment_method_cost_supported: null,
-        shipping_cost_formatted: '€5',
-        untracked_redirect_supported: false,
-        coupon_info: null,
-      },
-    },
-    shop_count: 3,
-    price_min: '€950,00',
-    price_drop_percentage: null,
-  };
+  // Sample shop cards as served by GET /s/<sku>/shops_list
+  const mockShopCards: ShopCardFixture[] = [
+    { shopId: 101, rawPrice: 1028.89, shippingCost: 0 },
+    { shopId: 102, rawPrice: 999.99, shippingCost: 3.5 },
+    { shopId: 103, rawPrice: 950, finalPrice: 945, shippingCost: 5 },
+  ];
 
   const mockStoreData = [
     {
@@ -185,10 +94,10 @@ describe('SkroutzClient', () => {
     vi.fn().mockImplementation((input: RequestInfo | URL) => {
       const url = String(input);
 
-      if (url.includes('filter_products.json')) {
+      if (url.includes('shops_list')) {
         return Promise.resolve({
           ok: true,
-          json: vi.fn().mockResolvedValue(mockProductData),
+          text: vi.fn().mockResolvedValue(buildShopsListHtml(mockShopCards)),
         });
       }
 
@@ -214,9 +123,7 @@ describe('SkroutzClient', () => {
   const originalConsoleWarn = console.warn;
 
   beforeEach(() => {
-    (
-      SkroutzClient as unknown as { productDataCache: Map<string, Promise<ProductData>> }
-    ).productDataCache.clear();
+    (SkroutzClient as unknown as { shopCardsCache: Map<string, unknown> }).shopCardsCache.clear();
 
     // Mock document body and elements
     document.body.innerHTML = `
@@ -270,7 +177,7 @@ describe('SkroutzClient', () => {
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        'https://www.skroutz.gr/s/12345678/filter_products.json',
+        'https://www.skroutz.gr/s/12345678/shops_list',
         expect.any(Object),
       );
 
@@ -347,63 +254,20 @@ describe('SkroutzClient', () => {
       });
     });
 
-    it('should match the buybox against raw_price when ecommerce_final_price equals raw_price plus shipping', async () => {
-      // Mirrors real Skroutz API behaviour where ecommerce_final_price = raw_price + shipping_cost
-      // and the buybox .final-price shows the net/raw price, not the total.
-      const ecProductData: ProductData = {
-        product_card_ids: [10],
-        sponsored_product_card_ids: [],
-        disabled_product_ids: [],
-        product_cards: {
-          '10': {
-            id: 10,
-            shop_id: 5527,
-            price: '20,96 €',
-            shipping_cost: 3.5,
-            raw_price: 20.96,
-            sponsored: false,
-            ecommerce_final_price: 24.46, // raw_price + shipping_cost
-            marketplace: false,
-            shop_details_icons: [],
-            products: [],
-            ecommerce_available: true,
-            only_available_through_fbs: false,
-            official_reseller: false,
-            expert_seller: false,
-            sponsored_by_merchant_tracking_url: '',
-            merchant_funded_installments: false,
-            sponsored_by_merchant_follow_cookie_link_data_cart: {},
-            discount_voucher_active: false,
-            fbs_active: false,
-            force_cargo_shipping_benefits: false,
-            ecommerce_final_price_formatted: '24,46 €',
-            ecommerce_payment_method_cost_formatted: null,
-            ecommerce_payment_method_cost_supported: null,
-            ecommerce_shipping_cost_formatted: '3,50 €',
-            fbm: false,
-            final_price: 24.46,
-            final_price_formatted: '24,46 €',
-            final_price_without_payment_cost_formatted: '24,46 €',
-            has_merchant_loyalty_points: false,
-            loyalty_points: '21',
-            net_price_formatted: '20,96 €',
-            no_credit_card: false,
-            payment_method_cost_formatted: null,
-            payment_method_cost_supported: null,
-            shipping_cost_formatted: '+ 3,50 €',
-            untracked_redirect_supported: true,
-            coupon_info: null,
-          },
-        },
-        shop_count: 1,
-        price_min: '20,96 €',
-        price_drop_percentage: null,
-      };
+    it('should match the buybox against the raw price when the card price equals raw price plus shipping', async () => {
+      // Mirrors real Skroutz behaviour where the card displays raw_price + shipping_cost
+      // while the buybox .final-price shows the net/raw price, not the total.
+      const ecProductCards: ShopCardFixture[] = [
+        { shopId: 5527, rawPrice: 20.96, finalPrice: 24.46, shippingCost: 3.5 },
+      ];
 
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
-        if (url.includes('filter_products.json')) {
-          return Promise.resolve({ ok: true, json: vi.fn().mockResolvedValue(ecProductData) });
+        if (url.includes('shops_list')) {
+          return Promise.resolve({
+            ok: true,
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(ecProductCards)),
+          });
         }
         if (url.includes('product_cards_nearest_location.json')) {
           return Promise.resolve({ ok: true, json: vi.fn().mockResolvedValue([]) });
@@ -437,64 +301,18 @@ describe('SkroutzClient', () => {
       });
     });
 
-    it('should match the buybox against raw_price when the API value has floating point noise', async () => {
-      const noisyPriceProductData: ProductData = {
-        product_card_ids: [11],
-        sponsored_product_card_ids: [],
-        disabled_product_ids: [],
-        product_cards: {
-          '11': {
-            id: 11,
-            shop_id: 13113,
-            price: '17,36 €',
-            shipping_cost: 3.5,
-            raw_price: 17.360000000000003,
-            sponsored: false,
-            ecommerce_final_price: 20.86,
-            marketplace: false,
-            shop_details_icons: [],
-            products: [],
-            ecommerce_available: true,
-            only_available_through_fbs: false,
-            official_reseller: false,
-            expert_seller: false,
-            sponsored_by_merchant_tracking_url: '',
-            merchant_funded_installments: false,
-            sponsored_by_merchant_follow_cookie_link_data_cart: {},
-            discount_voucher_active: false,
-            fbs_active: true,
-            force_cargo_shipping_benefits: false,
-            ecommerce_final_price_formatted: '20,86 €',
-            ecommerce_payment_method_cost_formatted: null,
-            ecommerce_payment_method_cost_supported: null,
-            ecommerce_shipping_cost_formatted: '3,50 €',
-            fbm: false,
-            final_price: 20.86,
-            final_price_formatted: '20,86 €',
-            final_price_without_payment_cost_formatted: '20,86 €',
-            has_merchant_loyalty_points: false,
-            loyalty_points: '',
-            net_price_formatted: '17,36 €',
-            no_credit_card: false,
-            payment_method_cost_formatted: null,
-            payment_method_cost_supported: null,
-            shipping_cost_formatted: '3,50 €',
-            untracked_redirect_supported: false,
-            coupon_info: null,
-          },
-        },
-        shop_count: 1,
-        price_min: '17,36 €',
-        price_drop_percentage: null,
-      };
+    it('should match the buybox against the raw price when the served value has floating point noise', async () => {
+      const noisyPriceShopCards: ShopCardFixture[] = [
+        { shopId: 13113, rawPrice: 17.360000000000003, finalPrice: 20.86, shippingCost: 3.5 },
+      ];
 
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(noisyPriceProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(noisyPriceShopCards)),
           });
         }
 
@@ -539,102 +357,18 @@ describe('SkroutzClient', () => {
     });
 
     it('should match the buybox against the active merchant shop when price fields do not match', async () => {
-      const mismatchedBuyboxProductData: ProductData = {
-        product_card_ids: [12, 13],
-        sponsored_product_card_ids: [],
-        disabled_product_ids: [],
-        product_cards: {
-          '12': {
-            id: 12,
-            shop_id: 13113,
-            price: '17,50 €',
-            shipping_cost: 3.5,
-            raw_price: 17.5,
-            sponsored: false,
-            ecommerce_final_price: 20.95,
-            marketplace: false,
-            shop_details_icons: [],
-            products: [],
-            ecommerce_available: true,
-            only_available_through_fbs: false,
-            official_reseller: false,
-            expert_seller: false,
-            sponsored_by_merchant_tracking_url: '',
-            merchant_funded_installments: false,
-            sponsored_by_merchant_follow_cookie_link_data_cart: {},
-            discount_voucher_active: false,
-            fbs_active: true,
-            force_cargo_shipping_benefits: false,
-            ecommerce_final_price_formatted: '20,95 €',
-            ecommerce_payment_method_cost_formatted: null,
-            ecommerce_payment_method_cost_supported: null,
-            ecommerce_shipping_cost_formatted: '3,50 €',
-            fbm: false,
-            final_price: 20.95,
-            final_price_formatted: '20,95 €',
-            final_price_without_payment_cost_formatted: '20,95 €',
-            has_merchant_loyalty_points: false,
-            loyalty_points: '',
-            net_price_formatted: '17,50 €',
-            no_credit_card: false,
-            payment_method_cost_formatted: null,
-            payment_method_cost_supported: null,
-            shipping_cost_formatted: '3,50 €',
-            untracked_redirect_supported: false,
-            coupon_info: null,
-          },
-          '13': {
-            id: 13,
-            shop_id: 15000,
-            price: '18,00 €',
-            shipping_cost: 4,
-            raw_price: 18,
-            sponsored: false,
-            ecommerce_final_price: 22,
-            marketplace: false,
-            shop_details_icons: [],
-            products: [],
-            ecommerce_available: true,
-            only_available_through_fbs: false,
-            official_reseller: false,
-            expert_seller: false,
-            sponsored_by_merchant_tracking_url: '',
-            merchant_funded_installments: false,
-            sponsored_by_merchant_follow_cookie_link_data_cart: {},
-            discount_voucher_active: false,
-            fbs_active: true,
-            force_cargo_shipping_benefits: false,
-            ecommerce_final_price_formatted: '22,00 €',
-            ecommerce_payment_method_cost_formatted: null,
-            ecommerce_payment_method_cost_supported: null,
-            ecommerce_shipping_cost_formatted: '4,00 €',
-            fbm: false,
-            final_price: 22,
-            final_price_formatted: '22,00 €',
-            final_price_without_payment_cost_formatted: '22,00 €',
-            has_merchant_loyalty_points: false,
-            loyalty_points: '',
-            net_price_formatted: '18,00 €',
-            no_credit_card: false,
-            payment_method_cost_formatted: null,
-            payment_method_cost_supported: null,
-            shipping_cost_formatted: '4,00 €',
-            untracked_redirect_supported: false,
-            coupon_info: null,
-          },
-        },
-        shop_count: 2,
-        price_min: '17,50 €',
-        price_drop_percentage: null,
-      };
+      const mismatchedBuyboxShopCards: ShopCardFixture[] = [
+        { shopId: 13113, rawPrice: 17.5, finalPrice: 20.95, shippingCost: 3.5 },
+        { shopId: 15000, rawPrice: 18, finalPrice: 22, shippingCost: 4 },
+      ];
 
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(mismatchedBuyboxProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(mismatchedBuyboxShopCards)),
           });
         }
 
@@ -771,10 +505,10 @@ describe('SkroutzClient', () => {
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(mockProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(mockShopCards)),
           });
         }
 
@@ -832,10 +566,10 @@ describe('SkroutzClient', () => {
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(mockProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(mockShopCards)),
           });
         }
 
@@ -932,10 +666,10 @@ describe('SkroutzClient', () => {
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(mockProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(mockShopCards)),
           });
         }
 
@@ -1026,10 +760,10 @@ describe('SkroutzClient', () => {
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(mockProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(mockShopCards)),
           });
         }
 
@@ -1148,10 +882,10 @@ describe('SkroutzClient', () => {
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(mockProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(mockShopCards)),
           });
         }
 
@@ -1250,10 +984,10 @@ describe('SkroutzClient', () => {
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(mockProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(mockShopCards)),
           });
         }
 
@@ -1390,10 +1124,10 @@ describe('SkroutzClient', () => {
       global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
         const url = String(input);
 
-        if (url.includes('filter_products.json')) {
+        if (url.includes('shops_list')) {
           return Promise.resolve({
             ok: true,
-            json: vi.fn().mockResolvedValue(mockProductData),
+            text: vi.fn().mockResolvedValue(buildShopsListHtml(mockShopCards)),
           });
         }
 
@@ -1458,7 +1192,7 @@ describe('SkroutzClient', () => {
       const result = await SkroutzClient.getCurrentProductData();
       expect(result).toBeDefined();
       expect(fetch).toHaveBeenCalledWith(
-        'https://www.skroutz.gr/s/12345678/filter_products.json',
+        'https://www.skroutz.gr/s/12345678/shops_list',
         expect.any(Object),
       );
 
@@ -1519,7 +1253,7 @@ describe('SkroutzClient', () => {
       expect(result.buyThroughSkroutz.totalPrice).toBe(1028.89);
     });
 
-    it('should use ecommerce_final_price when available', async () => {
+    it('should use the displayed shop card price when it differs from the raw price', async () => {
       // Act
       const result: ProductPriceData = await SkroutzClient.getCurrentProductData();
 
