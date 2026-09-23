@@ -2,7 +2,8 @@
   --custom-light-red: #ff0000 !important;
   --flagged-item-box-shadow: 0px 0px 5px 2px var(--custom-light-red) !important;
 
-  --price-checker-light-bg: #f0f0f0;
+  /* Skroutz's own card surface (delivery box, delivery fee rows) */
+  --price-checker-light-bg: #f8f8f8;
   --price-checker-dark-bg: #3a3a3a;
   --price-cheaper-color: #fd1530;
   --price-expensive-color: #3a8c3a;
@@ -1010,10 +1011,11 @@ text-black {
 }
 
 .analysis-toggle-button {
-  border: none !important;
   background: #ffffff !important;
   color: #444 !important;
   border-radius: 999px !important;
+  /* Same hairline border as the "Αξιολόγησε το reSkroutzed" button */
+  border: 1px solid rgba(120, 68, 40, 0.18) !important;
   padding: 6px 14px !important;
   font-size: 12px !important;
   font-weight: 600 !important;
@@ -1025,16 +1027,16 @@ text-black {
   white-space: nowrap !important;
   transition:
     background 0.2s ease,
+    border-color 0.2s ease,
     box-shadow 0.2s ease,
     transform 0.15s ease !important;
   line-height: 1 !important;
   letter-spacing: 0.4px !important;
-  border: 1px solid rgba(0, 0, 0, 0) !important;
 }
 
 .analysis-toggle-button:hover {
   background: #f2f2f2 !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(120, 68, 40, 0.26) !important;
 }
 
 .analysis-toggle-button:active {
