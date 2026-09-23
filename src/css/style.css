@@ -1062,8 +1062,8 @@ text-black {
   border: none !important;
   border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
   border-radius: 0 !important;
-  padding: 10px 16px 0 !important;
-  margin-top: 2px !important;
+  padding: 16px 4px 0 !important;
+  margin-top: 4px !important;
   background: transparent !important;
   box-shadow: none !important;
   display: flex !important;
@@ -1472,10 +1472,6 @@ text-black {
   border: none !important;
   border-radius: 12px !important;
   color: inherit !important;
-  /* The store CTA is a <button>; without this it would keep the browser's
-     default Arial 13.33px instead of the host page font the BestPrice link
-     inherits, so the two columns would render at different sizes. */
-  font: inherit !important;
   cursor: pointer !important;
   position: relative !important;
   isolation: isolate !important;
@@ -1641,6 +1637,17 @@ text-black {
   width: 100% !important;
 }
 
+/* Delivery-cost disclaimer shown in the shipping slot when BestPrice has no shipping cost */
+.price-display-shipping-note {
+  flex: 0 0 auto !important;
+  min-height: 18px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  color: rgba(107, 107, 107, 0.9) !important;
+  white-space: nowrap !important;
+}
+
 /* Visible indicator when BestPrice data is not available */
 .bestprice-unavailable {
   flex: 1 1 0 !important;
@@ -1786,7 +1793,8 @@ text-black {
     min-height: auto !important;
   }
 
-  .price-display-action-content .shipping-cost-text {
+  .price-display-action-content .shipping-cost-text,
+  .price-display-action-content .price-display-shipping-note {
     white-space: normal !important;
   }
 
