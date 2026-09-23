@@ -230,6 +230,12 @@
   .menu-open .toggle-buttons-container {
     transform: scale(1) !important;
   }
+
+  /* Stacked bar: the divider becomes a horizontal hairline */
+  .toggle-separator {
+    width: 24px !important;
+    height: 1px !important;
+  }
 }
 
 /* ---------- INDIVIDUAL TOGGLE BUTTONS ---------- */
@@ -331,89 +337,14 @@
   letter-spacing: 0.02em !important;
 }
 
-/* ---------- PRICE DIFFERENCE BUTTON ---------- */
-.price-difference-option {
-  width: 72px !important;
-  border-radius: var(--ut-radius-full) !important;
-  flex-direction: row !important;
-  gap: 1px !important;
-}
-
-.price-difference-option.active {
-  background: var(--ut-on-bg) !important;
-  color: var(--ut-icon-strong) !important;
-  border-color: var(--ut-on-ring) !important;
-}
-
-.price-difference-option span {
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  color: inherit !important;
-  line-height: 1 !important;
-}
-
-.price-difference-option svg {
-  display: none !important;
-}
-
-/* Inline price input (desktop) */
-.price-inline-input {
-  background: var(--ut-input-bg) !important;
-  border: 1px solid var(--ut-btn-border) !important;
-  border-radius: var(--ut-radius-sm) !important;
-  color: var(--ut-icon-strong) !important;
-  font-family:
-    'Inter',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  text-align: center !important;
-  padding: 2px !important;
-  width: 70% !important;
-  height: 60% !important;
-  outline: none !important;
-}
-
-.price-inline-input:focus {
-  border-color: var(--ut-on-ring) !important;
-  box-shadow: 0 0 0 2px rgba(242, 242, 246, 0.25) !important;
-}
-
-/* Mobile price display */
-.price-value-mobile {
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  color: inherit !important;
-  line-height: 1 !important;
-}
-
-.price-currency-symbol,
-.price-currency-symbol-mobile {
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  opacity: 0.8 !important;
-}
-
-/* Mobile: price-difference option spans full width horizontally */
-@media (max-width: 768px) {
-  .price-difference-option {
-    width: 100% !important;
-    border-radius: var(--ut-radius-md) !important;
-    flex-direction: row !important;
-    gap: 4px !important;
-  }
-
-  .price-difference-mobile-container {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 2px !important;
-    width: 100% !important;
-  }
+/* ---------- GROUP SEPARATOR ---------- */
+.toggle-separator {
+  flex: 0 0 auto !important;
+  align-self: center !important;
+  width: 1px !important;
+  height: 24px !important;
+  background: var(--ut-btn-border) !important;
+  border-radius: 1px !important;
 }
 
 /* ---------- DARK MODE OVERRIDES (skroutz.gr dark mode hardening) ---------- */
@@ -465,16 +396,6 @@
 .dark-mode .toggle-option-button svg {
   color: inherit !important;
   fill: currentColor !important;
-}
-
-.dark-mode .price-difference-option {
-  color: var(--ut-icon) !important;
-}
-
-.dark-mode .price-difference-option.active {
-  background: var(--ut-on-bg) !important;
-  color: var(--ut-icon-strong) !important;
-  border-color: var(--ut-on-ring) !important;
 }
 
 /* ---------- ANIMATIONS ---------- */

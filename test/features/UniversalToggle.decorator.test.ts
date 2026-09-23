@@ -147,7 +147,6 @@ describe('UniversalToggleDecorator', () => {
       expect(buttonsContainer).not.toBeNull();
 
       // Check that all option buttons are created
-      expect(document.querySelector('.price-difference-option')).not.toBeNull();
       expect(document.querySelector('.dark-mode-option')).not.toBeNull();
       expect(document.querySelector('.ad-toggle-option')).not.toBeNull();
       expect(document.querySelector('.video-toggle-option')).not.toBeNull();
@@ -205,16 +204,6 @@ describe('UniversalToggleDecorator', () => {
       if (recommendationNotification?.textContent) {
         expect(['4', '0']).toContain(recommendationNotification.textContent);
       }
-    });
-
-    it('should display the current minimum price difference value', () => {
-      // Act
-      universalToggleDecorator.execute();
-
-      // Assert
-      const priceDifferenceButton = document.querySelector('.price-difference-option');
-      const valueDisplay = priceDifferenceButton?.querySelector('span');
-      expect(valueDisplay?.textContent).toBe('1');
     });
 
     it('should set up click handlers for all toggle buttons', () => {

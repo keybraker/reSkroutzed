@@ -140,22 +140,6 @@ export const translations = {
     [Language.BULGARIAN]: 'Показване на AI Slop',
     [Language.GERMAN]: 'AI Slop anzeigen',
   },
-
-  // Price difference
-  minimumPriceDifference: {
-    [Language.ENGLISH]: 'Minimum Percentage Difference',
-    [Language.GREEK]: 'Ελάχιστη ποσοστιαία διαφορά',
-    [Language.ROMANIAN]: 'Diferență procentuală minimă',
-    [Language.BULGARIAN]: 'Минимална процентна разлика',
-    [Language.GERMAN]: 'Minimale prozentuale Differenz',
-  },
-  minimumPriceDifferencePrompt: {
-    [Language.ENGLISH]: 'Minimum percentage difference (%):',
-    [Language.GREEK]: 'Ελάχιστη ποσοστιαία διαφορά (%):',
-    [Language.ROMANIAN]: 'Diferență procentuală minimă (%):',
-    [Language.BULGARIAN]: 'Минимална процентна разлика (%):',
-    [Language.GERMAN]: 'Minimale prozentuale Differenz (%):',
-  },
 };
 
 /**

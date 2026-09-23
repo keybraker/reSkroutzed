@@ -158,9 +158,9 @@
       bar.classList.add('toggle-buttons-container');
 
       const defs = [
-        { cls: 'price-difference-option', special: 'percent', active: true },
         { cls: 'dark-mode-option', path: 'moon', title: 'Dark mode', active: false },
         { cls: 'wide-mode-option', path: 'expand', title: 'Wide mode', active: false },
+        { cls: 'toggle-separator', special: 'separator' },
         { cls: 'ad-toggle-option', path: 'tag', title: 'Product ads', count: 3, active: true },
         { cls: 'video-toggle-option', path: 'video', title: 'Video ads', count: 2, active: true },
         {
@@ -188,23 +188,25 @@
       ];
 
       defs.forEach((def) => {
+        if (def.special === 'separator') {
+          const divider = document.createElement('div');
+          divider.classList.add(def.cls);
+          divider.setAttribute('aria-hidden', 'true');
+          bar.appendChild(divider);
+          return;
+        }
+
         const btn = document.createElement('button');
         btn.classList.add('toggle-option-button', def.cls);
         if (def.active) btn.classList.add('active');
         if (def.title) btn.title = def.title;
 
-        if (def.special === 'percent') {
-          const inner = document.createElement('span');
-          inner.textContent = '5%';
-          btn.appendChild(inner);
-        } else {
-          btn.appendChild(svg(PATHS[def.path]));
-          if (def.count > 0) {
-            const badge = document.createElement('div');
-            badge.classList.add('notification-bubble');
-            badge.textContent = String(def.count);
-            btn.appendChild(badge);
-          }
+        btn.appendChild(svg(PATHS[def.path]));
+        if (def.count > 0) {
+          const badge = document.createElement('div');
+          badge.classList.add('notification-bubble');
+          badge.textContent = String(def.count);
+          btn.appendChild(badge);
         }
         bar.appendChild(btn);
       });

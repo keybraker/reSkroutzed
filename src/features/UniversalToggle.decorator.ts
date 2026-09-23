@@ -1,6 +1,5 @@
 import { BrowserClient, StorageKey } from '../clients/browser/client';
 import { DomClient } from '../clients/dom/client';
-import { Language } from '../common/enums/Language.enum';
 import { getConditionalTranslation } from '../common/functions/translations';
 import { State } from '../common/types/State.type';
 import { CampaignAdHandler } from '../handlers/Campaign.handler';
@@ -15,11 +14,11 @@ import { createAdToggleButton } from './functions/createAdToggleButton';
 import { createAISlopToggleButton } from './functions/createAISlopToggleButton';
 import { createDarkModeToggleButton } from './functions/createDarkModeToggleButton';
 import { createLogoElement } from './functions/createLogoElement';
-import { createPriceDifferenceOption } from './functions/createPriceDifferenceOption';
 import { createRecommendationAdToggleButton } from './functions/createRecommendationAdToggleButton';
 import { createShelfProductAdToggleButton } from './functions/createShelfProductAdToggleButton';
 import { createSkoopToggleButton } from './functions/createSkoopToggleButton';
 import { createSponsorshipToggleButton } from './functions/createSponsorshipToggleButton';
+import { createToggleSeparator } from './functions/createToggleSeparator';
 import { createVideoToggleButton } from './functions/createVideoToggleButton';
 import { createWideModeToggleButton } from './functions/createWideModeToggleButton';
 import { ToggleButtonContext } from './functions/toggleButtonContext';
@@ -83,8 +82,8 @@ export class UniversalToggleDecorator implements FeatureInstance {
     buttonsContainer.classList.add('toggle-buttons-container');
 
     const ctx = this.toggleContext;
-    const priceDifferenceButton = createPriceDifferenceOption(ctx);
     const darkModeButton = createDarkModeToggleButton(ctx);
+    const appearanceSeparator = createToggleSeparator();
     const wideModeButton = createWideModeToggleButton(ctx);
     const adToggleButton = createAdToggleButton(ctx);
     const videoToggleButton = createVideoToggleButton(ctx);
@@ -94,9 +93,9 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const skoopToggleButton = createSkoopToggleButton(ctx);
     const aiSlopToggleButton = createAISlopToggleButton(ctx);
 
-    DomClient.appendElementToElement(priceDifferenceButton, buttonsContainer);
     DomClient.appendElementToElement(darkModeButton, buttonsContainer);
     DomClient.appendElementToElement(wideModeButton, buttonsContainer);
+    DomClient.appendElementToElement(appearanceSeparator, buttonsContainer);
     DomClient.appendElementToElement(adToggleButton, buttonsContainer);
     DomClient.appendElementToElement(videoToggleButton, buttonsContainer);
     DomClient.appendElementToElement(sponsorshipToggleButton, buttonsContainer);
@@ -271,41 +270,6 @@ export class UniversalToggleDecorator implements FeatureInstance {
         'aiSlopHide',
         'aiSlopShow',
       );
-    }
-
-    const priceDifferenceButton = container.querySelector(
-      '.price-difference-option',
-    ) as HTMLButtonElement;
-    if (priceDifferenceButton) {
-      priceDifferenceButton.setAttribute(
-        'data-value',
-        this.state.minimumPriceDifference.toString(),
-      );
-
-      const updatedTitle =
-        this.state.language === Language.GREEK
-          ? `Ελάχιστη ποσοστιαία διαφορά: ${this.state.minimumPriceDifference}%`
-          : `Minimum Percentage Difference: ${this.state.minimumPriceDifference}%`;
-      priceDifferenceButton.title = updatedTitle;
-
-      const valueText = priceDifferenceButton.querySelector('.price-value-mobile');
-      if (valueText) {
-        valueText.textContent = this.state.minimumPriceDifference.toString();
-      } else {
-        const valueDisplay = priceDifferenceButton.querySelector('span');
-        if (valueDisplay) {
-          valueDisplay.textContent = this.state.minimumPriceDifference.toString();
-        }
-      }
-
-      const mobileSymbol = priceDifferenceButton.querySelector(
-        '.price-currency-symbol-mobile',
-      ) as HTMLElement | null;
-      if (mobileSymbol) mobileSymbol.textContent = '%';
-      const desktopSymbol = priceDifferenceButton.querySelector(
-        '.price-currency-symbol',
-      ) as HTMLElement | null;
-      if (desktopSymbol) desktopSymbol.textContent = '%';
     }
   }
 

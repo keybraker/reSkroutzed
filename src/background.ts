@@ -265,8 +265,6 @@ chrome.runtime.onMessage.addListener(
     } else if (request.action === 'updatePriceDifference' && request.value !== undefined) {
       state.minimumPriceDifference = request.value as number;
       BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
-      const event = new Event('priceThresholdChange');
-      document.dispatchEvent(event);
       sendResponse({ success: true });
     } else if (request.action === 'togglePriceChecker' && request.value !== undefined) {
       state.priceCheckerEnabled = request.value as boolean;
