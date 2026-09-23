@@ -24,6 +24,7 @@ export type State = {
   wideMode: boolean;
   // price checker
   priceCheckerEnabled: boolean;
+  /** Minimum total-price difference, in euros, before the checker calls out a deal. */
   minimumPriceDifference: number;
   // platform detection
   isMobile: boolean;

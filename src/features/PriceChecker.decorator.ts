@@ -752,8 +752,6 @@ function createCalculationComponent(
     productPriceData.buyThroughSkroutz.totalPrice - productPriceData.buyThroughStore.totalPrice,
   );
   const differenceAbsolute = Math.abs(priceDifference);
-  const base = productPriceData.buyThroughStore.totalPrice;
-  const percentDiff = base > 0 ? (differenceAbsolute / base) * 100 : 0;
   const skroutzTotal = formatAnalysisPrice(productPriceData.buyThroughSkroutz.totalPrice);
   const storeTotal = formatAnalysisPrice(productPriceData.buyThroughStore.totalPrice);
   const storeLabel = language === Language.ENGLISH ? 'Store' : 'Αγορά μέσω καταστήματος';
@@ -781,11 +779,15 @@ function createCalculationComponent(
   }
 
   if (minimumPriceDifference > 0) {
-    const isBelow = percentDiff <= minimumPriceDifference;
+    // The threshold is an amount in euros, matching the popup's input, so both
+    // sides of the comparison are formatted as prices.
+    const isBelow = differenceAbsolute <= minimumPriceDifference;
+    const threshold = formatAnalysisPrice(minimumPriceDifference);
+    const actualDifference = formatAnalysisPrice(differenceAbsolute);
     const message =
       language === Language.ENGLISH
-        ? `Threshold: ${isBelow ? 'below' : 'above'} ${minimumPriceDifference.toFixed(1)}% (Δ ${percentDiff.toFixed(1)}%)`
-        : `Όριο: ${isBelow ? 'κάτω από' : 'πάνω από'} ${minimumPriceDifference.toFixed(1)}% (Δ ${percentDiff.toFixed(1)}%)`;
+        ? `Threshold: ${isBelow ? 'below' : 'above'} ${threshold} (Δ ${actualDifference})`
+        : `Όριο: ${isBelow ? 'κάτω από' : 'πάνω από'} ${threshold} (Δ ${actualDifference})`;
 
     const span = document.createElement('span');
     span.className = 'minimum-price-difference-text';

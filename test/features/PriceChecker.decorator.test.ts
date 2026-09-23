@@ -596,6 +596,26 @@ describe('PriceCheckerDecorator', () => {
     expect(comparisonText?.textContent).not.toContain('667.00€ - 663.90€');
   });
 
+  it('states the minimum difference threshold in euros rather than a percentage', async () => {
+    // Arrange - 104€ vs 98€ leaves a 6€ gap, past the 5€ threshold
+    mockState.minimumPriceDifference = 5;
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    const thresholdText = document.querySelector('.minimum-price-difference-text');
+    expect(thresholdText).not.toBeNull();
+    expect(thresholdText?.textContent).toContain('above 5.00€');
+    expect(thresholdText?.textContent).toContain('Δ 6.00€');
+    expect(thresholdText?.textContent).not.toContain('%');
+  });
+
   it('does not touch the page when the price checker is disabled', async () => {
     // Arrange
     mockState.priceCheckerEnabled = false;
