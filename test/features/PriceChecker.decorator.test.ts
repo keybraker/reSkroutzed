@@ -659,4 +659,33 @@ describe('PriceCheckerDecorator', () => {
     // Assert
     expect(document.querySelector('.price-checker-outline')).not.toBeNull();
   });
+
+  it('closes the card with the review and support promotion band', async () => {
+    // Arrange
+    const productDataDeferred = createDeferred<ProductPriceData>();
+    vi.mocked(SkroutzClient.getCurrentProductData).mockReturnValue(productDataDeferred.promise);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    const executePromise = decorator.execute();
+
+    await flushPromises();
+
+    // Assert - the skeleton mirrors the final layout
+    const skeletonCard = document.querySelector('.price-checker-outline');
+    expect(skeletonCard?.lastElementChild?.classList.contains('own-promotion')).toBe(true);
+
+    // Act
+    productDataDeferred.resolve(mockProductPriceData);
+    await executePromise;
+    await flushPromises();
+
+    // Assert
+    const card = document.querySelector('.price-checker-outline');
+    const promotion = card?.lastElementChild;
+    expect(promotion?.classList.contains('own-promotion')).toBe(true);
+    expect(promotion?.querySelector('.own-promotion-left')).not.toBeNull();
+    expect(promotion?.querySelector('.buy-me-coffee')).not.toBeNull();
+  });
 });

@@ -1075,11 +1075,11 @@ text-black {
 }
 
 .own-promotion {
-  margin: -20px -20px 12px !important;
+  margin: 12px -20px -20px !important;
   padding: 12px 16px !important;
   border: none !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
-  border-radius: 18px 18px 0 0 !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 0 0 18px 18px !important;
   background: rgba(255, 255, 255, 0.45) !important;
   box-shadow: none !important;
   display: flex !important;
@@ -1924,6 +1924,10 @@ text-black {
 
   .store-availability-right {
     flex: 1 1 auto !important;
+  }
+
+  .own-promotion {
+    margin: 12px -16px -16px !important;
   }
 
   .own-promotion .store-availability-row {

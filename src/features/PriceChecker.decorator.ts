@@ -231,7 +231,6 @@ function createPriceCheckerSkeleton(): HTMLDivElement {
   const contentContainer = DomClient.createElement('div', {
     className: 'inline-flex-col',
   }) as HTMLDivElement;
-  DomClient.appendElementToElement(createPromotionSkeletonElement(), priceIndication);
 
   const priceCalculationContainer = DomClient.createElement('div', {
     className: 'price-calculation-container',
@@ -253,6 +252,7 @@ function createPriceCheckerSkeleton(): HTMLDivElement {
   DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
   DomClient.appendElementToElement(createStoreAvailabilitySkeletonElement(), contentContainer);
   DomClient.appendElementToElement(contentContainer, priceIndication);
+  DomClient.appendElementToElement(createPromotionSkeletonElement(), priceIndication);
 
   DomClient.appendElementToElement(priceIndication, stack);
 
@@ -1027,14 +1027,6 @@ function createPriceIndicationElement(
 
     DomClient.appendElementToElement(tagsContainer, priceIndication);
 
-    const reSkroutzedReview = createReSkoutzedReviewElement(language);
-    const buyMeCoffeeElement = createBuyMeCoffeeElement(language);
-    const actionPlaceholder = reSkroutzedReview.querySelector('.own-promotion-right');
-    if (actionPlaceholder) {
-      actionPlaceholder.appendChild(buyMeCoffeeElement);
-    }
-    DomClient.appendElementToElement(reSkroutzedReview, priceIndication);
-
     const contentContainer = DomClient.createElement('div', { className: 'inline-flex-col' });
     const priceCalculationContainer = DomClient.createElement('div', {
       className: 'price-calculation-container',
@@ -1113,6 +1105,16 @@ function createPriceIndicationElement(
         ? 'By reSkroutzed, Leave a review'
         : 'Από το reSkroutzed, Αφήστε μια κριτική';
     DomClient.appendElementToElement(contentContainer, priceIndication);
+
+    // The review/support band closes the card so it reads as a footer instead of
+    // a header above the price information.
+    const reSkroutzedReview = createReSkoutzedReviewElement(language);
+    const buyMeCoffeeElement = createBuyMeCoffeeElement(language);
+    const actionPlaceholder = reSkroutzedReview.querySelector('.own-promotion-right');
+    if (actionPlaceholder) {
+      actionPlaceholder.appendChild(buyMeCoffeeElement);
+    }
+    DomClient.appendElementToElement(reSkroutzedReview, priceIndication);
 
     DomClient.appendElementToElement(priceIndication, priceCheckerStack);
 
