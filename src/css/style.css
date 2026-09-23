@@ -1477,6 +1477,11 @@ text-black {
   isolation: isolate !important;
   text-align: left !important;
   text-decoration: none !important;
+  /* The store column is a <button>, which does not inherit the page font on its
+     own; without this it falls back to the UA font and drifts from the <a>-based
+     BestPrice column. */
+  font-family: inherit !important;
+  font-size: inherit !important;
   transition:
     background-color 0.18s ease,
     color 0.18s ease,
@@ -1512,6 +1517,18 @@ text-black {
   min-height: 18px !important;
   line-height: 1.2 !important;
   white-space: nowrap !important;
+}
+
+/* The store column is a <button> and the BestPrice column an <a>: without an
+   explicit font they inherit different sizes (UA button font vs page font), so
+   the two shipping-cost lines must be pinned to one value. The note variant
+   keeps its own smaller size and is therefore excluded. */
+.price-display-action-content .shipping-cost-text:not(.price-display-shipping-note) {
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  letter-spacing: normal !important;
 }
 
 .price-display-action-positive .price-indicator-price,
