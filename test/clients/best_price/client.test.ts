@@ -309,6 +309,85 @@ describe('BestPriceClient', () => {
       });
     });
 
+    it('reads the shipping cost from the item page when the listing omits it', async () => {
+      document.body.innerHTML = [
+        '<nav aria-label="breadcrumb">',
+        '<a href="/c/1/root.html">Root</a>',
+        '<a href="/c/40/kinhta-thlefwna.html">Κινητά Τηλέφωνα</a>',
+        '</nav>',
+        '<h1>Apple iPhone 17 Pro Max 256GB</h1>',
+      ].join('');
+
+      const expectedSearchUrl = new URL('https://www.bestprice.gr/search');
+      expectedSearchUrl.searchParams.set('q', 'Apple iPhone 17 Pro Max 256GB');
+      const itemUrl = 'https://www.bestprice.gr/item/2162499901/apple-iphone-17-pro-max-256gb.html';
+
+      const listingHtml = [
+        '<div class="p" data-cid="806">',
+        '<h3 class="p__title">',
+        '<a href="/item/2162499901/apple-iphone-17-pro-max-256gb.html" title="Apple iPhone 17 Pro Max 256GB">Apple iPhone 17 Pro Max 256GB</a>',
+        '</h3>',
+        '<div class="p__price--current">1.259,00€</div>',
+        '<div class="p__merchants">66 stores</div>',
+        '</div>',
+      ].join('');
+
+      const itemPageHtml = [
+        '<html>',
+        '<body>',
+        '<div class="prices__product" data-is-bestprice data-price="125900" data-shipping-cost="490">',
+        '<div class="prices__costs"><div class="prices__cost-value prices__cost-value--add">4,90€</div></div>',
+        '</div>',
+        '</body>',
+        '</html>',
+      ].join('');
+
+      setBridgeResponses(
+        {
+          ok: true,
+          status: 200,
+          url: 'https://www.bestprice.gr/api/getProduct',
+          data: false,
+        },
+        {
+          ok: true,
+          status: 200,
+          url: expectedSearchUrl.toString(),
+          data: listingHtml,
+        },
+        {
+          ok: true,
+          status: 200,
+          url: itemUrl,
+          data: itemPageHtml,
+        },
+      );
+
+      const result = await BestPriceClient.getCurrentProductData();
+      const sendMessage = getSendMessageMock();
+
+      expect(sendMessage).toHaveBeenNthCalledWith(
+        3,
+        {
+          action: 'bestprice.fetch',
+          url: itemUrl,
+          method: 'GET',
+          responseType: 'text',
+        },
+        expect.any(Function),
+      );
+
+      expect(result).toEqual({
+        title: 'Apple iPhone 17 Pro Max 256GB',
+        price: 1259,
+        shippingCost: 4.9,
+        totalPrice: 1263.9,
+        url: itemUrl,
+        merchantCount: 66,
+        categoryId: 806,
+      });
+    });
+
     it('uses the item page shipping cost when BestPrice returns a product page', async () => {
       document.body.innerHTML = [
         '<nav aria-label="breadcrumb">',
@@ -352,6 +431,7 @@ describe('BestPriceClient', () => {
 
       const result = await BestPriceClient.getCurrentProductData();
 
+      expect(getSendMessageMock()).toHaveBeenCalledTimes(2);
       expect(result).toEqual({
         title: 'Apple iPhone 17 Pro Max 256GB',
         price: 1259,
@@ -405,6 +485,7 @@ describe('BestPriceClient', () => {
 
       const result = await BestPriceClient.getCurrentProductData();
 
+      expect(getSendMessageMock()).toHaveBeenCalledTimes(2);
       expect(result).toEqual({
         title: 'Apple iPhone 17 Pro Max 256GB',
         price: 1259,

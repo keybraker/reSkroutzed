@@ -202,6 +202,20 @@ const parseShippingCost = (value?: string | number | null): number | undefined =
   return Number.isFinite(parsedCost) && parsedCost >= 0 ? parsedCost / 100 : undefined;
 };
 
+const extractItemPageShippingCost = (parsedDocument: Document): number | undefined => {
+  const bestOfferCard =
+    parsedDocument.querySelector('.prices__product[data-is-bestprice]') ??
+    parsedDocument.querySelector('.prices__product');
+
+  return parseShippingCost(
+    bestOfferCard?.getAttribute('data-shipping-cost') ??
+      bestOfferCard?.querySelector('.prices__cost-value')?.textContent,
+  );
+};
+
+const parseItemPageShippingCost = (html: string): number | undefined =>
+  extractItemPageShippingCost(new DOMParser().parseFromString(html, 'text/html'));
+
 const parseBestPriceCents = (value?: string | number | null): number | undefined => {
   if (value === undefined || value === null) {
     return undefined;
@@ -353,7 +367,7 @@ export class BestPriceClient {
       );
       const productData = this.parseProductPayload(productPayload, query);
       if (productData) {
-        return productData;
+        return await this.withShippingCost(productData);
       }
     } catch (error) {
       console.warn('[reSkroutzed] BestPrice direct lookup failed', error);
@@ -367,7 +381,7 @@ export class BestPriceClient {
         const searchResponse = await this.fetchSearchResponse(searchQuery);
         const searchData = this.parseSearchHtml(searchResponse.data, query, searchResponse.url);
         if (searchData) {
-          return searchData;
+          return await this.withShippingCost(searchData);
         }
       } catch (error) {
         console.warn('[reSkroutzed] BestPrice search fallback failed', {
@@ -387,7 +401,9 @@ export class BestPriceClient {
 
     try {
       const payload = await this.fetchDealsPayload(bestPriceCategoryId);
-      return parseBestPriceDealsPayload(payload, query);
+      const dealsData = parseBestPriceDealsPayload(payload, query);
+
+      return dealsData ? await this.withShippingCost(dealsData) : undefined;
     } catch (error) {
       console.warn('[reSkroutzed] BestPrice category fallback failed', {
         skroutzCategoryId,
@@ -400,6 +416,38 @@ export class BestPriceClient {
 
   private static getMappedCategoryId(categoryId: number): number {
     return bestPriceCategoryMap[String(categoryId)] ?? categoryId;
+  }
+
+  /**
+   * BestPrice only exposes a shipping cost on the item page (the listing cards
+   * and the lookup/deals payloads carry a price alone). When a resolution path
+   * returns no shipping cost, read it from the resolved item page so the total
+   * price stays comparable with the Buy through Skroutz total.
+   */
+  private static async withShippingCost(
+    productData: BestPriceProductData,
+  ): Promise<BestPriceProductData> {
+    if (productData.shippingCost !== undefined || !productData.url.includes('/item/')) {
+      return productData;
+    }
+
+    try {
+      const itemPage = await this.fetchItemPage(productData.url);
+      const shippingCost = parseItemPageShippingCost(itemPage);
+
+      if (shippingCost === undefined) {
+        return productData;
+      }
+
+      return {
+        ...productData,
+        shippingCost,
+        totalPrice: productData.price + shippingCost,
+      };
+    } catch (error) {
+      console.warn('[reSkroutzed] BestPrice shipping cost lookup failed', error);
+      return productData;
+    }
   }
 
   private static getCanonicalUrl(): string {
@@ -517,10 +565,7 @@ export class BestPriceClient {
         bestOfferCard?.querySelector('.prices__price a')?.textContent,
     );
     const offerPriceFromAttributes = parseBestPriceCents(bestOfferCard?.getAttribute('data-price'));
-    const shippingCost = parseShippingCost(
-      bestOfferCard?.getAttribute('data-shipping-cost') ??
-        bestOfferCard?.querySelector('.prices__cost-value')?.textContent,
-    );
+    const shippingCost = extractItemPageShippingCost(parsedDocument);
     const price = offerPriceFromAttributes ?? offerPrice ?? pagePrice;
 
     if (!url || !price || !url.includes('/item/')) {
@@ -834,5 +879,16 @@ export class BestPriceClient {
       method: 'GET',
       responseType: 'text',
     });
+  }
+
+  private static async fetchItemPage(url: string): Promise<string> {
+    const response = await this.requestBestPrice<string>({
+      action: 'bestprice.fetch',
+      url,
+      method: 'GET',
+      responseType: 'text',
+    });
+
+    return response.data;
   }
 }
