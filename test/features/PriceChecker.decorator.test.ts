@@ -275,6 +275,7 @@ describe('PriceCheckerDecorator', () => {
     expect(bestPriceBadge?.classList.contains('price-display-bestprice-action')).toBe(true);
     expect(bestPriceBadge?.classList.contains('price-display-action-positive')).toBe(true);
     expect(bestPriceBadge?.querySelector('.bestprice-badge-logo')).not.toBeNull();
+    expect(bestPriceBadge?.querySelector('.price-display-shipping-note')).toBeNull();
     expect(document.querySelector('.price-history-loading-wrapper')).not.toBeNull();
 
     const hydratedStoreAction = document.querySelector(
@@ -485,6 +486,32 @@ describe('PriceCheckerDecorator', () => {
     expect(unavailableStatus).not.toBeNull();
     expect(unavailableStatus?.textContent).toContain('BestPrice not available');
     expect(priceRow?.lastElementChild).toBe(unavailableStatus);
+    expect(document.querySelector('.price-display-shipping-note')).toBeNull();
+  });
+
+  it('notes possible delivery costs in the shipping slot when BestPrice has no shipping cost', async () => {
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue({
+      ...mockBestPriceData,
+      shippingCost: undefined,
+      totalPrice: undefined,
+    });
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    const bestPriceBadge = document.querySelector('.bestprice-badge') as HTMLAnchorElement | null;
+    const shippingNote = bestPriceBadge?.querySelector(
+      '.price-display-shipping-note',
+    ) as HTMLDivElement | null;
+
+    expect(shippingNote).not.toBeNull();
+    expect(shippingNote?.textContent).toBe('(Delivery costs may apply)');
+    expect(shippingNote?.classList.contains('shipping-cost-text')).toBe(true);
+    expect(shippingNote?.classList.contains('price-display-action-positive')).toBe(true);
+    expect(bestPriceBadge?.querySelectorAll('.shipping-cost-text').length).toBe(1);
   });
 
   it('styles each offer independently against the Skroutz total price', async () => {

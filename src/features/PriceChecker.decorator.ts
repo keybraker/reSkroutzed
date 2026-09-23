@@ -21,6 +21,7 @@ type PriceDisplayActionOptions = {
   classNames?: string[];
   price: number;
   shippingCost?: number;
+  shippingNote?: string;
   priceClassNames?: string[];
   language: Language;
   subtitleText: string;
@@ -116,6 +117,15 @@ function createBestPriceLoadingBadge(): HTMLDivElement {
     ['price-display-bestprice-action', 'bestprice-badge', 'bestprice-badge-loading'],
     { includeNotificationLogo: true },
   );
+}
+
+function createShippingNoteElement(text: string, extraClasses: string[] = []): HTMLDivElement {
+  const note = DomClient.createElement('div', {
+    className: ['shipping-cost-text', 'price-display-shipping-note', ...extraClasses],
+  }) as HTMLDivElement;
+  note.textContent = text;
+
+  return note;
 }
 
 function createPriceHistoryLoadingComponent(): HTMLDivElement {
@@ -466,6 +476,11 @@ function createPriceDisplayAction(
       createShippingCostElement(options.shippingCost, options.language, options.priceClassNames),
       content,
     );
+  } else if (options.shippingNote) {
+    DomClient.appendElementToElement(
+      createShippingNoteElement(options.shippingNote, options.priceClassNames),
+      content,
+    );
   }
 
   DomClient.appendElementToElement(
@@ -537,6 +552,10 @@ function createBestPriceBadge(
     classNames: ['price-display-bestprice-action', 'bestprice-badge', ...priceClassNames],
     price: bestPriceProductData.price,
     shippingCost: bestPriceProductData.shippingCost,
+    shippingNote:
+      language === Language.ENGLISH
+        ? '(Delivery costs may apply)'
+        : '(Ενδέχεται να υπάρχουν μεταφορικά)',
     priceClassNames,
     language,
     subtitleText: language === Language.ENGLISH ? 'Buy through BestPrice' : 'Αγορά μέσω BestPrice',

@@ -1472,6 +1472,10 @@ text-black {
   border: none !important;
   border-radius: 12px !important;
   color: inherit !important;
+  /* The store CTA is a <button>; without this it would keep the browser's
+     default Arial 13.33px instead of the host page font the BestPrice link
+     inherits, so the two columns would render at different sizes. */
+  font: inherit !important;
   cursor: pointer !important;
   position: relative !important;
   isolation: isolate !important;
