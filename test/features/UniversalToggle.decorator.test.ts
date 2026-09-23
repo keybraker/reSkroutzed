@@ -114,6 +114,7 @@ describe('UniversalToggleDecorator', () => {
       shelfAdCount: 1,
       recommendationAdCount: 4,
       skoopAdCount: 0,
+      priceCheckerEnabled: true,
       minimumPriceDifference: 1,
       sponsorshipAdCount: 0,
       isMobile: false,

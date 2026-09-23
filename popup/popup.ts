@@ -35,6 +35,16 @@ function getButton(id: string): HTMLButtonElement {
 }
 
 /**
+ * The minimum difference threshold and its apply button only make sense while
+ * the price checker is enabled, so mirror the toggle on those controls.
+ */
+function syncPriceRowState(isPriceCheckerEnabled: boolean): void {
+  document.getElementById('priceRow')?.classList.toggle('is-disabled', !isPriceCheckerEnabled);
+  getInput('priceDifference').disabled = !isPriceCheckerEnabled;
+  getButton('updatePriceBtn').disabled = !isPriceCheckerEnabled;
+}
+
+/**
  * Send a toggle message to the active tab. Silently ignores tabs that do not
  * have the content script injected (e.g. non-Skroutz pages).
  */
@@ -90,6 +100,11 @@ function loadSettings(): void {
 
   getBool(StorageKey.SPONSORSHIP_VISIBILITY, true, (value) => {
     getInput('toggleSponsorships').checked = !value;
+  });
+
+  getBool(StorageKey.PRICE_CHECKER_ENABLED, true, (value) => {
+    getInput('togglePriceChecker').checked = value;
+    syncPriceRowState(value);
   });
 
   getNumber(StorageKey.MINIMUM_PRICE_DIFFERENCE, 0, (value) => {
@@ -186,6 +201,14 @@ function setupEventListeners(): void {
     const hideSponsorships = !sponsorshipsToggle.checked;
     setStorageValue(StorageKey.SPONSORSHIP_VISIBILITY, hideSponsorships);
     sendMessageToActiveTab('toggleSponsorships', hideSponsorships);
+  });
+
+  const priceCheckerToggle = getInput('togglePriceChecker');
+  priceCheckerToggle.addEventListener('change', () => {
+    const isPriceCheckerEnabled = priceCheckerToggle.checked;
+    setStorageValue(StorageKey.PRICE_CHECKER_ENABLED, isPriceCheckerEnabled);
+    sendMessageToActiveTab('togglePriceChecker', isPriceCheckerEnabled);
+    syncPriceRowState(isPriceCheckerEnabled);
   });
 
   const priceInput = getInput('priceDifference');

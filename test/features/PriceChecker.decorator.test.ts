@@ -101,6 +101,7 @@ describe('PriceCheckerDecorator', () => {
     wideMode: false,
     hideUniversalToggle: false,
     hideSponsorships: false,
+    priceCheckerEnabled: true,
     productAdCount: 0,
     videoAdCount: 0,
     shelfAdCount: 0,
@@ -161,6 +162,7 @@ describe('PriceCheckerDecorator', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockState.priceCheckerEnabled = true;
     document.body.innerHTML = `
       <article class="buybox">
         <div class="price-box">
@@ -592,5 +594,69 @@ describe('PriceCheckerDecorator', () => {
     expect(comparisonText?.textContent).toContain('Buying through "BestPrice" is 54.99€ cheaper');
     expect(comparisonText?.textContent).toContain('718.89€ - 663.90€');
     expect(comparisonText?.textContent).not.toContain('667.00€ - 663.90€');
+  });
+
+  it('does not touch the page when the price checker is disabled', async () => {
+    // Arrange
+    mockState.priceCheckerEnabled = false;
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    expect(SkroutzClient.getCurrentProductData).not.toHaveBeenCalled();
+    expect(BestPriceClient.getCurrentProductData).not.toHaveBeenCalled();
+    expect(document.querySelector('.price-checker-stack')).toBeNull();
+    expect(document.querySelector('.price-checker-outline')).toBeNull();
+    expect(document.querySelector('.shipping-cost-text')).toBeNull();
+  });
+
+  it('removes every rendered artifact when destroyed', async () => {
+    // Arrange
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    expect(document.querySelector('.price-checker-outline')).not.toBeNull();
+    expect(document.querySelector('.shipping-cost-text')).not.toBeNull();
+    expect(document.querySelector('.skroutz-breakdown-inline')).not.toBeNull();
+
+    // Act
+    decorator.destroy();
+
+    // Assert
+    expect(document.querySelector('.price-checker-outline')).toBeNull();
+    expect(document.querySelector('.price-checker-stack')).toBeNull();
+    expect(document.querySelector('.shipping-cost-text')).toBeNull();
+    expect(document.querySelector('.skroutz-breakdown-inline')).toBeNull();
+  });
+
+  it('renders again when executed after being destroyed', async () => {
+    // Arrange
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+    decorator.destroy();
+    expect(document.querySelector('.price-checker-outline')).toBeNull();
+
+    // Act
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    expect(document.querySelector('.price-checker-outline')).not.toBeNull();
   });
 });

@@ -23,6 +23,7 @@ function buildMockState(overrides: Partial<State> = {}): State {
     language: Language.GREEK,
     darkMode: false,
     wideMode: false,
+    priceCheckerEnabled: true,
     minimumPriceDifference: 0,
     isMobile: false,
     ...overrides,

@@ -303,6 +303,11 @@ body {
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
+/* Variant that hugs its single row instead of growing inside a flex panel */
+.settings-grid-static {
+  flex: none;
+  margin-bottom: var(--space-md);
+}
 .setting-item {
   display: flex;
   align-items: center;
@@ -409,6 +414,12 @@ body {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
+}
+.price-row.is-disabled {
+  opacity: 0.5;
+}
+.price-row.is-disabled .btn-primary {
+  cursor: not-allowed;
 }
 .price-input-group {
   display: flex;

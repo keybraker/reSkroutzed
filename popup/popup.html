@@ -194,11 +194,23 @@
 
         <!-- Price Checker Panel -->
         <div class="tab-panel" data-panel="price">
+          <div class="settings-grid settings-grid-static">
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Price checker</span>
+                <span class="setting-hint">Compare prices &amp; show price history</span>
+              </div>
+              <label class="toggle" for="togglePriceChecker">
+                <input type="checkbox" id="togglePriceChecker" class="toggle-input" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+          </div>
           <p class="panel-description">
             Get alerts when you can find a better price elsewhere. Set the minimum difference to
             avoid noise.
           </p>
-          <div class="price-row">
+          <div class="price-row" id="priceRow">
             <div class="price-input-group">
               <label for="priceDifference" class="price-label">Minimum difference</label>
               <div class="price-input-wrapper">

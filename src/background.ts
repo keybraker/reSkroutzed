@@ -33,6 +33,7 @@ const state: State = {
   sponsorshipAdCount: 0,
   darkMode: false,
   wideMode: false,
+  priceCheckerEnabled: true,
   minimumPriceDifference: 0,
   isMobile: false,
 };
@@ -85,6 +86,7 @@ function loadStorage(): void {
   );
   state.hideSkoopAds = BrowserClient.getValue<boolean>(StorageKey.SKOOP_AD_VISIBILITY);
   state.darkMode = BrowserClient.getValue<boolean>(StorageKey.DARK_MODE);
+  state.priceCheckerEnabled = BrowserClient.getValue<boolean>(StorageKey.PRICE_CHECKER_ENABLED);
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
   );
@@ -265,6 +267,16 @@ chrome.runtime.onMessage.addListener(
       BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
       const event = new Event('priceThresholdChange');
       document.dispatchEvent(event);
+      sendResponse({ success: true });
+    } else if (request.action === 'togglePriceChecker' && request.value !== undefined) {
+      state.priceCheckerEnabled = request.value as boolean;
+      BrowserClient.setValue(StorageKey.PRICE_CHECKER_ENABLED, state.priceCheckerEnabled);
+
+      if (state.priceCheckerEnabled) {
+        void priceCheckerIndicator.execute();
+      } else {
+        priceCheckerIndicator.destroy();
+      }
       sendResponse({ success: true });
     } else if (request.action === 'toggleUniversalToggle' && request.value !== undefined) {
       state.hideUniversalToggle = request.value as boolean;

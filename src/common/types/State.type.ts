@@ -23,6 +23,7 @@ export type State = {
   darkMode: boolean;
   wideMode: boolean;
   // price checker
+  priceCheckerEnabled: boolean;
   minimumPriceDifference: number;
   // platform detection
   isMobile: boolean;

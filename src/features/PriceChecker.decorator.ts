@@ -1170,6 +1170,10 @@ export class PriceCheckerDecorator implements FeatureInstance {
   }
 
   public async execute(): Promise<void> {
+    if (!this.state.priceCheckerEnabled) {
+      return;
+    }
+
     await this.initializeProductView();
     this.setupNavigationHandlers();
   }
@@ -1181,6 +1185,15 @@ export class PriceCheckerDecorator implements FeatureInstance {
       this.observer.disconnect();
       this.observer = null;
     }
+
+    // Invalidate in-flight fetches so late responses cannot re-render the UI.
+    this.currentInitializationId++;
+    this.isInitializing = false;
+    this.lastProductId = null;
+    this.productPriceData = undefined;
+    this.productPriceHistory = undefined;
+    this.bestPriceProductData = undefined;
+    this.cleanup();
   }
 
   private setupNavigationHandlers(): void {

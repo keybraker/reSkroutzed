@@ -70,6 +70,7 @@ mockState = {
   sponsorshipAdCount: 0,
   language: Language.GREEK,
   darkMode: false,
+  priceCheckerEnabled: true,
   minimumPriceDifference: 0,
   isMobile: false,
 };

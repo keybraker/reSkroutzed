@@ -59,6 +59,7 @@ describe('createDarkModeToggleButton', () => {
       language: Language.ENGLISH,
       darkMode: false,
       wideMode: false,
+      priceCheckerEnabled: true,
       minimumPriceDifference: 0,
       isMobile: false,
     };

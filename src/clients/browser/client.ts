@@ -16,6 +16,7 @@ export enum StorageKey {
   MINIMUM_PRICE_DIFFERENCE = STORAGE_KEY_PREFIX + '-minimum-difference',
   AI_SLOP_VISIBILITY = STORAGE_KEY_PREFIX + '-ai-slop-visibility',
   WIDE_MODE = STORAGE_KEY_PREFIX + '-wide-mode',
+  PRICE_CHECKER_ENABLED = STORAGE_KEY_PREFIX + '-price-checker-enabled',
 }
 
 const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
@@ -32,6 +33,8 @@ const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
   // false means AI content (sofos*) is visible by default
   [StorageKey.AI_SLOP_VISIBILITY]: false,
   [StorageKey.WIDE_MODE]: false,
+  // true means the price checker runs on product pages by default
+  [StorageKey.PRICE_CHECKER_ENABLED]: true,
 };
 
 export class BrowserClient {
