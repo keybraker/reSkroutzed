@@ -1059,11 +1059,6 @@ function createPriceIndicationElement(
 
     DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
 
-    const storeAvailability = createStoreAvailabilityElement(productPriceData, language);
-    if (storeAvailability) {
-      DomClient.appendElementToElement(storeAvailability, contentContainer);
-    }
-
     const calcElem = createCalculationComponent(
       productPriceData,
       minimumPriceDifference,
@@ -1104,6 +1099,13 @@ function createPriceIndicationElement(
 
     // The analysis is revealed directly beneath the toggle button that controls it.
     DomClient.appendElementToElement(analysisContainer, contentContainer);
+
+    // The availability note closes the card: it is informational and reads as a
+    // footer under the price breakdown.
+    const storeAvailability = createStoreAvailabilityElement(productPriceData, language);
+    if (storeAvailability) {
+      DomClient.appendElementToElement(storeAvailability, contentContainer);
+    }
 
     priceIndication.title =
       language === Language.ENGLISH
