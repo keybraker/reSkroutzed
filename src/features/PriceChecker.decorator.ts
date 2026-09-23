@@ -1078,8 +1078,6 @@ function createPriceIndicationElement(
     );
     DomClient.appendElementToElement(breakdownElem, analysisContainer);
 
-    DomClient.appendElementToElement(analysisContainer, contentContainer);
-
     DomClient.appendElementToElement(infoContainer, contentContainer);
 
     if (productPriceHistory) {
@@ -1103,6 +1101,9 @@ function createPriceIndicationElement(
     } else if (renderOptions.isPriceHistoryLoading) {
       DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
     }
+
+    // The analysis is revealed directly beneath the toggle button that controls it.
+    DomClient.appendElementToElement(analysisContainer, contentContainer);
 
     priceIndication.title =
       language === Language.ENGLISH
