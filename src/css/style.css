@@ -1134,6 +1134,7 @@ text-black {
   max-width: 100% !important;
   cursor: pointer !important;
   pointer-events: auto !important;
+  position: relative !important;
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
@@ -1210,6 +1211,65 @@ text-black {
     0 4px 12px rgba(0, 0, 0, 0.08) !important;
   transform: translateY(-1px) !important;
   outline: none !important;
+}
+
+/* Faint glow on the promo pills: a static soft shadow that only fades in and out
+   once every 12s. No ring, no growth, no movement — the glow itself is fixed, so
+   only `opacity` animates (cheap) and the pills read as calm between pulses.
+   `opacity: 0` + `backwards` fill keep the glow hidden through the delay, before
+   and until the first fade — without them the shadow paints at full strength on
+   load and then snaps off when the cycle starts.
+   NB: opacity intentionally has no `!important` — an important declaration would
+   outrank the keyframes and freeze the fade. */
+.own-promotion-review-link::after,
+.buy-me-coffee::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: -2px !important;
+  border-radius: 999px !important;
+  pointer-events: none !important;
+  opacity: 0;
+  animation: promotion-soft-glow 12s ease-in-out 0.4s infinite backwards !important;
+}
+
+.own-promotion-review-link::after {
+  box-shadow: 0 0 14px 4px rgba(255, 146, 60, 0.5) !important;
+}
+
+/* The support pill is already orange, so it needs a stronger, deeper amber halo
+   for the pulse to read as clearly as it does around the white review pill. */
+.buy-me-coffee::after {
+  box-shadow: 0 0 22px 8px rgba(255, 132, 32, 0.85) !important;
+}
+
+@keyframes promotion-soft-glow {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.55;
+  }
+
+  38% {
+    opacity: 0.7;
+  }
+
+  58% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .own-promotion-review-link::after,
+  .buy-me-coffee::after {
+    content: none !important;
+    animation: none !important;
+  }
 }
 
 .own-promotion-brand-logo img {
