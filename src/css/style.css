@@ -1616,11 +1616,7 @@ text-black {
   height: 22px !important;
   display: block !important;
   flex: 0 0 auto !important;
-}
-
-.store-logo path {
-  fill: currentColor !important;
-  color: rgba(0, 0, 0, 0.55) !important;
+  object-fit: contain !important;
 }
 
 .bestprice-badge-logo path,
