@@ -516,19 +516,27 @@ body {
 
 /* ---------- FOOTER ---------- */
 .footer {
-  padding: 10px var(--space-xl);
+  padding: 12px var(--space-xl);
   border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: var(--surface-1);
+  flex-shrink: 0;
+}
+.footer-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
-  background: var(--surface-1);
-  flex-shrink: 0;
+  /* label on the left, controls on the right, always on one line */
+  flex-wrap: nowrap;
 }
 .footer-links {
   display: flex;
   align-items: center;
   gap: var(--space-md);
+  min-width: 0;
 }
 .footer-label {
   font-size: 10px;
@@ -541,6 +549,8 @@ body {
 .store-links {
   display: flex;
   gap: var(--space-sm);
+  flex-wrap: nowrap;
+  flex-shrink: 0;
 }
 .store-pill {
   display: inline-flex;
@@ -587,6 +597,54 @@ body {
   opacity: 0.5;
 }
 
+/* ---------- SUPPORT ---------- */
+.footer-row--center {
+  justify-content: center;
+}
+.support-links {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+.support-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.support-pill:hover {
+  background: var(--surface-3);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+.support-pill-logo {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: var(--accent-foreground);
+}
+.support-pill--paypal .support-pill-logo {
+  background: #ffc439;
+}
+.support-pill--revolut .support-pill-logo {
+  background: #627eea;
+}
+
 /* ---------- SCROLLBAR ---------- */
 .settings-grid::-webkit-scrollbar {
   width: 4px;
@@ -613,9 +671,5 @@ body {
   }
   .btn-primary {
     width: 100%;
-  }
-  .footer {
-    flex-direction: column;
-    align-items: center;
   }
 }
