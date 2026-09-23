@@ -1,15 +1,22 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { ProductPriceHistory } from '../../../src/clients/skroutz/client';
+import { PriceChartValue } from '../../../src/clients/skroutz/types';
 import { PriceHistoryComponent } from '../../../src/common/components/PriceHistory.component';
 import { Language } from '../../../src/common/enums/Language.enum';
 
 describe('PriceHistoryComponent', () => {
-  const makeHistory = (min: number, max: number): ProductPriceHistory => ({
-    minimumPrice: min,
-    maximumPrice: max,
-    allPrices: [],
-    sixMonthPrices: [],
+  const samples = (values: number[]): PriceChartValue[] =>
+    values.map((value, index) => ({ value, timestamp: index }));
+
+  const makeHistory = (
+    allPrices: number[],
+    sixMonthPrices: number[] = allPrices,
+  ): ProductPriceHistory => ({
+    minimumPrice: Math.min(...allPrices),
+    maximumPrice: Math.max(...allPrices),
+    allPrices: samples(allPrices),
+    sixMonthPrices: samples(sixMonthPrices),
   });
 
   const renderVerdict = (
@@ -40,7 +47,7 @@ describe('PriceHistoryComponent', () => {
 
   it('renders a GOOD PRICE row with the buy modifier when the price is cheap', () => {
     // Arrange
-    const history = makeHistory(100, 200);
+    const history = makeHistory([100, 150, 200]);
 
     // Act
     const verdict = renderVerdict('cheap', history, 110);
@@ -52,7 +59,7 @@ describe('PriceHistoryComponent', () => {
 
   it('renders an OK PRICE row with the shortlist modifier when the price is normal', () => {
     // Arrange
-    const history = makeHistory(100, 200);
+    const history = makeHistory([100, 150, 200]);
 
     // Act
     const verdict = renderVerdict('normal', history, 150);
@@ -64,7 +71,7 @@ describe('PriceHistoryComponent', () => {
 
   it('renders an EXPENSIVE PRICE row with the dontbuy modifier when the price is expensive', () => {
     // Arrange
-    const history = makeHistory(100, 200);
+    const history = makeHistory([100, 150, 200]);
 
     // Act
     const verdict = renderVerdict('expensive', history, 190);
@@ -76,7 +83,7 @@ describe('PriceHistoryComponent', () => {
 
   it('renders a coloured rounded icon square inside every verdict row', () => {
     // Arrange
-    const history = makeHistory(100, 200);
+    const history = makeHistory([100, 150, 200]);
 
     // Act
     const verdict = renderVerdict('normal', history, 150);
@@ -87,7 +94,7 @@ describe('PriceHistoryComponent', () => {
 
   it('uses the same base design for every verdict and only varies the colour modifier', () => {
     // Arrange
-    const history = makeHistory(100, 200);
+    const history = makeHistory([100, 150, 200]);
 
     // Act
     const buy = renderVerdict('cheap', history, 110);
@@ -113,7 +120,7 @@ describe('PriceHistoryComponent', () => {
 
   it('shows the combined assessment sentence as the subtitle when lifetime matches the current state', () => {
     // Arrange
-    const history = makeHistory(100, 200);
+    const history = makeHistory([100, 150, 200]);
 
     // Act
     const verdict = renderVerdict('normal', history, 150);
@@ -125,21 +132,34 @@ describe('PriceHistoryComponent', () => {
   });
 
   it('falls back to the period assessment sentence when lifetime data is unavailable', () => {
-    // Arrange
-    const history = makeHistory(100, 100);
+    // Arrange — only the last 6 months have samples
+    const history = makeHistory([], [100, 150, 200]);
 
     // Act
-    const verdict = renderVerdict('expensive', history, 100);
+    const verdict = renderVerdict('cheap', history, 110);
 
     // Assert
     expect(queryPart(verdict, '.price-history-verdict-subtitle').textContent).toBe(
-      'Υψηλή τιμή σε σχέση με το τελευταίο εξάμηνο',
+      'Καλή τιμή σε σχέση με το τελευταίο εξάμηνο',
+    );
+  });
+
+  it('names both windows in the subtitle when they disagree about the price', () => {
+    // Arrange — cheap against the last 6 months, ordinary over the whole period
+    const history = makeHistory([90, 100, 150, 200, 210], [100, 150, 200]);
+
+    // Act
+    const verdict = renderVerdict('normal', history, 105);
+
+    // Assert
+    expect(queryPart(verdict, '.price-history-verdict-subtitle').textContent).toBe(
+      'Καλή τιμή σε σχέση με το τελευταίο εξάμηνο • Μέση τιμή σε σχέση με όλη τη διάρκεια πώλησης',
     );
   });
 
   it('localizes the assessment sentence according to the language', () => {
     // Arrange
-    const history = makeHistory(100, 200);
+    const history = makeHistory([100, 150, 200]);
 
     // Act
     const verdict = renderVerdict('cheap', history, 110, Language.ENGLISH);
@@ -152,7 +172,7 @@ describe('PriceHistoryComponent', () => {
 
   it('localizes the verdict labels to English (GOOD PRICE / OK PRICE / EXPENSIVE PRICE)', () => {
     // Arrange
-    const history = makeHistory(100, 200);
+    const history = makeHistory([100, 150, 200]);
 
     // Act
     const good = renderVerdict('cheap', history, 110, Language.ENGLISH);

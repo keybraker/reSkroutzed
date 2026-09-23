@@ -3,6 +3,7 @@ import { DomClient } from '../clients/dom/client';
 import { ProductPriceData, ProductPriceHistory, SkroutzClient } from '../clients/skroutz/client';
 import { PriceHistoryComponent } from '../common/components/PriceHistory.component';
 import { Language } from '../common/enums/Language.enum';
+import { assessPrice } from '../common/functions/priceVerdict';
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createBuyMeCoffeeElement } from './functions/createBuyMeCoffeeElement';
@@ -1076,14 +1077,14 @@ function createPriceIndicationElement(
     DomClient.appendElementToElement(infoContainer, contentContainer);
 
     if (productPriceHistory) {
+      // The chart tracks product prices, so comparing the shipping-inclusive
+      // total against it would push every verdict towards "expensive".
+      const storeProductPrice = productPriceData.buyThroughStore.price;
       const priceHistoryBreakdown = PriceHistoryComponent(
-        getPriceHistoryComparisonOutcome(
-          productPriceHistory,
-          productPriceData.buyThroughStore.totalPrice,
-        ),
+        assessPrice(productPriceHistory, storeProductPrice).overall,
         productPriceHistory,
         language,
-        productPriceData.buyThroughStore.totalPrice,
+        storeProductPrice,
       );
       const priceHistoryControls = priceHistoryBreakdown.querySelector('.price-history-controls');
       if (priceHistoryControls) {
@@ -1119,32 +1120,6 @@ function createPriceIndicationElement(
   } catch (err) {
     console.error('PriceChecker: failed to build indication element', err);
     return createPriceCheckerFallbackElement(language);
-  }
-}
-
-function getPriceHistoryComparisonOutcome(
-  productPriceHistory: ProductPriceHistory,
-  currentPrice: number,
-): 'expensive' | 'cheap' | 'normal' {
-  const min = Number(productPriceHistory.minimumPrice);
-  const max = Number(productPriceHistory.maximumPrice);
-
-  if (!Number.isFinite(min) || !Number.isFinite(max)) {
-    return 'normal';
-  }
-
-  const priceRange = max - min;
-  if (priceRange <= 0) {
-    return 'normal';
-  }
-
-  const pricePosition = (currentPrice - min) / priceRange; //
-  if (pricePosition <= 0.3) {
-    return 'cheap';
-  } else if (pricePosition <= 0.7) {
-    return 'normal';
-  } else {
-    return 'expensive';
   }
 }
 

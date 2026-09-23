@@ -1,9 +1,10 @@
 import { DomClient } from '../../clients/dom/client';
 import { ProductPriceHistory } from '../../clients/skroutz/client';
 import { Language } from '../enums/Language.enum';
+import { assessPrice, PriceAssessment, PriceVerdict } from '../functions/priceVerdict';
 import { translate, TranslationKey } from '../utils/translations';
 
-type PriceLevel = 'cheap' | 'normal' | 'expensive';
+type PriceLevel = PriceVerdict;
 
 const VERDICT_LABEL_KEY: Record<PriceLevel, TranslationKey> = {
   cheap: 'verdict.goodPrice',
@@ -30,54 +31,35 @@ function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-function getLifetimePriceLevel(
-  productPriceHistory: ProductPriceHistory,
-  currentPrice: number,
-): PriceLevel | null {
-  const min = Number(productPriceHistory.minimumPrice);
-  const max = Number(productPriceHistory.maximumPrice);
-
-  if (!Number.isFinite(min) || !Number.isFinite(max)) {
-    return null;
-  }
-
-  const priceRange = max - min;
-  if (priceRange <= 0) {
-    return null;
-  }
-
-  const pricePosition = (currentPrice - min) / priceRange;
-
-  if (pricePosition <= 0.3) return 'cheap';
-  if (pricePosition <= 0.7) return 'normal';
-  return 'expensive';
-}
-
 /**
  * Builds the assessment sentence describing the current price, previously shown
- * as plain labels and now displayed as the verdict box subtitle.
+ * as plain labels and now displayed as the verdict box subtitle. Each window is
+ * named on its own whenever the two disagree, so the sentence stays honest about
+ * what the price was measured against.
  */
-function buildAssessmentText(
-  currentPriceState: PriceLevel,
-  lifetimeLevel: PriceLevel | null,
-  language: Language,
-): string {
-  if (lifetimeLevel && lifetimeLevel === currentPriceState) {
-    return translate(
-      `priceHistory.combined${capitalize(currentPriceState)}` as TranslationKey,
-      language,
-    );
+function buildAssessmentText(assessment: PriceAssessment, language: Language): string {
+  const { recent, lifetime } = assessment;
+
+  if (recent && lifetime && recent === lifetime) {
+    return translate(`priceHistory.combined${capitalize(recent)}` as TranslationKey, language);
   }
 
-  const parts = [translate(`priceHistory.${currentPriceState}` as TranslationKey, language)];
-
-  if (lifetimeLevel) {
-    parts.push(
-      translate(`priceHistory.lifetime${capitalize(lifetimeLevel)}` as TranslationKey, language),
-    );
+  if (recent && lifetime) {
+    return [
+      translate(`priceHistory.${recent}` as TranslationKey, language),
+      translate(`priceHistory.lifetime${capitalize(lifetime)}` as TranslationKey, language),
+    ].join(' • ');
   }
 
-  return parts.join(' • ');
+  if (recent) {
+    return translate(`priceHistory.${recent}` as TranslationKey, language);
+  }
+
+  if (lifetime) {
+    return translate(`priceHistory.lifetime${capitalize(lifetime)}` as TranslationKey, language);
+  }
+
+  return translate('priceHistory.normal', language);
 }
 
 /**
@@ -146,11 +128,9 @@ export function PriceHistoryComponent(
   assessmentsContainer.style.flex = '1 1 auto';
   assessmentsContainer.style.minWidth = '0';
 
-  const lifetimeLevel = getLifetimePriceLevel(productPriceHistory, currentPrice);
-
   const verdictBox = createVerdictBox(
     currentPriceState,
-    buildAssessmentText(currentPriceState, lifetimeLevel, language),
+    buildAssessmentText(assessPrice(productPriceHistory, currentPrice), language),
     language,
   );
   DomClient.appendElementToElement(verdictBox, assessmentsContainer);
