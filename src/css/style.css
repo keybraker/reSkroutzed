@@ -308,6 +308,76 @@ text-black {
   white-space: nowrap !important;
 }
 
+/* ---------- ORBITING EMBER ----------
+   A single warm ember travels around the pill's edge, continuously and never stopping.
+   - The ember rides the pill's own `border-box` background layer, and it has to be the
+     same box that runs the animation: animating a registered custom property and reading
+     it from a *different* box (a pseudo-element, or an inherited copy) is not reliably
+     invalidated in Blink. Observed here: one pill's ember stayed pinned to the initial
+     angle for as long as the page was open while the other pill swept normally, with
+     identical declarations on both. Keyframes and the gradient that consumes them
+     therefore stay on the element itself.
+   - The band is as thick as the border (4px) while the static edge is only the 2px
+     `outline` sitting over its outer half, so the moving line reads heavier than the
+     line it runs along. No mask is needed: the opaque `padding-box` fill hides the
+     gradient's middle, which is exactly why that fill cannot be translucent.
+   - `@property` registers the angle as an <angle>. That registration is what makes it
+     interpolable; without it the gradient would sit frozen at 198deg. Browsers without
+     `@property` (Firefox < 128) fall back to discrete keyframe steps, which for a full
+     360deg turn land on an identical-looking angle — a static ember, no jitter.
+   - Only `background` and `border` are pinned with `!important` on these pills, never the
+     animated custom property, so the animation survives the rule that `!important`
+     author declarations outrank `@keyframes`. */
+@property --resk-ring-angle {
+  syntax: '<angle>';
+  initial-value: 198deg;
+  inherits: false;
+}
+
+/* One full turn per cycle at a constant rate: no hold, so the ember never stops and
+   there is no seam between cycles. */
+@keyframes resk-ember-sweep {
+  from {
+    --resk-ring-angle: 198deg;
+  }
+
+  to {
+    --resk-ring-angle: 558deg;
+  }
+}
+
+/* Ember only, on a transparent track: the static edge is the outline, so anything drawn
+   in the track would make the band read 4px wide at rest. Declared on the pills rather
+   than on :root, so each pill's own animated angle is the one substituted. */
+.own-promotion-review-link,
+.buy-me-coffee {
+  --resk-ember: conic-gradient(
+    from var(--resk-ring-angle, 198deg) at 50% 50%,
+    transparent 0deg,
+    transparent 195deg,
+    rgba(255, 179, 71, 0.06) 215deg,
+    rgba(255, 179, 71, 0.14) 240deg,
+    rgba(255, 179, 71, 0.3) 262deg,
+    rgba(255, 179, 71, 0.55) 280deg,
+    rgba(255, 179, 71, 0.8) 292deg,
+    #ffb347 300deg,
+    rgba(255, 179, 71, 0.5) 312deg,
+    rgba(255, 179, 71, 0.2) 324deg,
+    rgba(255, 179, 71, 0.07) 334deg,
+    transparent 342deg,
+    transparent 360deg
+  );
+  animation: resk-ember-sweep 3.6s linear infinite !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Freezes the ember at the resting angle the registration declares. */
+  .own-promotion-review-link,
+  .buy-me-coffee {
+    animation: none !important;
+  }
+}
+
 .buy-me-coffee-link {
   display: inline-flex !important;
   align-items: center !important;
@@ -326,8 +396,13 @@ text-black {
 .buy-me-coffee {
   position: static !important;
   color: #ffffff !important;
-  background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
-  border: 1px solid rgba(101, 52, 17, 0.18) !important;
+  background:
+    linear-gradient(135deg, #ff6b35, #f7931e) padding-box,
+    var(--resk-ember) border-box !important;
+  border: 4px solid transparent !important;
+  /* The visible static edge: half the band, sitting over the ember's outer half. */
+  outline: 2px solid rgba(101, 52, 17, 0.18) !important;
+  outline-offset: -2px !important;
   box-shadow:
     0 4px 12px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
@@ -370,8 +445,10 @@ text-black {
 
 .buy-me-coffee:hover {
   /* keep static appearance on hover */
-  background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
-  border-color: rgba(101, 52, 17, 0.18) !important;
+  background:
+    linear-gradient(135deg, #ff6b35, #f7931e) padding-box,
+    var(--resk-ember) border-box !important;
+  outline-color: rgba(101, 52, 17, 0.18) !important;
   box-shadow:
     0 4px 12px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
@@ -1011,11 +1088,10 @@ text-black {
 }
 
 .analysis-toggle-button {
+  border: none !important;
   background: #ffffff !important;
   color: #444 !important;
   border-radius: 999px !important;
-  /* Same hairline border as the "Αξιολόγησε το reSkroutzed" button */
-  border: 1px solid rgba(120, 68, 40, 0.18) !important;
   padding: 6px 14px !important;
   font-size: 12px !important;
   font-weight: 600 !important;
@@ -1027,16 +1103,16 @@ text-black {
   white-space: nowrap !important;
   transition:
     background 0.2s ease,
-    border-color 0.2s ease,
     box-shadow 0.2s ease,
     transform 0.15s ease !important;
   line-height: 1 !important;
   letter-spacing: 0.4px !important;
+  border: 1px solid rgba(0, 0, 0, 0) !important;
 }
 
 .analysis-toggle-button:hover {
   background: #f2f2f2 !important;
-  border-color: rgba(120, 68, 40, 0.26) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 .analysis-toggle-button:active {
@@ -1123,9 +1199,15 @@ text-black {
   flex: 1 1 auto !important;
   min-height: 38px !important;
   padding: 8px 14px !important;
-  border: 1px solid rgba(120, 68, 40, 0.18) !important;
+  border: 4px solid transparent !important;
   border-radius: 999px !important;
-  background: rgba(255, 255, 255, 0.66) !important;
+  /* Has to be opaque: this layer covers the middle of the ember gradient. */
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    var(--resk-ember) border-box !important;
+  /* The visible static edge: half the band, sitting over the ember's outer half. */
+  outline: 2px solid rgba(120, 68, 40, 0.18) !important;
+  outline-offset: -2px !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.72),
     0 2px 8px rgba(0, 0, 0, 0.06) !important;
@@ -1134,10 +1216,9 @@ text-black {
   max-width: 100% !important;
   cursor: pointer !important;
   pointer-events: auto !important;
-  position: relative !important;
   transition:
     background 0.2s ease,
-    border-color 0.2s ease,
+    outline-color 0.2s ease,
     box-shadow 0.2s ease,
     transform 0.2s ease !important;
 }
@@ -1204,72 +1285,14 @@ text-black {
 
 .own-promotion-review-link:hover,
 .own-promotion-review-link:focus-visible {
-  background: rgba(255, 255, 255, 0.82) !important;
-  border-color: rgba(120, 68, 40, 0.26) !important;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    var(--resk-ember) border-box !important;
+  outline-color: rgba(120, 68, 40, 0.26) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     0 4px 12px rgba(0, 0, 0, 0.08) !important;
   transform: translateY(-1px) !important;
-  outline: none !important;
-}
-
-/* Faint glow on the promo pills: a static soft shadow that only fades in and out
-   once every 12s. No ring, no growth, no movement — the glow itself is fixed, so
-   only `opacity` animates (cheap) and the pills read as calm between pulses.
-   `opacity: 0` + `backwards` fill keep the glow hidden through the delay, before
-   and until the first fade — without them the shadow paints at full strength on
-   load and then snaps off when the cycle starts.
-   NB: opacity intentionally has no `!important` — an important declaration would
-   outrank the keyframes and freeze the fade. */
-.own-promotion-review-link::after,
-.buy-me-coffee::after {
-  content: '' !important;
-  position: absolute !important;
-  inset: -2px !important;
-  border-radius: 999px !important;
-  pointer-events: none !important;
-  opacity: 0;
-  animation: promotion-soft-glow 12s ease-in-out 0.4s infinite backwards !important;
-}
-
-.own-promotion-review-link::after {
-  box-shadow: 0 0 14px 4px rgba(255, 146, 60, 0.5) !important;
-}
-
-/* The support pill is already orange, so it needs a stronger, deeper amber halo
-   for the pulse to read as clearly as it does around the white review pill. */
-.buy-me-coffee::after {
-  box-shadow: 0 0 22px 8px rgba(255, 132, 32, 0.85) !important;
-}
-
-@keyframes promotion-soft-glow {
-  0% {
-    opacity: 0;
-  }
-
-  20% {
-    opacity: 0.55;
-  }
-
-  38% {
-    opacity: 0.7;
-  }
-
-  58% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .own-promotion-review-link::after,
-  .buy-me-coffee::after {
-    content: none !important;
-    animation: none !important;
-  }
 }
 
 .own-promotion-brand-logo img {
@@ -1986,6 +2009,7 @@ text-black {
     flex: 1 1 auto !important;
   }
 
+  /* Mobile card padding is 16px, so the band's bleed has to match. */
   .own-promotion {
     margin: 12px -16px -16px !important;
   }
