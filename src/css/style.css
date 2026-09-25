@@ -1088,7 +1088,6 @@ text-black {
 }
 
 .analysis-toggle-button {
-  border: none !important;
   background: #ffffff !important;
   color: #444 !important;
   border-radius: 999px !important;
@@ -1107,7 +1106,9 @@ text-black {
     transform 0.15s ease !important;
   line-height: 1 !important;
   letter-spacing: 0.4px !important;
-  border: 1px solid rgba(0, 0, 0, 0) !important;
+  /* Thin hairline, the same weight as the card's other borders. The 1px is always
+     reserved, so only the colour changes and the button never shifts. */
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
 .analysis-toggle-button:hover {
