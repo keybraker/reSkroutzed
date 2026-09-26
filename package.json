@@ -55,7 +55,7 @@
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.4.2",
-    "typescript": "^5.0.4",
+    "typescript": "^7.0.2",
     "vitest": "^1.2.2",
     "web-ext": "^8.9.0",
     "webpack": "^5.89.0",
