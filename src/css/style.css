@@ -1590,6 +1590,9 @@ text-black {
 }
 
 .price-average-line .price-average-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
   min-width: 0 !important;
 }
 

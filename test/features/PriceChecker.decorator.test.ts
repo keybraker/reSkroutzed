@@ -478,7 +478,12 @@ describe('PriceCheckerDecorator', () => {
     expect(line).not.toBeNull();
     expect(line?.parentElement?.classList.contains('price-history-row')).toBe(true);
     expect(line?.querySelector('.price-average-icon svg')).not.toBeNull();
-    expect(line?.textContent).toBe('6-month average: 95,00€ · All-time average: 110,00€');
+
+    // Six months on top, the whole sales period underneath.
+    const lines = Array.from(line?.querySelectorAll('.price-average-item') ?? []).map(
+      (item) => item.textContent,
+    );
+    expect(lines).toEqual(['6-month average: 95,00€', 'All-time average: 110,00€']);
 
     // The toggles sit to the right of the line, inside the same row.
     const controls = line?.nextElementSibling as HTMLElement | null;
@@ -500,9 +505,10 @@ describe('PriceCheckerDecorator', () => {
     await flushPromises();
 
     // Assert
-    expect(document.querySelector('.price-average-line')?.textContent).toBe(
-      'Μέση τιμή εξαμήνου: 95,00€ · Μέση τιμή όλης της περιόδου: 110,00€',
-    );
+    const lines = Array.from(
+      document.querySelectorAll('.price-average-line .price-average-item'),
+    ).map((item) => item.textContent);
+    expect(lines).toEqual(['Μέση τιμή εξαμήνου: 95,00€', 'Μέση τιμή όλης της περιόδου: 110,00€']);
   });
 
   it('omits the average for a window with no usable samples', async () => {

@@ -447,10 +447,10 @@ function formatAveragePrice(value: number): string {
 }
 
 /**
- * The quiet line under the price columns: the mean recorded price for the last
- * six months and for the product's entire sales period. It is informational and
- * italic on purpose so it annotates the comparison prices without competing
- * with them.
+ * The quiet caption in the price-history row: the mean recorded price for the last
+ * six months and for the product's entire sales period, each on its own line with
+ * the six-month figure on top. It is informational and italic on purpose so it
+ * annotates the comparison prices without competing with them.
  */
 function createAveragePriceLine(
   productPriceHistory: ProductPriceHistory,
@@ -462,10 +462,10 @@ function createAveragePriceLine(
     return null;
   }
 
-  const parts: string[] = [];
+  const lines: string[] = [];
 
   if (sixMonth !== null) {
-    parts.push(
+    lines.push(
       language === Language.ENGLISH
         ? `6-month average: ${formatAveragePrice(sixMonth)}`
         : `Μέση τιμή εξαμήνου: ${formatAveragePrice(sixMonth)}`,
@@ -473,7 +473,7 @@ function createAveragePriceLine(
   }
 
   if (lifetime !== null) {
-    parts.push(
+    lines.push(
       language === Language.ENGLISH
         ? `All-time average: ${formatAveragePrice(lifetime)}`
         : `Μέση τιμή όλης της περιόδου: ${formatAveragePrice(lifetime)}`,
@@ -488,17 +488,27 @@ function createAveragePriceLine(
       ? 'Average of the prices recorded for this product in the last 6 months and over its entire sales period.'
       : 'Μέσος όρος των τιμών που καταγράφηκαν για το προϊόν το τελευταίο εξάμηνο και σε όλη τη διάρκεια πώλησής του.';
 
-  const icon = DomClient.createElement('span', {
+  // Container divs, not spans: `.info-with-analysis-row span:first-child` in
+  // style.css stretches the first span of any flex box inside that row, which
+  // used to blow the icon up to the free space and push the caption to the right.
+  const icon = DomClient.createElement('div', {
     className: 'price-average-icon',
-  }) as HTMLSpanElement;
+  });
   icon.setAttribute('aria-hidden', 'true');
   icon.innerHTML =
     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
 
-  const text = DomClient.createElement('span', {
+  const text = DomClient.createElement('div', {
     className: 'price-average-text',
-  }) as HTMLSpanElement;
-  text.textContent = parts.join(' · ');
+  });
+
+  lines.forEach((lineText) => {
+    const item = DomClient.createElement('div', {
+      className: 'price-average-item',
+    });
+    item.textContent = lineText;
+    DomClient.appendElementToElement(item, text);
+  });
 
   DomClient.appendElementToElement(icon, line);
   DomClient.appendElementToElement(text, line);
