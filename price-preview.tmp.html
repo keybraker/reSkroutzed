@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="el">
+  <head>
+    <meta charset="utf-8" />
+    <title>reSkroutzed price row — three column preview (scratch)</title>
+    <link rel="stylesheet" href="src/css/style.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .harness {
+        width: 600px;
+        margin: 0 auto 28px;
+        border: 1px dashed #d0d0d0;
+        border-radius: 16px;
+        padding: 8px;
+      }
+      .harness-label {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        color: #666;
+        margin: 0 auto 6px;
+        width: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <template id="price-row">
+      <div class="price-display-row">
+        <button type="button" class="price-display-action price-display-store-action">
+          <div class="price-display-action-content">
+            <div class="price-indicator-price">
+              2969<span class="price-indicator-comma">,</span
+              ><span class="price-indicator-decimal">05</span
+              ><span class="price-indicator-currency">€</span>
+            </div>
+            <div class="shipping-cost-text">(+0,00€ μεταφορικά)</div>
+            <div class="price-display-subtitle">Αγορά μέσω καταστήματος</div>
+          </div>
+          <div class="price-display-action-notification">
+            <img class="store-logo" src="icons/store_logo.png" alt="" />
+          </div>
+          <span class="price-display-action-arrow" aria-hidden="true"
+            ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M4 2L8 6L4 10"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+          ></span>
+        </button>
+
+        <div class="price-display-divider" aria-hidden="true"></div>
+
+        <a
+          href="#"
+          class="price-display-action price-display-bestprice-action bestprice-badge price-display-action-positive"
+        >
+          <div class="price-display-action-content">
+            <div class="price-indicator-price price-display-action-positive">
+              2279<span class="price-indicator-comma">,</span
+              ><span class="price-indicator-decimal">99</span
+              ><span class="price-indicator-currency">€</span>
+            </div>
+            <div class="shipping-cost-text price-display-action-positive">(+2,99€ μεταφορικά)</div>
+            <div class="price-display-subtitle">Αγορά μέσω BestPrice</div>
+          </div>
+          <div class="price-display-action-notification">
+            <svg class="bestprice-badge-logo" viewBox="0 0 44 28" aria-hidden="true">
+              <path d="M1 6h42v16H1z" />
+            </svg>(+0,00€ μεταφορικά)
+από 130,68 € / μήνα σε 24 δόσεις
+          </div>
+          <span class="price-display-action-arrow" aria-hidden="true"
+            ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M4 2L8 6L4 10"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+          ></span>
+        </a>
+
+        <div class="price-display-divider" aria-hidden="true"></div>
+
+        <a
+          href="#"
+          class="price-display-action price-display-shopflix-action shopflix-badge price-display-action-positive"
+        >
+          <div class="price-display-action-content">
+            <div class="price-indicator-price price-display-action-positive">
+              1467<span class="price-indicator-comma">,</span
+              ><span class="price-indicator-decimal">00</span
+              ><span class="price-indicator-currency">€</span>
+            </div>
+            <div
+              class="shipping-cost-text price-display-shipping-note price-display-action-positive"
+            >
+              (Ενδέχεται να υπάρχουν μεταφορικά)
+            </div>
+            <div class="price-display-subtitle">Αγορά μέσω Shopflix</div>
+          </div>
+          <div class="price-display-action-notification">
+            <span class="shopflix-badge-logo" aria-hidden="true">shopflix</span>
+          </div>
+          <span class="price-display-action-arrow" aria-hidden="true"
+            ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M4 2L8 6L4 10"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+          ></span>
+        </a>
+      </div>
+    </template>
+
+    <p class="harness-label">AFTER — price-display-row-multi rules active</p>
+    <div class="harness">
+      <div class="price-checker-stack">
+        <div class="display-padding price-checker-outline" style="margin-top: 14px">
+          <div class="inline-flex-col">
+            <div class="price-calculation-container">
+              <div class="price-display-wrapper" data-mount data-multi="true"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="harness-label">BEFORE — row without the multi-column scaling</p>
+    <div class="harness">
+      <div class="price-checker-stack">
+        <div class="display-padding price-checker-outline" style="margin-top: 14px">
+          <div class="inline-flex-col">
+            <div class="price-calculation-container">
+              <div class="price-display-wrapper" data-mount data-multi="false"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const template = document.getElementById('price-row');
+      document.querySelectorAll('[data-mount]').forEach((host) => {
+        const row = template.content.cloneNode(true).querySelector('.price-display-row');
+        if (host.dataset.multi === 'true') {
+          row.classList.add('price-display-row-multi');
+        }
+        host.appendChild(row);
+      });
+    </script>
+  </body>
+</html>

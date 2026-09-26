@@ -1,9 +1,11 @@
-import { BestPriceClient, BestPriceProductData } from '../clients/best_price/client';
+import { BestPriceClient } from '../clients/best_price/client';
 import { DomClient } from '../clients/dom/client';
+import { ShopflixClient } from '../clients/shopflix/client';
 import { ProductPriceData, ProductPriceHistory, SkroutzClient } from '../clients/skroutz/client';
 import { PriceHistoryComponent } from '../common/components/PriceHistory.component';
 import { Language } from '../common/enums/Language.enum';
 import { assessPrice } from '../common/functions/priceVerdict';
+import { PriceComparisonProduct } from '../common/types/PriceComparisonProduct.type';
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createBuyMeCoffeeElement } from './functions/createBuyMeCoffeeElement';
@@ -14,8 +16,82 @@ const roundToZero = (value: number, precision = 1e-10): number => {
 };
 
 type PriceCheckerRenderOptions = {
-  isBestPriceLoading?: boolean;
   isPriceHistoryLoading?: boolean;
+};
+
+/**
+ * Everything that differs between comparison providers. The price-display row,
+ * badge, breakdown and analysis copy are all rendered from this view so every
+ * provider shares one implementation.
+ */
+type PriceProviderView = {
+  badgeClassNames: string[];
+  loadingBadgeClassNames: string[];
+  unavailableClassName: string;
+  comparisonTextClassName: string;
+  label: string;
+  createLogo: () => HTMLElement | SVGSVGElement;
+  subtitleText: (language: Language) => string;
+  unavailableText: (language: Language) => string;
+  ariaLabel: (language: Language) => string;
+};
+
+/** One comparison column: a provider plus the state of its product lookup. */
+type ComparisonSlot = {
+  view: PriceProviderView;
+  productData?: PriceComparisonProduct;
+  isLoading: boolean;
+};
+
+function createShopflixLogo(): HTMLSpanElement {
+  const logo = document.createElement('span');
+  logo.className = 'shopflix-badge-logo';
+  logo.textContent = 'shopflix';
+  logo.setAttribute('aria-hidden', 'true');
+
+  return logo;
+}
+
+const BEST_PRICE_VIEW: PriceProviderView = {
+  badgeClassNames: ['price-display-bestprice-action', 'bestprice-badge'],
+  loadingBadgeClassNames: [
+    'price-display-bestprice-action',
+    'bestprice-badge',
+    'bestprice-badge-loading',
+  ],
+  unavailableClassName: 'bestprice-unavailable',
+  comparisonTextClassName: 'bestprice-comparison-text',
+  label: 'BestPrice',
+  createLogo: createBestPriceLogo,
+  subtitleText: (language) =>
+    language === Language.ENGLISH ? 'Buy through BestPrice' : 'Αγορά μέσω BestPrice',
+  unavailableText: (language) =>
+    language === Language.ENGLISH ? 'BestPrice not available' : 'BestPrice: δεν βρέθηκε',
+  ariaLabel: (language) =>
+    language === Language.ENGLISH
+      ? 'Open BestPrice product page'
+      : 'Άνοιγμα σελίδας προϊόντος στο BestPrice',
+};
+
+const SHOPFLIX_VIEW: PriceProviderView = {
+  badgeClassNames: ['price-display-shopflix-action', 'shopflix-badge'],
+  loadingBadgeClassNames: [
+    'price-display-shopflix-action',
+    'shopflix-badge',
+    'shopflix-badge-loading',
+  ],
+  unavailableClassName: 'shopflix-unavailable',
+  comparisonTextClassName: 'shopflix-comparison-text',
+  label: 'Shopflix',
+  createLogo: createShopflixLogo,
+  subtitleText: (language) =>
+    language === Language.ENGLISH ? 'Buy through Shopflix' : 'Αγορά μέσω Shopflix',
+  unavailableText: (language) =>
+    language === Language.ENGLISH ? 'Shopflix not available' : 'Shopflix: δεν βρέθηκε',
+  ariaLabel: (language) =>
+    language === Language.ENGLISH
+      ? 'Open Shopflix product page'
+      : 'Άνοιγμα σελίδας προϊόντος στο Shopflix',
 };
 
 type PriceDisplayActionOptions = {
@@ -49,12 +125,7 @@ function createSkeletonBlock(extraClasses: string[] = []): HTMLDivElement {
 }
 
 function createPriceDisplayLoadingAction(
-  classNames: string[] = [
-    'price-display-action',
-    'price-display-bestprice-action',
-    'bestprice-badge',
-    'bestprice-badge-loading',
-  ],
+  classNames: string[],
   options: { includeNotificationLogo?: boolean } = {},
 ): HTMLDivElement {
   const action = DomClient.createElement('div', {
@@ -98,13 +169,15 @@ function createPriceDisplayLoadingAction(
   return action;
 }
 
-function createBestPriceUnavailableStatus(language: Language): HTMLDivElement {
+function createComparisonUnavailableStatus(
+  view: PriceProviderView,
+  language: Language,
+): HTMLDivElement {
   const status = DomClient.createElement('div', {
-    className: ['price-display-column', 'bestprice-unavailable'],
+    className: ['price-display-column', view.unavailableClassName],
   }) as HTMLDivElement;
 
-  status.textContent =
-    language === Language.ENGLISH ? 'BestPrice not available' : 'BestPrice: δεν βρέθηκε';
+  status.textContent = view.unavailableText(language);
 
   return status;
 }
@@ -113,11 +186,10 @@ function createStorePriceLoadingAction(): HTMLDivElement {
   return createPriceDisplayLoadingAction(['price-display-store-action']);
 }
 
-function createBestPriceLoadingBadge(): HTMLDivElement {
-  return createPriceDisplayLoadingAction(
-    ['price-display-bestprice-action', 'bestprice-badge', 'bestprice-badge-loading'],
-    { includeNotificationLogo: true },
-  );
+function createComparisonLoadingBadge(view: PriceProviderView): HTMLDivElement {
+  return createPriceDisplayLoadingAction(view.loadingBadgeClassNames, {
+    includeNotificationLogo: true,
+  });
 }
 
 function createShippingNoteElement(text: string, extraClasses: string[] = []): HTMLDivElement {
@@ -216,7 +288,7 @@ function createPromotionSkeletonElement(): HTMLDivElement {
   return promotion;
 }
 
-function createPriceCheckerSkeleton(): HTMLDivElement {
+function createPriceCheckerSkeleton(slots: ComparisonSlot[]): HTMLDivElement {
   const stack = DomClient.createElement('div', {
     className: ['price-checker-stack', 'price-checker-loading-stack'],
   }) as HTMLDivElement;
@@ -239,12 +311,15 @@ function createPriceCheckerSkeleton(): HTMLDivElement {
     className: 'price-display-wrapper',
   }) as HTMLDivElement;
   const priceDisplayRow = DomClient.createElement('div', {
-    className: 'price-display-row',
+    className:
+      slots.length > 1 ? ['price-display-row', 'price-display-row-multi'] : 'price-display-row',
   }) as HTMLDivElement;
 
   DomClient.appendElementToElement(createStorePriceLoadingAction(), priceDisplayRow);
-  DomClient.appendElementToElement(createPriceDisplayDivider(), priceDisplayRow);
-  DomClient.appendElementToElement(createBestPriceLoadingBadge(), priceDisplayRow);
+  slots.forEach((slot) => {
+    DomClient.appendElementToElement(createPriceDisplayDivider(), priceDisplayRow);
+    DomClient.appendElementToElement(createComparisonLoadingBadge(slot.view), priceDisplayRow);
+  });
   DomClient.appendElementToElement(priceDisplayRow, priceDisplay);
 
   DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
@@ -264,48 +339,36 @@ function createPriceDisplayComponent(
   price: number,
   shippingCost: number,
   language: Language,
-  bestPriceProductData?: BestPriceProductData,
-  isBestPriceLoading = false,
+  slots: ComparisonSlot[],
 ): HTMLDivElement {
-  if (bestPriceProductData || isBestPriceLoading) {
-    const row = DomClient.createElement('div', {
-      className: 'price-display-row',
-    }) as HTMLDivElement;
-    DomClient.appendElementToElement(
-      createStorePriceAction(productPriceData, price, shippingCost, language),
-      row,
-    );
-    DomClient.appendElementToElement(createPriceDisplayDivider(), row);
-    if (bestPriceProductData) {
-      DomClient.appendElementToElement(
-        createBestPriceBadge(
-          bestPriceProductData,
-          productPriceData.buyThroughSkroutz.totalPrice,
-          language,
-        ),
-        row,
-      );
-    } else {
-      DomClient.appendElementToElement(createBestPriceLoadingBadge(), row);
-    }
-
-    const container = DomClient.createElement('div', {
-      className: 'price-display-wrapper',
-    }) as HTMLDivElement;
-    DomClient.appendElementToElement(row, container);
-
-    return container;
-  }
-
   const row = DomClient.createElement('div', {
-    className: 'price-display-row',
+    className:
+      slots.length > 1 ? ['price-display-row', 'price-display-row-multi'] : 'price-display-row',
   }) as HTMLDivElement;
   DomClient.appendElementToElement(
     createStorePriceAction(productPriceData, price, shippingCost, language),
     row,
   );
-  DomClient.appendElementToElement(createPriceDisplayDivider(), row);
-  DomClient.appendElementToElement(createBestPriceUnavailableStatus(language), row);
+
+  slots.forEach((slot) => {
+    DomClient.appendElementToElement(createPriceDisplayDivider(), row);
+
+    if (slot.productData) {
+      DomClient.appendElementToElement(
+        createComparisonBadge(
+          slot.productData,
+          productPriceData.buyThroughSkroutz.totalPrice,
+          language,
+          slot.view,
+        ),
+        row,
+      );
+    } else if (slot.isLoading) {
+      DomClient.appendElementToElement(createComparisonLoadingBadge(slot.view), row);
+    } else {
+      DomClient.appendElementToElement(createComparisonUnavailableStatus(slot.view, language), row);
+    }
+  });
 
   const container = DomClient.createElement('div', {
     className: 'price-display-wrapper',
@@ -531,45 +594,43 @@ function createStorePriceAction(
   }) as HTMLButtonElement;
 }
 
-function createBestPriceBadge(
-  bestPriceProductData: BestPriceProductData,
+function createComparisonBadge(
+  comparisonProductData: PriceComparisonProduct,
   skroutzTotalPrice: number,
   language: Language,
+  view: PriceProviderView,
 ): HTMLAnchorElement {
-  const bestPriceTotal =
-    bestPriceProductData.totalPrice ??
-    bestPriceProductData.price + (bestPriceProductData.shippingCost ?? 0);
-  const priceClassNames = getPriceComparisonClassNames(skroutzTotalPrice, bestPriceTotal);
+  const comparisonTotal =
+    comparisonProductData.totalPrice ??
+    comparisonProductData.price + (comparisonProductData.shippingCost ?? 0);
+  const priceClassNames = getPriceComparisonClassNames(skroutzTotalPrice, comparisonTotal);
 
-  const bestPriceLink = createPriceDisplayAction({
-    classNames: ['price-display-bestprice-action', 'bestprice-badge', ...priceClassNames],
-    price: bestPriceProductData.price,
-    shippingCost: bestPriceProductData.shippingCost,
+  const comparisonLink = createPriceDisplayAction({
+    classNames: [...view.badgeClassNames, ...priceClassNames],
+    price: comparisonProductData.price,
+    shippingCost: comparisonProductData.shippingCost,
     shippingNote:
       language === Language.ENGLISH
         ? '(Delivery costs may apply)'
         : '(Ενδέχεται να υπάρχουν μεταφορικά)',
     priceClassNames,
     language,
-    subtitleText: language === Language.ENGLISH ? 'Buy through BestPrice' : 'Αγορά μέσω BestPrice',
-    title: bestPriceProductData.title,
-    ariaLabel:
-      language === Language.ENGLISH
-        ? 'Open BestPrice product page'
-        : 'Άνοιγμα σελίδας προϊόντος στο BestPrice',
-    href: bestPriceProductData.url,
-    notificationLogo: createBestPriceLogo(),
+    subtitleText: view.subtitleText(language),
+    title: comparisonProductData.title,
+    ariaLabel: view.ariaLabel(language),
+    href: comparisonProductData.url,
+    notificationLogo: view.createLogo(),
   }) as HTMLAnchorElement;
 
-  if (bestPriceProductData.shippingCost !== undefined) {
-    bestPriceLink.title = `${bestPriceProductData.title} · ${bestPriceProductData.price
+  if (comparisonProductData.shippingCost !== undefined) {
+    comparisonLink.title = `${comparisonProductData.title} · ${comparisonProductData.price
       .toFixed(2)
-      .replace('.', ',')}€ (+${bestPriceProductData.shippingCost.toFixed(2).replace('.', ',')}€ ${
-      language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'
-    })`;
+      .replace('.', ',')}€ (+${comparisonProductData.shippingCost
+      .toFixed(2)
+      .replace('.', ',')}€ ${language === Language.ENGLISH ? 'shipping' : 'μεταφορικά'})`;
   }
 
-  return bestPriceLink;
+  return comparisonLink;
 }
 
 function createAnalysisToggleButton(
@@ -613,7 +674,7 @@ function createAnalysisToggleButton(
 function createPriceComparisonBreakdownComponent(
   productPriceData: ProductPriceData,
   language: Language,
-  bestPriceProductData?: BestPriceProductData,
+  slots: ComparisonSlot[],
 ): HTMLElement {
   const transportationBreakdown = DomClient.createElement('div', {
     className: 'transportation-breakdown',
@@ -659,34 +720,35 @@ function createPriceComparisonBreakdownComponent(
   DomClient.appendElementToElement(skroutzContainer, transportationBreakdown);
   DomClient.appendElementToElement(storeContainer, transportationBreakdown);
 
-  if (bestPriceProductData) {
-    const bestPriceContainer = DomClient.createElement('div', {
-      className: 'price-breakdown-item',
-    });
-    const bestLabel = DomClient.createElement('div', { className: 'breakdown-label' });
-    bestLabel.textContent = language === Language.ENGLISH ? 'BestPrice' : 'BestPrice';
-
-    const bestValue = DomClient.createElement('div', { className: 'breakdown-value' });
-    const bpPrice = bestPriceProductData.price.toFixed(2);
-    const bpShipping =
-      bestPriceProductData.shippingCost !== undefined
-        ? bestPriceProductData.shippingCost.toFixed(2)
-        : null;
-    const bpTotalNum =
-      bestPriceProductData.totalPrice ??
-      bestPriceProductData.price + (bestPriceProductData.shippingCost ?? 0);
-    const bpTotal = bpTotalNum.toFixed(2);
-
-    if (bpShipping !== null) {
-      bestValue.textContent = `${bpPrice}€ + ${bpShipping}€ = ${bpTotal}€`;
-    } else {
-      bestValue.textContent = `${bpPrice}€ = ${bpTotal}€`;
+  slots.forEach((slot) => {
+    if (!slot.productData) {
+      return;
     }
 
-    DomClient.appendElementToElement(bestLabel, bestPriceContainer);
-    DomClient.appendElementToElement(bestValue, bestPriceContainer);
-    DomClient.appendElementToElement(bestPriceContainer, transportationBreakdown);
-  }
+    const comparisonContainer = DomClient.createElement('div', {
+      className: 'price-breakdown-item',
+    });
+    const comparisonLabel = DomClient.createElement('div', { className: 'breakdown-label' });
+    comparisonLabel.textContent = slot.view.label;
+
+    const comparisonValue = DomClient.createElement('div', { className: 'breakdown-value' });
+    const comparisonPrice = slot.productData.price.toFixed(2);
+    const comparisonShipping =
+      slot.productData.shippingCost !== undefined ? slot.productData.shippingCost.toFixed(2) : null;
+    const comparisonTotal = (
+      slot.productData.totalPrice ?? slot.productData.price + (slot.productData.shippingCost ?? 0)
+    ).toFixed(2);
+
+    if (comparisonShipping !== null) {
+      comparisonValue.textContent = `${comparisonPrice}€ + ${comparisonShipping}€ = ${comparisonTotal}€`;
+    } else {
+      comparisonValue.textContent = `${comparisonPrice}€ = ${comparisonTotal}€`;
+    }
+
+    DomClient.appendElementToElement(comparisonLabel, comparisonContainer);
+    DomClient.appendElementToElement(comparisonValue, comparisonContainer);
+    DomClient.appendElementToElement(comparisonContainer, transportationBreakdown);
+  });
 
   return transportationBreakdown;
 }
@@ -743,7 +805,7 @@ function createCalculationComponent(
   productPriceData: ProductPriceData,
   minimumPriceDifference: number,
   language: Language,
-  bestPriceProductData?: BestPriceProductData,
+  slots: ComparisonSlot[],
 ): HTMLDivElement {
   const calculationContainer = DomClient.createElement('div', {
     className: 'calculation-container',
@@ -795,27 +857,31 @@ function createCalculationComponent(
     DomClient.appendElementToElement(span, calculationContainer);
   }
 
-  if (bestPriceProductData) {
-    const bestPriceTotal = bestPriceProductData.totalPrice ?? bestPriceProductData.price;
-    const bestPriceDetails = `${skroutzTotal} - ${formatAnalysisPrice(bestPriceTotal)}`;
+  slots.forEach((slot) => {
+    if (!slot.productData) {
+      return;
+    }
 
-    const bestPriceComparison = document.createElement('div');
-    bestPriceComparison.className = 'bestprice-comparison-text';
+    const comparisonTotal = slot.productData.totalPrice ?? slot.productData.price;
+    const comparisonDetails = `${skroutzTotal} - ${formatAnalysisPrice(comparisonTotal)}`;
 
-    bestPriceComparison.appendChild(
+    const comparisonText = document.createElement('div');
+    comparisonText.className = slot.view.comparisonTextClassName;
+
+    comparisonText.appendChild(
       createAnalysisMetricRow(
         createComparisonSummary(
-          'BestPrice',
+          slot.view.label,
           productPriceData.buyThroughSkroutz.totalPrice,
-          bestPriceTotal,
+          comparisonTotal,
           language,
         ),
-        bestPriceDetails,
+        comparisonDetails,
       ),
     );
 
-    DomClient.appendElementToElement(bestPriceComparison, calculationContainer);
-  }
+    DomClient.appendElementToElement(comparisonText, calculationContainer);
+  });
 
   return calculationContainer;
 }
@@ -1012,7 +1078,7 @@ function createPriceIndicationElement(
   productPriceHistory: ProductPriceHistory | undefined,
   language: Language,
   minimumPriceDifference: number,
-  bestPriceProductData?: BestPriceProductData,
+  slots: ComparisonSlot[],
   renderOptions: PriceCheckerRenderOptions = {},
 ): HTMLDivElement {
   try {
@@ -1040,8 +1106,7 @@ function createPriceIndicationElement(
       productPriceData.buyThroughStore.price,
       productPriceData.buyThroughStore.shippingCost,
       language,
-      bestPriceProductData,
-      renderOptions.isBestPriceLoading,
+      slots,
     );
     DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
 
@@ -1058,13 +1123,13 @@ function createPriceIndicationElement(
       productPriceData,
       minimumPriceDifference,
       language,
-      bestPriceProductData,
+      slots,
     );
     if (calcElem) DomClient.appendElementToElement(calcElem, analysisContainer);
     const breakdownElem = createPriceComparisonBreakdownComponent(
       productPriceData,
       language,
-      bestPriceProductData,
+      slots,
     );
     DomClient.appendElementToElement(breakdownElem, analysisContainer);
 
@@ -1137,7 +1202,8 @@ export class PriceCheckerDecorator implements FeatureInstance {
   /* Data */
   private productPriceData: ProductPriceData | undefined = undefined;
   private productPriceHistory: ProductPriceHistory | undefined = undefined;
-  private bestPriceProductData: BestPriceProductData | undefined = undefined;
+  private bestPriceProductData: PriceComparisonProduct | undefined = undefined;
+  private shopflixProductData: PriceComparisonProduct | undefined = undefined;
 
   constructor(private readonly state: State) {
     this.boundNavigationHandler = this.handleNavigation.bind(this);
@@ -1167,7 +1233,16 @@ export class PriceCheckerDecorator implements FeatureInstance {
     this.productPriceData = undefined;
     this.productPriceHistory = undefined;
     this.bestPriceProductData = undefined;
+    this.shopflixProductData = undefined;
     this.cleanup();
+  }
+
+  /**
+   * Shopflix only covers the Greek market, so its column is skipped entirely on
+   * the other Skroutz storefronts.
+   */
+  private shouldCompareShopflix(): boolean {
+    return this.state.showShopflix && ShopflixClient.isSupported();
   }
 
   private setupNavigationHandlers(): void {
@@ -1259,10 +1334,35 @@ export class PriceCheckerDecorator implements FeatureInstance {
       this.productPriceData = undefined;
       this.productPriceHistory = undefined;
       this.bestPriceProductData = undefined;
-      this.replacePriceIndication(host, createPriceCheckerSkeleton());
+      this.shopflixProductData = undefined;
 
+      const compareShopflix = this.shouldCompareShopflix();
       let isPriceHistoryLoading = true;
       let isBestPriceLoading = true;
+      let isShopflixLoading = compareShopflix;
+
+      const buildSlots = (): ComparisonSlot[] => {
+        const slots: ComparisonSlot[] = [
+          {
+            view: BEST_PRICE_VIEW,
+            productData: this.bestPriceProductData,
+            isLoading: isBestPriceLoading,
+          },
+        ];
+
+        if (compareShopflix) {
+          slots.push({
+            view: SHOPFLIX_VIEW,
+            productData: this.shopflixProductData,
+            isLoading: isShopflixLoading,
+          });
+        }
+
+        return slots;
+      };
+
+      this.replacePriceIndication(host, createPriceCheckerSkeleton(buildSlots()));
+
       const renderLoadedState = (): void => {
         if (!this.isCurrentInitialization(initializationId) || !this.productPriceData) {
           return;
@@ -1278,15 +1378,12 @@ export class PriceCheckerDecorator implements FeatureInstance {
           this.productPriceHistory,
           this.state.language,
           this.state.minimumPriceDifference,
-          this.bestPriceProductData,
-          {
-            isBestPriceLoading,
-            isPriceHistoryLoading,
-          },
+          buildSlots(),
+          { isPriceHistoryLoading },
         );
 
         this.replacePriceIndication(currentHost, priceIndication);
-        this.addPriceComparisonToOptions();
+        this.addPriceComparisonToOptions(buildSlots());
       };
 
       void SkroutzClient.getPriceHistory()
@@ -1314,12 +1411,12 @@ export class PriceCheckerDecorator implements FeatureInstance {
         });
 
       void BestPriceClient.getCurrentProductData()
-        .then((bestPriceProductData) => {
+        .then((productData) => {
           if (!this.isCurrentInitialization(initializationId)) {
             return;
           }
 
-          this.bestPriceProductData = bestPriceProductData;
+          this.bestPriceProductData = productData;
         })
         .catch((error) => {
           if (!this.isCurrentInitialization(initializationId)) {
@@ -1336,6 +1433,32 @@ export class PriceCheckerDecorator implements FeatureInstance {
           isBestPriceLoading = false;
           renderLoadedState();
         });
+
+      if (compareShopflix) {
+        void ShopflixClient.getCurrentProductData()
+          .then((productData) => {
+            if (!this.isCurrentInitialization(initializationId)) {
+              return;
+            }
+
+            this.shopflixProductData = productData;
+          })
+          .catch((error) => {
+            if (!this.isCurrentInitialization(initializationId)) {
+              return;
+            }
+
+            console.warn('PriceChecker: failed to fetch Shopflix data', error);
+          })
+          .finally(() => {
+            if (!this.isCurrentInitialization(initializationId)) {
+              return;
+            }
+
+            isShopflixLoading = false;
+            renderLoadedState();
+          });
+      }
 
       this.productPriceData = await SkroutzClient.getCurrentProductData();
 
@@ -1465,7 +1588,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
     }
   }
 
-  private addPriceComparisonToOptions(): void {
+  private addPriceComparisonToOptions(slots: ComparisonSlot[]): void {
     if (!this.productPriceData) {
       return;
     }
@@ -1496,7 +1619,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
       const breakdown = createPriceComparisonBreakdownComponent(
         this.productPriceData,
         this.state.language,
-        this.bestPriceProductData,
+        slots,
       );
 
       breakdown.classList.add(className);

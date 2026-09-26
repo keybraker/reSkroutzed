@@ -3,9 +3,7 @@
   "description": "reSkroutzed, is a must-have enhancer for website skroutz.gr",
   "version": "2.3.1",
   "manifest_version": 3,
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage"],
   "host_permissions": [
     "*://www.skroutz.gr/*",
     "*://www.skroutz.ro/*",
@@ -13,12 +11,14 @@
     "*://www.skroutz.de/*",
     "*://www.skroutz.bg/*",
     "*://www.skroutz.eu/*",
-    "*://www.bestprice.gr/*"
+    "*://www.bestprice.gr/*",
+    "*://shopflix.gr/*",
+    "*://www.shopflix.gr/*",
+    "*://*.algolia.net/*",
+    "*://*.algolianet.com/*"
   ],
   "background": {
-    "scripts": [
-      "service_worker.js"
-    ]
+    "scripts": ["service_worker.js"]
   },
   "content_scripts": [
     {
@@ -39,19 +39,13 @@
         "css/darkModeToggle.css",
         "css/universalToggle.css"
       ],
-      "js": [
-        "background.js"
-      ],
+      "js": ["background.js"],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "icons/48.png",
-        "icons/store_logo.png",
-        "externalPaymentProviders/*.webp"
-      ],
+      "resources": ["icons/48.png", "icons/store_logo.png", "externalPaymentProviders/*.webp"],
       "matches": [
         "https://www.skroutz.gr/*",
         "https://www.skroutz.ro/*",

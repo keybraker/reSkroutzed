@@ -35,6 +35,7 @@ const state: State = {
   wideMode: false,
   priceCheckerEnabled: true,
   minimumPriceDifference: 0,
+  showShopflix: true,
   isMobile: false,
 };
 
@@ -90,6 +91,7 @@ function loadStorage(): void {
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
   );
+  state.showShopflix = BrowserClient.getValue<boolean>(StorageKey.SHOPFLIX_COMPARISON);
   state.hideUniversalToggle = BrowserClient.getValue<boolean>(
     StorageKey.UNIVERSAL_TOGGLE_VISIBILITY,
   );
@@ -265,6 +267,15 @@ chrome.runtime.onMessage.addListener(
     } else if (request.action === 'updatePriceDifference' && request.value !== undefined) {
       state.minimumPriceDifference = request.value as number;
       BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
+      sendResponse({ success: true });
+    } else if (request.action === 'toggleShopflix' && request.value !== undefined) {
+      state.showShopflix = request.value as boolean;
+      BrowserClient.setValue(StorageKey.SHOPFLIX_COMPARISON, state.showShopflix);
+
+      if (state.priceCheckerEnabled) {
+        priceCheckerIndicator.destroy();
+        void priceCheckerIndicator.execute();
+      }
       sendResponse({ success: true });
     } else if (request.action === 'togglePriceChecker' && request.value !== undefined) {
       state.priceCheckerEnabled = request.value as boolean;

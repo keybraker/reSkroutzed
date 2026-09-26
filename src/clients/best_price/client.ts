@@ -1,60 +1,20 @@
-import { SkroutzClient } from '../skroutz/client';
-import bestPriceCategoryMap from './bestprice-category-map';
+import type { PriceComparisonProduct } from '../../common/types/PriceComparisonProduct.type';
 import type {
-  BestPriceBridgeRequest,
-  BestPriceBridgeResponse,
-  BestPriceBridgeSuccess,
-} from './messages';
+  PriceBridgeRequest as BestPriceBridgeRequest,
+  PriceBridgeSuccess as BestPriceBridgeSuccess,
+} from '../common/priceBridge';
+import { requestPriceBridge } from '../common/priceBridge';
+import {
+  buildSearchQueryVariants,
+  compactWhitespace,
+  getFirstFiniteNumber,
+  scoreDealMatch,
+} from '../common/priceMatching';
+import { getCanonicalUrl, getCurrentProductQueries } from '../common/skroutzQuery';
+import bestPriceCategoryMap from './bestprice-category-map';
 
 const BEST_PRICE_BASE_URL = 'https://www.bestprice.gr';
 const BEST_PRICE_REQUEST_TIMEOUT_MS = 5000;
-
-const BEST_PRICE_COLOR_HINTS = [
-  'natural titanium',
-  'desert titanium',
-  'space gray',
-  'deep blue',
-  'graphite',
-  'starlight',
-  'midnight',
-  'titanium',
-  'silver',
-  'black',
-  'white',
-  'blue',
-  'green',
-  'red',
-  'gold',
-  'pink',
-  'purple',
-  'grey',
-  'gray',
-];
-
-const ACCESSORY_HINTS = new Set([
-  'case',
-  'cover',
-  'film',
-  'glass',
-  'hydrogel',
-  'protector',
-  'screen',
-  'tempered',
-  'tpu',
-  'θήκη',
-  'θηκη',
-  'προστασιας',
-  'προστασίας',
-  'τζαμακι',
-  'τζαμάκι',
-  'μεμβρανη',
-  'μεμβράνη',
-  'φορτιστης',
-  'φορτιστής',
-  'charger',
-  'cable',
-  'adapter',
-]);
 
 type BestPriceDeal = {
   mp?: number;
@@ -68,15 +28,7 @@ export type BestPriceDealsPayload = {
   deals?: BestPriceDeal[];
 };
 
-export type BestPriceProductData = {
-  title: string;
-  price: number;
-  url: string;
-  merchantCount?: number;
-  categoryId?: number;
-  shippingCost?: number;
-  totalPrice?: number;
-};
+export type BestPriceProductData = PriceComparisonProduct;
 
 type BestPriceScoredProductData = BestPriceProductData & {
   score: number;
@@ -99,44 +51,6 @@ type BestPriceProductLookupPayload = {
   product?: BestPriceProductLookupEntity;
   cluster?: BestPriceProductLookupEntity;
   products?: BestPriceProductLookupEntity[];
-};
-
-type BestPriceRuntimeBridge = {
-  lastError?: { message: string };
-  sendMessage: (
-    request: BestPriceBridgeRequest,
-    callback: (response?: BestPriceBridgeResponse<unknown>) => void,
-  ) => void;
-};
-
-const normalizeText = (value: string): string =>
-  value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\u0370-\u03ff]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-const tokenize = (value: string): string[] =>
-  normalizeText(value)
-    .split(' ')
-    .filter((token) => token.length > 1);
-
-const compactWhitespace = (value?: string | null): string =>
-  (value ?? '').replace(/\s+/g, ' ').trim();
-
-const getFirstFiniteNumber = (
-  ...values: Array<number | string | undefined>
-): number | undefined => {
-  for (const value of values) {
-    const numericValue = typeof value === 'number' ? value : Number(value);
-    if (Number.isFinite(numericValue) && numericValue > 0) {
-      return numericValue;
-    }
-  }
-
-  return undefined;
 };
 
 const parseBestPricePrice = (value?: string | number | null): number | undefined => {
@@ -257,65 +171,6 @@ const normalizeBestPriceUrl = (value?: string): string | undefined => {
   return `${BEST_PRICE_BASE_URL}/item/${value.replace(/^\/+/, '')}.html`;
 };
 
-const buildBestPriceSearchQueries = (query: string): string[] => {
-  const variants = new Set<string>();
-  const addVariant = (value: string): void => {
-    const candidate = compactWhitespace(value);
-    if (candidate.length >= 4) {
-      variants.add(candidate);
-    }
-  };
-
-  addVariant(query);
-  addVariant(query.replace(/[|,:;+]+/g, ' '));
-  addVariant(query.replace(/\((?:\d+\s*\/\s*)?(\d+\s*(?:gb|tb))\)/gi, '$1'));
-  addVariant(query.replace(/\(([^)]*)\)/g, ' $1 '));
-  addVariant(query.replace(/\([^)]*\)/g, ' '));
-  addVariant(
-    query.replace(
-      new RegExp(
-        `\\b(?:${BEST_PRICE_COLOR_HINTS.map((hint) => hint.replace(/\s+/g, '\\s+')).join('|')})\\b`,
-        'gi',
-      ),
-      ' ',
-    ),
-  );
-  addVariant(query.replace(/[/_-]+/g, ' '));
-
-  return [...variants];
-};
-
-const scoreDealMatch = (deal: BestPriceProductData, query: string): number => {
-  const normalizedQuery = normalizeText(query);
-  const normalizedTitle = normalizeText(deal.title);
-  const queryTokens = new Set(tokenize(query));
-  const titleTokens = new Set(tokenize(deal.title));
-  const commonTokens = [...titleTokens].filter((token) => queryTokens.has(token));
-
-  if (commonTokens.length < 2) {
-    return Number.NEGATIVE_INFINITY;
-  }
-
-  let score = 12 * commonTokens.length;
-  score += (commonTokens.length / Math.max(queryTokens.size, 1)) * 30;
-
-  if (normalizedQuery === normalizedTitle) {
-    score += 30;
-  }
-
-  if (normalizedQuery.includes(normalizedTitle) || normalizedTitle.includes(normalizedQuery)) {
-    score += 12;
-  }
-
-  score -= 18 * [...titleTokens].filter((token) => ACCESSORY_HINTS.has(token)).length;
-
-  if (deal.merchantCount) {
-    score += Math.min(deal.merchantCount, 99) / 8;
-  }
-
-  return score;
-};
-
 export function parseBestPriceDealsPayload(
   payload: BestPriceDealsPayload,
   query: string,
@@ -354,7 +209,7 @@ export function parseBestPriceDealsPayload(
 
 export class BestPriceClient {
   public static async getCurrentProductData(): Promise<BestPriceProductData | undefined> {
-    const queries = await this.getCurrentProductQueries();
+    const queries = await getCurrentProductQueries();
     const query = queries[0];
     if (!query || queries.length === 0) {
       return undefined;
@@ -363,7 +218,7 @@ export class BestPriceClient {
     try {
       const productPayload = await this.fetchProductPayload(
         window.location.href,
-        this.getCanonicalUrl(),
+        getCanonicalUrl(),
       );
       const productData = this.parseProductPayload(productPayload, query);
       if (productData) {
@@ -374,7 +229,7 @@ export class BestPriceClient {
       // Fall back to BestPrice search when the direct product lookup is unavailable.
     }
 
-    const searchQueries = queries.flatMap((candidate) => buildBestPriceSearchQueries(candidate));
+    const searchQueries = queries.flatMap((candidate) => buildSearchQueryVariants(candidate));
 
     for (const searchQuery of new Set(searchQueries)) {
       try {
@@ -448,40 +303,6 @@ export class BestPriceClient {
       console.warn('[reSkroutzed] BestPrice shipping cost lookup failed', error);
       return productData;
     }
-  }
-
-  private static getCanonicalUrl(): string {
-    return document.querySelector('link[rel="canonical"]')?.getAttribute('href')?.trim() ?? '';
-  }
-
-  private static async getCurrentProductQueries(): Promise<string[]> {
-    const queries = new Set<string>();
-    const addQuery = (value?: string): void => {
-      const candidate = compactWhitespace(value)
-        .replace(/\s*\|\s*Skroutz.*$/i, '')
-        .trim();
-      if (candidate && candidate.length >= 4 && !/^skroutz(?:\.gr)?$/i.test(candidate)) {
-        queries.add(candidate);
-      }
-    };
-
-    addQuery(this.getCurrentProductQuery());
-    addQuery(this.getCurrentProductSlugQuery());
-
-    const skroutzProductNames = await SkroutzClient.getCurrentProductNames();
-    skroutzProductNames.forEach((name) => addQuery(name));
-
-    return [...queries];
-  }
-
-  private static getCurrentProductSlugQuery(): string | undefined {
-    const canonicalUrl = this.getCanonicalUrl() || window.location.pathname;
-    const slugMatch = canonicalUrl.match(/\/s\/\d+\/([^/?#]+?)(?:\.html)?(?:[?#].*)?$/i);
-    if (!slugMatch?.[1]) {
-      return undefined;
-    }
-
-    return compactWhitespace(decodeURIComponent(slugMatch[1]).replace(/[-_]+/g, ' '));
   }
 
   private static parseProductPayload(
@@ -783,56 +604,10 @@ export class BestPriceClient {
     return getLastCategoryId(hrefs);
   }
 
-  private static getCurrentProductQuery(): string | undefined {
-    const productName = compactWhitespace(
-      document.querySelector('h1')?.textContent ??
-        document.querySelector('meta[property="og:title"]')?.getAttribute('content') ??
-        document.title,
-    )
-      .replace(/\s*\|\s*Skroutz.*$/i, '')
-      .trim();
-
-    return productName || undefined;
-  }
-
   private static async requestBestPrice<T>(
     request: BestPriceBridgeRequest,
   ): Promise<BestPriceBridgeSuccess<T>> {
-    const runtime = (
-      globalThis as typeof globalThis & { chrome?: { runtime?: BestPriceRuntimeBridge } }
-    ).chrome?.runtime;
-    if (!runtime?.sendMessage) {
-      throw new Error('BestPrice background bridge is unavailable');
-    }
-
-    return await new Promise<BestPriceBridgeSuccess<T>>((resolve, reject) => {
-      const timeout = window.setTimeout(() => {
-        reject(new Error(`BestPrice request timed out after ${BEST_PRICE_REQUEST_TIMEOUT_MS}ms`));
-      }, BEST_PRICE_REQUEST_TIMEOUT_MS);
-
-      runtime.sendMessage(request, (response?: BestPriceBridgeResponse<unknown>) => {
-        window.clearTimeout(timeout);
-
-        if (runtime.lastError) {
-          reject(new Error(runtime.lastError.message));
-          return;
-        }
-
-        if (!response) {
-          reject(new Error('BestPrice background returned no response'));
-          return;
-        }
-
-        const typedResponse = response as BestPriceBridgeResponse<T>;
-
-        if (!typedResponse.ok) {
-          reject(new Error(typedResponse.error));
-          return;
-        }
-
-        resolve(typedResponse);
-      });
-    });
+    return await requestPriceBridge<T>(request, 'BestPrice', BEST_PRICE_REQUEST_TIMEOUT_MS);
   }
 
   private static async fetchDealsPayload(categoryId: number): Promise<BestPriceDealsPayload> {

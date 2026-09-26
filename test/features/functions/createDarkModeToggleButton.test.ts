@@ -61,6 +61,7 @@ describe('createDarkModeToggleButton', () => {
       wideMode: false,
       priceCheckerEnabled: true,
       minimumPriceDifference: 0,
+      showShopflix: true,
       isMobile: false,
     };
 

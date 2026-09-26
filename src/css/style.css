@@ -907,7 +907,8 @@ text-black {
   line-height: 1.4 !important;
 }
 
-.bestprice-comparison-text {
+.bestprice-comparison-text,
+.shopflix-comparison-text {
   display: block !important;
 }
 
@@ -1578,7 +1579,8 @@ text-black {
   padding-right: 16px !important;
 }
 
-.price-display-bestprice-action {
+.price-display-bestprice-action,
+.price-display-shopflix-action {
   padding-left: 16px !important;
 }
 
@@ -1645,7 +1647,10 @@ text-black {
 .price-display-action-notification {
   position: absolute !important;
   top: 4px !important;
-  right: 28px !important;
+  /* Pinned to the corner, aligned with the arrow's right edge. The old 28px
+     inset existed to clear the arrow, but that is vertically centred, so the
+     top-right corner is free - and the extra width goes back to the price. */
+  right: 8px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1697,7 +1702,8 @@ text-black {
   box-shadow: 0 0 0 2px rgba(43, 96, 173, 0.22) !important;
 }
 
-.bestprice-badge-loading {
+.bestprice-badge-loading,
+.shopflix-badge-loading {
   pointer-events: none !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -1712,6 +1718,18 @@ text-black {
   height: 22px !important;
   display: block !important;
   flex: 0 0 auto !important;
+}
+
+/* Shopflix has no inline SVG mark, so its badge uses the blue wordmark instead */
+.shopflix-badge-logo {
+  display: block !important;
+  flex: 0 0 auto !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 22px !important;
+  color: #0d1bbd !important;
+  white-space: nowrap !important;
 }
 
 .store-logo {
@@ -1748,7 +1766,8 @@ text-black {
 }
 
 /* Visible indicator when BestPrice data is not available */
-.bestprice-unavailable {
+.bestprice-unavailable,
+.shopflix-unavailable {
   flex: 1 1 0 !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1801,6 +1820,57 @@ text-black {
 
 .analysis-container .price-breakdown-item {
   width: calc(50% - 8px) !important;
+}
+
+/* Store + two comparison providers: three columns have to share the width the
+   two-column layout gave to two, so the price typography is scaled down and the
+   supporting lines shrink to keep every column readable. Desktop only, so the
+   stacked mobile layout keeps its own paddings and sizes. */
+@media (min-width: 641px) {
+  .price-display-row-multi .price-display-action {
+    gap: 8px !important;
+    padding-right: 22px !important;
+  }
+
+  .price-display-row-multi .price-display-store-action {
+    padding-right: 10px !important;
+  }
+
+  .price-display-row-multi .price-display-bestprice-action,
+  .price-display-row-multi .price-display-shopflix-action {
+    padding-left: 10px !important;
+  }
+
+  /* The 48px headline is sized for a half-width column; at a third of the row
+     it is wider than the column and collides with the next price. */
+  .price-display-row-multi .price-indicator-price {
+    font-size: 28px !important;
+    margin-right: 4px !important;
+  }
+
+  .price-display-row-multi .price-indicator-currency,
+  .price-display-row-multi .price-indicator-decimal,
+  .price-display-row-multi .price-indicator-comma {
+    font-size: 17px !important;
+  }
+
+  .price-display-row-multi .price-display-action-content {
+    gap: 1px !important;
+  }
+
+  .price-display-row-multi
+    .price-display-action-content
+    .shipping-cost-text:not(.price-display-shipping-note) {
+    font-size: 11px !important;
+  }
+
+  .price-display-row-multi .price-display-action-content .shipping-cost-text {
+    white-space: normal !important;
+  }
+
+  .price-display-row-multi .price-display-subtitle {
+    font-size: 11px !important;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1871,6 +1941,7 @@ text-black {
   }
 
   .bestprice-badge,
+  .shopflix-badge,
   .price-display-action,
   .price-display-column {
     width: 100% !important;
@@ -1878,7 +1949,8 @@ text-black {
   }
 
   .price-display-store-action,
-  .price-display-bestprice-action {
+  .price-display-bestprice-action,
+  .price-display-shopflix-action {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
@@ -1895,10 +1967,6 @@ text-black {
   .price-display-action-content .shipping-cost-text,
   .price-display-action-content .price-display-shipping-note {
     white-space: normal !important;
-  }
-
-  .price-display-action-notification {
-    right: 24px !important;
   }
 
   .price-display-subtitle {

@@ -21,7 +21,7 @@ reSkroutzed, is a must-have enhancer for website skroutz.gr.
 
 It assists you by making clear what products are ads and giving you the means to remove them.
 
-The price checker makes sure the amount displayed on the product is actually the lowest. For those that "Buy through skroutz" is worth more than buying through a store directly, they can easily select a price difference threshold.
+The price checker makes sure the amount displayed on the product is actually the lowest. For those that "Buy through skroutz" is worth more than buying through a store directly, they can easily select a price difference threshold, and the comparison is shown against both BestPrice and Shopflix.
 
 Dark mode is now as easy as clicking one button.
 
@@ -34,6 +34,7 @@ The all new universal selector on the bottom left side of the screen is always t
 ## Additional functionality
 
 - Lowest price checker outside of _"Buy through Skroutz"_
+  - Comparison sources: BestPrice and Shopflix (Greece only), shown side by side
   - Minimum price difference, option to ignore price differences smaller than threshold
 - Dark mode
 - Sponsored (Ad) product flagging and removal

@@ -116,6 +116,7 @@ describe('UniversalToggleDecorator', () => {
       skoopAdCount: 0,
       priceCheckerEnabled: true,
       minimumPriceDifference: 1,
+      showShopflix: true,
       sponsorshipAdCount: 0,
       isMobile: false,
     };

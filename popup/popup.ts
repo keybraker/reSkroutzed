@@ -110,6 +110,10 @@ function loadSettings(): void {
   getNumber(StorageKey.MINIMUM_PRICE_DIFFERENCE, 0, (value) => {
     getInput('priceDifference').value = String(value);
   });
+
+  getBool(StorageKey.SHOPFLIX_COMPARISON, true, (value) => {
+    getInput('toggleShopflix').checked = value;
+  });
 }
 
 function setupEventListeners(): void {
@@ -209,6 +213,13 @@ function setupEventListeners(): void {
     setStorageValue(StorageKey.PRICE_CHECKER_ENABLED, isPriceCheckerEnabled);
     sendMessageToActiveTab('togglePriceChecker', isPriceCheckerEnabled);
     syncPriceRowState(isPriceCheckerEnabled);
+  });
+
+  const shopflixToggle = getInput('toggleShopflix');
+  shopflixToggle.addEventListener('change', () => {
+    const showShopflix = shopflixToggle.checked;
+    setStorageValue(StorageKey.SHOPFLIX_COMPARISON, showShopflix);
+    sendMessageToActiveTab('toggleShopflix', showShopflix);
   });
 
   const priceInput = getInput('priceDifference');
