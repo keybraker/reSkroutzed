@@ -1819,6 +1819,29 @@ text-black {
   width: calc(50% - 8px) !important;
 }
 
+/* Store + two comparison providers: the extra column needs tighter spacing and
+   the shipping line has to be allowed to wrap. Desktop only, so the stacked
+   mobile layout keeps its own paddings. */
+@media (min-width: 641px) {
+  .price-display-row-multi .price-display-action {
+    gap: 8px !important;
+    padding-right: 22px !important;
+  }
+
+  .price-display-row-multi .price-display-store-action {
+    padding-right: 10px !important;
+  }
+
+  .price-display-row-multi .price-display-bestprice-action,
+  .price-display-row-multi .price-display-shopflix-action {
+    padding-left: 10px !important;
+  }
+
+  .price-display-row-multi .price-display-action-content .shipping-cost-text {
+    white-space: normal !important;
+  }
+}
+
 @media (max-width: 640px) {
   .price-checker-outline {
     padding: 16px !important;

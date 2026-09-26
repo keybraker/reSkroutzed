@@ -8,7 +8,6 @@ import {
   SkroutzClient,
 } from '../../src/clients/skroutz/client';
 import { Language } from '../../src/common/enums/Language.enum';
-import { PriceProvider } from '../../src/common/enums/PriceProvider.enum';
 import { PriceComparisonProduct } from '../../src/common/types/PriceComparisonProduct.type';
 import { State } from '../../src/common/types/State.type';
 import { PriceCheckerDecorator } from '../../src/features/PriceChecker.decorator';
@@ -119,7 +118,7 @@ describe('PriceCheckerDecorator', () => {
     skoopAdCount: 0,
     sponsorshipAdCount: 0,
     minimumPriceDifference: 5,
-    priceProvider: PriceProvider.BEST_PRICE,
+    showShopflix: true,
     isMobile: false,
   };
 
@@ -182,7 +181,7 @@ describe('PriceCheckerDecorator', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockState.priceCheckerEnabled = true;
-    mockState.priceProvider = PriceProvider.BEST_PRICE;
+    mockState.showShopflix = true;
     document.body.innerHTML = `
       <article class="buybox">
         <div class="price-box">
@@ -210,11 +209,11 @@ describe('PriceCheckerDecorator', () => {
     vi.useRealTimers();
   });
 
-  it('renders the Shopflix badge when Shopflix is the selected provider', async () => {
-    mockState.priceProvider = PriceProvider.SHOPFLIX;
+  it('renders both comparison columns when the Shopflix comparison is enabled', async () => {
     vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
     vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
     vi.mocked(ShopflixClient.getCurrentProductData).mockResolvedValue(mockShopflixData);
 
     decorator = new PriceCheckerDecorator(mockState);
@@ -230,20 +229,30 @@ describe('PriceCheckerDecorator', () => {
     expect(shopflixBadge?.querySelector('.price-display-shipping-note')?.textContent).toContain(
       'Delivery costs may apply',
     );
-    expect(document.querySelector('.bestprice-badge')).toBeNull();
-    expect(BestPriceClient.getCurrentProductData).not.toHaveBeenCalled();
+
+    const bestPriceBadge = document.querySelector('.bestprice-badge') as HTMLAnchorElement | null;
+    expect(bestPriceBadge).not.toBeNull();
+    expect(bestPriceBadge?.href).toBe('https://www.bestprice.gr/item/mock.html');
+    expect(bestPriceBadge?.textContent).toContain('Buy through BestPrice');
+
+    // Store | divider | BestPrice | divider | Shopflix
+    expect(document.querySelectorAll('.price-display-divider')).toHaveLength(2);
     expect(document.querySelector('.shopflix-comparison-text')?.textContent).toContain('Shopflix');
+    expect(document.querySelector('.bestprice-comparison-text')?.textContent).toContain(
+      'BestPrice',
+    );
   });
 
-  it('renders the Shopflix loading badge while Shopflix data is pending', async () => {
-    mockState.priceProvider = PriceProvider.SHOPFLIX;
+  it('keeps a pending provider skeleton while the other provider hydrates', async () => {
     vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
 
     const productDataDeferred = createDeferred<ProductPriceData>();
+    const bestPriceDeferred = createDeferred<PriceComparisonProduct | undefined>();
     const shopflixDeferred = createDeferred<PriceComparisonProduct | undefined>();
 
     vi.mocked(SkroutzClient.getCurrentProductData).mockReturnValue(productDataDeferred.promise);
     vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockReturnValue(bestPriceDeferred.promise);
     vi.mocked(ShopflixClient.getCurrentProductData).mockReturnValue(shopflixDeferred.promise);
 
     decorator = new PriceCheckerDecorator(mockState);
@@ -251,20 +260,30 @@ describe('PriceCheckerDecorator', () => {
 
     await flushPromises();
 
+    expect(document.querySelector('.bestprice-badge-loading')).not.toBeNull();
     expect(document.querySelector('.shopflix-badge-loading')).not.toBeNull();
-    expect(document.querySelector('.bestprice-badge-loading')).toBeNull();
 
     productDataDeferred.resolve(mockProductPriceData);
+    await flushPromises();
+
+    bestPriceDeferred.resolve(mockBestPriceData);
+    await flushPromises();
+
+    expect(document.querySelector('.bestprice-badge')).not.toBeNull();
+    expect(document.querySelector('.shopflix-badge-loading')).not.toBeNull();
+
     shopflixDeferred.resolve(mockShopflixData);
     await executePromise;
     await flushPromises();
+
+    expect(document.querySelector('.shopflix-badge')).not.toBeNull();
   });
 
-  it('shows the Shopflix unavailable state when no listing matches', async () => {
-    mockState.priceProvider = PriceProvider.SHOPFLIX;
+  it('shows the Shopflix unavailable state next to a working BestPrice column', async () => {
     vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
     vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
     vi.mocked(ShopflixClient.getCurrentProductData).mockResolvedValue(undefined);
 
     decorator = new PriceCheckerDecorator(mockState);
@@ -275,10 +294,10 @@ describe('PriceCheckerDecorator', () => {
       'Shopflix not available',
     );
     expect(document.querySelector('.shopflix-badge')).toBeNull();
+    expect(document.querySelector('.bestprice-badge')).not.toBeNull();
   });
 
-  it('falls back to BestPrice when Shopflix is selected outside the Greek site', async () => {
-    mockState.priceProvider = PriceProvider.SHOPFLIX;
+  it('never requests Shopflix on the non-Greek Skroutz storefronts', async () => {
     vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
     vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
@@ -290,6 +309,25 @@ describe('PriceCheckerDecorator', () => {
 
     expect(ShopflixClient.getCurrentProductData).not.toHaveBeenCalled();
     expect(document.querySelector('.bestprice-badge')).not.toBeNull();
+    expect(document.querySelector('.shopflix-badge')).toBeNull();
+    expect(document.querySelector('.shopflix-badge-loading')).toBeNull();
+    expect(document.querySelectorAll('.price-display-divider')).toHaveLength(1);
+  });
+
+  it('skips the Shopflix column when the comparison is switched off', async () => {
+    mockState.showShopflix = false;
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    expect(ShopflixClient.getCurrentProductData).not.toHaveBeenCalled();
+    expect(document.querySelector('.bestprice-badge')).not.toBeNull();
+    expect(document.querySelector('.shopflix-badge')).toBeNull();
   });
 
   it('renders a skeleton immediately before product data resolves', async () => {

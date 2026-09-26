@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Language } from '../../src/common/enums/Language.enum';
-import { PriceProvider } from '../../src/common/enums/PriceProvider.enum';
 import { State } from '../../src/common/types/State.type';
 import { WideModeDecorator } from '../../src/features/WideMode.decorator';
 
@@ -26,7 +25,7 @@ function buildMockState(overrides: Partial<State> = {}): State {
     wideMode: false,
     priceCheckerEnabled: true,
     minimumPriceDifference: 0,
-    priceProvider: PriceProvider.BEST_PRICE,
+    showShopflix: true,
     isMobile: false,
     ...overrides,
   };

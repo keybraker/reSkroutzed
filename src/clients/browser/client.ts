@@ -1,5 +1,4 @@
 import { Language } from '../../common/enums/Language.enum';
-import { PriceProvider } from '../../common/enums/PriceProvider.enum';
 
 export type StorageValueType = boolean | Language | number | string;
 
@@ -18,7 +17,7 @@ export enum StorageKey {
   AI_SLOP_VISIBILITY = STORAGE_KEY_PREFIX + '-ai-slop-visibility',
   WIDE_MODE = STORAGE_KEY_PREFIX + '-wide-mode',
   PRICE_CHECKER_ENABLED = STORAGE_KEY_PREFIX + '-price-checker-enabled',
-  PRICE_PROVIDER = STORAGE_KEY_PREFIX + '-price-provider',
+  SHOPFLIX_COMPARISON = STORAGE_KEY_PREFIX + '-shopflix-comparison',
 }
 
 const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
@@ -37,8 +36,8 @@ const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
   [StorageKey.WIDE_MODE]: false,
   // true means the price checker runs on product pages by default
   [StorageKey.PRICE_CHECKER_ENABLED]: true,
-  // BestPrice is the long-standing default comparison source
-  [StorageKey.PRICE_PROVIDER]: PriceProvider.BEST_PRICE,
+  // Shopflix is compared alongside BestPrice by default
+  [StorageKey.SHOPFLIX_COMPARISON]: true,
 };
 
 export class BrowserClient {

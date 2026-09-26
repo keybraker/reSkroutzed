@@ -47,7 +47,7 @@ src/
 - All properties are **required** — no optional (`?`) fields.
 - Counters (`productAdCount`, `shelfAdCount`, etc.) are incremented by handlers during `flag()`.
 - Visibility booleans (`hideProductAds`, etc.) are toggled by the popup via `chrome.runtime.onMessage`.
-- `priceProvider` picks which external catalogue the price checker compares against (`PriceProvider.BEST_PRICE` or `SHOPFLIX`).
+- `showShopflix` adds a second comparison column (Shopflix) beside the always-on BestPrice one. Shopflix is Greece-only, so the column is skipped on the other Skroutz storefronts.
 
 ## Clients
 
@@ -168,7 +168,7 @@ mockState = {
   wideMode: false,
   priceCheckerEnabled: true,
   minimumPriceDifference: 0,
-  priceProvider: PriceProvider.BEST_PRICE,
+  showShopflix: true,
   isMobile: false,
 };
 ```
@@ -178,17 +178,17 @@ mockState = {
 
 ## File Locations
 
-| Concern              | Path                                                    |
-| -------------------- | ------------------------------------------------------- |
-| Shared state type    | `src/common/types/State.type.ts`                        |
-| Price provider enum  | `src/common/enums/PriceProvider.enum.ts`                |
-| Comparison product   | `src/common/types/PriceComparisonProduct.type.ts`       |
+| Concern           | Path                             |
+| ----------------- | -------------------------------- |
+| Shared state type | `src/common/types/State.type.ts` |
+
+| Comparison product | `src/common/types/PriceComparisonProduct.type.ts` |
 | Ad handler interface | `src/handlers/common/interfaces/adHandler.interface.ts` |
-| Feature interface    | `src/features/common/FeatureInstance.ts`                |
-| Browser storage keys | `src/clients/browser/client.ts` (`StorageKey` enum)     |
-| Test global mocks    | `test/setup.ts`                                         |
-| Chrome manifest      | `manifests/manifest_chrome.json`                        |
-| Firefox manifest     | `manifests/manifest_firefox.json`                       |
+| Feature interface | `src/features/common/FeatureInstance.ts` |
+| Browser storage keys | `src/clients/browser/client.ts` (`StorageKey` enum) |
+| Test global mocks | `test/setup.ts` |
+| Chrome manifest | `manifests/manifest_chrome.json` |
+| Firefox manifest | `manifests/manifest_firefox.json` |
 
 ## Documentation
 

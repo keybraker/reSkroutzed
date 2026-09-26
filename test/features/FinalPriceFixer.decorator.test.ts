@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { Language } from '../../src/common/enums/Language.enum';
-import { PriceProvider } from '../../src/common/enums/PriceProvider.enum';
 import { State } from '../../src/common/types/State.type';
 import { FinalPriceFixerDecorator } from '../../src/features/FinalPriceFixer.decorator';
 
@@ -29,7 +28,7 @@ describe('FinalPriceFixerDecorator', (): void => {
       skoopAdCount: 0,
       priceCheckerEnabled: true,
       minimumPriceDifference: 1,
-      priceProvider: PriceProvider.BEST_PRICE,
+      showShopflix: true,
       sponsorshipAdCount: 0,
       isMobile: false,
     };

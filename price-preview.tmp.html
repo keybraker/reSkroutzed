@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="el">
+  <head>
+    <meta charset="utf-8" />
+    <title>reSkroutzed price row — three column preview (scratch)</title>
+    <link rel="stylesheet" href="src/css/style.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .harness {
+        width: 600px;
+        margin: 0 auto 32px;
+        border: 1px dashed #d0d0d0;
+        border-radius: 16px;
+        padding: 8px;
+      }
+      .harness-narrow {
+        width: 560px;
+      }
+      .harness-label {
+        font-size: 12px;
+        color: #666;
+        margin: 0 0 6px 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="harness-label">600px card — store + BestPrice + Shopflix</p>
+    <div class="harness">
+      <div class="price-checker-stack">
+        <div class="display-padding price-checker-outline" style="margin-top: 14px">
+          <div class="tags-container"></div>
+          <div class="inline-flex-col">
+            <div class="price-calculation-container">
+              <div class="price-display-wrapper">
+                <div class="price-display-row price-display-row-multi">
+                  <button
+                    type="button"
+                    class="price-display-action price-display-store-action price-display-action-positive"
+                  >
+                    <div class="price-display-action-content">
+                      <div class="price-indicator-price price-display-action-positive">
+                        1335<span class="price-indicator-comma">,</span
+                        ><span class="price-indicator-decimal">10</span
+                        ><span class="price-indicator-currency">€</span>
+                      </div>
+                      <div class="shipping-cost-text price-display-action-positive">
+                        (+0,00€ μεταφορικά)
+                      </div>
+                      <div class="price-display-subtitle">Αγορά μέσω καταστήματος</div>
+                    </div>
+                    <div class="price-display-action-notification">
+                      <img class="store-logo" src="icons/store_logo.png" alt="" />
+                    </div>
+                    <span class="price-display-action-arrow" aria-hidden="true"
+                      ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M4 2L8 6L4 10"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        /></svg
+                    ></span>
+                  </button>
+
+                  <div class="price-display-divider" aria-hidden="true"></div>
+
+                  <a
+                    href="#"
+                    class="price-display-action price-display-bestprice-action bestprice-badge price-display-action-negative"
+                  >
+                    <div class="price-display-action-content">
+                      <div class="price-indicator-price price-display-action-negative">
+                        1379<span class="price-indicator-comma">,</span
+                        ><span class="price-indicator-decimal">41</span
+                        ><span class="price-indicator-currency">€</span>
+                      </div>
+                      <div class="shipping-cost-text price-display-action-negative">
+                        (+6,00€ μεταφορικά)
+                      </div>
+                      <div class="price-display-subtitle">Αγορά μέσω BestPrice</div>
+                    </div>
+                    <div class="price-display-action-notification">
+                      <svg class="bestprice-badge-logo" viewBox="0 0 44 28" aria-hidden="true">
+                        <path d="M1 6h42v16H1z" />
+                      </svg>
+                    </div>
+                    <span class="price-display-action-arrow" aria-hidden="true"
+                      ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M4 2L8 6L4 10"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        /></svg
+                    ></span>
+                  </a>
+
+                  <div class="price-display-divider" aria-hidden="true"></div>
+
+                  <a
+                    href="#"
+                    class="price-display-action price-display-shopflix-action shopflix-badge price-display-action-positive"
+                  >
+                    <div class="price-display-action-content">
+                      <div class="price-indicator-price price-display-action-positive">
+                        1299<span class="price-indicator-comma">,</span
+                        ><span class="price-indicator-decimal">00</span
+                        ><span class="price-indicator-currency">€</span>
+                      </div>
+                      <div class="shipping-cost-text price-display-shipping-note price-display-action-positive">
+                        (Ενδέχεται να υπάρχουν μεταφορικά)
+                      </div>
+                      <div class="price-display-subtitle">Αγορά μέσω Shopflix</div>
+                    </div>
+                    <div class="price-display-action-notification">
+                      <span class="shopflix-badge-logo" aria-hidden="true">shopflix</span>
+                    </div>
+                    <span class="price-display-action-arrow" aria-hidden="true"
+                      ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M4 2L8 6L4 10"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        /></svg
+                    ></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="harness-label">560px card — tighter case</p>
+    <div class="harness harness-narrow">
+      <div class="price-checker-stack">
+        <div class="display-padding price-checker-outline" style="margin-top: 14px">
+          <div class="inline-flex-col">
+            <div class="price-calculation-container">
+              <div class="price-display-wrapper">
+                <div class="price-display-row price-display-row-multi">
+                  <button
+                    type="button"
+                    class="price-display-action price-display-store-action price-display-action-negative"
+                  >
+                    <div class="price-display-action-content">
+                      <div class="price-indicator-price price-display-action-negative">
+                        1871<span class="price-indicator-comma">,</span
+                        ><span class="price-indicator-decimal">10</span
+                        ><span class="price-indicator-currency">€</span>
+                      </div>
+                      <div class="shipping-cost-text price-display-action-negative">
+                        (+3,50€ μεταφορικά)
+                      </div>
+                      <div class="price-display-subtitle">Αγορά μέσω καταστήματος</div>
+                    </div>
+                    <div class="price-display-action-notification">
+                      <img class="store-logo" src="icons/store_logo.png" alt="" />
+                    </div>
+                    <span class="price-display-action-arrow" aria-hidden="true"
+                      ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M4 2L8 6L4 10"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        /></svg
+                    ></span>
+                  </button>
+
+                  <div class="price-display-divider" aria-hidden="true"></div>
+
+                  <a href="#" class="price-display-action price-display-bestprice-action bestprice-badge">
+                    <div class="price-display-action-content">
+                      <div class="price-indicator-price">
+                        1779<span class="price-indicator-comma">,</span
+                        ><span class="price-indicator-decimal">00</span
+                        ><span class="price-indicator-currency">€</span>
+                      </div>
+                      <div class="shipping-cost-text price-display-shipping-note">
+                        (Ενδέχεται να υπάρχουν μεταφορικά)
+                      </div>
+                      <div class="price-display-subtitle">Αγορά μέσω BestPrice</div>
+                    </div>
+                    <div class="price-display-action-notification">
+                      <svg class="bestprice-badge-logo" viewBox="0 0 44 28" aria-hidden="true">
+                        <path d="M1 6h42v16H1z" />
+                      </svg>
+                    </div>
+                    <span class="price-display-action-arrow" aria-hidden="true"
+                      ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M4 2L8 6L4 10"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        /></svg
+                    ></span>
+                  </a>
+
+                  <div class="price-display-divider" aria-hidden="true"></div>
+
+                  <a href="#" class="price-display-action price-display-shopflix-action shopflix-badge">
+                    <div class="price-display-action-content">
+                      <div class="price-indicator-price">
+                        1699<span class="price-indicator-comma">,</span
+                        ><span class="price-indicator-decimal">00</span
+                        ><span class="price-indicator-currency">€</span>
+                      </div>
+                      <div class="shipping-cost-text price-display-shipping-note">
+                        (Ενδέχεται να υπάρχουν μεταφορικά)
+                      </div>
+                      <div class="price-display-subtitle">Αγορά μέσω Shopflix</div>
+                    </div>
+                    <div class="price-display-action-notification">
+                      <span class="shopflix-badge-logo" aria-hidden="true">shopflix</span>
+                    </div>
+                    <span class="price-display-action-arrow" aria-hidden="true"
+                      ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M4 2L8 6L4 10"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        /></svg
+                    ></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
