@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DomClient } from '../../src/clients/dom/client';
+import { PriceProvider } from '../../src/common/enums/PriceProvider.enum';
 import { State } from '../../src/common/types/State.type';
 import { ShelfProductAdHandler } from '../../src/handlers/ShelfProductAd.handler';
 
@@ -45,6 +46,7 @@ describe('ShelfProductAdHandler', () => {
       darkMode: false,
       priceCheckerEnabled: true,
       minimumPriceDifference: 0,
+      priceProvider: PriceProvider.BEST_PRICE,
       isMobile: false,
     };
 

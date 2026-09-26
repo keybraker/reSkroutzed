@@ -26,7 +26,7 @@ After any source change, **always run `npm test`** before considering the task d
 ```
 src/
   background.ts           # Content script — entry point injected into skroutz.gr pages
-  service_worker.ts       # MV3 service worker — bridges BestPrice API calls
+  service_worker.ts       # MV3 service worker — bridges price-provider API calls
   clients/
     browser/              # BrowserClient: chrome.storage + locale/mobile detection
     dom/                  # DomClient: DOM manipulation helpers
@@ -47,6 +47,7 @@ src/
 - All properties are **required** — no optional (`?`) fields.
 - Counters (`productAdCount`, `shelfAdCount`, etc.) are incremented by handlers during `flag()`.
 - Visibility booleans (`hideProductAds`, etc.) are toggled by the popup via `chrome.runtime.onMessage`.
+- `priceProvider` picks which external catalogue the price checker compares against (`PriceProvider.BEST_PRICE` or `SHOPFLIX`).
 
 ## Clients
 
@@ -54,6 +55,8 @@ src/
 - **DomClient** (`clients/dom/`) — static helpers: `getElementsByClass`, `addClassesToElement`, `updateElementVisibility`, `appendElementToElement`. Use these, never `document.querySelector` directly in handlers/features.
 - **SkroutzClient** (`clients/skroutz/`) — fetches product metadata and price history from Skroutz's internal API.
 - **BestPriceClient** (`clients/best_price/`) — fetches competing store prices from bestprice.gr.
+- **ShopflixClient** (`clients/shopflix/`) — fetches competing prices from shopflix.gr through its Algolia search index. Greece only: `isSupported()` gates it to `www.skroutz.gr`.
+- **Shared provider helpers** (`clients/common/`) — `priceBridge` (relays requests through the service worker, which allowlists hosts per `action`), `priceMatching` (title scoring and search-query variants), `skroutzQuery` (derives search queries from the current Skroutz page).
 
 ## Key Conventions
 
@@ -151,17 +154,21 @@ mockState = {
   hideSponsorships: false,
   hideShelfProductAds: false,
   hideRecommendationAds: false,
+  hideSkoopAds: false,
   hideAISlop: false,
   hideUniversalToggle: false,
   productAdCount: 0,
   shelfAdCount: 0,
+  skoopAdCount: 0,
   recommendationAdCount: 0,
   videoAdCount: 0,
   sponsorshipAdCount: 0,
   language: Language.GREEK,
   darkMode: false,
+  wideMode: false,
   priceCheckerEnabled: true,
   minimumPriceDifference: 0,
+  priceProvider: PriceProvider.BEST_PRICE,
   isMobile: false,
 };
 ```
@@ -174,6 +181,8 @@ mockState = {
 | Concern              | Path                                                    |
 | -------------------- | ------------------------------------------------------- |
 | Shared state type    | `src/common/types/State.type.ts`                        |
+| Price provider enum  | `src/common/enums/PriceProvider.enum.ts`                |
+| Comparison product   | `src/common/types/PriceComparisonProduct.type.ts`       |
 | Ad handler interface | `src/handlers/common/interfaces/adHandler.interface.ts` |
 | Feature interface    | `src/features/common/FeatureInstance.ts`                |
 | Browser storage keys | `src/clients/browser/client.ts` (`StorageKey` enum)     |

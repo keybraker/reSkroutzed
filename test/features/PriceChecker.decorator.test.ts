@@ -1,12 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BestPriceClient, BestPriceProductData } from '../../src/clients/best_price/client';
+import { ShopflixClient } from '../../src/clients/shopflix/client';
 import {
   ProductPriceData,
   ProductPriceHistory,
   SkroutzClient,
 } from '../../src/clients/skroutz/client';
 import { Language } from '../../src/common/enums/Language.enum';
+import { PriceProvider } from '../../src/common/enums/PriceProvider.enum';
+import { PriceComparisonProduct } from '../../src/common/types/PriceComparisonProduct.type';
 import { State } from '../../src/common/types/State.type';
 import { PriceCheckerDecorator } from '../../src/features/PriceChecker.decorator';
 
@@ -20,6 +23,13 @@ vi.mock('../../src/clients/skroutz/client', () => ({
 vi.mock('../../src/clients/best_price/client', () => ({
   BestPriceClient: {
     getCurrentProductData: vi.fn(),
+  },
+}));
+
+vi.mock('../../src/clients/shopflix/client', () => ({
+  ShopflixClient: {
+    getCurrentProductData: vi.fn(),
+    isSupported: vi.fn(),
   },
 }));
 
@@ -109,6 +119,7 @@ describe('PriceCheckerDecorator', () => {
     skoopAdCount: 0,
     sponsorshipAdCount: 0,
     minimumPriceDifference: 5,
+    priceProvider: PriceProvider.BEST_PRICE,
     isMobile: false,
   };
 
@@ -153,6 +164,14 @@ describe('PriceCheckerDecorator', () => {
     url: 'https://www.bestprice.gr/item/mock.html',
   };
 
+  // Shopflix exposes no shipping cost to anonymous visitors, so the badge falls
+  // back to a price-only comparison.
+  const mockShopflixData: PriceComparisonProduct = {
+    title: 'Shopflix listing',
+    price: 92,
+    url: 'https://shopflix.gr/p/SF-1/mock-product',
+  };
+
   const mockPriceHistory: ProductPriceHistory = {
     minimumPrice: 90,
     maximumPrice: 120,
@@ -163,6 +182,7 @@ describe('PriceCheckerDecorator', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockState.priceCheckerEnabled = true;
+    mockState.priceProvider = PriceProvider.BEST_PRICE;
     document.body.innerHTML = `
       <article class="buybox">
         <div class="price-box">
@@ -188,6 +208,88 @@ describe('PriceCheckerDecorator', () => {
     document.body.innerHTML = '';
     vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it('renders the Shopflix badge when Shopflix is the selected provider', async () => {
+    mockState.priceProvider = PriceProvider.SHOPFLIX;
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(ShopflixClient.getCurrentProductData).mockResolvedValue(mockShopflixData);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    const shopflixBadge = document.querySelector('.shopflix-badge') as HTMLAnchorElement | null;
+    expect(shopflixBadge).not.toBeNull();
+    expect(shopflixBadge?.href).toBe('https://shopflix.gr/p/SF-1/mock-product');
+    expect(shopflixBadge?.textContent).toContain('Buy through Shopflix');
+    expect(shopflixBadge?.classList.contains('price-display-shopflix-action')).toBe(true);
+    expect(shopflixBadge?.querySelector('.shopflix-badge-logo')?.textContent).toBe('shopflix');
+    expect(shopflixBadge?.querySelector('.price-display-shipping-note')?.textContent).toContain(
+      'Delivery costs may apply',
+    );
+    expect(document.querySelector('.bestprice-badge')).toBeNull();
+    expect(BestPriceClient.getCurrentProductData).not.toHaveBeenCalled();
+    expect(document.querySelector('.shopflix-comparison-text')?.textContent).toContain('Shopflix');
+  });
+
+  it('renders the Shopflix loading badge while Shopflix data is pending', async () => {
+    mockState.priceProvider = PriceProvider.SHOPFLIX;
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
+
+    const productDataDeferred = createDeferred<ProductPriceData>();
+    const shopflixDeferred = createDeferred<PriceComparisonProduct | undefined>();
+
+    vi.mocked(SkroutzClient.getCurrentProductData).mockReturnValue(productDataDeferred.promise);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(ShopflixClient.getCurrentProductData).mockReturnValue(shopflixDeferred.promise);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    const executePromise = decorator.execute();
+
+    await flushPromises();
+
+    expect(document.querySelector('.shopflix-badge-loading')).not.toBeNull();
+    expect(document.querySelector('.bestprice-badge-loading')).toBeNull();
+
+    productDataDeferred.resolve(mockProductPriceData);
+    shopflixDeferred.resolve(mockShopflixData);
+    await executePromise;
+    await flushPromises();
+  });
+
+  it('shows the Shopflix unavailable state when no listing matches', async () => {
+    mockState.priceProvider = PriceProvider.SHOPFLIX;
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(ShopflixClient.getCurrentProductData).mockResolvedValue(undefined);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    expect(document.querySelector('.shopflix-unavailable')?.textContent).toBe(
+      'Shopflix not available',
+    );
+    expect(document.querySelector('.shopflix-badge')).toBeNull();
+  });
+
+  it('falls back to BestPrice when Shopflix is selected outside the Greek site', async () => {
+    mockState.priceProvider = PriceProvider.SHOPFLIX;
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    expect(ShopflixClient.getCurrentProductData).not.toHaveBeenCalled();
+    expect(document.querySelector('.bestprice-badge')).not.toBeNull();
   });
 
   it('renders a skeleton immediately before product data resolves', async () => {

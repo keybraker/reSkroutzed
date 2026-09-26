@@ -1,4 +1,5 @@
 import { StorageKey } from '../src/clients/browser/client';
+import { PriceProvider } from '../src/common/enums/PriceProvider.enum';
 
 function getBool(key: StorageKey, defaultValue: boolean, callback: (value: boolean) => void): void {
   chrome.storage.local.get([key], (result) => {
@@ -14,7 +15,14 @@ function getNumber(key: StorageKey, defaultValue: number, callback: (value: numb
   });
 }
 
-function setStorageValue(key: StorageKey, value: boolean | number): void {
+function getString(key: StorageKey, defaultValue: string, callback: (value: string) => void): void {
+  chrome.storage.local.get([key], (result) => {
+    const value = result[key];
+    callback(value === undefined ? defaultValue : String(value));
+  });
+}
+
+function setStorageValue(key: StorageKey, value: boolean | number | string): void {
   chrome.storage.local.set({ [key]: value });
 }
 
@@ -34,21 +42,33 @@ function getButton(id: string): HTMLButtonElement {
   return element;
 }
 
+function getSelect(id: string): HTMLSelectElement {
+  const element = document.getElementById(id);
+  if (!(element instanceof HTMLSelectElement)) {
+    throw new Error(`Popup select #${id} is missing`);
+  }
+  return element;
+}
+
 /**
- * The minimum difference threshold and its apply button only make sense while
- * the price checker is enabled, so mirror the toggle on those controls.
+ * The comparison controls only make sense while the price checker is enabled,
+ * so mirror the toggle on those controls.
  */
 function syncPriceRowState(isPriceCheckerEnabled: boolean): void {
   document.getElementById('priceRow')?.classList.toggle('is-disabled', !isPriceCheckerEnabled);
+  document
+    .getElementById('priceProviderRow')
+    ?.classList.toggle('is-disabled', !isPriceCheckerEnabled);
   getInput('priceDifference').disabled = !isPriceCheckerEnabled;
   getButton('updatePriceBtn').disabled = !isPriceCheckerEnabled;
+  getSelect('priceProvider').disabled = !isPriceCheckerEnabled;
 }
 
 /**
  * Send a toggle message to the active tab. Silently ignores tabs that do not
  * have the content script injected (e.g. non-Skroutz pages).
  */
-function sendMessageToActiveTab(action: string, value: boolean | number): void {
+function sendMessageToActiveTab(action: string, value: boolean | number | string): void {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const tabId = tabs[0]?.id;
     if (tabId === undefined) {
@@ -109,6 +129,10 @@ function loadSettings(): void {
 
   getNumber(StorageKey.MINIMUM_PRICE_DIFFERENCE, 0, (value) => {
     getInput('priceDifference').value = String(value);
+  });
+
+  getString(StorageKey.PRICE_PROVIDER, PriceProvider.BEST_PRICE, (value) => {
+    getSelect('priceProvider').value = value;
   });
 }
 
@@ -209,6 +233,12 @@ function setupEventListeners(): void {
     setStorageValue(StorageKey.PRICE_CHECKER_ENABLED, isPriceCheckerEnabled);
     sendMessageToActiveTab('togglePriceChecker', isPriceCheckerEnabled);
     syncPriceRowState(isPriceCheckerEnabled);
+  });
+
+  const priceProviderSelect = getSelect('priceProvider');
+  priceProviderSelect.addEventListener('change', () => {
+    setStorageValue(StorageKey.PRICE_PROVIDER, priceProviderSelect.value);
+    sendMessageToActiveTab('updatePriceProvider', priceProviderSelect.value);
   });
 
   const priceInput = getInput('priceDifference');

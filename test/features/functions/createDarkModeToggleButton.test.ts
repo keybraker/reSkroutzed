@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BrowserClient } from '../../../src/clients/browser/client';
 import { Language } from '../../../src/common/enums/Language.enum';
+import { PriceProvider } from '../../../src/common/enums/PriceProvider.enum';
 import { State } from '../../../src/common/types/State.type';
 import { createDarkModeToggleButton } from '../../../src/features/functions/createDarkModeToggleButton';
 import { ToggleButtonContext } from '../../../src/features/functions/toggleButtonContext';
@@ -61,6 +62,7 @@ describe('createDarkModeToggleButton', () => {
       wideMode: false,
       priceCheckerEnabled: true,
       minimumPriceDifference: 0,
+      priceProvider: PriceProvider.BEST_PRICE,
       isMobile: false,
     };
 

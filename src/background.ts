@@ -1,5 +1,6 @@
 import { BrowserClient, StorageKey } from './clients/browser/client';
 import { Language } from './common/enums/Language.enum';
+import { PriceProvider } from './common/enums/PriceProvider.enum';
 import { State } from './common/types/State.type';
 import { FinalPriceFixerDecorator } from './features/FinalPriceFixer.decorator';
 import { LogoHatDecorator } from './features/LogoHat.decorator';
@@ -35,6 +36,7 @@ const state: State = {
   wideMode: false,
   priceCheckerEnabled: true,
   minimumPriceDifference: 0,
+  priceProvider: PriceProvider.BEST_PRICE,
   isMobile: false,
 };
 
@@ -90,6 +92,7 @@ function loadStorage(): void {
   state.minimumPriceDifference = BrowserClient.getValue<number>(
     StorageKey.MINIMUM_PRICE_DIFFERENCE,
   );
+  state.priceProvider = BrowserClient.getValue<PriceProvider>(StorageKey.PRICE_PROVIDER);
   state.hideUniversalToggle = BrowserClient.getValue<boolean>(
     StorageKey.UNIVERSAL_TOGGLE_VISIBILITY,
   );
@@ -222,7 +225,7 @@ const wideModeDecorator = new WideModeDecorator(state);
 
 chrome.runtime.onMessage.addListener(
   (
-    request: { action: string; value?: boolean | number },
+    request: { action: string; value?: boolean | number | string },
     sender: chrome.runtime.MessageSender,
     sendResponse: (response: { success: boolean }) => void,
   ) => {
@@ -265,6 +268,15 @@ chrome.runtime.onMessage.addListener(
     } else if (request.action === 'updatePriceDifference' && request.value !== undefined) {
       state.minimumPriceDifference = request.value as number;
       BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
+      sendResponse({ success: true });
+    } else if (request.action === 'updatePriceProvider' && request.value !== undefined) {
+      state.priceProvider = request.value as PriceProvider;
+      BrowserClient.setValue(StorageKey.PRICE_PROVIDER, state.priceProvider);
+
+      if (state.priceCheckerEnabled) {
+        priceCheckerIndicator.destroy();
+        void priceCheckerIndicator.execute();
+      }
       sendResponse({ success: true });
     } else if (request.action === 'togglePriceChecker' && request.value !== undefined) {
       state.priceCheckerEnabled = request.value as boolean;

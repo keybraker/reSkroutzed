@@ -1,19 +1,39 @@
 import type {
-  BestPriceBridgeRequest,
-  BestPriceBridgeResponse,
-} from './clients/best_price/messages';
+  PriceBridgeAction,
+  PriceBridgeRequest,
+  PriceBridgeResponse,
+} from './clients/common/priceBridge';
 
-const BEST_PRICE_ORIGIN = 'https://www.bestprice.gr';
+const PROVIDER_LABELS: Record<PriceBridgeAction, string> = {
+  'bestprice.fetch': 'BestPrice',
+  'shopflix.fetch': 'Shopflix',
+};
 
-const isBestPriceBridgeRequest = (value: unknown): value is BestPriceBridgeRequest => {
+/**
+ * Hosts each provider action is allowed to call. Every bridged request is
+ * validated against these before the service worker performs it.
+ */
+const ALLOWED_HOSTS: Record<PriceBridgeAction, (hostname: string) => boolean> = {
+  'bestprice.fetch': (hostname) => hostname === 'www.bestprice.gr',
+  'shopflix.fetch': (hostname) =>
+    hostname === 'shopflix.gr' ||
+    hostname === 'www.shopflix.gr' ||
+    hostname.endsWith('.algolia.net') ||
+    hostname.endsWith('.algolianet.com'),
+};
+
+const isPriceBridgeAction = (value: unknown): value is PriceBridgeAction =>
+  value === 'bestprice.fetch' || value === 'shopflix.fetch';
+
+const isPriceBridgeRequest = (value: unknown): value is PriceBridgeRequest => {
   if (!value || typeof value !== 'object') {
     return false;
   }
 
-  const request = value as Partial<BestPriceBridgeRequest>;
+  const request = value as Partial<PriceBridgeRequest>;
 
   return (
-    request.action === 'bestprice.fetch' &&
+    isPriceBridgeAction(request.action) &&
     typeof request.url === 'string' &&
     (request.responseType === 'json' || request.responseType === 'text')
   );
@@ -36,17 +56,20 @@ chrome.runtime.onMessage.addListener(
   (
     request: unknown,
     _sender: chrome.runtime.MessageSender,
-    sendResponse: (response: BestPriceBridgeResponse<unknown>) => void,
+    sendResponse: (response: PriceBridgeResponse<unknown>) => void,
   ) => {
-    if (!isBestPriceBridgeRequest(request)) {
+    if (!isPriceBridgeRequest(request)) {
       return false;
     }
 
     void (async () => {
+      const providerLabel = PROVIDER_LABELS[request.action];
+
       try {
         const requestUrl = new URL(request.url);
-        if (requestUrl.origin !== BEST_PRICE_ORIGIN) {
-          throw new Error('Only BestPrice requests are allowed');
+
+        if (!ALLOWED_HOSTS[request.action](requestUrl.hostname)) {
+          throw new Error(`Only ${providerLabel} requests are allowed`);
         }
 
         const response = await fetch(requestUrl.toString(), {
@@ -59,7 +82,7 @@ chrome.runtime.onMessage.addListener(
           sendResponse({
             ok: false,
             status: response.status,
-            error: `BestPrice request failed with HTTP ${response.status}`,
+            error: `${providerLabel} request failed with HTTP ${response.status}`,
           });
           return;
         }
@@ -76,7 +99,7 @@ chrome.runtime.onMessage.addListener(
       } catch (error) {
         sendResponse({
           ok: false,
-          error: error instanceof Error ? error.message : 'Unknown BestPrice request error',
+          error: error instanceof Error ? error.message : `Unknown ${providerLabel} request error`,
         });
       }
     })();

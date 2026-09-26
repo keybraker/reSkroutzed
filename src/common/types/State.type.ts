@@ -1,4 +1,5 @@
 import { Language } from '../enums/Language.enum';
+import { PriceProvider } from '../enums/PriceProvider.enum';
 
 export type State = {
   // visibility
@@ -26,6 +27,8 @@ export type State = {
   priceCheckerEnabled: boolean;
   /** Minimum total-price difference, in euros, before the checker calls out a deal. */
   minimumPriceDifference: number;
+  /** External catalogue the price checker compares the Skroutz offer against. */
+  priceProvider: PriceProvider;
   // platform detection
   isMobile: boolean;
 };

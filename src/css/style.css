@@ -907,7 +907,8 @@ text-black {
   line-height: 1.4 !important;
 }
 
-.bestprice-comparison-text {
+.bestprice-comparison-text,
+.shopflix-comparison-text {
   display: block !important;
 }
 
@@ -1578,7 +1579,8 @@ text-black {
   padding-right: 16px !important;
 }
 
-.price-display-bestprice-action {
+.price-display-bestprice-action,
+.price-display-shopflix-action {
   padding-left: 16px !important;
 }
 
@@ -1697,7 +1699,8 @@ text-black {
   box-shadow: 0 0 0 2px rgba(43, 96, 173, 0.22) !important;
 }
 
-.bestprice-badge-loading {
+.bestprice-badge-loading,
+.shopflix-badge-loading {
   pointer-events: none !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -1712,6 +1715,18 @@ text-black {
   height: 22px !important;
   display: block !important;
   flex: 0 0 auto !important;
+}
+
+/* Shopflix has no inline SVG mark, so its badge uses the blue wordmark instead */
+.shopflix-badge-logo {
+  display: block !important;
+  flex: 0 0 auto !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 22px !important;
+  color: #0d1bbd !important;
+  white-space: nowrap !important;
 }
 
 .store-logo {
@@ -1748,7 +1763,8 @@ text-black {
 }
 
 /* Visible indicator when BestPrice data is not available */
-.bestprice-unavailable {
+.bestprice-unavailable,
+.shopflix-unavailable {
   flex: 1 1 0 !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1871,6 +1887,7 @@ text-black {
   }
 
   .bestprice-badge,
+  .shopflix-badge,
   .price-display-action,
   .price-display-column {
     width: 100% !important;
@@ -1878,7 +1895,8 @@ text-black {
   }
 
   .price-display-store-action,
-  .price-display-bestprice-action {
+  .price-display-bestprice-action,
+  .price-display-shopflix-action {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
