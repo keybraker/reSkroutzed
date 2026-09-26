@@ -124,6 +124,33 @@ text-black {
   border-radius: 18px !important;
 }
 
+/* Small tag at the top-left of each option's price block, above the price: how
+   much cheaper or pricier that option is than buying through Skroutz, in the same
+   green / red as the column. */
+.price-difference-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  align-self: flex-start !important;
+  margin: 2px 0 3px !important;
+  padding: 0 6px !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 16px !important;
+  letter-spacing: 0.2px !important;
+  white-space: nowrap !important;
+}
+
+.price-difference-badge--cheaper {
+  background: #2e7b2e !important;
+}
+
+.price-difference-badge--pricier {
+  background: #a93331 !important;
+}
+
 .price-checker-loading,
 .store-availability-loading,
 .own-promotion-loading {

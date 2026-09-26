@@ -543,6 +543,104 @@ describe('PriceCheckerDecorator', () => {
     expect(document.querySelector('.price-average-line')).toBeNull();
   });
 
+  it('shows each option its own difference pill, measured against Skroutz', async () => {
+    // Arrange — store 98,00€ and BestPrice 96,00€ vs Buy through Skroutz 104,00€
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert — each pill lives inside its own price block, not on the card.
+    const storeBadge = document.querySelector(
+      '.price-display-store-action .price-difference-badge',
+    );
+    const bestPriceBadge = document.querySelector(
+      '.price-display-bestprice-action .price-difference-badge',
+    );
+    expect(storeBadge?.textContent).toBe('-6,00€');
+    expect(bestPriceBadge?.textContent).toBe('-8,00€');
+    expect(storeBadge?.classList.contains('price-difference-badge--cheaper')).toBe(true);
+
+    // The pill leads its block, directly above the price it refers to.
+    expect(storeBadge?.nextElementSibling?.classList.contains('price-indicator-price')).toBe(true);
+    expect(document.querySelectorAll('.price-difference-badge')).toHaveLength(2);
+  });
+
+  it('gives the Shopflix option a pill too when that comparison is on', async () => {
+    // Arrange — store 98,00€, BestPrice 96,00€, Shopflix 92,00€ vs Skroutz 104,00€
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.getCurrentProductData).mockResolvedValue(mockShopflixData);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    const badges = [
+      '.price-display-store-action',
+      '.price-display-bestprice-action',
+      '.price-display-shopflix-action',
+    ].map((selector) => document.querySelector(`${selector} .price-difference-badge`));
+    expect(badges.map((badge) => badge?.textContent)).toEqual(['-6,00€', '-8,00€', '-12,00€']);
+  });
+
+  it('renders no pill on an option that costs the same as Skroutz', async () => {
+    // Arrange — store 104,00€ matches Buy through Skroutz 104,00€
+    const matchingProductData: ProductPriceData = {
+      ...mockProductPriceData,
+      buyThroughStore: {
+        ...mockProductPriceData.buyThroughStore,
+        totalPrice: mockProductPriceData.buyThroughSkroutz.totalPrice,
+      },
+    };
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(matchingProductData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    expect(
+      document.querySelector('.price-display-store-action .price-difference-badge'),
+    ).toBeNull();
+    expect(document.querySelectorAll('.price-difference-badge')).toHaveLength(1);
+  });
+
+  it('turns the store pill red when the store total is pricier', async () => {
+    // Arrange — store 110,00€ vs Buy through Skroutz 104,00€
+    const pricierProductData: ProductPriceData = {
+      ...mockProductPriceData,
+      buyThroughStore: { ...mockProductPriceData.buyThroughStore, totalPrice: 110 },
+    };
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(pricierProductData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    const badge = document.querySelector('.price-display-store-action .price-difference-badge');
+    expect(badge?.classList.contains('price-difference-badge--pricier')).toBe(true);
+    expect(badge?.textContent).toBe('+6,00€');
+  });
+
   it('clicking the store price reuses the store navigation behavior', async () => {
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
     vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);

@@ -9,6 +9,7 @@ import { PriceComparisonProduct } from '../common/types/PriceComparisonProduct.t
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createBuyMeCoffeeElement } from './functions/createBuyMeCoffeeElement';
+import { createPriceDifferenceBadge } from './functions/createPriceDifferenceBadge';
 import { createReSkoutzedReviewElement } from './functions/createReskoutzedReviewElement';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
@@ -97,6 +98,8 @@ const SHOPFLIX_VIEW: PriceProviderView = {
 type PriceDisplayActionOptions = {
   classNames?: string[];
   price: number;
+  /** Signed difference against the Buy-through-Skroutz total; rendered as a pill. */
+  difference: number;
   shippingCost?: number;
   shippingNote?: string;
   priceClassNames?: string[];
@@ -362,6 +365,11 @@ function createPriceDisplayComponent(
   return container;
 }
 
+/** The price an offer is actually bought at, falling back to price + shipping. */
+function getComparisonTotal(productData: PriceComparisonProduct): number {
+  return productData.totalPrice ?? productData.price + (productData.shippingCost ?? 0);
+}
+
 function getPriceComparisonClassNames(
   skroutzTotalPrice: number,
   comparedOfferTotalPrice: number,
@@ -570,6 +578,14 @@ function createPriceDisplayAction(
     className: 'price-display-action-content',
   }) as HTMLDivElement;
 
+  // The difference leads the block: above the price it reads as that option's own
+  // tag, instead of floating between the shipping cost and the shop name where it
+  // was not clear what it belonged to.
+  const differenceBadge = createPriceDifferenceBadge(options.difference, options.language);
+  if (differenceBadge) {
+    DomClient.appendElementToElement(differenceBadge, content);
+  }
+
   DomClient.appendElementToElement(
     createFormattedPriceElement(options.price, options.priceClassNames ?? []),
     content,
@@ -617,14 +633,16 @@ function createStorePriceAction(
   shippingCost: number,
   language: Language,
 ): HTMLButtonElement {
+  const skroutzTotalPrice = productPriceData.buyThroughSkroutz.totalPrice;
   const priceClassNames = getPriceComparisonClassNames(
-    productPriceData.buyThroughSkroutz.totalPrice,
+    skroutzTotalPrice,
     productPriceData.buyThroughStore.totalPrice,
   );
 
   return createPriceDisplayAction({
     classNames: ['price-display-store-action', ...priceClassNames],
     price,
+    difference: productPriceData.buyThroughStore.totalPrice - skroutzTotalPrice,
     shippingCost,
     priceClassNames,
     language,
@@ -648,14 +666,13 @@ function createComparisonBadge(
   language: Language,
   view: PriceProviderView,
 ): HTMLAnchorElement {
-  const comparisonTotal =
-    comparisonProductData.totalPrice ??
-    comparisonProductData.price + (comparisonProductData.shippingCost ?? 0);
+  const comparisonTotal = getComparisonTotal(comparisonProductData);
   const priceClassNames = getPriceComparisonClassNames(skroutzTotalPrice, comparisonTotal);
 
   const comparisonLink = createPriceDisplayAction({
     classNames: [...view.badgeClassNames, ...priceClassNames],
     price: comparisonProductData.price,
+    difference: comparisonTotal - skroutzTotalPrice,
     shippingCost: comparisonProductData.shippingCost,
     shippingNote:
       language === Language.ENGLISH
@@ -783,9 +800,7 @@ function createPriceComparisonBreakdownComponent(
     const comparisonPrice = slot.productData.price.toFixed(2);
     const comparisonShipping =
       slot.productData.shippingCost !== undefined ? slot.productData.shippingCost.toFixed(2) : null;
-    const comparisonTotal = (
-      slot.productData.totalPrice ?? slot.productData.price + (slot.productData.shippingCost ?? 0)
-    ).toFixed(2);
+    const comparisonTotal = getComparisonTotal(slot.productData).toFixed(2);
 
     if (comparisonShipping !== null) {
       comparisonValue.textContent = `${comparisonPrice}€ + ${comparisonShipping}€ = ${comparisonTotal}€`;
