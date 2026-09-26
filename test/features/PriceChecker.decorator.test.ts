@@ -7,6 +7,7 @@ import {
   ProductPriceHistory,
   SkroutzClient,
 } from '../../src/clients/skroutz/client';
+import { PriceChartValue } from '../../src/clients/skroutz/types';
 import { Language } from '../../src/common/enums/Language.enum';
 import { PriceComparisonProduct } from '../../src/common/types/PriceComparisonProduct.type';
 import { State } from '../../src/common/types/State.type';
@@ -33,11 +34,26 @@ vi.mock('../../src/clients/shopflix/client', () => ({
 }));
 
 vi.mock('../../src/common/components/PriceHistory.component', () => ({
-  PriceHistoryComponent: vi.fn(() => {
-    const element = document.createElement('div');
-    element.className = 'mock-price-history';
-    return element;
-  }),
+  PriceHistoryComponent: vi.fn(
+    (_language: Language, averagePriceLine?: HTMLElement | null): HTMLElement => {
+      const element = document.createElement('div');
+      element.className = 'mock-price-history';
+
+      const row = document.createElement('div');
+      row.className = 'price-history-row';
+
+      if (averagePriceLine) {
+        row.appendChild(averagePriceLine);
+      }
+
+      const controls = document.createElement('div');
+      controls.className = 'price-history-controls';
+      row.appendChild(controls);
+      element.appendChild(row);
+
+      return element;
+    },
+  ),
 }));
 
 vi.mock('../../src/features/functions/createReskoutzedReviewElement', () => ({
@@ -172,14 +188,21 @@ describe('PriceCheckerDecorator', () => {
   };
 
   const mockPriceHistory: ProductPriceHistory = {
-    minimumPrice: 90,
-    maximumPrice: 120,
     allPrices: [],
     sixMonthPrices: [],
   };
 
+  const samples = (values: number[]): PriceChartValue[] =>
+    values.map((value, index) => ({ value, timestamp: index * 86_400_000 }));
+
+  const mockPriceHistoryWithSamples: ProductPriceHistory = {
+    allPrices: samples([100, 110, 120]),
+    sixMonthPrices: samples([90, 100]),
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
+    mockState.language = Language.ENGLISH;
     mockState.priceCheckerEnabled = true;
     mockState.showShopflix = true;
     document.body.innerHTML = `
@@ -436,6 +459,88 @@ describe('PriceCheckerDecorator', () => {
 
     expect(document.querySelector('.price-history-loading-wrapper')).toBeNull();
     expect(document.querySelector('.mock-price-history')).not.toBeNull();
+  });
+
+  it('shows the six-month and lifetime average prices under the price columns', async () => {
+    // Arrange
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistoryWithSamples);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    const line = document.querySelector('.price-average-line') as HTMLDivElement | null;
+    expect(line).not.toBeNull();
+    expect(line?.parentElement?.classList.contains('price-history-row')).toBe(true);
+    expect(line?.querySelector('.price-average-icon svg')).not.toBeNull();
+    expect(line?.textContent).toBe('6-month average: 95,00€ · All-time average: 110,00€');
+
+    // The toggles sit to the right of the line, inside the same row.
+    const controls = line?.nextElementSibling as HTMLElement | null;
+    expect(controls?.classList.contains('price-history-controls')).toBe(true);
+    expect(controls?.querySelector('.analysis-toggle-button')).not.toBeNull();
+  });
+
+  it('translates the average line to Greek', async () => {
+    // Arrange
+    mockState.language = Language.GREEK;
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistoryWithSamples);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    expect(document.querySelector('.price-average-line')?.textContent).toBe(
+      'Μέση τιμή εξαμήνου: 95,00€ · Μέση τιμή όλης της περιόδου: 110,00€',
+    );
+  });
+
+  it('omits the average for a window with no usable samples', async () => {
+    // Arrange
+    const lifetimeOnlyHistory: ProductPriceHistory = {
+      allPrices: samples([100, 200]),
+      sixMonthPrices: [],
+    };
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(lifetimeOnlyHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    expect(document.querySelector('.price-average-line')?.textContent).toBe(
+      'All-time average: 150,00€',
+    );
+  });
+
+  it('does not render an average line when the history has no samples', async () => {
+    // Arrange
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert
+    expect(document.querySelector('.price-average-line')).toBeNull();
   });
 
   it('clicking the store price reuses the store navigation behavior', async () => {

@@ -4,7 +4,7 @@ import { ShopflixClient } from '../clients/shopflix/client';
 import { ProductPriceData, ProductPriceHistory, SkroutzClient } from '../clients/skroutz/client';
 import { PriceHistoryComponent } from '../common/components/PriceHistory.component';
 import { Language } from '../common/enums/Language.enum';
-import { assessPrice } from '../common/functions/priceVerdict';
+import { getPriceAverages } from '../common/functions/priceAverages';
 import { PriceComparisonProduct } from '../common/types/PriceComparisonProduct.type';
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
@@ -209,32 +209,12 @@ function createPriceHistoryLoadingComponent(): HTMLDivElement {
   const row = DomClient.createElement('div', {
     className: ['price-history-row', 'info-with-analysis-row', 'price-history-loading-row'],
   }) as HTMLDivElement;
-  const topRow = DomClient.createElement('div', {
-    className: ['info-with-analysis-row', 'price-history-loading-top-row'],
-  }) as HTMLDivElement;
-  const assessments = DomClient.createElement('div', {
-    className: ['price-history-assessments', 'price-history-loading-assessments'],
-  }) as HTMLDivElement;
   const controls = DomClient.createElement('div', {
     className: 'price-history-controls',
   }) as HTMLDivElement;
 
-  DomClient.appendElementToElement(
-    createSkeletonBlock(['price-checker-skeleton-history-copy']),
-    assessments,
-  );
-  DomClient.appendElementToElement(
-    createSkeletonBlock([
-      'price-checker-skeleton-history-copy',
-      'price-checker-skeleton-history-copy-secondary',
-    ]),
-    assessments,
-  );
-
-  DomClient.appendElementToElement(assessments, topRow);
   DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-chip']), controls);
-  DomClient.appendElementToElement(controls, topRow);
-  DomClient.appendElementToElement(topRow, row);
+  DomClient.appendElementToElement(controls, row);
   DomClient.appendElementToElement(row, wrapper);
 
   return wrapper;
@@ -323,6 +303,10 @@ function createPriceCheckerSkeleton(slots: ComparisonSlot[]): HTMLDivElement {
   DomClient.appendElementToElement(priceDisplayRow, priceDisplay);
 
   DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-average']),
+    priceCalculationContainer,
+  );
   DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
   DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
   DomClient.appendElementToElement(createStoreAvailabilitySkeletonElement(), contentContainer);
@@ -448,6 +432,70 @@ function createPriceDisplaySubtitle(
     (language === Language.ENGLISH ? 'Buy through store' : 'Αγορά μέσω καταστήματος');
 
   return subtitle;
+}
+
+function formatAveragePrice(value: number): string {
+  return `${value.toFixed(2).replace('.', ',')}€`;
+}
+
+/**
+ * The quiet line under the price columns: the mean recorded price for the last
+ * six months and for the product's entire sales period. It is informational and
+ * italic on purpose so it annotates the comparison prices without competing
+ * with them.
+ */
+function createAveragePriceLine(
+  productPriceHistory: ProductPriceHistory,
+  language: Language,
+): HTMLDivElement | null {
+  const { sixMonth, lifetime } = getPriceAverages(productPriceHistory);
+
+  if (sixMonth === null && lifetime === null) {
+    return null;
+  }
+
+  const parts: string[] = [];
+
+  if (sixMonth !== null) {
+    parts.push(
+      language === Language.ENGLISH
+        ? `6-month average: ${formatAveragePrice(sixMonth)}`
+        : `Μέση τιμή εξαμήνου: ${formatAveragePrice(sixMonth)}`,
+    );
+  }
+
+  if (lifetime !== null) {
+    parts.push(
+      language === Language.ENGLISH
+        ? `All-time average: ${formatAveragePrice(lifetime)}`
+        : `Μέση τιμή όλης της περιόδου: ${formatAveragePrice(lifetime)}`,
+    );
+  }
+
+  const line = DomClient.createElement('div', {
+    className: 'price-average-line',
+  }) as HTMLDivElement;
+  line.title =
+    language === Language.ENGLISH
+      ? 'Average of the prices recorded for this product in the last 6 months and over its entire sales period.'
+      : 'Μέσος όρος των τιμών που καταγράφηκαν για το προϊόν το τελευταίο εξάμηνο και σε όλη τη διάρκεια πώλησής του.';
+
+  const icon = DomClient.createElement('span', {
+    className: 'price-average-icon',
+  }) as HTMLSpanElement;
+  icon.setAttribute('aria-hidden', 'true');
+  icon.innerHTML =
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+
+  const text = DomClient.createElement('span', {
+    className: 'price-average-text',
+  }) as HTMLSpanElement;
+  text.textContent = parts.join(' · ');
+
+  DomClient.appendElementToElement(icon, line);
+  DomClient.appendElementToElement(text, line);
+
+  return line;
 }
 
 function createPriceDisplayActionArrow(): HTMLSpanElement {
@@ -1136,15 +1184,8 @@ function createPriceIndicationElement(
     DomClient.appendElementToElement(infoContainer, contentContainer);
 
     if (productPriceHistory) {
-      // The chart tracks product prices, so comparing the shipping-inclusive
-      // total against it would push every verdict towards "expensive".
-      const storeProductPrice = productPriceData.buyThroughStore.price;
-      const priceHistoryBreakdown = PriceHistoryComponent(
-        assessPrice(productPriceHistory, storeProductPrice).overall,
-        productPriceHistory,
-        language,
-        storeProductPrice,
-      );
+      const averagePriceLine = createAveragePriceLine(productPriceHistory, language);
+      const priceHistoryBreakdown = PriceHistoryComponent(language, averagePriceLine);
       const priceHistoryControls = priceHistoryBreakdown.querySelector('.price-history-controls');
       if (priceHistoryControls) {
         DomClient.appendElementToElement(

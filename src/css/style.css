@@ -160,19 +160,6 @@ text-black {
   margin-top: 4px !important;
 }
 
-.price-checker-skeleton-history-copy {
-  flex: 1 1 auto !important;
-  width: auto !important;
-}
-
-.price-checker-skeleton-history-copy {
-  height: 16px !important;
-}
-
-.price-checker-skeleton-history-copy-secondary {
-  width: 78% !important;
-}
-
 .price-checker-skeleton-chip {
   flex: 0 0 96px !important;
   width: 96px !important;
@@ -208,6 +195,13 @@ text-black {
 .price-checker-skeleton-badge-label {
   width: 132px !important;
   height: 12px !important;
+  border-radius: 8px !important;
+}
+
+.price-checker-skeleton-average {
+  width: 68% !important;
+  max-width: 280px !important;
+  height: 13px !important;
   border-radius: 8px !important;
 }
 
@@ -253,21 +247,6 @@ text-black {
 .price-history-loading-row {
   display: flex !important;
   flex-direction: column !important;
-}
-
-.price-history-loading-top-row {
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 16px !important;
-  width: 100% !important;
-}
-
-.price-history-loading-assessments {
-  display: flex !important;
-  flex: 1 1 auto !important;
-  flex-direction: column !important;
-  gap: 4px !important;
-  min-width: 0 !important;
 }
 
 .store-availability-loading {
@@ -1371,97 +1350,9 @@ text-black {
   align-items: center !important;
 }
 
-/* Price history verdict box (BUY / SHORT LIST / DON'T BUY) */
-.price-history-verdict {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.price-history-verdict-icon {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex: 0 0 auto !important;
-  width: 44px !important;
-  height: 44px !important;
-  aspect-ratio: 1 / 1 !important;
-  border-radius: 10px !important;
-  color: #ffffff !important;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
-}
-
-.price-history-verdict-icon svg {
-  width: 22px !important;
-  height: 22px !important;
-  display: block !important;
-  flex-shrink: 0 !important;
-}
-
-.price-history-verdict-text {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-  min-width: 0 !important;
-}
-
-.price-history-verdict-title {
-  font-size: 15px !important;
-  font-weight: 800 !important;
-  line-height: 1.2 !important;
-  letter-spacing: 0.3px !important;
-  text-transform: uppercase !important;
-  color: #222 !important;
-}
-
-.price-history-verdict-subtitle {
-  font-size: 12px !important;
-  line-height: 1.35 !important;
-  color: #888 !important;
-}
-
-.price-history-verdict--buy .price-history-verdict-icon {
-  background-color: #398435 !important;
-}
-
-.price-history-verdict--shortlist .price-history-verdict-icon {
-  background-color: #ffb800 !important;
-  color: #5a4300 !important;
-}
-
-.price-history-verdict--dontbuy .price-history-verdict-icon {
-  background-color: #a93331 !important;
-}
-
-/* Split verdict content and controls into two equal halves */
-.price-history-row > .price-history-content-row {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  align-items: center !important;
-  gap: 16px !important;
-}
-
-.price-history-content-row .price-history-assessments {
-  min-width: 0 !important;
-}
-
-.price-history-content-row .price-history-controls {
-  width: 100% !important;
-  margin-left: 0 !important;
-  align-items: stretch !important;
-}
-
-.price-history-content-row .price-history-controls .analysis-toggle-button {
-  width: 100% !important;
-  justify-content: center !important;
-}
-
 .price-history-controls {
   display: flex !important;
   flex-direction: column !important;
-  align-items: flex-end !important;
   justify-content: center !important;
   gap: 6px !important;
   margin-left: auto !important;
@@ -1642,6 +1533,37 @@ text-black {
   min-height: 30px !important;
   display: flex !important;
   align-items: flex-end !important;
+}
+
+/* Quiet annotation in the price-history row, left of the toggles: the mean
+   recorded price for the last six months and for the whole sales period. Italic
+   on purpose so it reads as a note attached to the prices rather than another
+   price. */
+.price-average-line {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  font-size: 12px !important;
+  font-style: italic !important;
+  line-height: 1.4 !important;
+  color: #888 !important;
+  text-align: left !important;
+}
+
+.price-average-line .price-average-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: #888 !important;
+}
+
+.price-average-line .price-average-text {
+  min-width: 0 !important;
 }
 
 .price-display-action-notification {
@@ -1983,37 +1905,7 @@ text-black {
     align-items: center !important;
   }
 
-  .price-history-assessments {
-    width: 100% !important;
-    align-items: center !important;
-    text-align: center !important;
-    margin-bottom: 4px !important;
-  }
-
-  .price-history-verdict {
-    align-items: flex-start !important;
-  }
-
-  .price-history-verdict-icon {
-    width: 34px !important;
-    height: 34px !important;
-    border-radius: 8px !important;
-  }
-
-  .price-history-verdict-icon svg {
-    width: 18px !important;
-    height: 18px !important;
-  }
-
-  .price-history-verdict-text {
-    text-align: left !important;
-  }
-
-  .price-history-verdict-title {
-    font-size: 14px !important;
-  }
-
-  .price-history-verdict-subtitle {
+  .price-average-line {
     font-size: 11px !important;
   }
 
@@ -2034,21 +1926,6 @@ text-black {
     min-width: 0 !important;
     padding-left: 10px !important;
     padding-right: 10px !important;
-  }
-
-  .price-history-row > .price-history-content-row {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 8px !important;
-  }
-
-  .price-history-content-row .price-history-controls {
-    align-items: center !important;
-  }
-
-  .price-history-content-row .price-history-controls .analysis-toggle-button {
-    width: auto !important;
   }
 
   .price-history-header {

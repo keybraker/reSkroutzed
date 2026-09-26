@@ -1,113 +1,14 @@
 import { DomClient } from '../../clients/dom/client';
-import { ProductPriceHistory } from '../../clients/skroutz/client';
 import { Language } from '../enums/Language.enum';
-import { assessPrice, PriceAssessment, PriceVerdict } from '../functions/priceVerdict';
-import { translate, TranslationKey } from '../utils/translations';
-
-type PriceLevel = PriceVerdict;
-
-const VERDICT_LABEL_KEY: Record<PriceLevel, TranslationKey> = {
-  cheap: 'verdict.goodPrice',
-  normal: 'verdict.okPrice',
-  expensive: 'verdict.expensivePrice',
-};
-
-const VERDICT_MODIFIER: Record<PriceLevel, string> = {
-  cheap: 'price-history-verdict--buy',
-  normal: 'price-history-verdict--shortlist',
-  expensive: 'price-history-verdict--dontbuy',
-};
-
-const VERDICT_ICON: Record<PriceLevel, string> = {
-  cheap:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
-  normal:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
-  expensive:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
-};
-
-function capitalize(value: string): string {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
 
 /**
- * Builds the assessment sentence describing the current price, previously shown
- * as plain labels and now displayed as the verdict box subtitle. Each window is
- * named on its own whenever the two disagree, so the sentence stays honest about
- * what the price was measured against.
+ * The price history row: the average-price caption on the left (when supplied)
+ * and the toggles on the right. The price checker appends the analysis toggle
+ * into `.price-history-controls`.
  */
-function buildAssessmentText(assessment: PriceAssessment, language: Language): string {
-  const { recent, lifetime } = assessment;
-
-  if (recent && lifetime && recent === lifetime) {
-    return translate(`priceHistory.combined${capitalize(recent)}` as TranslationKey, language);
-  }
-
-  if (recent && lifetime) {
-    return [
-      translate(`priceHistory.${recent}` as TranslationKey, language),
-      translate(`priceHistory.lifetime${capitalize(lifetime)}` as TranslationKey, language),
-    ].join(' • ');
-  }
-
-  if (recent) {
-    return translate(`priceHistory.${recent}` as TranslationKey, language);
-  }
-
-  if (lifetime) {
-    return translate(`priceHistory.lifetime${capitalize(lifetime)}` as TranslationKey, language);
-  }
-
-  return translate('priceHistory.normal', language);
-}
-
-/**
- * Creates the GOOD PRICE / OK PRICE / EXPENSIVE PRICE verdict box as an
- * image-style row: a coloured rounded icon square on the left, the bold
- * localized verdict label and the visible grey assessment sentence as
- * supporting text. The design and size are identical for every verdict — only
- * the colour modifier differs.
- */
-function createVerdictBox(
-  level: PriceLevel,
-  assessmentText: string,
-  language: Language,
-): HTMLElement {
-  const box = DomClient.createElement('div', {
-    className: ['price-history-verdict', VERDICT_MODIFIER[level]],
-  });
-
-  const icon = DomClient.createElement('span', {
-    className: 'price-history-verdict-icon',
-  });
-  icon.innerHTML = VERDICT_ICON[level];
-
-  const textContainer = DomClient.createElement('span', {
-    className: 'price-history-verdict-text',
-  });
-
-  const title = document.createElement('span');
-  title.className = 'price-history-verdict-title';
-  title.textContent = translate(VERDICT_LABEL_KEY[level], language);
-
-  const subtitle = document.createElement('span');
-  subtitle.className = 'price-history-verdict-subtitle';
-  subtitle.textContent = assessmentText;
-
-  DomClient.appendElementToElement(title, textContainer);
-  DomClient.appendElementToElement(subtitle, textContainer);
-  DomClient.appendElementToElement(icon, box);
-  DomClient.appendElementToElement(textContainer, box);
-
-  return box;
-}
-
 export function PriceHistoryComponent(
-  currentPriceState: PriceLevel,
-  productPriceHistory: ProductPriceHistory,
   language: Language,
-  currentPrice: number,
+  averagePriceLine?: HTMLElement | null,
 ): HTMLElement {
   const wrapper = DomClient.createElement('div', {
     className: 'price-history-wrapper',
@@ -117,34 +18,11 @@ export function PriceHistoryComponent(
     className: ['price-history-row', 'info-with-analysis-row'],
   });
   row.style.display = 'flex';
-  row.style.flexDirection = 'column';
+  row.style.flexDirection = 'row';
 
-  const assessmentsContainer = DomClient.createElement('div', {
-    className: 'price-history-assessments',
-  });
-  assessmentsContainer.style.display = 'flex';
-  assessmentsContainer.style.flexDirection = 'column';
-  assessmentsContainer.style.gap = '4px';
-  assessmentsContainer.style.flex = '1 1 auto';
-  assessmentsContainer.style.minWidth = '0';
-
-  const verdictBox = createVerdictBox(
-    currentPriceState,
-    buildAssessmentText(assessPrice(productPriceHistory, currentPrice), language),
-    language,
-  );
-  DomClient.appendElementToElement(verdictBox, assessmentsContainer);
-
-  const topRow = DomClient.createElement('div', {
-    className: ['info-with-analysis-row', 'price-history-content-row'],
-  });
-  topRow.style.display = 'flex';
-  topRow.style.flexDirection = 'row';
-  topRow.style.alignItems = 'center';
-  topRow.style.justifyContent = 'space-between';
-  topRow.style.gap = '16px';
-
-  DomClient.appendElementToElement(assessmentsContainer, topRow);
+  if (averagePriceLine) {
+    DomClient.appendElementToElement(averagePriceLine, row);
+  }
 
   const controlsContainer = DomClient.createElement('div', {
     className: 'price-history-controls',
@@ -177,8 +55,7 @@ export function PriceHistoryComponent(
   });
 
   DomClient.appendElementToElement(toggleButton, controlsContainer);
-  DomClient.appendElementToElement(controlsContainer, topRow);
-  DomClient.appendElementToElement(topRow, row);
+  DomClient.appendElementToElement(controlsContainer, row);
 
   const line = document.createElement('hr');
   line.className = 'price-history-separator';

@@ -72,9 +72,8 @@
           </div>
           <div class="price-display-action-notification">
             <svg class="bestprice-badge-logo" viewBox="0 0 44 28" aria-hidden="true">
-              <path d="M1 6h42v16H1z" />
-            </svg>(+0,00€ μεταφορικά)
-από 130,68 € / μήνα σε 24 δόσεις
+              <path d="M1 6h42v16H1z" /></svg
+            >(+0,00€ μεταφορικά) από 130,68 € / μήνα σε 24 δόσεις
           </div>
           <span class="price-display-action-arrow" aria-hidden="true"
             ><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -131,6 +130,92 @@
           <div class="inline-flex-col">
             <div class="price-calculation-container">
               <div class="price-display-wrapper" data-mount data-multi="true"></div>
+            </div>
+            <div class="price-history-wrapper">
+              <hr
+                class="price-history-separator"
+                style="
+                  border: none;
+                  border-top: 1px solid currentColor;
+                  opacity: 0.2;
+                  margin: 2px 0 24px;
+                "
+              />
+              <div
+                class="price-history-row info-with-analysis-row"
+                style="display: flex; flex-direction: row"
+              >
+                <div
+                  class="price-average-line"
+                  title="Μέσος όρος των τιμών που καταγράφηκαν για το προϊόν το τελευταίο εξάμηνο και σε όλη τη διάρκεια πώλησής του."
+                >
+                  <span class="price-average-icon" aria-hidden="true"
+                    ><svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+                  ></span>
+                  <span class="price-average-text"
+                    >Μέση τιμή εξαμήνου: 95,00€ · Μέση τιμή όλης της περιόδου: 110,00€</span
+                  >
+                </div>
+                <div
+                  class="price-history-controls"
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: stretch;
+                    justify-content: center;
+                    gap: 6px;
+                    margin-left: auto;
+                  "
+                >
+                  <button type="button" class="analysis-toggle-button price-history-toggle-button">
+                    <span>Εξέλιξη τιμής</span>
+                    <span class="analysis-icon"
+                      ><svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M3 3v18h18" />
+                        <polyline points="6.5 16.5 10 13 13 16 20 9" /></svg
+                    ></span>
+                  </button>
+                  <button type="button" class="analysis-toggle-button">
+                    <span>Ανάλυση</span>
+                    <span class="analysis-icon"
+                      ><svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+                    ></span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,189 +1,91 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ProductPriceHistory } from '../../../src/clients/skroutz/client';
-import { PriceChartValue } from '../../../src/clients/skroutz/types';
 import { PriceHistoryComponent } from '../../../src/common/components/PriceHistory.component';
 import { Language } from '../../../src/common/enums/Language.enum';
 
 describe('PriceHistoryComponent', () => {
-  const samples = (values: number[]): PriceChartValue[] =>
-    values.map((value, index) => ({ value, timestamp: index }));
-
-  const makeHistory = (
-    allPrices: number[],
-    sixMonthPrices: number[] = allPrices,
-  ): ProductPriceHistory => ({
-    minimumPrice: Math.min(...allPrices),
-    maximumPrice: Math.max(...allPrices),
-    allPrices: samples(allPrices),
-    sixMonthPrices: samples(sixMonthPrices),
-  });
-
-  const renderVerdict = (
-    state: 'cheap' | 'normal' | 'expensive',
-    history: ProductPriceHistory,
-    price: number,
-    language: Language = Language.GREEK,
-  ): HTMLElement => {
-    const wrapper = PriceHistoryComponent(state, history, language, price);
-    const verdict = wrapper.querySelector('.price-history-verdict');
-    if (!verdict) {
-      throw new Error('price-history-verdict not rendered');
-    }
-    return verdict as HTMLElement;
-  };
-
-  const queryPart = (verdict: HTMLElement, selector: string): HTMLElement => {
-    const element = verdict.querySelector(selector);
+  const queryPart = (wrapper: HTMLElement, selector: string): HTMLElement => {
+    const element = wrapper.querySelector(selector);
     if (!element) {
       throw new Error(`${selector} not rendered`);
     }
+
     return element as HTMLElement;
   };
 
   afterEach(() => {
     document.body.innerHTML = '';
+    vi.restoreAllMocks();
   });
 
-  it('renders a GOOD PRICE row with the buy modifier when the price is cheap', () => {
-    // Arrange
-    const history = makeHistory([100, 150, 200]);
-
-    // Act
-    const verdict = renderVerdict('cheap', history, 110);
+  it('no longer renders a price verdict row', () => {
+    // Arrange / Act
+    const wrapper = PriceHistoryComponent(Language.GREEK);
 
     // Assert
-    expect(verdict.className).toBe('price-history-verdict price-history-verdict--buy');
-    expect(queryPart(verdict, '.price-history-verdict-title').textContent).toBe('Καλή τιμή');
+    expect(wrapper.querySelector('.price-history-verdict')).toBeNull();
+    expect(wrapper.querySelector('.price-history-assessments')).toBeNull();
   });
 
-  it('renders an OK PRICE row with the shortlist modifier when the price is normal', () => {
+  it('renders the price history toggle that opens the native chart button', () => {
     // Arrange
-    const history = makeHistory([100, 150, 200]);
+    const nativeButton = document.createElement('button');
+    nativeButton.className = 'btn-reset icon price-history';
+    const nativeClick = vi.spyOn(nativeButton, 'click');
+    document.body.appendChild(nativeButton);
 
     // Act
-    const verdict = renderVerdict('normal', history, 150);
+    const wrapper = PriceHistoryComponent(Language.GREEK);
+    const toggle = queryPart(wrapper, '.price-history-toggle-button') as HTMLButtonElement;
+    toggle.click();
 
     // Assert
-    expect(verdict.className).toBe('price-history-verdict price-history-verdict--shortlist');
-    expect(queryPart(verdict, '.price-history-verdict-title').textContent).toBe('Κανονική τιμή');
+    expect(toggle.textContent).toContain('Εξέλιξη τιμής');
+    expect(toggle.querySelector('.analysis-icon svg')).not.toBeNull();
+    expect(nativeClick).toHaveBeenCalledTimes(1);
   });
 
-  it('renders an EXPENSIVE PRICE row with the dontbuy modifier when the price is expensive', () => {
-    // Arrange
-    const history = makeHistory([100, 150, 200]);
-
-    // Act
-    const verdict = renderVerdict('expensive', history, 190);
+  it('localizes the toggle label to English', () => {
+    // Arrange / Act
+    const wrapper = PriceHistoryComponent(Language.ENGLISH);
 
     // Assert
-    expect(verdict.className).toBe('price-history-verdict price-history-verdict--dontbuy');
-    expect(queryPart(verdict, '.price-history-verdict-title').textContent).toBe('Ακριβή τιμή');
-  });
-
-  it('renders a coloured rounded icon square inside every verdict row', () => {
-    // Arrange
-    const history = makeHistory([100, 150, 200]);
-
-    // Act
-    const verdict = renderVerdict('normal', history, 150);
-
-    // Assert
-    expect(queryPart(verdict, '.price-history-verdict-icon').querySelector('svg')).not.toBeNull();
-  });
-
-  it('uses the same base design for every verdict and only varies the colour modifier', () => {
-    // Arrange
-    const history = makeHistory([100, 150, 200]);
-
-    // Act
-    const buy = renderVerdict('cheap', history, 110);
-    const shortlist = renderVerdict('normal', history, 150);
-    const dontBuy = renderVerdict('expensive', history, 190);
-
-    // Assert
-    const verdicts = [buy, shortlist, dontBuy];
-    verdicts.forEach((verdict) => {
-      expect(verdict.classList.contains('price-history-verdict')).toBe(true);
-      expect(verdict.querySelector('.price-history-verdict-icon')).not.toBeNull();
-      expect(verdict.querySelector('.price-history-verdict-title')).not.toBeNull();
-      expect(verdict.querySelector('.price-history-verdict-subtitle')).not.toBeNull();
-    });
-    expect(new Set(verdicts.map((verdict) => verdict.className))).toEqual(
-      new Set([
-        'price-history-verdict price-history-verdict--buy',
-        'price-history-verdict price-history-verdict--shortlist',
-        'price-history-verdict price-history-verdict--dontbuy',
-      ]),
+    expect(wrapper.querySelector('.price-history-toggle-button')?.textContent).toContain(
+      'Price history',
     );
   });
 
-  it('shows the combined assessment sentence as the subtitle when lifetime matches the current state', () => {
+  it('exposes the controls container the price checker appends the analysis toggle into', () => {
+    // Arrange / Act
+    const wrapper = PriceHistoryComponent(Language.GREEK);
+
+    // Assert
+    const controls = queryPart(wrapper, '.price-history-controls');
+    expect(controls.querySelector('.price-history-toggle-button')).not.toBeNull();
+    expect(wrapper.querySelector('.price-history-separator')).not.toBeNull();
+  });
+
+  it('places the supplied average-price caption on the left of the toggles', () => {
     // Arrange
-    const history = makeHistory([100, 150, 200]);
+    const caption = document.createElement('div');
+    caption.className = 'price-average-line';
 
     // Act
-    const verdict = renderVerdict('normal', history, 150);
+    const wrapper = PriceHistoryComponent(Language.GREEK, caption);
 
     // Assert
-    expect(queryPart(verdict, '.price-history-verdict-subtitle').textContent).toBe(
-      'Μέση τιμή σε σχέση με το τελευταίο εξάμηνο και όλη τη διάρκεια πώλησης',
-    );
+    const row = queryPart(wrapper, '.price-history-row');
+    expect(row.firstElementChild).toBe(caption);
+    expect(row.lastElementChild?.classList.contains('price-history-controls')).toBe(true);
   });
 
-  it('falls back to the period assessment sentence when lifetime data is unavailable', () => {
-    // Arrange — only the last 6 months have samples
-    const history = makeHistory([], [100, 150, 200]);
-
-    // Act
-    const verdict = renderVerdict('cheap', history, 110);
+  it('renders the row without a caption when none is supplied', () => {
+    // Arrange / Act
+    const wrapper = PriceHistoryComponent(Language.GREEK);
 
     // Assert
-    expect(queryPart(verdict, '.price-history-verdict-subtitle').textContent).toBe(
-      'Καλή τιμή σε σχέση με το τελευταίο εξάμηνο',
-    );
-  });
-
-  it('names both windows in the subtitle when they disagree about the price', () => {
-    // Arrange — cheap against the last 6 months, ordinary over the whole period
-    const history = makeHistory([90, 100, 150, 200, 210], [100, 150, 200]);
-
-    // Act
-    const verdict = renderVerdict('normal', history, 105);
-
-    // Assert
-    expect(queryPart(verdict, '.price-history-verdict-subtitle').textContent).toBe(
-      'Καλή τιμή σε σχέση με το τελευταίο εξάμηνο • Μέση τιμή σε σχέση με όλη τη διάρκεια πώλησης',
-    );
-  });
-
-  it('localizes the assessment sentence according to the language', () => {
-    // Arrange
-    const history = makeHistory([100, 150, 200]);
-
-    // Act
-    const verdict = renderVerdict('cheap', history, 110, Language.ENGLISH);
-
-    // Assert
-    expect(queryPart(verdict, '.price-history-verdict-subtitle').textContent).toBe(
-      'Good price compared to both the last 6 months and the entire sales period',
-    );
-  });
-
-  it('localizes the verdict labels to English (GOOD PRICE / OK PRICE / EXPENSIVE PRICE)', () => {
-    // Arrange
-    const history = makeHistory([100, 150, 200]);
-
-    // Act
-    const good = renderVerdict('cheap', history, 110, Language.ENGLISH);
-    const ok = renderVerdict('normal', history, 150, Language.ENGLISH);
-    const expensive = renderVerdict('expensive', history, 190, Language.ENGLISH);
-
-    // Assert
-    expect(queryPart(good, '.price-history-verdict-title').textContent).toBe('GOOD PRICE');
-    expect(queryPart(ok, '.price-history-verdict-title').textContent).toBe('OK PRICE');
-    expect(queryPart(expensive, '.price-history-verdict-title').textContent).toBe(
-      'EXPENSIVE PRICE',
-    );
+    const row = queryPart(wrapper, '.price-history-row');
+    expect(row.querySelector('.price-average-line')).toBeNull();
+    expect(row.querySelector('.price-history-controls')).not.toBeNull();
   });
 });
