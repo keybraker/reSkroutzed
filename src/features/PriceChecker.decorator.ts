@@ -9,7 +9,10 @@ import { PriceComparisonProduct } from '../common/types/PriceComparisonProduct.t
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createBuyMeCoffeeElement } from './functions/createBuyMeCoffeeElement';
-import { createPriceDifferenceBadge } from './functions/createPriceDifferenceBadge';
+import {
+  createPriceDifferenceBadge,
+  createPriceDifferenceBadgeSpacer,
+} from './functions/createPriceDifferenceBadge';
 import { createReSkoutzedReviewElement } from './functions/createReskoutzedReviewElement';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
@@ -212,12 +215,30 @@ function createPriceHistoryLoadingComponent(): HTMLDivElement {
   const row = DomClient.createElement('div', {
     className: ['price-history-row', 'info-with-analysis-row', 'price-history-loading-row'],
   }) as HTMLDivElement;
+  const panel = DomClient.createElement('div', {
+    className: ['price-history-panel', 'price-history-loading-panel'],
+  }) as HTMLDivElement;
+  const averages = DomClient.createElement('div', {
+    className: 'price-history-averages',
+  }) as HTMLDivElement;
   const controls = DomClient.createElement('div', {
     className: 'price-history-controls',
   }) as HTMLDivElement;
 
+  // Mirrors the loaded panel: the two average lines on the left, the toggles on
+  // the right, both two rows tall.
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-average']),
+    averages,
+  );
+  DomClient.appendElementToElement(
+    createSkeletonBlock(['price-checker-skeleton-average', 'price-checker-skeleton-average-short']),
+    averages,
+  );
   DomClient.appendElementToElement(createSkeletonBlock(['price-checker-skeleton-chip']), controls);
-  DomClient.appendElementToElement(controls, row);
+  DomClient.appendElementToElement(averages, panel);
+  DomClient.appendElementToElement(controls, panel);
+  DomClient.appendElementToElement(panel, row);
   DomClient.appendElementToElement(row, wrapper);
 
   return wrapper;
@@ -306,10 +327,6 @@ function createPriceCheckerSkeleton(slots: ComparisonSlot[]): HTMLDivElement {
   DomClient.appendElementToElement(priceDisplayRow, priceDisplay);
 
   DomClient.appendElementToElement(priceDisplay, priceCalculationContainer);
-  DomClient.appendElementToElement(
-    createSkeletonBlock(['price-checker-skeleton-average']),
-    priceCalculationContainer,
-  );
   DomClient.appendElementToElement(priceCalculationContainer, contentContainer);
   DomClient.appendElementToElement(createPriceHistoryLoadingComponent(), contentContainer);
   DomClient.appendElementToElement(createStoreAvailabilitySkeletonElement(), contentContainer);
@@ -447,12 +464,13 @@ function formatAveragePrice(value: number): string {
 }
 
 /**
- * The quiet caption in the price-history row: the mean recorded price for the last
- * six months and for the product's entire sales period, each on its own line with
- * the six-month figure on top. It is informational and italic on purpose so it
- * annotates the comparison prices without competing with them.
+ * The averages block that sits at the top of the price-history panel: one row per
+ * window, the amount in bold first and the window in grey after it, so the two
+ * figures stack and compare at a glance. Follows the native buybox row order
+ * ("2,50 € σε Skroutz Point"). Returns `null` when neither window has samples, so
+ * the panel is skipped entirely.
  */
-function createAveragePriceLine(
+function createAveragesBlock(
   productPriceHistory: ProductPriceHistory,
   language: Language,
 ): HTMLDivElement | null {
@@ -462,58 +480,52 @@ function createAveragePriceLine(
     return null;
   }
 
-  const lines: string[] = [];
-
-  if (sixMonth !== null) {
-    lines.push(
-      language === Language.ENGLISH
-        ? `6-month average: ${formatAveragePrice(sixMonth)}`
-        : `Μέση τιμή εξαμήνου: ${formatAveragePrice(sixMonth)}`,
-    );
-  }
-
-  if (lifetime !== null) {
-    lines.push(
-      language === Language.ENGLISH
-        ? `All-time average: ${formatAveragePrice(lifetime)}`
-        : `Μέση τιμή όλης της περιόδου: ${formatAveragePrice(lifetime)}`,
-    );
-  }
-
-  const line = DomClient.createElement('div', {
-    className: 'price-average-line',
+  const block = DomClient.createElement('div', {
+    className: 'price-history-averages',
   }) as HTMLDivElement;
-  line.title =
+  block.title =
     language === Language.ENGLISH
       ? 'Average of the prices recorded for this product in the last 6 months and over its entire sales period.'
       : 'Μέσος όρος των τιμών που καταγράφηκαν για το προϊόν το τελευταίο εξάμηνο και σε όλη τη διάρκεια πώλησής του.';
 
+  const rows = [
+    {
+      amount: sixMonth,
+      label: language === Language.ENGLISH ? '6-month average' : 'μέση τιμή 6 μήνων',
+    },
+    {
+      amount: lifetime,
+      label: language === Language.ENGLISH ? 'all-time average' : 'μέση τιμή όλης της περιόδου',
+    },
+  ];
+
   // Container divs, not spans: `.info-with-analysis-row span:first-child` in
-  // style.css stretches the first span of any flex box inside that row, which
-  // used to blow the icon up to the free space and push the caption to the right.
-  const icon = DomClient.createElement('div', {
-    className: 'price-average-icon',
-  });
-  icon.setAttribute('aria-hidden', 'true');
-  icon.innerHTML =
-    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+  // style.css stretches the first span of any flex box inside that row.
+  rows.forEach((row) => {
+    if (row.amount === null) {
+      return;
+    }
 
-  const text = DomClient.createElement('div', {
-    className: 'price-average-text',
-  });
-
-  lines.forEach((lineText) => {
-    const item = DomClient.createElement('div', {
-      className: 'price-average-item',
+    const rowElement = DomClient.createElement('div', {
+      className: 'price-history-average-row',
     });
-    item.textContent = lineText;
-    DomClient.appendElementToElement(item, text);
+
+    const amount = DomClient.createElement('div', {
+      className: 'price-history-average-amount',
+    });
+    amount.textContent = formatAveragePrice(row.amount);
+
+    const label = DomClient.createElement('div', {
+      className: 'price-history-average-label',
+    });
+    label.textContent = row.label;
+
+    DomClient.appendElementToElement(amount, rowElement);
+    DomClient.appendElementToElement(label, rowElement);
+    DomClient.appendElementToElement(rowElement, block);
   });
 
-  DomClient.appendElementToElement(icon, line);
-  DomClient.appendElementToElement(text, line);
-
-  return line;
+  return block;
 }
 
 function createPriceDisplayActionArrow(): HTMLSpanElement {
@@ -590,11 +602,13 @@ function createPriceDisplayAction(
 
   // The difference leads the block: above the price it reads as that option's own
   // tag, instead of floating between the shipping cost and the shop name where it
-  // was not clear what it belonged to.
-  const differenceBadge = createPriceDifferenceBadge(options.difference, options.language);
-  if (differenceBadge) {
-    DomClient.appendElementToElement(differenceBadge, content);
-  }
+  // was not clear what it belonged to. An option that costs the same as Skroutz
+  // gets the pill's empty twin rather than nothing at all, so its price sits on
+  // the same line as the prices of the options that do differ.
+  const differenceBadge =
+    createPriceDifferenceBadge(options.difference, options.language) ??
+    createPriceDifferenceBadgeSpacer();
+  DomClient.appendElementToElement(differenceBadge, content);
 
   DomClient.appendElementToElement(
     createFormattedPriceElement(options.price, options.priceClassNames ?? []),
@@ -1100,8 +1114,23 @@ function createStoreAvailabilityElement(
   const availabilityStatus = document.createElement('p');
   availabilityStatus.className = 'store-availability-status';
 
+  // Native status row: a state icon, one short sentence, then the action at the
+  // right. The icon glyph and colour carry the state, so the sentence can stay
+  // plain instead of being the only thing that says what is going on.
+  const iconPaths = {
+    matched:
+      '<circle cx="12" cy="12" r="10"></circle><polyline points="8 12.5 11 15.5 16 9"></polyline>',
+    unavailable:
+      '<circle cx="12" cy="12" r="10"></circle><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line>',
+    info: '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>',
+  };
+
+  let iconPath = iconPaths.info;
+  let message = '';
+
   if (isAvailableInUserArea) {
-    availabilityStatus.textContent =
+    iconPath = iconPaths.matched;
+    message =
       language === Language.ENGLISH
         ? `Available in your area.`
         : `Είναι διαθέσιμο στην περιοχή σου.`;
@@ -1109,24 +1138,37 @@ function createStoreAvailabilityElement(
   } else if (isConnected && userArea && hasPickupCities) {
     // No store pickup in the user's area, but the product can be picked up from
     // stores elsewhere - offer to open Skroutz's own store pickup list.
-    availabilityStatus.textContent =
+    iconPath = iconPaths.unavailable;
+    message =
       language === Language.ENGLISH
         ? `Not available in your area.`
         : `Δεν είναι διαθέσιμο στην περιοχή σου.`;
     availabilityStatus.classList.add('not-available');
   } else if (hasPickupCities) {
-    availabilityStatus.textContent =
+    message =
       language === Language.ENGLISH
-        ? 'This product is available for store pickup in selected cities.'
-        : 'Το προϊόν είναι διαθέσιμο για παραλαβή από κατάστημα σε επιλεγμένες πόλεις.';
+        ? 'Available for store pickup in selected cities.'
+        : 'Διαθέσιμο για παραλαβή από κατάστημα σε επιλεγμένες πόλεις.';
   } else {
-    availabilityStatus.textContent =
+    message =
       language === Language.ENGLISH
         ? 'Store availability information is not available right now.'
         : 'Οι πληροφορίες διαθεσιμότητας καταστημάτων δεν είναι διαθέσιμες αυτή τη στιγμή.';
   }
 
-  DomClient.appendElementToElement(availabilityStatus, availabilityContainer);
+  const availabilityIcon = DomClient.createElement('span', {
+    className: 'store-availability-icon',
+  });
+  availabilityIcon.setAttribute('aria-hidden', 'true');
+  availabilityIcon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>`;
+
+  const availabilityText = DomClient.createElement('span', {
+    className: 'store-availability-text',
+  });
+  availabilityText.textContent = message;
+
+  DomClient.appendElementToElement(availabilityIcon, availabilityStatus);
+  DomClient.appendElementToElement(availabilityText, availabilityStatus);
 
   // No per-store chips: the row stays informational and loads the real store
   // list through Skroutz's native store-pickup view.
@@ -1136,12 +1178,22 @@ function createStoreAvailabilityElement(
     loadLink.className = 'store-availability-more-link';
     loadLink.textContent =
       language === Language.ENGLISH
-        ? 'See where you can pick it up.'
-        : 'Δες που μπορείς να παραλάβεις.';
+        ? 'See where you can pick it up'
+        : 'Δες πού μπορείς να παραλάβεις';
     loadLink.addEventListener('click', openNativeStorePickupModal);
-    availabilityStatus.appendChild(document.createTextNode(' '));
+
+    const chevron = DomClient.createElement('span', {
+      className: 'store-availability-link-chevron',
+    });
+    chevron.setAttribute('aria-hidden', 'true');
+    chevron.innerHTML =
+      '<svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    DomClient.appendElementToElement(chevron, loadLink);
     DomClient.appendElementToElement(loadLink, availabilityStatus);
   }
+
+  DomClient.appendElementToElement(availabilityStatus, availabilityContainer);
 
   return availabilityContainer;
 }
@@ -1209,8 +1261,8 @@ function createPriceIndicationElement(
     DomClient.appendElementToElement(infoContainer, contentContainer);
 
     if (productPriceHistory) {
-      const averagePriceLine = createAveragePriceLine(productPriceHistory, language);
-      const priceHistoryBreakdown = PriceHistoryComponent(language, averagePriceLine);
+      const averagesBlock = createAveragesBlock(productPriceHistory, language);
+      const priceHistoryBreakdown = PriceHistoryComponent(language, averagesBlock);
       const priceHistoryControls = priceHistoryBreakdown.querySelector('.price-history-controls');
       if (priceHistoryControls) {
         DomClient.appendElementToElement(

@@ -35,15 +35,15 @@ vi.mock('../../src/clients/shopflix/client', () => ({
 
 vi.mock('../../src/common/components/PriceHistory.component', () => ({
   PriceHistoryComponent: vi.fn(
-    (_language: Language, averagePriceLine?: HTMLElement | null): HTMLElement => {
+    (_language: Language, averagesBlock?: HTMLElement | null): HTMLElement => {
       const element = document.createElement('div');
       element.className = 'mock-price-history';
 
       const row = document.createElement('div');
       row.className = 'price-history-row';
 
-      if (averagePriceLine) {
-        row.appendChild(averagePriceLine);
+      if (averagesBlock) {
+        row.appendChild(averagesBlock);
       }
 
       const controls = document.createElement('div');
@@ -416,6 +416,7 @@ describe('PriceCheckerDecorator', () => {
     expect(document.querySelector('.store-availability-status')?.textContent).toContain(
       'Available in your area.',
     );
+    expect(document.querySelector('.store-availability-icon svg')).not.toBeNull();
     // Store chips were removed: the row is informational and hands the real
     // store list over to Skroutz's native store-pickup view.
     expect(document.querySelectorAll('.store-location-entry').length).toBe(0);
@@ -427,7 +428,8 @@ describe('PriceCheckerDecorator', () => {
       '.store-availability-more-link',
     ) as HTMLButtonElement | null;
     expect(moreLink).not.toBeNull();
-    expect(moreLink?.textContent).toContain('See where you can pick it up.');
+    expect(moreLink?.textContent).toContain('See where you can pick it up');
+    expect(moreLink?.querySelector('.store-availability-link-chevron svg')).not.toBeNull();
 
     bestPriceDeferred.resolve(mockBestPriceData);
     await flushPromises();
@@ -461,7 +463,7 @@ describe('PriceCheckerDecorator', () => {
     expect(document.querySelector('.mock-price-history')).not.toBeNull();
   });
 
-  it('shows the six-month and lifetime average prices under the price columns', async () => {
+  it('builds the averages block with the amount before its window', async () => {
     // Arrange
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
     vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistoryWithSamples);
@@ -474,24 +476,30 @@ describe('PriceCheckerDecorator', () => {
     await flushPromises();
 
     // Assert
-    const line = document.querySelector('.price-average-line') as HTMLDivElement | null;
-    expect(line).not.toBeNull();
-    expect(line?.parentElement?.classList.contains('price-history-row')).toBe(true);
-    expect(line?.querySelector('.price-average-icon svg')).not.toBeNull();
+    const block = document.querySelector('.price-history-averages') as HTMLDivElement | null;
+    expect(block).not.toBeNull();
+    expect(block?.parentElement?.classList.contains('price-history-row')).toBe(true);
+    expect(block?.title).toContain('Average of the prices recorded');
 
-    // Six months on top, the whole sales period underneath.
-    const lines = Array.from(line?.querySelectorAll('.price-average-item') ?? []).map(
-      (item) => item.textContent,
+    // Six months first, the whole sales period underneath; amount then window.
+    const rows = Array.from(block?.querySelectorAll('.price-history-average-row') ?? []).map(
+      (row) => [
+        row.querySelector('.price-history-average-amount')?.textContent,
+        row.querySelector('.price-history-average-label')?.textContent,
+      ],
     );
-    expect(lines).toEqual(['6-month average: 95,00€', 'All-time average: 110,00€']);
+    expect(rows).toEqual([
+      ['95,00€', '6-month average'],
+      ['110,00€', 'all-time average'],
+    ]);
 
-    // The toggles sit to the right of the line, inside the same row.
-    const controls = line?.nextElementSibling as HTMLElement | null;
+    // The toggles keep their container, next to the block in the same row.
+    const controls = block?.nextElementSibling as HTMLElement | null;
     expect(controls?.classList.contains('price-history-controls')).toBe(true);
     expect(controls?.querySelector('.analysis-toggle-button')).not.toBeNull();
   });
 
-  it('translates the average line to Greek', async () => {
+  it('translates the averages block to Greek', async () => {
     // Arrange
     mockState.language = Language.GREEK;
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
@@ -505,13 +513,19 @@ describe('PriceCheckerDecorator', () => {
     await flushPromises();
 
     // Assert
-    const lines = Array.from(
-      document.querySelectorAll('.price-average-line .price-average-item'),
-    ).map((item) => item.textContent);
-    expect(lines).toEqual(['Μέση τιμή εξαμήνου: 95,00€', 'Μέση τιμή όλης της περιόδου: 110,00€']);
+    const rows = Array.from(
+      document.querySelectorAll('.price-history-averages .price-history-average-row'),
+    ).map((row) => [
+      row.querySelector('.price-history-average-amount')?.textContent,
+      row.querySelector('.price-history-average-label')?.textContent,
+    ]);
+    expect(rows).toEqual([
+      ['95,00€', 'μέση τιμή 6 μήνων'],
+      ['110,00€', 'μέση τιμή όλης της περιόδου'],
+    ]);
   });
 
-  it('omits the average for a window with no usable samples', async () => {
+  it('omits the average row for a window with no usable samples', async () => {
     // Arrange
     const lifetimeOnlyHistory: ProductPriceHistory = {
       allPrices: samples([100, 200]),
@@ -528,12 +542,12 @@ describe('PriceCheckerDecorator', () => {
     await flushPromises();
 
     // Assert
-    expect(document.querySelector('.price-average-line')?.textContent).toBe(
-      'All-time average: 150,00€',
-    );
+    const rows = document.querySelectorAll('.price-history-average-row');
+    expect(rows).toHaveLength(1);
+    expect(rows[0].querySelector('.price-history-average-amount')?.textContent).toBe('150,00€');
   });
 
-  it('does not render an average line when the history has no samples', async () => {
+  it('does not build an averages block when the history has no samples', async () => {
     // Arrange
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
     vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
@@ -545,8 +559,9 @@ describe('PriceCheckerDecorator', () => {
     await decorator.execute();
     await flushPromises();
 
-    // Assert
-    expect(document.querySelector('.price-average-line')).toBeNull();
+    // Assert — no averages, but the toggles still have a home.
+    expect(document.querySelector('.price-history-averages')).toBeNull();
+    expect(document.querySelector('.price-history-controls')).not.toBeNull();
   });
 
   it('shows each option its own difference pill, measured against Skroutz', async () => {
@@ -623,6 +638,37 @@ describe('PriceCheckerDecorator', () => {
       document.querySelector('.price-display-store-action .price-difference-badge'),
     ).toBeNull();
     expect(document.querySelectorAll('.price-difference-badge')).toHaveLength(1);
+  });
+
+  it('reserves the pill row on an option that costs the same as Skroutz', async () => {
+    // Arrange — store 104,00€ matches Buy through Skroutz 104,00€
+    const matchingProductData: ProductPriceData = {
+      ...mockProductPriceData,
+      buyThroughStore: {
+        ...mockProductPriceData.buyThroughStore,
+        totalPrice: mockProductPriceData.buyThroughSkroutz.totalPrice,
+      },
+    };
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(matchingProductData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert — the spacer takes the pill's place and leads the block, so the
+    // store price keeps the baseline of the column that does have a pill.
+    const storeContent = document.querySelector(
+      '.price-display-store-action .price-display-action-content',
+    );
+    const spacer = storeContent?.firstElementChild;
+    expect(spacer?.classList.contains('price-difference-badge-spacer')).toBe(true);
+    expect(
+      document.querySelectorAll('.price-display-action-content .price-difference-badge-spacer'),
+    ).toHaveLength(1);
   });
 
   it('turns the store pill red when the store total is pricier', async () => {
@@ -727,7 +773,7 @@ describe('PriceCheckerDecorator', () => {
     expect(status?.textContent).toContain('Not available in your area.');
     expect(document.querySelectorAll('.store-location-entry').length).toBe(0);
     expect(moreLink).not.toBeNull();
-    expect(moreLink?.textContent).toContain('See where you can pick it up.');
+    expect(moreLink?.textContent).toContain('See where you can pick it up');
 
     moreLink?.click();
     expect(nativeClickSpy).toHaveBeenCalledTimes(1);
@@ -773,11 +819,9 @@ describe('PriceCheckerDecorator', () => {
     ) as HTMLButtonElement | null;
 
     expect(status).not.toBeNull();
-    expect(status?.textContent).toContain(
-      'This product is available for store pickup in selected cities.',
-    );
+    expect(status?.textContent).toContain('Available for store pickup in selected cities.');
     expect(loadLink).not.toBeNull();
-    expect(loadLink?.textContent).toContain('See where you can pick it up.');
+    expect(loadLink?.textContent).toContain('See where you can pick it up');
     // The unconnected hint must not render the detailed store chip list.
     expect(document.querySelector('.store-availability-shops-list')).toBeNull();
     expect(document.querySelectorAll('.store-location-entry').length).toBe(0);

@@ -127,13 +127,14 @@ text-black {
 /* Small tag at the top-left of each option's price block, above the price: how
    much cheaper or pricier that option is than buying through Skroutz, in the same
    green / red as the column. */
+/* Native chip geometry, like the buybox "-10%" badge: small radius, solid fill. */
 .price-difference-badge {
   display: inline-flex !important;
   align-items: center !important;
   align-self: flex-start !important;
   margin: 2px 0 3px !important;
-  padding: 0 6px !important;
-  border-radius: 999px !important;
+  padding: 1px 7px !important;
+  border-radius: 6px !important;
   color: #ffffff !important;
   font-size: 11px !important;
   font-style: normal !important;
@@ -149,6 +150,16 @@ text-black {
 
 .price-difference-badge--pricier {
   background: #a93331 !important;
+}
+
+/* The pill's empty twin: an option that costs what Skroutz charges reserves the
+   same row, so all three columns keep one price baseline. 16px line plus the
+   pill's 1px padding and 2/3px margins. */
+.price-difference-badge-spacer {
+  display: block !important;
+  align-self: flex-start !important;
+  height: 18px !important;
+  margin: 2px 0 3px !important;
 }
 
 .price-checker-loading,
@@ -230,6 +241,10 @@ text-black {
   max-width: 280px !important;
   height: 13px !important;
   border-radius: 8px !important;
+}
+
+.price-checker-skeleton-average-short {
+  width: 52% !important;
 }
 
 .price-checker-skeleton-arrow {
@@ -1311,12 +1326,38 @@ text-black {
 
 /* reSkroutzed badge removed; availability card now visually continues the price checker */
 
+/* Native status row: state icon, short sentence, then the action at the right. */
 .store-availability-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
   margin: 0 !important;
   font-size: 13px !important;
   line-height: 1.35 !important;
   color: #172019 !important;
   font-weight: 500 !important;
+}
+
+.store-availability-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: #6b6b6b !important;
+}
+
+.store-availability-text {
+  min-width: 0 !important;
+}
+
+.store-availability-status.matched .store-availability-icon {
+  color: #2e7b2e !important;
+}
+
+.store-availability-status.not-available .store-availability-icon {
+  color: #a93331 !important;
 }
 
 .store-availability-status.matched {
@@ -1328,17 +1369,34 @@ text-black {
 }
 
 .store-availability-more-link {
-  display: inline !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 0 0 auto !important;
   padding: 0 !important;
-  margin: 0 0 0 4px !important;
   border: none !important;
   background: transparent !important;
   font: inherit !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
   color: #4a9edd !important;
   text-decoration: none !important;
   text-underline-offset: 2px !important;
   cursor: pointer !important;
-  vertical-align: baseline !important;
+}
+
+.store-availability-link-chevron {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.store-availability-link-chevron svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
 }
 
 .store-availability-more-link:hover {
@@ -1562,38 +1620,92 @@ text-black {
   align-items: flex-end !important;
 }
 
-/* Quiet annotation in the price-history row, left of the toggles: the mean
-   recorded price for the last six months and for the whole sales period. Italic
-   on purpose so it reads as a note attached to the prices rather than another
-   price. */
-.price-average-line {
+/* The price-history row is one native inset panel: averages, a hairline, then the
+   actions. The card surface is already #f8f8f8, so the panel is white - the
+   inversion of the native grey panel on the white buybox - and it earns its edge
+   from the fill alone, with no border, exactly like the native one. */
+.price-history-panel {
   display: flex !important;
   flex: 1 1 auto !important;
-  align-items: flex-start !important;
-  gap: 6px !important;
-  min-width: 0 !important;
-  font-size: 12px !important;
-  font-style: italic !important;
-  line-height: 1.4 !important;
-  color: #888 !important;
-  text-align: left !important;
-}
-
-.price-average-line .price-average-icon {
-  display: inline-flex !important;
+  flex-direction: row !important;
   align-items: center !important;
-  justify-content: center !important;
-  flex: 0 0 auto !important;
-  width: 16px !important;
-  height: 16px !important;
-  color: #888 !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-sizing: border-box !important;
 }
 
-.price-average-line .price-average-text {
+/* Amount first, window after it, following the native row order
+   ("2,50 € σε Skroutz Point"). Both amounts share a left edge so the two figures
+   stack and compare. */
+.price-history-averages {
   display: flex !important;
+  flex: 0 1 auto !important;
   flex-direction: column !important;
-  gap: 1px !important;
+  gap: 2px !important;
   min-width: 0 !important;
+}
+
+.price-history-average-row {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 8px !important;
+}
+
+/* Wide enough for a four-figure amount so the labels line up, no wider, or the
+   gap between the amount and its window reads as wasted space. */
+.price-history-average-amount {
+  flex: 0 0 auto !important;
+  min-width: 54px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  color: #222222 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.price-history-average-label {
+  min-width: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  color: #6b6b6b !important;
+}
+
+/* Inside the panel the actions are links, not pills: no fill, no border, no
+   padding, and the label takes the link colour. They stack on the right, one per
+   average row, so the two halves of the panel are the same two lines tall. */
+.price-history-panel .price-history-controls {
+  flex: 0 0 auto !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  margin-left: 0 !important;
+  width: auto !important;
+}
+
+.price-history-panel .analysis-toggle-button {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  justify-content: flex-start !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #0b6bcb !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  gap: 7px !important;
+}
+
+.price-history-panel .analysis-toggle-button:hover {
+  background: transparent !important;
+  border: none !important;
+  text-decoration: underline !important;
 }
 
 .price-display-action-notification {
@@ -1935,8 +2047,19 @@ text-black {
     align-items: center !important;
   }
 
-  .price-average-line {
-    font-size: 11px !important;
+  .price-history-panel {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  .price-history-panel .price-history-controls {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    margin-left: 0 !important;
   }
 
   .price-history-controls {

@@ -59,3 +59,13 @@ export function createPriceDifferenceBadge(
 
   return badge;
 }
+
+/**
+ * The pill's empty twin, for an option that costs exactly what Skroutz charges.
+ * It holds the same box as the pill without adding a `price-difference-badge`
+ * element, so the option without a pill keeps its price on the same line as the
+ * options that have one.
+ */
+export function createPriceDifferenceBadgeSpacer(): HTMLElement {
+  return DomClient.createElement('span', { className: 'price-difference-badge-spacer' });
+}

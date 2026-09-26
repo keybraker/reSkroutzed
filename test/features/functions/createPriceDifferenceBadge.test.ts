@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { Language } from '../../../src/common/enums/Language.enum';
-import { createPriceDifferenceBadge } from '../../../src/features/functions/createPriceDifferenceBadge';
+import {
+  createPriceDifferenceBadge,
+  createPriceDifferenceBadgeSpacer,
+} from '../../../src/features/functions/createPriceDifferenceBadge';
 
 describe('createPriceDifferenceBadge', () => {
   it('renders a cheaper pill with a negative amount', () => {
@@ -59,5 +62,15 @@ describe('createPriceDifferenceBadge', () => {
     expect(pricier?.getAttribute('aria-label')).toBe(
       '3,12€ more expensive than buying through Skroutz',
     );
+  });
+
+  it('reserves the pill row with an empty twin when there is no difference', () => {
+    // Act
+    const spacer = createPriceDifferenceBadgeSpacer();
+
+    // Assert — a separate class, so it never counts as a pill of its own.
+    expect(spacer.classList.contains('price-difference-badge-spacer')).toBe(true);
+    expect(spacer.classList.contains('price-difference-badge')).toBe(false);
+    expect(spacer.textContent).toBe('');
   });
 });

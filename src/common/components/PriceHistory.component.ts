@@ -2,13 +2,15 @@ import { DomClient } from '../../clients/dom/client';
 import { Language } from '../enums/Language.enum';
 
 /**
- * The price history row: the average-price caption on the left (when supplied)
- * and the toggles on the right. The price checker appends the analysis toggle
- * into `.price-history-controls`.
+ * The price history row. With averages it renders the native-style inset panel:
+ * the averages block, a hairline, then the toggles as links. Without averages
+ * (or while they load) the toggles render bare in the row, so they always have a
+ * home. The price checker appends the analysis toggle into
+ * `.price-history-controls`.
  */
 export function PriceHistoryComponent(
   language: Language,
-  averagePriceLine?: HTMLElement | null,
+  averagesBlock?: HTMLElement | null,
 ): HTMLElement {
   const wrapper = DomClient.createElement('div', {
     className: 'price-history-wrapper',
@@ -19,10 +21,6 @@ export function PriceHistoryComponent(
   });
   row.style.display = 'flex';
   row.style.flexDirection = 'row';
-
-  if (averagePriceLine) {
-    DomClient.appendElementToElement(averagePriceLine, row);
-  }
 
   const controlsContainer = DomClient.createElement('div', {
     className: 'price-history-controls',
@@ -55,15 +53,28 @@ export function PriceHistoryComponent(
   });
 
   DomClient.appendElementToElement(toggleButton, controlsContainer);
-  DomClient.appendElementToElement(controlsContainer, row);
 
-  const line = document.createElement('hr');
-  line.className = 'price-history-separator';
-  line.style.border = 'none';
-  line.style.borderTop = '1px solid currentColor';
-  line.style.opacity = '0.2';
-  line.style.margin = '2px 0 24px';
-  DomClient.appendElementToElement(line, wrapper);
+  if (averagesBlock) {
+    // The panel supplies the surface, so the hairline above the row is only
+    // needed in the no-panel fallback.
+    const panel = DomClient.createElement('div', {
+      className: 'price-history-panel',
+    });
+
+    DomClient.appendElementToElement(averagesBlock, panel);
+    DomClient.appendElementToElement(controlsContainer, panel);
+    DomClient.appendElementToElement(panel, row);
+  } else {
+    DomClient.appendElementToElement(controlsContainer, row);
+
+    const separator = document.createElement('hr');
+    separator.className = 'price-history-separator';
+    separator.style.border = 'none';
+    separator.style.borderTop = '1px solid currentColor';
+    separator.style.opacity = '0.2';
+    separator.style.margin = '2px 0 24px';
+    DomClient.appendElementToElement(separator, wrapper);
+  }
 
   DomClient.appendElementToElement(row, wrapper);
 

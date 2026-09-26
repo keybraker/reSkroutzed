@@ -65,27 +65,30 @@ describe('PriceHistoryComponent', () => {
     expect(wrapper.querySelector('.price-history-separator')).not.toBeNull();
   });
 
-  it('places the supplied average-price caption on the left of the toggles', () => {
+  it('wraps the averages block and the toggles in the panel', () => {
     // Arrange
-    const caption = document.createElement('div');
-    caption.className = 'price-average-line';
+    const averagesBlock = document.createElement('div');
+    averagesBlock.className = 'price-history-averages';
 
     // Act
-    const wrapper = PriceHistoryComponent(Language.GREEK, caption);
+    const wrapper = PriceHistoryComponent(Language.GREEK, averagesBlock);
 
     // Assert
-    const row = queryPart(wrapper, '.price-history-row');
-    expect(row.firstElementChild).toBe(caption);
-    expect(row.lastElementChild?.classList.contains('price-history-controls')).toBe(true);
+    const panel = queryPart(wrapper, '.price-history-panel');
+    expect(panel.firstElementChild).toBe(averagesBlock);
+    expect(panel.lastElementChild?.classList.contains('price-history-controls')).toBe(true);
+    // The panel supplies the surface, so the hairline above the row is redundant.
+    expect(wrapper.querySelector('.price-history-separator')).toBeNull();
   });
 
-  it('renders the row without a caption when none is supplied', () => {
+  it('renders the toggles bare when there is no averages block', () => {
     // Arrange / Act
     const wrapper = PriceHistoryComponent(Language.GREEK);
 
     // Assert
+    expect(wrapper.querySelector('.price-history-panel')).toBeNull();
+    expect(wrapper.querySelector('.price-history-separator')).not.toBeNull();
     const row = queryPart(wrapper, '.price-history-row');
-    expect(row.querySelector('.price-average-line')).toBeNull();
     expect(row.querySelector('.price-history-controls')).not.toBeNull();
   });
 });
