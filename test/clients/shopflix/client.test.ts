@@ -147,6 +147,47 @@ describe('ShopflixClient', () => {
       expect(result?.categoryId).toBe(2246);
     });
 
+    it('prefers the matching configuration over a cheaper one', () => {
+      const macbookQuery =
+        'Apple MacBook Pro 14.2" IPS Retina Display 120Hz (M5 Pro-15-Core/48GB/1TB SSD/16-Core GPU) Space Black (US Keyboard)';
+      const payload = buildSearchPayload([
+        buildHit({
+          name: 'Apple MacBook Pro 14.2" IPS Retina Display 120Hz M5 Pro-15-Core / 24GB / 1TB SSD / 16-Core GPU Space Black US Keyboard',
+          sku: 'SF-201773825',
+          slug: 'apple-macbook-pro-14-2-m5-pro-24gb',
+          price: 2848.47,
+        }),
+        buildHit({
+          name: 'Apple MacBook Pro 14.2" IPS Retina Display 120Hz M5 Pro-15-Core/48GB/1TB SSD/16-Core GPU Space Black International English Keyboard',
+          sku: 'SF-202544811',
+          slug: 'apple-macbook-pro-14-2-m5-pro-48gb',
+          price: 4399.1,
+        }),
+      ]);
+
+      const result = parseShopflixHits(payload, macbookQuery);
+
+      expect(result?.url).toBe(
+        'https://shopflix.gr/p/SF-202544811/apple-macbook-pro-14-2-m5-pro-48gb',
+      );
+      expect(result?.price).toBe(4399.1);
+    });
+
+    it('returns undefined rather than a cheaper listing of a different configuration', () => {
+      const macbookQuery =
+        'Apple MacBook Pro 14.2" IPS Retina Display 120Hz (M5 Pro-15-Core/48GB/1TB SSD/16-Core GPU) Space Black (US Keyboard)';
+      const payload = buildSearchPayload([
+        buildHit({
+          name: 'Apple MacBook Pro 14.2" IPS Retina Display 120Hz M5 Pro-15-Core / 24GB / 1TB SSD / 16-Core GPU Space Black US Keyboard',
+          sku: 'SF-201773825',
+          slug: 'apple-macbook-pro-14-2-m5-pro-24gb',
+          price: 2848.47,
+        }),
+      ]);
+
+      expect(parseShopflixHits(payload, macbookQuery)).toBeUndefined();
+    });
+
     it('ignores hits without a usable price or product url', () => {
       const payload = buildSearchPayload([
         buildHit({ name: 'Philips OneBlade Pro 360', sku: 'SF-103964576' }),

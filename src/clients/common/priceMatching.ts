@@ -114,6 +114,67 @@ export const buildSearchQueryVariants = (query: string): string[] => {
 };
 
 /**
+ * Configuration-bearing tokens: capacity, refresh rate, battery, camera, core
+ * count and screen size. Two listings for the "same" product regularly differ
+ * here - a 48GB and a 24GB MacBook Pro share every other word in their titles -
+ * so a candidate whose specs disagree with the Skroutz title must never rank as
+ * a match, no matter how much of the rest of the title overlaps.
+ */
+const SPEC_PATTERN_SOURCE =
+  '(\\d+(?:[.,]\\d+)?)[-\\s]*(gb|tb|mb|ghz|mhz|hz|mah|mp|core)\\b|(\\d+(?:[.,]\\d+)?)[-\\s]*(?:"|”|inch(?:es)?)';
+
+const extractSpecValues = (title: string): Map<string, string[]> => {
+  const specs = new Map<string, string[]>();
+  const addSpec = (unit: string, value: string): void => {
+    specs.set(unit, [...(specs.get(unit) ?? []), value.replace(',', '.')]);
+  };
+
+  // A fresh regex per call: a shared /g/ literal keeps lastIndex between calls.
+  const pattern = new RegExp(SPEC_PATTERN_SOURCE, 'gi');
+  let match = pattern.exec(title);
+
+  while (match) {
+    if (match[1] !== undefined && match[2] !== undefined) {
+      addSpec(match[2].toLowerCase(), match[1]);
+    } else if (match[3] !== undefined) {
+      addSpec('in', match[3]);
+    }
+
+    match = pattern.exec(title);
+  }
+
+  return specs;
+};
+
+const areSpecValuesEqual = (left: string[], right: string[]): boolean =>
+  [...left].sort().join('|') === [...right].sort().join('|');
+
+/**
+ * Whether a candidate lists a configuration compatible with the Skroutz title.
+ * A candidate that simply omits a spec stays acceptable, but one that states a
+ * conflicting value (48GB vs 24GB, 120Hz vs 60Hz) is rejected.
+ */
+export const isVariantCompatible = (query: string, title: string): boolean => {
+  const querySpecs = extractSpecValues(query);
+
+  if (querySpecs.size === 0) {
+    return true;
+  }
+
+  const titleSpecs = extractSpecValues(title);
+
+  for (const [unit, queryValues] of querySpecs) {
+    const titleValues = titleSpecs.get(unit);
+
+    if (titleValues && !areSpecValuesEqual(queryValues, titleValues)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
  * Score how well a provider catalogue title matches the Skroutz product title.
  * Returns `Number.NEGATIVE_INFINITY` when the titles are too far apart.
  */
@@ -128,6 +189,10 @@ export const scoreDealMatch = (
   const commonTokens = [...titleTokens].filter((token) => queryTokens.has(token));
 
   if (commonTokens.length < 2) {
+    return Number.NEGATIVE_INFINITY;
+  }
+
+  if (!isVariantCompatible(query, deal.title)) {
     return Number.NEGATIVE_INFINITY;
   }
 
