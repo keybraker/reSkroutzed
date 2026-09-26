@@ -123,10 +123,18 @@ export const buildSearchQueryVariants = (query: string): string[] => {
 const SPEC_PATTERN_SOURCE =
   '(\\d+(?:[.,]\\d+)?)[-\\s]*(gb|tb|mb|ghz|mhz|hz|mah|mp|core)\\b|(\\d+(?:[.,]\\d+)?)[-\\s]*(?:"|”|inch(?:es)?)';
 
+/**
+ * Greek catalogues write thousands with a dot ("5.000 mAh") where Skroutz
+ * writes them plain, so fold those before comparing. Decimals ("14.2") keep
+ * their dot and commas become dots.
+ */
+const normalizeSpecValue = (value: string): string =>
+  /^\d{1,3}(?:\.\d{3})+$/.test(value) ? value.replace(/\./g, '') : value.replace(',', '.');
+
 const extractSpecValues = (title: string): Map<string, string[]> => {
   const specs = new Map<string, string[]>();
   const addSpec = (unit: string, value: string): void => {
-    specs.set(unit, [...(specs.get(unit) ?? []), value.replace(',', '.')]);
+    specs.set(unit, [...(specs.get(unit) ?? []), normalizeSpecValue(value)]);
   };
 
   // A fresh regex per call: a shared /g/ literal keeps lastIndex between calls.
@@ -146,13 +154,31 @@ const extractSpecValues = (title: string): Map<string, string[]> => {
   return specs;
 };
 
-const areSpecValuesEqual = (left: string[], right: string[]): boolean =>
-  [...left].sort().join('|') === [...right].sort().join('|');
+const compareSpecValuesDescending = (left: string, right: string): number =>
+  Number(right) - Number(left);
+
+/**
+ * Catalogue titles drop or add the lower-order specs relative to Skroutz
+ * ("256GB" where Skroutz writes "12GB 256GB"), so values are compared from the
+ * largest downwards over the shorter list. The top spec - storage, screen size,
+ * refresh rate - has to agree, while a listing that simply says less is fine.
+ */
+const specValuesAgree = (queryValues: string[], titleValues: string[]): boolean => {
+  const sortedQuery = [...queryValues].sort(compareSpecValuesDescending);
+  const sortedTitle = [...titleValues].sort(compareSpecValuesDescending);
+  const comparable = Math.min(sortedQuery.length, sortedTitle.length);
+
+  return sortedQuery.slice(0, comparable).every((value, index) => value === sortedTitle[index]);
+};
 
 /**
  * Whether a candidate lists a configuration compatible with the Skroutz title.
- * A candidate that simply omits a spec stays acceptable, but one that states a
- * conflicting value (48GB vs 24GB, 120Hz vs 60Hz) is rejected.
+ *
+ * Catalogue titles are regularly wordier or terser than Skroutz's, so a
+ * candidate may omit a spec or list only some of its values. Only a candidate
+ * that disagrees on an aligned value - a 24GB listing for a 48GB product, a
+ * 512GB phone for a 256GB one - is a different configuration and must never
+ * rank as a match.
  */
 export const isVariantCompatible = (query: string, title: string): boolean => {
   const querySpecs = extractSpecValues(query);
@@ -166,7 +192,7 @@ export const isVariantCompatible = (query: string, title: string): boolean => {
   for (const [unit, queryValues] of querySpecs) {
     const titleValues = titleSpecs.get(unit);
 
-    if (titleValues && !areSpecValuesEqual(queryValues, titleValues)) {
+    if (titleValues && !specValuesAgree(queryValues, titleValues)) {
       return false;
     }
   }

@@ -104,6 +104,54 @@ describe('BestPriceClient', () => {
         categoryId: 806,
       });
     });
+
+    it('keeps matching when BestPrice lists fewer capacity values than Skroutz', () => {
+      // Skroutz titles carry both RAM and storage ("12GB 256GB") while this
+      // catalogue often keeps only the storage, which is not a variant mismatch.
+      const payload: BestPriceDealsPayload = {
+        deals: [
+          {
+            title: 'Samsung Galaxy S26 Ultra 5G 256GB Titanium Black',
+            path: 'phones/samsung-galaxy-s26-ultra-5g-256gb',
+            mp: 68805,
+            mc: 42,
+            cid: 806,
+          },
+        ],
+      };
+
+      const result = parseBestPriceDealsPayload(
+        payload,
+        'Samsung Galaxy S26 Ultra 5G 12GB 256GB Titanium Black',
+      );
+
+      expect(result).toMatchObject({
+        title: 'Samsung Galaxy S26 Ultra 5G 256GB Titanium Black',
+        price: 688.05,
+        merchantCount: 42,
+      });
+    });
+
+    it('still rejects a deal for a different capacity', () => {
+      const payload: BestPriceDealsPayload = {
+        deals: [
+          {
+            title: 'Samsung Galaxy S26 Ultra 5G 512GB Titanium Black',
+            path: 'phones/samsung-galaxy-s26-ultra-5g-512gb',
+            mp: 68805,
+            mc: 42,
+            cid: 806,
+          },
+        ],
+      };
+
+      expect(
+        parseBestPriceDealsPayload(
+          payload,
+          'Samsung Galaxy S26 Ultra 5G 12GB 256GB Titanium Black',
+        ),
+      ).toBeUndefined();
+    });
   });
 
   describe('getCurrentProductData', () => {

@@ -56,6 +56,66 @@ describe('isVariantCompatible', () => {
     );
   });
 
+  it('accepts a listing that lists fewer capacity values than the query', () => {
+    // Skroutz writes "12GB 256GB"; provider catalogues often keep only the
+    // storage, which is not a different configuration.
+    expect(
+      isVariantCompatible(
+        'Samsung Galaxy S26 Ultra 5G 12GB 256GB Titanium Black',
+        'Samsung Galaxy S26 Ultra 5G 256GB Titanium Black',
+      ),
+    ).toBe(true);
+  });
+
+  it('accepts the "12/256GB" shorthand for the same configuration', () => {
+    expect(
+      isVariantCompatible(
+        'Samsung Galaxy S26 Ultra 5G 12GB 256GB Titanium Black',
+        'Samsung Galaxy S26 Ultra 5G 12/256GB Titanium Black',
+      ),
+    ).toBe(true);
+  });
+
+  it('accepts a listing that states capacity values the query omits', () => {
+    // The reverse of the case above: Skroutz kept only the storage, the
+    // provider lists RAM as well. Still the same configuration.
+    expect(
+      isVariantCompatible(
+        'Samsung Galaxy S26 Ultra 5G 256GB Titanium Black',
+        'Samsung Galaxy S26 Ultra 5G 12GB 256GB Titanium Black',
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects a listing for a different model that shares the brand', () => {
+    // Real payload from BestPrice's /api/getDeals for the mobile-phone
+    // category, which is the only deal it returns.
+    expect(
+      isVariantCompatible(
+        'Samsung Galaxy S26 Ultra 5G 12GB 256GB Titanium Black',
+        'Samsung Galaxy Z Fold5 5G 512GB',
+      ),
+    ).toBe(false);
+  });
+
+  it('ignores thousands separators in specs', () => {
+    expect(
+      isVariantCompatible(
+        'Samsung Galaxy A56 5G 8GB 128GB 5000mAh',
+        'Samsung Galaxy A56 5G 8GB 128GB 5.000 mAh',
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects a listing that claims a capacity the query does not', () => {
+    expect(
+      isVariantCompatible(
+        'Samsung Galaxy S26 Ultra 5G 12GB 256GB Titanium Black',
+        'Samsung Galaxy S26 Ultra 5G 12GB 512GB Titanium Black',
+      ),
+    ).toBe(false);
+  });
+
   it('passes titles that carry no configuration tokens at all', () => {
     expect(isVariantCompatible('Ninja Air Fryer AF500EU', 'Ninja Air Fryer AF500EU')).toBe(true);
   });
