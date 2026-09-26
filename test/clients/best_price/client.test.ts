@@ -556,6 +556,10 @@ describe('BestPriceClient', () => {
       const expectedSearchUrl = new URL('https://www.bestprice.gr/search');
       expectedSearchUrl.searchParams.set('q', 'Apple iPhone 17 Pro Max 256GB');
 
+      // The capacity is dropped from the broadest variant, which is tried last.
+      const expectedBroadSearchUrl = new URL('https://www.bestprice.gr/search');
+      expectedBroadSearchUrl.searchParams.set('q', 'Apple iPhone 17 Pro Max');
+
       setBridgeResponses(
         {
           ok: true,
@@ -567,6 +571,12 @@ describe('BestPriceClient', () => {
           ok: true,
           status: 200,
           url: expectedSearchUrl.toString(),
+          data: '<div id="no-results__wrapper"></div>',
+        },
+        {
+          ok: true,
+          status: 200,
+          url: expectedBroadSearchUrl.toString(),
           data: '<div id="no-results__wrapper"></div>',
         },
         {
@@ -591,7 +601,7 @@ describe('BestPriceClient', () => {
       const sendMessage = getSendMessageMock();
 
       expect(sendMessage).toHaveBeenNthCalledWith(
-        3,
+        4,
         {
           action: 'bestprice.fetch',
           url: 'https://www.bestprice.gr/api/getDeals',
@@ -622,6 +632,9 @@ describe('BestPriceClient', () => {
       const expectedSearchUrl = new URL('https://www.bestprice.gr/search');
       expectedSearchUrl.searchParams.set('q', 'Apple iPhone 17 Pro Max 256GB');
 
+      const expectedBroadSearchUrl = new URL('https://www.bestprice.gr/search');
+      expectedBroadSearchUrl.searchParams.set('q', 'Apple iPhone 17 Pro Max');
+
       setBridgeResponses(
         {
           ok: true,
@@ -635,13 +648,20 @@ describe('BestPriceClient', () => {
           url: expectedSearchUrl.toString(),
           data: '<div id="no-results__wrapper"></div>',
         },
+        {
+          ok: true,
+          status: 200,
+          url: expectedBroadSearchUrl.toString(),
+          data: '<div id="no-results__wrapper"></div>',
+        },
       );
 
       const result = await BestPriceClient.getCurrentProductData();
       const sendMessage = getSendMessageMock();
 
       expect(result).toBeUndefined();
-      expect(sendMessage).toHaveBeenCalledTimes(2);
+      // Product lookup plus both search variants, and never the category deal.
+      expect(sendMessage).toHaveBeenCalledTimes(3);
     });
 
     it('uses Skroutz product names as search fallbacks when live page text is noisy', async () => {

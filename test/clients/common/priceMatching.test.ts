@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { isVariantCompatible, scoreDealMatch } from '../../../src/clients/common/priceMatching';
+import {
+  buildSearchQueryVariants,
+  isVariantCompatible,
+  scoreDealMatch,
+} from '../../../src/clients/common/priceMatching';
 
 const MACBOOK_QUERY =
   'Apple MacBook Pro 14.2" IPS Retina Display 120Hz (M5 Pro-15-Core/48GB/1TB SSD/16-Core GPU) Space Black (US Keyboard)';
@@ -144,5 +148,60 @@ describe('scoreDealMatch', () => {
     );
 
     expect(accessory).toBeLessThan(product);
+  });
+
+  it('matches the real BestPrice listing for this Skroutz page', () => {
+    // The query the extension builds from the product slug, and the listing
+    // BestPrice returns for "apple macbook pro 14 m5 pro space black".
+    const slugQuery =
+      'apple macbook pro 14 2 ips retina display 120hz m5 pro 15 core 48gb 1tb ssd 16 core gpu space black us keyboard';
+    const listing = 'Apple MacBook Pro 14" 2026 (M5 Pro Chip 15-Core/48GB/1TB SSD/16-Core GPU)';
+
+    expect(isVariantCompatible(slugQuery, listing)).toBe(true);
+    expect(scoreDealMatch({ title: listing }, slugQuery)).toBeGreaterThan(0);
+  });
+
+  it('still rejects the 16" sibling the same search returns', () => {
+    const slugQuery =
+      'apple macbook pro 14 2 ips retina display 120hz m5 pro 15 core 48gb 1tb ssd 16 core gpu space black us keyboard';
+    const sixteenInch = 'Apple MacBook Pro 16" 2026 (M5 Pro Chip 18-Core/48GB/1TB SSD/20-Core GPU)';
+
+    expect(isVariantCompatible(slugQuery, sixteenInch)).toBe(false);
+    expect(scoreDealMatch({ title: sixteenInch }, slugQuery)).toBe(Number.NEGATIVE_INFINITY);
+  });
+});
+
+describe('buildSearchQueryVariants', () => {
+  // The query the extension derives from this product's slug.
+  const MACBOOK_SLUG_QUERY =
+    'apple macbook pro 14 2 ips retina display 120hz m5 pro 15 core 48gb 1tb ssd 16 core gpu space black us keyboard';
+
+  it('keeps the literal query first so specific lookups keep winning', () => {
+    expect(buildSearchQueryVariants(MACBOOK_SLUG_QUERY)[0]).toBe(MACBOOK_SLUG_QUERY);
+  });
+
+  it('offers a broad query stripped of the spec and filler terms', () => {
+    // BestPrice ANDs every term and answers this slug with "Δεν βρέθηκαν
+    // αποτελέσματα … Χρησιμοποίησε λιγότερους όρους", while the stripped form
+    // returns the exact machine.
+    expect(buildSearchQueryVariants(MACBOOK_SLUG_QUERY)).toContain(
+      'apple macbook pro 14 m5 pro space black',
+    );
+  });
+
+  it('drops core counts but keeps the screen size', () => {
+    const variants = buildSearchQueryVariants(
+      'Apple MacBook Pro 14 IPS Retina Display 120Hz (M5 Pro-15-Core/48GB/1TB SSD/16-Core GPU)',
+    );
+
+    expect(variants).toContain('Apple MacBook Pro 14 M5 Pro');
+  });
+
+  it('keeps model names that embed a number', () => {
+    const variants = buildSearchQueryVariants(
+      'Samsung Galaxy S26 Ultra 5G 12GB 256GB Titanium Black',
+    );
+
+    expect(variants).toContain('Samsung Galaxy S26 Ultra 5G Titanium Black');
   });
 });

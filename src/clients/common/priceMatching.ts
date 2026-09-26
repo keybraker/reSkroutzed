@@ -82,6 +82,84 @@ export const getFirstFiniteNumber = (
 };
 
 /**
+ * Marketing filler that says nothing about which product is being looked at.
+ * Provider search engines AND every term, so these words only reduce recall.
+ */
+const FILLER_HINTS = new Set([
+  'ips',
+  'retina',
+  'display',
+  'screen',
+  'panel',
+  'ssd',
+  'hdd',
+  'nand',
+  'gpu',
+  'cpu',
+  'npu',
+  'chip',
+  'core',
+  'cores',
+  'keyboard',
+  'panel',
+  'nano',
+  'texture',
+  'us',
+  'uk',
+  'with',
+  'and',
+]);
+
+/** A value glued to its unit: "48GB", "1TB", "120Hz", "5000mAh". */
+const GLUED_SPEC_PATTERN = /^\d+(?:[.,]\d+)?(?:gb|tb|mb|ghz|mhz|hz|mah|mp)$/i;
+
+/** A standalone number, which is either a screen size or a spec value. */
+const STANDALONE_NUMBER_PATTERN = /^\d+(?:[.,]\d+)?$/;
+
+/** Units that turn the number before them into a spec rather than a size. */
+const SPEC_UNITS = new Set(['core', 'cores', 'gb', 'tb', 'mb', 'ghz', 'mhz', 'hz', 'mah', 'mp']);
+
+/** Screens are never smaller than this, so a smaller number is a spec value. */
+const MINIMUM_SCREEN_SIZE = 10;
+
+/**
+ * Reduce a title to the words that actually identify the product: the brand,
+ * the family, the model and the screen size. Provider search engines AND every
+ * term, so an over-specified query matches nothing at all - BestPrice answers
+ * "Apple MacBook Pro 14.2\" IPS Retina Display 120Hz (M5 Pro-15-Core/48GB/1TB
+ * SSD/16-Core GPU) Space Black (US Keyboard)" with no results and the advice
+ * to use fewer terms, while "Apple MacBook Pro 14 M5 Pro" finds it.
+ */
+const buildBroadQuery = (query: string): string => {
+  const tokens = compactWhitespace(query.replace(/[/_+(),-]+/g, ' ')).split(' ');
+
+  return compactWhitespace(
+    tokens
+      .filter((token, index) => {
+        const lowered = token.toLowerCase();
+
+        if (!/\d/.test(lowered)) {
+          return !FILLER_HINTS.has(lowered);
+        }
+
+        if (GLUED_SPEC_PATTERN.test(lowered)) {
+          return false;
+        }
+
+        if (STANDALONE_NUMBER_PATTERN.test(lowered)) {
+          const nextToken = tokens[index + 1]?.toLowerCase() ?? '';
+
+          // "15 Core" is a core count, not a screen size.
+          return Number(lowered) >= MINIMUM_SCREEN_SIZE && !SPEC_UNITS.has(nextToken);
+        }
+
+        return true;
+      })
+      .join(' '),
+  );
+};
+
+/**
  * Build alternative search queries from a Skroutz product title so a provider
  * catalogue can still be searched when the literal title is too specific.
  */
@@ -109,6 +187,20 @@ export const buildSearchQueryVariants = (query: string): string[] => {
     ),
   );
   addVariant(query.replace(/[/_-]+/g, ' '));
+
+  // Tried last: the broadest form, so it only runs when nothing more specific
+  // found a match. Being last keeps precision intact for well-covered products.
+  const broadQuery = buildBroadQuery(query);
+  addVariant(broadQuery);
+  addVariant(
+    broadQuery.replace(
+      new RegExp(
+        `\\b(?:${COLOR_HINTS.map((hint) => hint.replace(/\s+/g, '\\s+')).join('|')})\\b`,
+        'gi',
+      ),
+      ' ',
+    ),
+  );
 
   return [...variants];
 };
