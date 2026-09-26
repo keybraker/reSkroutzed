@@ -1647,7 +1647,10 @@ text-black {
 .price-display-action-notification {
   position: absolute !important;
   top: 4px !important;
-  right: 28px !important;
+  /* Pinned to the corner, aligned with the arrow's right edge. The old 28px
+     inset existed to clear the arrow, but that is vertically centred, so the
+     top-right corner is free - and the extra width goes back to the price. */
+  right: 8px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1819,9 +1822,10 @@ text-black {
   width: calc(50% - 8px) !important;
 }
 
-/* Store + two comparison providers: the extra column needs tighter spacing and
-   the shipping line has to be allowed to wrap. Desktop only, so the stacked
-   mobile layout keeps its own paddings. */
+/* Store + two comparison providers: three columns have to share the width the
+   two-column layout gave to two, so the price typography is scaled down and the
+   supporting lines shrink to keep every column readable. Desktop only, so the
+   stacked mobile layout keeps its own paddings and sizes. */
 @media (min-width: 641px) {
   .price-display-row-multi .price-display-action {
     gap: 8px !important;
@@ -1837,8 +1841,35 @@ text-black {
     padding-left: 10px !important;
   }
 
+  /* The 48px headline is sized for a half-width column; at a third of the row
+     it is wider than the column and collides with the next price. */
+  .price-display-row-multi .price-indicator-price {
+    font-size: 28px !important;
+    margin-right: 4px !important;
+  }
+
+  .price-display-row-multi .price-indicator-currency,
+  .price-display-row-multi .price-indicator-decimal,
+  .price-display-row-multi .price-indicator-comma {
+    font-size: 17px !important;
+  }
+
+  .price-display-row-multi .price-display-action-content {
+    gap: 1px !important;
+  }
+
+  .price-display-row-multi
+    .price-display-action-content
+    .shipping-cost-text:not(.price-display-shipping-note) {
+    font-size: 11px !important;
+  }
+
   .price-display-row-multi .price-display-action-content .shipping-cost-text {
     white-space: normal !important;
+  }
+
+  .price-display-row-multi .price-display-subtitle {
+    font-size: 11px !important;
   }
 }
 
@@ -1936,10 +1967,6 @@ text-black {
   .price-display-action-content .shipping-cost-text,
   .price-display-action-content .price-display-shipping-note {
     white-space: normal !important;
-  }
-
-  .price-display-action-notification {
-    right: 24px !important;
   }
 
   .price-display-subtitle {
