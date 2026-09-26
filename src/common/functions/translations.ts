@@ -169,13 +169,3 @@ export function getConditionalTranslation(
 ): string {
   return condition ? getTranslation(language, trueKey) : getTranslation(language, falseKey);
 }
-
-/**
- * Format a text with a value
- * @param text Text with a %s placeholder
- * @param value Value to insert
- * @returns Formatted text
- */
-export function formatTranslation(text: string, value: string | number): string {
-  return text.replace('%s', value.toString());
-}

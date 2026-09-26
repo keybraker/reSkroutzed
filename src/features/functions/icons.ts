@@ -42,17 +42,6 @@ export interface IconDef {
 export const ICON = {
   // ── Dark Mode ──────────────────────────────────────────────────────────
 
-  sun: {
-    // Disc with 8 rays (rays meet the disc, so it still reads as a sun at 16px)
-    path:
-      'M8 3.8a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4z' +
-      'M8 3V1.5M8 14.5v-1.5' +
-      'M3 8H1.5M14.5 8h-1.5' +
-      'M4.46 4.46l-1.06-1.06M11.54 11.54l1.06 1.06' +
-      'M4.46 11.54l-1.06 1.06M11.54 4.46l1.06-1.06',
-    label: 'Light mode',
-  },
-
   moon: {
     // Crescent moon — outer disc arc closed by a deeper bite, leaving sharp horns
     path: 'M13.75 8A5.75 5.75 0 1 1 8 2.25a5.5 5.5 0 0 0 5.75 5.75z',
