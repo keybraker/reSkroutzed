@@ -28,6 +28,7 @@ describe('FinalPriceFixerDecorator', (): void => {
       skoopAdCount: 0,
       priceCheckerEnabled: true,
       minimumPriceDifference: 1,
+      showBestPrice: true,
       showShopflix: true,
       sponsorshipAdCount: 0,
       isMobile: false,

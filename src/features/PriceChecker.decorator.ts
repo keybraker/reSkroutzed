@@ -1356,6 +1356,14 @@ export class PriceCheckerDecorator implements FeatureInstance {
   }
 
   /**
+   * BestPrice can be switched off in the popup; when disabled its column is
+   * skipped and no request is made.
+   */
+  private shouldCompareBestPrice(): boolean {
+    return this.state.showBestPrice;
+  }
+
+  /**
    * Shopflix only covers the Greek market, so its column is skipped entirely on
    * the other Skroutz storefronts.
    */
@@ -1454,19 +1462,22 @@ export class PriceCheckerDecorator implements FeatureInstance {
       this.bestPriceProductData = undefined;
       this.shopflixProductData = undefined;
 
+      const compareBestPrice = this.shouldCompareBestPrice();
       const compareShopflix = this.shouldCompareShopflix();
       let isPriceHistoryLoading = true;
-      let isBestPriceLoading = true;
+      let isBestPriceLoading = compareBestPrice;
       let isShopflixLoading = compareShopflix;
 
       const buildSlots = (): ComparisonSlot[] => {
-        const slots: ComparisonSlot[] = [
-          {
+        const slots: ComparisonSlot[] = [];
+
+        if (compareBestPrice) {
+          slots.push({
             view: BEST_PRICE_VIEW,
             productData: this.bestPriceProductData,
             isLoading: isBestPriceLoading,
-          },
-        ];
+          });
+        }
 
         if (compareShopflix) {
           slots.push({
@@ -1528,29 +1539,31 @@ export class PriceCheckerDecorator implements FeatureInstance {
           renderLoadedState();
         });
 
-      void BestPriceClient.getCurrentProductData()
-        .then((productData) => {
-          if (!this.isCurrentInitialization(initializationId)) {
-            return;
-          }
+      if (compareBestPrice) {
+        void BestPriceClient.getCurrentProductData()
+          .then((productData) => {
+            if (!this.isCurrentInitialization(initializationId)) {
+              return;
+            }
 
-          this.bestPriceProductData = productData;
-        })
-        .catch((error) => {
-          if (!this.isCurrentInitialization(initializationId)) {
-            return;
-          }
+            this.bestPriceProductData = productData;
+          })
+          .catch((error) => {
+            if (!this.isCurrentInitialization(initializationId)) {
+              return;
+            }
 
-          console.warn('PriceChecker: failed to fetch BestPrice data', error);
-        })
-        .finally(() => {
-          if (!this.isCurrentInitialization(initializationId)) {
-            return;
-          }
+            console.warn('PriceChecker: failed to fetch BestPrice data', error);
+          })
+          .finally(() => {
+            if (!this.isCurrentInitialization(initializationId)) {
+              return;
+            }
 
-          isBestPriceLoading = false;
-          renderLoadedState();
-        });
+            isBestPriceLoading = false;
+            renderLoadedState();
+          });
+      }
 
       if (compareShopflix) {
         void ShopflixClient.getCurrentProductData()

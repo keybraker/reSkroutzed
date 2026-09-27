@@ -45,6 +45,7 @@ describe('RecommendationAdHandler', () => {
       darkMode: false,
       priceCheckerEnabled: true,
       minimumPriceDifference: 0,
+      showBestPrice: true,
       showShopflix: true,
       isMobile: false,
     };

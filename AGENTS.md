@@ -47,7 +47,7 @@ src/
 - All properties are **required** — no optional (`?`) fields.
 - Counters (`productAdCount`, `shelfAdCount`, etc.) are incremented by handlers during `flag()`.
 - Visibility booleans (`hideProductAds`, etc.) are toggled by the popup via `chrome.runtime.onMessage`.
-- `showShopflix` adds a second comparison column (Shopflix) beside the always-on BestPrice one. Shopflix is Greece-only, so the column is skipped on the other Skroutz storefronts.
+- `showBestPrice` and `showShopflix` control the two price-comparison columns (BestPrice, Shopflix) shown beside the store offer. Both default to on; disabling one skips its column and its network request. Shopflix is Greece-only, so its column is also skipped on the other Skroutz storefronts.
 
 ## Clients
 
@@ -168,6 +168,7 @@ mockState = {
   wideMode: false,
   priceCheckerEnabled: true,
   minimumPriceDifference: 0,
+  showBestPrice: true,
   showShopflix: true,
   isMobile: false,
 };
