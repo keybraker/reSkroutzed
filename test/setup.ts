@@ -16,6 +16,10 @@ global.chrome = {
   runtime: {
     sendMessage: vi.fn(),
     getURL: vi.fn((path: string) => `chrome-extension://test-extension-id/${path}`),
+    setUninstallURL: vi.fn(),
+    onMessage: {
+      addListener: vi.fn(),
+    },
     lastError: undefined,
   },
   storage: {

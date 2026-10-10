@@ -28,6 +28,7 @@ module.exports = (env = {}, argv = {}) => {
           { from: 'popup/popup.html', to: 'popup/popup.html' },
           { from: 'popup/popup.css', to: 'popup/popup.css' },
           { from: 'manifests/manifest_firefox.json', to: 'manifest.json' },
+          { from: 'locales', to: '_locales' },
           { from: 'icons/*.png', to: 'icons/[name][ext]' },
           { from: 'src/css/*.css', to: 'css/[name][ext]' },
           { from: 'externalPaymentProviders', to: 'externalPaymentProviders' },

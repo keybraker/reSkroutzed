@@ -4,6 +4,14 @@ import type {
   PriceBridgeResponse,
 } from './clients/common/priceBridge';
 
+/**
+ * Where users land after uninstalling so they can share feedback or reach
+ * support. Swap for a dedicated survey form once one exists.
+ */
+const UNINSTALL_SURVEY_URL = 'https://itsiakkas.com/support';
+
+chrome.runtime.setUninstallURL(UNINSTALL_SURVEY_URL);
+
 const PROVIDER_LABELS: Record<PriceBridgeAction, string> = {
   'bestprice.fetch': 'BestPrice',
   'shopflix.fetch': 'Shopflix',
