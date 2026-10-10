@@ -336,6 +336,22 @@ body {
   color: var(--text-primary);
   line-height: 1.2;
 }
+
+/* Small "beta" chip pinned to the right of an experimental feature's label. */
+.beta-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
 .setting-hint {
   font-size: 10px;
   color: var(--text-tertiary);
@@ -630,19 +646,11 @@ body {
   border-color: var(--border-default);
   color: var(--text-primary);
 }
-.support-pill-logo {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  object-fit: contain;
+.support-pill-icon {
+  width: 13px;
+  height: 13px;
   flex-shrink: 0;
-  background: var(--accent-foreground);
-}
-.support-pill--paypal .support-pill-logo {
-  background: #ffc439;
-}
-.support-pill--revolut .support-pill-logo {
-  background: #627eea;
+  color: var(--accent);
 }
 
 /* ---------- SCROLLBAR ---------- */

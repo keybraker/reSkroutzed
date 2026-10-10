@@ -255,10 +255,15 @@ describe('PriceCheckerDecorator', () => {
       'Delivery costs may apply',
     );
 
+    // Shopflix is still experimental, so its subtitle carries a beta chip.
+    const shopflixSubtitle = shopflixBadge?.querySelector('.price-display-subtitle');
+    expect(shopflixSubtitle?.querySelector('.price-checker-beta-tag')?.textContent).toBe('beta');
+
     const bestPriceBadge = document.querySelector('.bestprice-badge') as HTMLAnchorElement | null;
     expect(bestPriceBadge).not.toBeNull();
     expect(bestPriceBadge?.href).toBe('https://www.bestprice.gr/item/mock.html');
     expect(bestPriceBadge?.textContent).toContain('Buy through BestPrice');
+    expect(bestPriceBadge?.querySelector('.price-checker-beta-tag')).toBeNull();
 
     // Store | divider | BestPrice | divider | Shopflix
     expect(document.querySelectorAll('.price-display-divider')).toHaveLength(2);

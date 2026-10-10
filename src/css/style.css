@@ -402,7 +402,7 @@ text-black {
 .buy-me-coffee-link {
   display: inline-flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: center !important;
   gap: 8px !important;
   color: inherit !important;
   text-decoration: none !important;
@@ -518,105 +518,6 @@ text-black {
   font-size: 18px !important;
   font-weight: 700 !important;
   color: var(--color-text-primary, #ffffff) !important;
-}
-
-.buy-me-coffee-label-container {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  flex-shrink: 0 !important;
-}
-
-.buy-me-coffee-options {
-  display: inline-flex !important;
-  gap: 6px flex !important;
-  flex-direction: row !important;
-  gap: 4px !important;
-  /* justify-content: space-aroundtant; */
-  flex-shrink: 0 !important;
-}
-
-/* make payment buttons circular and icon-only visually */
-.buy-me-coffee-option {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  height: 32px !important;
-  padding: 32px !important;
-  padding: 5px !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
-  flex-shrink: 0 !important;
-  border: 2px solid rgba(255, 255, 255, 0.2) !important;
-  transition: all 0.2s ease !important;
-  box-sizing: border-box !important;
-}
-
-.buy-me-coffee-option .payment-icon {
-  width: 18px !important;
-  height: 18px !important;
-  height: 24px !important;
-  object-fit: contain !important;
-  object-position: center !important;
-  border-radius: 0 !important;
-  display: block !important;
-}
-
-/* Inline SVG fallback when raster images fail to load */
-.buy-me-coffee-option .payment-svg {
-  width: 18px !important;
-  height: 18px !important;
-  display: none !important;
-  line-height: 0 !important;
-}
-.buy-me-coffee-option .payment-svg svg {
-  width: 100% !important;
-  height: 100% !important;
-  display: block !important;
-  border-radius: 50% !important;
-}
-
-/* keep text for screen readers but hide visually */
-.payment-text {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
-
-.buy-me-coffee-option {
-  /* Base appearance for payment option buttons is defined earlier
-     to make them circular and icon-only. Keep this selector present
-     but avoid overriding the circular sizing rules defined above. */
-}
-
-.buy-me-coffee-option.paypal {
-  background: linear-gradient(135deg, #ffc115, #ffb800) !important;
-  color: #242424 !important;
-  box-shadow: 0 2px 6px rgba(255, 193, 21, 0.3) !important;
-}
-
-.buy-me-coffee-option.paypal:hover {
-  background: linear-gradient(135deg, #ffb800, #ffa500) !important;
-  box-shadow: 0 4px 12px rgba(255, 193, 21, 0.5) !important;
-  transform: scale(1.08) !important;
-}
-
-.buy-me-coffee-option.revolut {
-  background: linear-gradient(135deg, #627eea, #5568d3) !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(98, 126, 234, 0.3) !important;
-}
-
-.buy-me-coffee-option.revolut:hover {
-  background: linear-gradient(135deg, #5568d3, #4454b8) !important;
-  box-shadow: 0 4px 12px rgba(98, 126, 234, 0.5) !important;
-  transform: scale(1.08) !important;
 }
 
 .buy-me-coffee-close {
@@ -1618,6 +1519,34 @@ text-black {
   min-height: 30px !important;
   display: flex !important;
   align-items: flex-end !important;
+}
+
+/* The beta variant carries a chip after the label, so the two items need a gap
+   and the chip is bottom-aligned with the label's text box. */
+.price-display-subtitle-beta {
+  gap: 6px !important;
+}
+
+.price-display-subtitle-label {
+  min-width: 0 !important;
+}
+
+/* Small "beta" chip marking a provider whose integration is still experimental. */
+.price-checker-beta-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+  margin-bottom: 2px !important;
+  padding: 1px 5px !important;
+  border-radius: 999px !important;
+  background: rgba(43, 96, 173, 0.12) !important;
+  color: #2b60ad !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
 }
 
 /* The price-history row is one native inset panel: averages, a hairline, then the

@@ -8,6 +8,7 @@ import { getPriceAverages } from '../common/functions/priceAverages';
 import { PriceComparisonProduct } from '../common/types/PriceComparisonProduct.type';
 import { State } from '../common/types/State.type';
 import { FeatureInstance } from './common/FeatureInstance';
+import { createBetaTag } from './functions/createBetaTag';
 import { createBuyMeCoffeeElement } from './functions/createBuyMeCoffeeElement';
 import {
   createPriceDifferenceBadge,
@@ -34,6 +35,8 @@ type PriceProviderView = {
   unavailableClassName: string;
   comparisonTextClassName: string;
   label: string;
+  /** Marks the provider as experimental; renders a "beta" chip beside its label. */
+  beta?: boolean;
   createLogo: () => HTMLElement | SVGSVGElement;
   subtitleText: (language: Language) => string;
   unavailableText: (language: Language) => string;
@@ -87,6 +90,7 @@ const SHOPFLIX_VIEW: PriceProviderView = {
   unavailableClassName: 'shopflix-unavailable',
   comparisonTextClassName: 'shopflix-comparison-text',
   label: 'Shopflix',
+  beta: true,
   createLogo: createShopflixLogo,
   subtitleText: (language) =>
     language === Language.ENGLISH ? 'Buy through Shopflix' : 'Αγορά μέσω Shopflix',
@@ -108,6 +112,8 @@ type PriceDisplayActionOptions = {
   priceClassNames?: string[];
   language: Language;
   subtitleText: string;
+  /** Renders a "beta" chip to the right of the subtitle label. */
+  showBetaTag?: boolean;
   title?: string;
   ariaLabel: string;
   href?: string;
@@ -448,13 +454,27 @@ function createPriceDisplaySubtitle(
   language: Language,
   extraClasses: string[] = [],
   preferredText?: string,
+  showBetaTag = false,
 ): HTMLDivElement {
   const subtitle = DomClient.createElement('div', {
-    className: ['price-display-subtitle', ...extraClasses],
+    className: [
+      'price-display-subtitle',
+      ...(showBetaTag ? ['price-display-subtitle-beta'] : []),
+      ...extraClasses,
+    ],
   }) as HTMLDivElement;
-  subtitle.textContent =
+
+  const label = DomClient.createElement('span', {
+    className: 'price-display-subtitle-label',
+  }) as HTMLSpanElement;
+  label.textContent =
     preferredText ??
     (language === Language.ENGLISH ? 'Buy through store' : 'Αγορά μέσω καταστήματος');
+  DomClient.appendElementToElement(label, subtitle);
+
+  if (showBetaTag) {
+    DomClient.appendElementToElement(createBetaTag(), subtitle);
+  }
 
   return subtitle;
 }
@@ -628,7 +648,12 @@ function createPriceDisplayAction(
   }
 
   DomClient.appendElementToElement(
-    createPriceDisplaySubtitle(options.language, [], options.subtitleText),
+    createPriceDisplaySubtitle(
+      options.language,
+      [],
+      options.subtitleText,
+      options.showBetaTag ?? false,
+    ),
     content,
   );
 
@@ -705,6 +730,7 @@ function createComparisonBadge(
     priceClassNames,
     language,
     subtitleText: view.subtitleText(language),
+    showBetaTag: view.beta,
     title: comparisonProductData.title,
     ariaLabel: view.ariaLabel(language),
     href: comparisonProductData.url,
