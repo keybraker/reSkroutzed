@@ -1,14 +1,10 @@
 import { DomClient } from '../../clients/dom/client';
 import { Language } from '../../common/enums/Language.enum';
-import { createLogoElement } from './createLogoElement';
 
 export function createReSkoutzedReviewElement(language: Language): HTMLDivElement {
   const reSkoutzedReviewElement = document.createElement('div');
   const reSkoutzedReviewLink = document.createElement('a');
-  const prefixText = document.createElement('span');
-  const brandName = document.createElement('strong');
   const reviewCopy = document.createElement('span');
-  const logoSlot = document.createElement('span');
 
   reSkoutzedReviewElement.classList.add('own-promotion');
 
@@ -29,27 +25,12 @@ export function createReSkoutzedReviewElement(language: Language): HTMLDivElemen
   reSkoutzedReviewLink.href = storeUrl;
   reSkoutzedReviewLink.target = '_blank';
   reSkoutzedReviewLink.rel = 'noopener noreferrer';
-  reSkoutzedReviewLink.classList.add('icon-border', 'own-promotion-review-link');
-
-  prefixText.className = 'own-promotion-review-prefix';
+  reSkoutzedReviewLink.classList.add('own-promotion-review-link');
 
   reviewCopy.className = 'own-promotion-review-copy';
+  reviewCopy.textContent = language === Language.GREEK ? 'Αξιολόγησε μας' : 'Rate us';
 
-  const icon = createLogoElement();
-  icon.classList.remove('icon-border');
-  icon.classList.add('own-promotion-brand-logo');
-
-  logoSlot.className = 'own-promotion-brand-logo-slot';
-
-  prefixText.textContent = language === Language.GREEK ? 'Αξιολόγησε το ' : 'Rate ';
-  brandName.textContent = 'reSkroutzed';
-  DomClient.appendElementToElement(prefixText, reviewCopy);
-  DomClient.appendElementToElement(brandName, reviewCopy);
   DomClient.appendElementToElement(reviewCopy, reSkoutzedReviewLink);
-
-  DomClient.appendElementToElement(icon, logoSlot);
-  DomClient.appendElementToElement(logoSlot, reSkoutzedReviewLink);
-
   DomClient.appendElementToElement(reSkoutzedReviewLink, left);
 
   row.appendChild(left);
