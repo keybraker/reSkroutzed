@@ -27,9 +27,9 @@ Dark mode is now as easy as clicking one button.
 
 The all new universal selector on the bottom left side of the screen is always there to help you tailor make the experience browsing as you wish!
 
-| ![Screenshot 1](../imagery/chrome/chrome_1280x800_screenshot_1.jpeg) | ![Screenshot 2](../imagery/chrome/chrome_1280x800_screenshot_2.jpeg) |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| ![Screenshot 3](../imagery/chrome/chrome_1280x800_screenshot_3.jpeg) | ![Screenshot 4](../imagery/chrome/chrome_1280x800_screenshot_4.jpeg) |
+| ![Screenshot 1](../imagery/chrome/chrome_1280x800_screenshot_1.png) | ![Screenshot 2](../imagery/chrome/chrome_1280x800_screenshot_2.png) |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| ![Screenshot 3](../imagery/chrome/chrome_1280x800_screenshot_3.png) | ![Screenshot 4](../imagery/chrome/chrome_1280x800_screenshot_4.png) |
 
 ## Additional functionality
 
