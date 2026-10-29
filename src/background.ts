@@ -1,5 +1,10 @@
 import { BrowserClient, StorageKey } from './clients/browser/client';
 import { Language } from './common/enums/Language.enum';
+import {
+  AI_HIDE_CLASS,
+  ensureAISlopStyleInjected,
+  queryAISlopNodes,
+} from './common/functions/aiSlop';
 import { State } from './common/types/State.type';
 import { FinalPriceFixerDecorator } from './features/FinalPriceFixer.decorator';
 import { LogoHatDecorator } from './features/LogoHat.decorator';
@@ -40,34 +45,14 @@ const state: State = {
   isMobile: false,
 };
 
-function ensureAISlopStyleInjected(): void {
-  if (document.getElementById('resk-ai-hide-style')) return;
-  const style = document.createElement('style');
-  style.id = 'resk-ai-hide-style';
-  style.textContent = `.resk-hide-ai { display: none !important; }`;
-  document.head.appendChild(style);
-}
-
-function queryAISlopNodes(): NodeListOf<HTMLElement> {
-  const selector = [
-    '[class*="sofos"]',
-    '.sofos-entrypoint',
-    '.sofos-listing-shelf',
-    '.sofos-chat-button-wrapper',
-    '.sofos-chat-button',
-    '.shifu-chat-button',
-  ].join(',');
-  return document.querySelectorAll(selector) as NodeListOf<HTMLElement>;
-}
-
 function applyAISlopVisibility(): void {
   ensureAISlopStyleInjected();
   const nodes = queryAISlopNodes();
   nodes.forEach((element) => {
     if (state.hideAISlop) {
-      element.classList.add('resk-hide-ai');
+      element.classList.add(AI_HIDE_CLASS);
     } else {
-      element.classList.remove('resk-hide-ai');
+      element.classList.remove(AI_HIDE_CLASS);
       if (element.style.display === 'none') {
         element.style.display = '';
       }

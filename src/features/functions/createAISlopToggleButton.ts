@@ -1,5 +1,10 @@
 import { BrowserClient, StorageKey } from '../../clients/browser/client';
 import { DomClient } from '../../clients/dom/client';
+import {
+  AI_HIDE_CLASS,
+  ensureAISlopStyleInjected,
+  queryAISlopNodes,
+} from '../../common/functions/aiSlop';
 import { buildSvg, ICON } from './icons';
 import { ToggleButtonContext } from './toggleButtonContext';
 
@@ -21,35 +26,15 @@ export function createAISlopToggleButton(ctx: ToggleButtonContext): HTMLButtonEl
   notificationBubble.textContent = '0';
   DomClient.appendElementToElement(notificationBubble, button);
 
-  const ensureStyle = (): void => {
-    if (document.getElementById('resk-ai-hide-style')) return;
-    const style = document.createElement('style');
-    style.id = 'resk-ai-hide-style';
-    style.textContent = `.resk-hide-ai { display: none !important; }`;
-    document.head.appendChild(style);
-  };
-
-  const queryNodes = (): NodeListOf<HTMLElement> => {
-    const selector = [
-      '[class*="sofos"]',
-      '.sofos-entrypoint',
-      '.sofos-listing-shelf',
-      '.sofos-chat-button-wrapper',
-      '.sofos-chat-button',
-    ].join(',');
-    return document.querySelectorAll(selector) as NodeListOf<HTMLElement>;
-  };
-
   const apply = (): void => {
-    ensureStyle();
-    const nodes = queryNodes();
+    ensureAISlopStyleInjected();
+    const nodes = queryAISlopNodes();
     let count = 0;
-    nodes.forEach((el) => {
-      const element = el as HTMLElement;
+    nodes.forEach((element) => {
       if (state.hideAISlop) {
-        element.classList.add('resk-hide-ai');
+        element.classList.add(AI_HIDE_CLASS);
       } else {
-        element.classList.remove('resk-hide-ai');
+        element.classList.remove(AI_HIDE_CLASS);
       }
       count += 1;
     });
