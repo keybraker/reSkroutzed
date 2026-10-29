@@ -10,6 +10,7 @@ vi.mock('../../src/clients/browser/client', () => ({
   BrowserClient: {
     setValue: vi.fn(),
     getValueAsync: vi.fn().mockResolvedValue(false),
+    getValuesAsync: vi.fn().mockResolvedValue({}),
     detectMobile: vi.fn().mockReturnValue(false),
   },
   StorageKey: {
@@ -92,6 +93,12 @@ describe('UniversalToggleDecorator', () => {
   beforeEach(() => {
     // Reset mocks
     vi.clearAllMocks();
+
+    // `vi.restoreAllMocks()` in afterEach drops the implementations, so they
+    // are re-established for every test.
+    vi.mocked(BrowserClient.getValueAsync).mockResolvedValue(false);
+    vi.mocked(BrowserClient.getValuesAsync).mockResolvedValue({});
+    vi.mocked(BrowserClient.detectMobile).mockReturnValue(false);
 
     // Do NOT mock createElementNS — let buildSvg create real SVG elements
     // that are discoverable via querySelector / children iteration.
@@ -225,6 +232,23 @@ describe('UniversalToggleDecorator', () => {
 
       // Restore original
       Element.prototype.addEventListener = addEventListener;
+    });
+
+    it('should refresh every setting with a single storage request when the menu opens', async () => {
+      // Arrange
+      universalToggleDecorator.execute();
+      const mainToggle = document.querySelector('.universal-toggle-button') as HTMLButtonElement;
+
+      // Act
+      mainToggle.click();
+      await vi.waitFor(() => {
+        expect(BrowserClient.getValuesAsync).toHaveBeenCalledTimes(1);
+      });
+
+      // Assert
+      expect(BrowserClient.getValuesAsync).toHaveBeenCalledWith(
+        expect.arrayContaining(['darkMode', 'wideMode']),
+      );
     });
   });
 

@@ -100,13 +100,10 @@ function loadStorage(): void {
   state.hideAISlop = BrowserClient.getValue<boolean>(StorageKey.AI_SLOP_VISIBILITY);
   state.wideMode = BrowserClient.getValue<boolean>(StorageKey.WIDE_MODE);
   state.isMobile = BrowserClient.detectMobile();
-
-  if (state.darkMode) {
-    themeSync(state);
-  }
 }
 
 loadStorage();
+themeSync(state);
 
 const videoAdHandler = new VideoAdHandler(state);
 const listProductAdHandler = new ListProductAdHandler(state);
@@ -123,8 +120,11 @@ const logoHatDecorator = new LogoHatDecorator();
 const wideModeDecorator = new WideModeDecorator(state);
 
 (function () {
-  async function initializer(): Promise<void> {
-    await priceCheckerIndicator.execute();
+  function initializer(): void {
+    // The price checker talks to the network, so it runs alongside the rest of
+    // the work instead of blocking ad flagging and visibility behind it.
+    void priceCheckerIndicator.execute();
+
     finalPriceFixerDecorator.execute();
     if (!state.hideUniversalToggle) {
       universalToggleDecorator.execute();
@@ -209,8 +209,8 @@ const wideModeDecorator = new WideModeDecorator(state);
     applyAISlopVisibility();
   }
 
-  window.onload = async function () {
-    await initializer();
+  function start(): void {
+    initializer();
     observeMutations();
 
     if (state.isMobile) {
@@ -221,7 +221,30 @@ const wideModeDecorator = new WideModeDecorator(state);
         }, 300);
       });
     }
-  };
+  }
+
+  // Start as soon as the DOM is parsed. Waiting for `window.onload` instead
+  // would hold every feature back until the last image of the page finished
+  // downloading, which on a slow connection is several seconds.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+
+  /**
+   * Reconcile the localStorage mirror with chrome.storage.local and re-apply
+   * whatever changed.
+   *
+   * This runs off the critical path: the page already has a usable state from
+   * the synchronous mirror, this only corrects it when chrome.storage
+   * disagrees (e.g. a setting changed from the popup on another tab).
+   */
+  void BrowserClient.hydrate().then(() => {
+    loadStorage();
+    themeSync(state);
+    toggleVisibility();
+  });
 })();
 
 chrome.runtime.onMessage.addListener(

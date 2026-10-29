@@ -13,19 +13,19 @@
   --ut-accent-glow: rgba(246, 139, 36, 0.35);
   --ut-text: #f2f2f6;
 
-  /* Neutral shadcn-like palette for the opened menu */
-  --ut-menu-bg: #141417;
-  --ut-menu-border: #26262e;
-  --ut-btn-bg: #1c1c22;
-  --ut-btn-border: #2c2c35;
-  --ut-btn-hover: #26262f;
-  --ut-on-bg: rgba(242, 242, 246, 0.08);
-  --ut-on-ring: #dcdce4;
-  --ut-icon: #9b9ba6;
-  --ut-icon-strong: #f2f2f6;
-  --ut-badge-bg: #3f3f48;
-  --ut-badge-text: #ececf1;
-  --ut-input-bg: #0f0f13;
+  /* Warm orange palette for the opened menu (light theme) */
+  --ut-menu-bg: #fff4e8;
+  --ut-menu-border: #f3d9b8;
+  --ut-btn-bg: #ffe9d1;
+  --ut-btn-border: #f0d0a8;
+  --ut-btn-hover: #fbdcb8;
+  --ut-on-bg: rgba(246, 139, 36, 0.18);
+  --ut-on-ring: #e07d1a;
+  --ut-icon: #b06a1a;
+  --ut-icon-strong: #7a4a10;
+  --ut-badge-bg: #f68b24;
+  --ut-badge-text: #ffffff;
+  --ut-input-bg: #fff8f0;
 
   --ut-radius-sm: 6px;
   --ut-radius-md: 10px;
@@ -48,6 +48,9 @@
   left: 20px !important;
   z-index: 9999 !important;
   isolation: isolate !important;
+  /* The palette below is already dark. Without this, Chrome's Auto Dark Theme
+     (and similar auto-darkening) inverts these surfaces, turning the bar white. */
+  color-scheme: only light !important;
 }
 
 @media (max-width: 768px) {
@@ -287,7 +290,7 @@
 }
 
 .toggle-option-button.active:hover {
-  background: rgba(242, 242, 246, 0.12) !important;
+  background: rgba(246, 139, 36, 0.3) !important;
   border-color: var(--ut-on-ring) !important;
 }
 
@@ -349,7 +352,27 @@
 
 /* ---------- DARK MODE OVERRIDES (skroutz.gr dark mode hardening) ---------- */
 /* Skroutz dark mode applies aggressive overrides to injected elements.
-   These rules lock down every surface so nothing turns blinding white. */
+   These rules lock down every surface so nothing turns blinding white.
+   The palette is intentionally identical to light mode: the menu keeps the
+   same warm orange look on both themes. */
+
+.dark-mode .universal-toggle-container,
+.dark-mode.universal-toggle-container {
+  --ut-menu-bg: #fff4e8;
+  --ut-menu-border: #f3d9b8;
+  --ut-btn-bg: #ffe9d1;
+  --ut-btn-border: #f0d0a8;
+  --ut-btn-hover: #fbdcb8;
+  --ut-on-bg: rgba(246, 139, 36, 0.18);
+  --ut-on-ring: #e07d1a;
+  --ut-icon: #b06a1a;
+  --ut-icon-strong: #7a4a10;
+  --ut-badge-bg: #f68b24;
+  --ut-badge-text: #ffffff;
+  --ut-input-bg: #fff8f0;
+  --ut-accent-glow: rgba(246, 139, 36, 0.35);
+  --ut-shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
 
 .dark-mode .universal-toggle-button {
   background: var(--ut-surface-2) !important;
@@ -385,7 +408,7 @@
 }
 
 .dark-mode .toggle-option-button.active:hover {
-  background: rgba(242, 242, 246, 0.12) !important;
+  background: rgba(246, 139, 36, 0.3) !important;
   border-color: var(--ut-on-ring) !important;
 }
 
@@ -396,6 +419,26 @@
 .dark-mode .toggle-option-button svg {
   color: inherit !important;
   fill: currentColor !important;
+}
+
+/* OS-level dark mode: keep the same palette, just harden against overrides. */
+@media (prefers-color-scheme: dark) {
+  .universal-toggle-container {
+    --ut-menu-bg: #fff4e8;
+    --ut-menu-border: #f3d9b8;
+    --ut-btn-bg: #ffe9d1;
+    --ut-btn-border: #f0d0a8;
+    --ut-btn-hover: #fbdcb8;
+    --ut-on-bg: rgba(246, 139, 36, 0.18);
+    --ut-on-ring: #e07d1a;
+    --ut-icon: #b06a1a;
+    --ut-icon-strong: #7a4a10;
+    --ut-badge-bg: #f68b24;
+    --ut-badge-text: #ffffff;
+    --ut-input-bg: #fff8f0;
+    --ut-accent-glow: rgba(246, 139, 36, 0.35);
+    --ut-shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
 }
 
 /* ---------- ANIMATIONS ---------- */

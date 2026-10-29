@@ -16,7 +16,7 @@ export interface FeatureInstance {
 }
 ```
 
-- `execute()` is called once on `window.onload` from `background.ts`.
+- `execute()` is called once as soon as the DOM is parsed (see `start()` in `background.ts`). It is deliberately **not** gated on `window.onload`, which would hold every feature back until the last image finished downloading.
 - `destroy()` is optional — implement it when the feature creates DOM nodes or event listeners that may need to be cleaned up (e.g., `UniversalToggleDecorator` removes itself when hidden).
 
 ## Instantiation

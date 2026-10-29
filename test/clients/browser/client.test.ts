@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BrowserClient, StorageKey } from '../../../src/clients/browser/client';
 import { Language } from '../../../src/common/enums/Language.enum';
@@ -90,6 +90,28 @@ describe('BrowserClient', (): void => {
       expect(result).toBe(true);
     });
 
+    it('should not issue a storage request — the read has to stay synchronous', (): void => {
+      // Setup
+      localStorage.getItem = vi.fn().mockReturnValue('true');
+
+      // Act
+      BrowserClient.getValue(StorageKey.DARK_MODE);
+
+      // Assert
+      expect(chrome.storage.local.get).not.toHaveBeenCalled();
+    });
+
+    it('should return the default when nothing is stored', (): void => {
+      // Setup
+      localStorage.getItem = vi.fn().mockReturnValue(null);
+
+      // Act
+      const result = BrowserClient.getValue(StorageKey.DARK_MODE);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
     it('should handle numeric values correctly', (): void => {
       // Setup
       const mockValue = '10';
@@ -142,6 +164,90 @@ describe('BrowserClient', (): void => {
 
       // Assert
       expect(localStorage.setItem).toHaveBeenCalledWith(key, '42');
+    });
+  });
+
+  describe('hydrate', (): void => {
+    it('should reconcile the mirror with a single bulk storage read', async (): Promise<void> => {
+      // Setup
+      chrome.storage.local.get = vi.fn().mockImplementation((_keys, callback): void => {
+        callback({ [StorageKey.DARK_MODE]: true, [StorageKey.WIDE_MODE]: true });
+      });
+      localStorage.getItem = vi.fn().mockReturnValue(null);
+
+      // Act
+      await BrowserClient.hydrate();
+
+      // Assert
+      expect(chrome.storage.local.get).toHaveBeenCalledTimes(1);
+      expect(chrome.storage.local.get).toHaveBeenCalledWith(null, expect.any(Function));
+      expect(localStorage.setItem).toHaveBeenCalledWith(StorageKey.DARK_MODE, 'true');
+    });
+
+    it('should not write values the mirror already holds', async (): Promise<void> => {
+      // Setup
+      chrome.storage.local.get = vi.fn().mockImplementation((_keys, callback): void => {
+        callback({ [StorageKey.DARK_MODE]: true });
+      });
+      localStorage.getItem = vi
+        .fn()
+        .mockImplementation((key: string) => (key === StorageKey.DARK_MODE ? 'true' : null));
+
+      // Act
+      await BrowserClient.hydrate();
+
+      // Assert
+      expect(localStorage.setItem).not.toHaveBeenCalledWith(
+        StorageKey.DARK_MODE,
+        expect.anything(),
+      );
+    });
+
+    it('should seed missing keys with their default', async (): Promise<void> => {
+      // Setup
+      chrome.storage.local.get = vi.fn().mockImplementation((_keys, callback): void => {
+        callback({});
+      });
+      localStorage.getItem = vi.fn().mockReturnValue(null);
+
+      // Act
+      await BrowserClient.hydrate();
+
+      // Assert
+      expect(chrome.storage.local.set).toHaveBeenCalledWith(
+        expect.objectContaining({ [StorageKey.DARK_MODE]: false }),
+      );
+    });
+  });
+
+  describe('getValuesAsync', (): void => {
+    it('should read every requested key with one storage request', async (): Promise<void> => {
+      // Setup
+      const keys = [StorageKey.DARK_MODE, StorageKey.WIDE_MODE];
+      chrome.storage.local.get = vi.fn().mockImplementation((_keys, callback): void => {
+        callback({ [StorageKey.DARK_MODE]: true, [StorageKey.WIDE_MODE]: false });
+      });
+
+      // Act
+      const values = await BrowserClient.getValuesAsync(keys);
+
+      // Assert
+      expect(chrome.storage.local.get).toHaveBeenCalledTimes(1);
+      expect(values[StorageKey.DARK_MODE]).toBe(true);
+      expect(values[StorageKey.WIDE_MODE]).toBe(false);
+    });
+
+    it('should fall back to the default for missing keys', async (): Promise<void> => {
+      // Setup
+      chrome.storage.local.get = vi.fn().mockImplementation((_keys, callback): void => {
+        callback({});
+      });
+
+      // Act
+      const values = await BrowserClient.getValuesAsync([StorageKey.DARK_MODE]);
+
+      // Assert
+      expect(values[StorageKey.DARK_MODE]).toBe(false);
     });
   });
 

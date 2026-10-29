@@ -5,9 +5,7 @@
   "default_locale": "en",
   "version": "2.4.4",
   "manifest_version": 3,
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage"],
   "host_permissions": [
     "*://www.skroutz.gr/*",
     "*://www.skroutz.ro/*",
@@ -22,11 +20,22 @@
     "*://*.algolianet.com/*"
   ],
   "background": {
-    "scripts": [
-      "service_worker.js"
-    ]
+    "scripts": ["service_worker.js"]
   },
   "content_scripts": [
+    {
+      "matches": [
+        "https://www.skroutz.gr/*",
+        "https://www.skroutz.ro/*",
+        "https://www.skroutz.cy/*",
+        "https://www.skroutz.de/*",
+        "https://www.skroutz.bg/*",
+        "https://www.skroutz.eu/*"
+      ],
+      "css": ["css/darkMode.css"],
+      "js": ["darkModeBoot.js"],
+      "run_at": "document_start"
+    },
     {
       "matches": [
         "https://www.skroutz.gr/*",
@@ -45,19 +54,13 @@
         "css/darkModeToggle.css",
         "css/universalToggle.css"
       ],
-      "js": [
-        "background.js"
-      ],
+      "js": ["background.js"],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "icons/48.png",
-        "icons/store_logo.png",
-        "externalPaymentProviders/*.webp"
-      ],
+      "resources": ["icons/48.png", "icons/store_logo.png", "externalPaymentProviders/*.webp"],
       "matches": [
         "https://www.skroutz.gr/*",
         "https://www.skroutz.ro/*",

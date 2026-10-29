@@ -28,7 +28,7 @@ export function createReSkoutzedReviewElement(language: Language): HTMLDivElemen
   reSkoutzedReviewLink.classList.add('own-promotion-review-link');
 
   reviewCopy.className = 'own-promotion-review-copy';
-  reviewCopy.textContent = language === Language.GREEK ? 'Αξιολόγησε μας' : 'Rate us';
+  reviewCopy.textContent = language === Language.GREEK ? 'Αξιολόγησε <3' : 'Rate <3';
 
   DomClient.appendElementToElement(reviewCopy, reSkoutzedReviewLink);
   DomClient.appendElementToElement(reSkoutzedReviewLink, left);

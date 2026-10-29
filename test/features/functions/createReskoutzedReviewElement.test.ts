@@ -40,22 +40,22 @@ describe('createReskoutzedReviewElement', () => {
     expect(link?.parentElement?.classList.contains('own-promotion-left')).toBe(true);
   });
 
-  it('should label the link "Rate us" in English', () => {
+  it('should label the link "Rate <3" in English', () => {
     // Act
     const element = createReSkoutzedReviewElement(Language.ENGLISH);
     const label = element.querySelector('.own-promotion-review-copy');
 
     // Assert
-    expect(label?.textContent).toBe('Rate us');
+    expect(label?.textContent).toBe('Rate <3');
   });
 
-  it('should label the link "Αξιολόγησε μας" in Greek', () => {
+  it('should label the link "Αξιολόγησε <3" in Greek', () => {
     // Act
     const element = createReSkoutzedReviewElement(Language.GREEK);
     const label = element.querySelector('.own-promotion-review-copy');
 
     // Assert
-    expect(label?.textContent).toBe('Αξιολόγησε μας');
+    expect(label?.textContent).toBe('Αξιολόγησε <3');
   });
 
   it('should not render the reSkroutzed icon', () => {

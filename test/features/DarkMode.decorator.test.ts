@@ -43,10 +43,6 @@ describe('DarkModeDecorator', () => {
 
     // Reset DOM state
     document.documentElement.classList.remove('resk-dark');
-    const existingStyle = document.getElementById('resk-dark-mode-style');
-    if (existingStyle) {
-      existingStyle.remove();
-    }
   });
 
   afterEach(() => {
@@ -62,65 +58,23 @@ describe('DarkModeDecorator', () => {
       expect(document.documentElement.classList.contains('resk-dark')).toBe(true);
     });
 
-    it('should inject a style element with the correct id', () => {
+    it('should not inject a style element — the stylesheet ships with the manifest', () => {
       // Act
       decorator.execute();
 
       // Assert
-      const style = document.getElementById('resk-dark-mode-style');
-      expect(style).not.toBeNull();
-      expect(style!.tagName).toBe('STYLE');
+      expect(document.getElementById('resk-dark-mode-style')).toBeNull();
+      expect(document.querySelectorAll('style')).toHaveLength(0);
     });
 
-    it('should inject filter inversion CSS', () => {
-      // Act
-      decorator.execute();
-
-      // Assert
-      const style = document.getElementById('resk-dark-mode-style');
-      expect(style!.textContent).toContain('filter: invert(1) hue-rotate(180deg)');
-      expect(style!.textContent).toContain('html.resk-dark');
-    });
-
-    it('should include media element restoration in CSS', () => {
-      // Act
-      decorator.execute();
-
-      // Assert
-      const style = document.getElementById('resk-dark-mode-style');
-      expect(style!.textContent).toContain('html.resk-dark img');
-      expect(style!.textContent).toContain('html.resk-dark video');
-      expect(style!.textContent).toContain('html.resk-dark canvas');
-      expect(style!.textContent).toContain('html.resk-dark svg');
-    });
-
-    it('should include print media query to disable filter', () => {
-      // Act
-      decorator.execute();
-
-      // Assert
-      const style = document.getElementById('resk-dark-mode-style');
-      expect(style!.textContent).toContain('@media print');
-      expect(style!.textContent).toContain('filter: none !important');
-    });
-
-    it('should be idempotent — calling execute twice only creates one style element', () => {
+    it('should be idempotent — calling execute twice keeps a single class', () => {
       // Act
       decorator.execute();
       decorator.execute();
 
       // Assert
-      const styles = document.querySelectorAll('#resk-dark-mode-style');
-      expect(styles.length).toBe(1);
-    });
-
-    it('should inject .resk-no-invert utility class', () => {
-      // Act
-      decorator.execute();
-
-      // Assert
-      const style = document.getElementById('resk-dark-mode-style');
-      expect(style!.textContent).toContain('.resk-no-invert');
+      expect(document.documentElement.classList.contains('resk-dark')).toBe(true);
+      expect(document.documentElement.className.match(/resk-dark/g)).toHaveLength(1);
     });
   });
 
@@ -136,26 +90,14 @@ describe('DarkModeDecorator', () => {
       expect(document.documentElement.classList.contains('resk-dark')).toBe(false);
     });
 
-    it('should remove the injected style element', () => {
-      // Arrange
-      decorator.execute();
-
-      // Act
-      decorator.destroy();
-
-      // Assert
-      const style = document.getElementById('resk-dark-mode-style');
-      expect(style).toBeNull();
-    });
-
-    it('should be safe to call destroy when no style was injected', () => {
+    it('should be safe to call destroy when dark mode was never enabled', () => {
       // Act & Assert — should not throw
       expect(() => decorator.destroy()).not.toThrow();
     });
   });
 
   describe('sync', () => {
-    it('should call execute when state.darkMode is true', () => {
+    it('should enable dark mode when state.darkMode is true', () => {
       // Arrange
       mockState.darkMode = true;
 
@@ -164,14 +106,13 @@ describe('DarkModeDecorator', () => {
 
       // Assert
       expect(document.documentElement.classList.contains('resk-dark')).toBe(true);
-      expect(document.getElementById('resk-dark-mode-style')).not.toBeNull();
     });
 
-    it('should call destroy when state.darkMode is false', () => {
+    it('should disable dark mode when state.darkMode is false', () => {
       // Arrange — first enable, then disable
       mockState.darkMode = true;
       decorator.sync();
-      expect(document.getElementById('resk-dark-mode-style')).not.toBeNull();
+      expect(document.documentElement.classList.contains('resk-dark')).toBe(true);
 
       mockState.darkMode = false;
 
@@ -180,14 +121,13 @@ describe('DarkModeDecorator', () => {
 
       // Assert
       expect(document.documentElement.classList.contains('resk-dark')).toBe(false);
-      expect(document.getElementById('resk-dark-mode-style')).toBeNull();
     });
 
     it('should toggle from off to on and back correctly', () => {
       // Arrange — start off
       mockState.darkMode = false;
       decorator.sync();
-      expect(document.getElementById('resk-dark-mode-style')).toBeNull();
+      expect(document.documentElement.classList.contains('resk-dark')).toBe(false);
 
       // Act — toggle on
       mockState.darkMode = true;
@@ -202,7 +142,6 @@ describe('DarkModeDecorator', () => {
 
       // Assert
       expect(document.documentElement.classList.contains('resk-dark')).toBe(false);
-      expect(document.getElementById('resk-dark-mode-style')).toBeNull();
     });
   });
 });

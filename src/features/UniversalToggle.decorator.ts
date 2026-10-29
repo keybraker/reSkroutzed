@@ -129,35 +129,35 @@ export class UniversalToggleDecorator implements FeatureInstance {
   }
 
   /**
-   * Refresh all settings from storage to ensure we have the latest values
+   * Refresh all settings from storage to ensure we have the latest values.
+   *
+   * Every setting is fetched with a single storage round-trip instead of one
+   * request per setting.
    */
   private async refreshSettingsFromStorage(): Promise<void> {
-    this.state.darkMode = (await BrowserClient.getValueAsync(StorageKey.DARK_MODE)) as boolean;
-    this.state.hideProductAds = (await BrowserClient.getValueAsync(
+    const values = await BrowserClient.getValuesAsync([
+      StorageKey.DARK_MODE,
       StorageKey.PRODUCT_AD_VISIBILITY,
-    )) as boolean;
-    this.state.hideVideoAds = (await BrowserClient.getValueAsync(
       StorageKey.VIDEO_AD_VISIBILITY,
-    )) as boolean;
-    this.state.hideShelfProductAds = (await BrowserClient.getValueAsync(
       StorageKey.SHELF_PRODUCT_AD_VISIBILITY,
-    )) as boolean;
-    this.state.hideRecommendationAds = (await BrowserClient.getValueAsync(
       StorageKey.RECOMMENDATION_AD_VISIBILITY,
-    )) as boolean;
-    this.state.hideSkoopAds = (await BrowserClient.getValueAsync(
       StorageKey.SKOOP_AD_VISIBILITY,
-    )) as boolean;
-    this.state.hideSponsorships = (await BrowserClient.getValueAsync(
       StorageKey.SPONSORSHIP_VISIBILITY,
-    )) as boolean;
-    this.state.hideAISlop = (await BrowserClient.getValueAsync(
       StorageKey.AI_SLOP_VISIBILITY,
-    )) as boolean;
-    this.state.wideMode = (await BrowserClient.getValueAsync(StorageKey.WIDE_MODE)) as boolean;
-    this.state.minimumPriceDifference = (await BrowserClient.getValueAsync(
+      StorageKey.WIDE_MODE,
       StorageKey.MINIMUM_PRICE_DIFFERENCE,
-    )) as number;
+    ]);
+
+    this.state.darkMode = values[StorageKey.DARK_MODE] as boolean;
+    this.state.hideProductAds = values[StorageKey.PRODUCT_AD_VISIBILITY] as boolean;
+    this.state.hideVideoAds = values[StorageKey.VIDEO_AD_VISIBILITY] as boolean;
+    this.state.hideShelfProductAds = values[StorageKey.SHELF_PRODUCT_AD_VISIBILITY] as boolean;
+    this.state.hideRecommendationAds = values[StorageKey.RECOMMENDATION_AD_VISIBILITY] as boolean;
+    this.state.hideSkoopAds = values[StorageKey.SKOOP_AD_VISIBILITY] as boolean;
+    this.state.hideSponsorships = values[StorageKey.SPONSORSHIP_VISIBILITY] as boolean;
+    this.state.hideAISlop = values[StorageKey.AI_SLOP_VISIBILITY] as boolean;
+    this.state.wideMode = values[StorageKey.WIDE_MODE] as boolean;
+    this.state.minimumPriceDifference = values[StorageKey.MINIMUM_PRICE_DIFFERENCE] as number;
 
     this.updateUIFromState();
   }

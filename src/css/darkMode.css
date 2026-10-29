@@ -1,0 +1,52 @@
+/*******************************************************************************
+ * Dark mode — CSS filter inversion (Dark Reader "Filter" engine approach).
+ *
+ * Injected by the manifest at `document_start` so the rules are already in
+ * place for the very first paint. The `resk-dark` class is put on <html> by
+ * the `darkModeBoot.js` content script at the same moment, which is what
+ * removes the light-then-dark flash on navigation.
+ *
+ * Strategy:
+ *   1. Invert + hue-rotate on <html> darkens the whole page in one rule.
+ *   2. Media elements re-invert to cancel the inversion and keep their colours.
+ *   3. Print media queries disable the filter so pages print normally.
+ *******************************************************************************/
+
+html.resk-dark {
+  filter: invert(1) hue-rotate(180deg) !important;
+  background-color: #1e1e1e !important;
+}
+
+/* Restore media elements to original appearance */
+html.resk-dark img,
+html.resk-dark video,
+html.resk-dark canvas,
+html.resk-dark svg,
+html.resk-dark [style*='background-image'],
+html.resk-dark .product-image img,
+html.resk-dark .sku-image,
+html.resk-dark .image-gallery img,
+html.resk-dark .category-image {
+  filter: invert(1) hue-rotate(180deg) !important;
+}
+
+/* Utility class to opt-out specific elements from inversion */
+html.resk-dark .resk-no-invert {
+  filter: none !important;
+}
+
+/* Print — disable filter */
+@media print {
+  html.resk-dark {
+    filter: none !important;
+    background-color: #fff !important;
+  }
+
+  html.resk-dark img,
+  html.resk-dark video,
+  html.resk-dark canvas,
+  html.resk-dark svg,
+  html.resk-dark [style*='background-image'] {
+    filter: none !important;
+  }
+}

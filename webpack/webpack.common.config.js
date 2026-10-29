@@ -8,6 +8,7 @@ module.exports = {
   mode: 'production',
   entry: {
     background: './src/background.ts',
+    darkModeBoot: './src/darkModeBoot.ts',
     service_worker: './src/service_worker.ts',
     popup: './popup/popup.ts',
   },

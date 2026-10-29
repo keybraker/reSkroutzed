@@ -87,10 +87,15 @@ export class BrowserClient {
   }
 
   /**
-   * Get a value from storage synchronously (with cached fallback)
+   * Get a value from the synchronous localStorage mirror.
+   *
+   * The mirror is kept in sync with chrome.storage.local by `hydrate()`, so no
+   * async round-trip is needed here — that is what allows the dark-mode boot
+   * script to read the preference at `document_start`.
+   *
    * @param key The key to retrieve
    * @param parseAs Optional function to parse the value
-   * @returns The value from storage, or the default if not found
+   * @returns The value from the mirror, or the default if not found
    */
   public static getValue<T extends StorageValueType>(
     key: StorageKey,
@@ -99,16 +104,7 @@ export class BrowserClient {
     const item = localStorage.getItem(key);
     const defaultValue = STORAGE_DEFAULTS[key] as T;
 
-    this.getValueAsync(key).then((chromeValue) => {
-      if (item !== chromeValue?.toString()) {
-        localStorage.setItem(key, chromeValue?.toString() || '');
-      }
-    });
-
     if (!item) {
-      if (defaultValue !== undefined) {
-        this.setValue(key, defaultValue);
-      }
       return defaultValue as T;
     }
 
@@ -123,6 +119,87 @@ export class BrowserClient {
     }
 
     return item as unknown as T;
+  }
+
+  /**
+   * Reconcile the localStorage mirror with chrome.storage.local.
+   *
+   * A single bulk read replaces one storage request per setting, so a page
+   * load pays for one round-trip instead of fourteen. Values that the mirror
+   * already holds are left untouched, so the steady state writes nothing.
+   */
+  public static async hydrate(): Promise<void> {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(null, (result) => {
+        const missingDefaults: { [key: string]: StorageValueType } = {};
+
+        Object.values(StorageKey).forEach((key) => {
+          const chromeValue = result[key];
+          const defaultValue = STORAGE_DEFAULTS[key];
+
+          if (chromeValue === undefined || chromeValue === null) {
+            if (defaultValue !== undefined) {
+              missingDefaults[key] = defaultValue;
+            }
+            return;
+          }
+
+          const serialized = chromeValue.toString();
+          if (localStorage.getItem(key) !== serialized) {
+            localStorage.setItem(key, serialized);
+          }
+        });
+
+        const missingKeys = Object.keys(missingDefaults);
+        if (missingKeys.length > 0) {
+          chrome.storage.local.set(missingDefaults);
+          missingKeys.forEach((key) => {
+            localStorage.setItem(key, missingDefaults[key].toString());
+          });
+        }
+
+        resolve();
+      });
+    });
+  }
+
+  /**
+   * Read several settings with a single storage round-trip.
+   *
+   * @param keys The keys to retrieve
+   * @returns The stored value for every requested key, with defaults applied
+   */
+  public static async getValuesAsync(
+    keys: StorageKey[],
+  ): Promise<Partial<Record<StorageKey, StorageValueType>>> {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(keys, (result) => {
+        const values: Partial<Record<StorageKey, StorageValueType>> = {};
+
+        keys.forEach((key) => {
+          const item = result[key];
+          const defaultValue = STORAGE_DEFAULTS[key];
+
+          if (item === undefined) {
+            if (defaultValue !== undefined) {
+              values[key] = defaultValue;
+              chrome.storage.local.set({ [key]: defaultValue });
+            }
+            return;
+          }
+
+          if (typeof defaultValue === 'boolean') {
+            values[key] = (item === true) as unknown as StorageValueType;
+          } else if (typeof defaultValue === 'number') {
+            values[key] = Number(item) as unknown as StorageValueType;
+          } else {
+            values[key] = item as StorageValueType;
+          }
+        });
+
+        resolve(values);
+      });
+    });
   }
 
   /**

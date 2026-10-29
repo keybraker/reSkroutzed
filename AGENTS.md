@@ -58,6 +58,35 @@ src/
 - **ShopflixClient** (`clients/shopflix/`) — fetches competing prices from shopflix.gr through its Algolia search index. Greece only: `isSupported()` gates it to `www.skroutz.gr`.
 - **Shared provider helpers** (`clients/common/`) — `priceBridge` (relays requests through the service worker, which allowlists hosts per `action`), `priceMatching` (title scoring and search-query variants), `skroutzQuery` (derives search queries from the current Skroutz page).
 
+## Page Load Pipeline
+
+Two content scripts run, in this order:
+
+| Script            | `run_at`         | Purpose                                                                                         |
+| ----------------- | ---------------- | ----------------------------------------------------------------------------------------------- |
+| `darkModeBoot.js` | `document_start` | Puts the `resk-dark` class on `<html>` before the first paint, so the page never flashes light. |
+| `background.js`   | `document_end`   | Flags ads, toggles visibility, renders the price checker and the universal toggle.              |
+
+### Dark mode without a flash
+
+`src/css/darkMode.css` holds the filter-inversion rules and is injected by the manifest at `document_start`. `src/darkModeBoot.ts` reads the dark-mode preference synchronously from the localStorage mirror and adds `resk-dark` to `<html>`. Both happen before the first paint, so the page renders dark from frame one.
+
+Rules that must hold:
+
+- The dark-mode CSS must stay in the manifest (not in a JS-built `<style>` element) — a JS-injected stylesheet lands after the page has already rendered light, which is exactly the flash this setup avoids.
+- `themeSync()` / `DarkModeDecorator` only toggle the class. They must never inject a stylesheet.
+- `darkModeBoot.ts` must not await `chrome.storage` — it has to answer synchronously.
+
+### Settings storage
+
+`chrome.storage.local` is the source of truth. A per-origin `localStorage` mirror is kept in sync so the content script can read settings synchronously (this is what makes `document_start` possible).
+
+- `BrowserClient.getValue()` — synchronous read from the mirror. No storage round-trip.
+- `BrowserClient.hydrate()` — one bulk `chrome.storage.local.get(null)` that reconciles the whole mirror. Called once, off the critical path, from `background.ts`.
+- `BrowserClient.getValuesAsync()` — reads several settings in one round-trip.
+
+`BrowserClient.setValue()` writes to both stores, so the mirror never goes stale in the tab that made the change.
+
 ## Key Conventions
 
 - `camelCase` for variables, properties, functions
@@ -130,7 +159,7 @@ Each feature implements `FeatureInstance`:
 
 ```ts
 interface FeatureInstance {
-  execute(): void; // called once on window.onload
+  execute(): void; // called once as soon as the DOM is parsed
   destroy?(): void; // optional — clean up DOM nodes / listeners
 }
 ```
@@ -179,9 +208,11 @@ mockState = {
 
 ## File Locations
 
-| Concern           | Path                             |
-| ----------------- | -------------------------------- |
-| Shared state type | `src/common/types/State.type.ts` |
+| Concern               | Path                             |
+| --------------------- | -------------------------------- |
+| Shared state type     | `src/common/types/State.type.ts` |
+| Dark-mode boot script | `src/darkModeBoot.ts`            |
+| Dark-mode stylesheet  | `src/css/darkMode.css`           |
 
 | Comparison product | `src/common/types/PriceComparisonProduct.type.ts` |
 | Ad handler interface | `src/handlers/common/interfaces/adHandler.interface.ts` |
