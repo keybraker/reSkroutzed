@@ -56,9 +56,10 @@
 @media (max-width: 768px) {
   .universal-toggle-container {
     bottom: 72px !important;
-    left: 15px !important;
+    right: 15px !important;
+    left: auto !important;
     flex-direction: column-reverse !important;
-    align-items: flex-start !important;
+    align-items: flex-end !important;
     justify-content: flex-end !important;
   }
 }
@@ -223,21 +224,18 @@
 @media (max-width: 768px) {
   .toggle-buttons-container {
     flex-direction: column !important;
-    left: 0 !important;
+    right: 0 !important;
+    left: auto !important;
     bottom: 60px !important;
-    padding: 58px 6px 6px 6px !important;
+    /* The bar stacks above the FAB, so it never needs the 58px notch that
+       makes room for the FAB on the horizontal bar. */
+    padding: 6px !important;
     transform-origin: bottom center !important;
     transform: scale(0.96) !important;
   }
 
   .menu-open .toggle-buttons-container {
     transform: scale(1) !important;
-  }
-
-  /* Stacked bar: the divider becomes a horizontal hairline */
-  .toggle-separator {
-    width: 24px !important;
-    height: 1px !important;
   }
 }
 
@@ -348,6 +346,15 @@
   height: 24px !important;
   background: var(--ut-btn-border) !important;
   border-radius: 1px !important;
+}
+
+/* Mobile: the stacked bar turns the divider into a horizontal hairline.
+   This must come after the base rule above to win the cascade. */
+@media (max-width: 768px) {
+  .toggle-separator {
+    width: 24px !important;
+    height: 1px !important;
+  }
 }
 
 /* ---------- DARK MODE OVERRIDES (skroutz.gr dark mode hardening) ---------- */
