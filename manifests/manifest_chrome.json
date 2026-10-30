@@ -3,7 +3,7 @@
   "short_name": "reSkroutzed",
   "description": "__MSG_extDescription__",
   "default_locale": "en",
-  "version": "2.4.4",
+  "version": "2.5.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
