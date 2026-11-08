@@ -82,6 +82,70 @@ describe('WideModeDecorator', () => {
       expect(style!.textContent).toContain('.resk-wide-mode');
     });
 
+    it('should not contain any rules outside the 1600px breakpoint', () => {
+      // Act
+      decorator.execute();
+
+      // Assert — everything wide-mode-specific lives inside the media query,
+      // so screens below 1600px render exactly as Skroutz ships them.
+      const text = document.getElementById('resk-wide-mode-style')!.textContent!;
+      const mediaStart = text.indexOf('@media (min-width: 1600px)');
+      expect(mediaStart).toBeGreaterThan(-1);
+      expect(text.slice(0, mediaStart)).not.toContain('.resk-wide-mode');
+    });
+
+    it('should cap the widened content and keep a viewport gutter', () => {
+      // Act
+      decorator.execute();
+
+      // Assert
+      const text = document.getElementById('resk-wide-mode-style')!.textContent!;
+      expect(text).toContain('min(3040px, calc(100% - clamp(48px, 4vw, 192px)))');
+      expect(text).toContain('.resk-wide-mode .content:not(.specs-container)');
+    });
+
+    it('should let the listing grid add columns instead of stretching cards', () => {
+      // Act
+      decorator.execute();
+
+      // Assert
+      const text = document.getElementById('resk-wide-mode-style')!.textContent!;
+      expect(text).toContain('grid-template-columns: repeat(auto-fill, minmax(260px, 1fr))');
+    });
+
+    it('should keep long-form sections at a readable measure', () => {
+      // Act
+      decorator.execute();
+
+      // Assert
+      const text = document.getElementById('resk-wide-mode-style')!.textContent!;
+      expect(text).toContain('.resk-wide-mode .reviews-container.content');
+      expect(text).toContain('.resk-wide-mode .qna-sku-section.content');
+      expect(text).toContain('min(1500px, calc(100% - clamp(48px, 4vw, 192px)))');
+      expect(text).toContain('.resk-wide-mode .reviews-ai-summary');
+    });
+
+    it('should not remove the native review body or specs caps', () => {
+      // Act
+      decorator.execute();
+
+      // Assert
+      const text = document.getElementById('resk-wide-mode-style')!.textContent!;
+      expect(text).not.toContain('.resk-wide-mode .review-body');
+      expect(text).not.toContain('.resk-wide-mode .js-review-body-content');
+      expect(text).not.toContain('.resk-wide-mode .simple-description');
+      expect(text).not.toContain('.resk-wide-mode .js-description-html');
+    });
+
+    it('should not use a raw percentage width that can under- or over-shoot', () => {
+      // Act
+      decorator.execute();
+
+      // Assert
+      const text = document.getElementById('resk-wide-mode-style')!.textContent!;
+      expect(text).not.toContain('80%');
+    });
+
     it('should be idempotent — calling execute twice does not duplicate style', () => {
       // Act
       decorator.execute();

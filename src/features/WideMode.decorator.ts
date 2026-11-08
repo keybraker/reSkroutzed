@@ -58,117 +58,56 @@ export class WideModeDecorator implements FeatureInstance {
   private getStyleContent(): string {
     return `
       @media (min-width: 1600px) {
-      .resk-wide-mode .content {
-        max-width: 80% !important;
-      }
-      .resk-wide-mode .main-content {
-        width: auto !important;
-      }
-      .resk-wide-mode .listing-list {
-        width: auto !important;
-      }
-      .resk-wide-mode .page-title-wrapper {
-        width: auto !important;
-      }
-      .resk-wide-mode .controls-wrapper {
-        width: auto !important;
-      }
-      .resk-wide-mode .filter-tags-wrapper {
-        width: auto !important;
-      }
-      .resk-wide-mode .top-section {
-        max-width: 80% !important;
-      }
-      .resk-wide-mode .main-sidebar {
-        max-width: 80% !important;
-      }
-      .resk-wide-mode .sidebar-overlay {
-        max-width: 80% !important;
-      }
-      .resk-wide-mode footer .content {
-        max-width: 80% !important;
-      }
-      .resk-wide-mode .content-scrollable {
-        max-width: none !important;
-      }
-      .resk-wide-mode .sticky-wrapper {
-        max-width: none !important;
-      }
-      .resk-wide-mode #sku-list {
-        width: auto !important;
-      }
-      .resk-wide-mode .site-header .content {
-        max-width: 80% !important;
-      }
-      .resk-wide-mode .simple-description {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .js-description-html {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .review-body {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .js-review-body-content {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .js-slidable {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .tl-shelf {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .tl-shelf-content {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .tl-shelf-wrapper {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .js-timeline-card {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .navigation-menu {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .scrollable {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .tiles-shelf {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .timeline-card {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .tracking-img-container {
-        max-width: none !important;
-        width: auto !important;
-      }
-      .resk-wide-mode .details-wrapper {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-      }
-      .resk-wide-mode .rich-components {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-      }
-      .resk-wide-mode .rich-components .inner-item {
-        align-self: center !important;
-      }
+        /*
+         * Skroutz caps main layout containers at 1500px. Wide mode raises the
+         * cap, but keeps a viewport-relative gutter so ultrawides do not turn
+         * product cards into giant tiles and leave no breathing room.
+         */
+        .resk-wide-mode .content:not(.specs-container) {
+          width: min(3040px, calc(100% - clamp(48px, 4vw, 192px))) !important;
+          max-width: min(3040px, calc(100% - clamp(48px, 4vw, 192px))) !important;
+        }
+
+        /*
+         * These already fill their parent once .content is widened, so drop
+         * any Skroutz max-width that would keep them narrow.
+         */
+        .resk-wide-mode .main-content,
+        .resk-wide-mode .listing-list,
+        .resk-wide-mode .page-title-wrapper,
+        .resk-wide-mode .controls-wrapper,
+        .resk-wide-mode .filter-tags-wrapper,
+        .resk-wide-mode #sku-list {
+          width: auto !important;
+          max-width: none !important;
+        }
+
+        /*
+         * Skroutz pins the listing to four columns from 1326px up. Let the
+         * grid add columns as the content widens while keeping card sizes
+         * near the native 250-290px range.
+         */
+        .resk-wide-mode .listing-list {
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+        }
+
+        /*
+         * Long-form areas keep a comfortable reading measure. The native
+         * review body (910px) and specs container (1070px) caps are left
+         * untouched on purpose.
+         */
+        .resk-wide-mode .reviews-container.content,
+        .resk-wide-mode .reviews-aggregation.content,
+        .resk-wide-mode .qna-sku-section.content {
+          width: min(1500px, calc(100% - clamp(48px, 4vw, 192px))) !important;
+          max-width: min(1500px, calc(100% - clamp(48px, 4vw, 192px))) !important;
+          margin-inline: auto !important;
+        }
+
+        .resk-wide-mode .reviews-ai-summary {
+          max-width: 1070px !important;
+          margin-inline: auto !important;
+        }
       }
     `;
   }
