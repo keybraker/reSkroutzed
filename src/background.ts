@@ -300,18 +300,14 @@ function isStorageKey(key: string): key is StorageKey {
 }
 
 function applyUniversalToggleVisibility(): void {
-  const existing = document.querySelector('.universal-toggle-container');
-
   if (state.hideUniversalToggle) {
-    if (existing?.parentElement) {
-      existing.parentElement.removeChild(existing);
-    }
+    universalToggleDecorator.destroy();
     return;
   }
 
-  if (!existing) {
-    new UniversalToggleDecorator(state).execute();
-  }
+  // Reuse the single instance: constructing a new one per storage change used
+  // to leave its document listener behind on every call.
+  universalToggleDecorator.execute();
 }
 
 function refreshPriceChecker(): void {

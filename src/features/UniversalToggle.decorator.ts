@@ -29,6 +29,22 @@ import { WideModeDecorator } from './WideMode.decorator';
 export class UniversalToggleDecorator implements FeatureInstance {
   private isMenuOpen: boolean = false;
   private state: State;
+  private container: HTMLElement | null = null;
+
+  /**
+   * Bound once so `destroy()` can remove exactly the listener `execute()` added.
+   * Registering a new closure per `execute()` leaked a listener into the tab's
+   * lifetime every time the toggle was re-created after a storage change.
+   */
+  private readonly handleDocumentClick = (event: MouseEvent): void => {
+    const { container } = this;
+
+    if (this.isMenuOpen && container && !container.contains(event.target as Node)) {
+      this.closeMenu(container);
+    }
+  };
+
+  private isDocumentClickListenerBound = false;
 
   private readonly videoHandler: VideoAdHandler;
   private readonly listProductAdHandler: ListProductAdHandler;
@@ -73,8 +89,16 @@ export class UniversalToggleDecorator implements FeatureInstance {
     if (this.state.hideUniversalToggle) {
       return;
     }
+
+    // Idempotent: a storage change can ask for the toggle again while it is
+    // already on the page.
+    if (this.container?.isConnected) {
+      return;
+    }
+
     const container = document.createElement('div');
     container.classList.add('universal-toggle-container');
+    this.container = container;
 
     const mainToggle = document.createElement('button');
     mainToggle.classList.add('universal-toggle-button');
@@ -113,16 +137,27 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     mainToggle.addEventListener('click', () => this.toggleMenu(container));
 
-    document.addEventListener('click', (event) => {
-      if (this.isMenuOpen && !container.contains(event.target as Node)) {
-        this.closeMenu(container);
-      }
-    });
+    if (!this.isDocumentClickListenerBound) {
+      document.addEventListener('click', this.handleDocumentClick);
+      this.isDocumentClickListenerBound = true;
+    }
 
     DomClient.appendElementToElement(buttonsContainer, container);
     DomClient.appendElementToElement(mainToggle, container);
 
     DomClient.appendElementToElement(container, DomClient.getDom().body);
+  }
+
+  /** Removes the toggle and the document listener it registered. */
+  public destroy(): void {
+    if (this.isDocumentClickListenerBound) {
+      document.removeEventListener('click', this.handleDocumentClick);
+      this.isDocumentClickListenerBound = false;
+    }
+
+    this.container?.remove();
+    this.container = null;
+    this.isMenuOpen = false;
   }
 
   private toggleMenu(container: HTMLElement): void {
