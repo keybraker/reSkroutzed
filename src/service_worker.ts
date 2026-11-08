@@ -76,6 +76,10 @@ chrome.runtime.onMessage.addListener(
       try {
         const requestUrl = new URL(request.url);
 
+        if (requestUrl.protocol !== 'https:') {
+          throw new Error(`Only HTTPS ${providerLabel} requests are allowed`);
+        }
+
         if (!ALLOWED_HOSTS[request.action](requestUrl.hostname)) {
           throw new Error(`Only ${providerLabel} requests are allowed`);
         }
