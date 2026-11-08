@@ -44,23 +44,6 @@ function syncPriceRowState(isPriceCheckerEnabled: boolean): void {
   getButton('updatePriceBtn').disabled = !isPriceCheckerEnabled;
 }
 
-/**
- * Send a toggle message to the active tab. Silently ignores tabs that do not
- * have the content script injected (e.g. non-Skroutz pages).
- */
-function sendMessageToActiveTab(action: string, value: boolean | number): void {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    const tabId = tabs[0]?.id;
-    if (tabId === undefined) {
-      return;
-    }
-
-    chrome.tabs.sendMessage(tabId, { action, value }, () => {
-      void chrome.runtime.lastError;
-    });
-  });
-}
-
 function loadSettings(): void {
   getBool(StorageKey.DARK_MODE, false, (value) => {
     getInput('toggleDarkMode').checked = value;
@@ -142,7 +125,6 @@ function setupEventListeners(): void {
   darkModeToggle.addEventListener('change', () => {
     const isDarkMode = darkModeToggle.checked;
     setStorageValue(StorageKey.DARK_MODE, isDarkMode);
-    sendMessageToActiveTab('toggleDarkMode', isDarkMode);
 
     document.body.classList.toggle('light-popup', !isDarkMode);
   });
@@ -151,7 +133,6 @@ function setupEventListeners(): void {
   wideModeToggle.addEventListener('change', () => {
     const isWideMode = wideModeToggle.checked;
     setStorageValue(StorageKey.WIDE_MODE, isWideMode);
-    sendMessageToActiveTab('toggleWideMode', isWideMode);
   });
 
   const universalToggle = getInput('toggleUniversalToggle');
@@ -159,63 +140,54 @@ function setupEventListeners(): void {
     const showUniversal = universalToggle.checked;
     const hideUniversal = !showUniversal;
     setStorageValue(StorageKey.UNIVERSAL_TOGGLE_VISIBILITY, hideUniversal);
-    sendMessageToActiveTab('toggleUniversalToggle', hideUniversal);
   });
 
   const adsToggle = getInput('toggleAds');
   adsToggle.addEventListener('change', () => {
     const hideAds = !adsToggle.checked;
     setStorageValue(StorageKey.PRODUCT_AD_VISIBILITY, hideAds);
-    sendMessageToActiveTab('toggleProductAds', hideAds);
   });
 
   const videosToggle = getInput('toggleVideos');
   videosToggle.addEventListener('change', () => {
     const hideVideos = !videosToggle.checked;
     setStorageValue(StorageKey.VIDEO_AD_VISIBILITY, hideVideos);
-    sendMessageToActiveTab('toggleVideoAds', hideVideos);
   });
 
   const shelvesToggle = getInput('toggleShelves');
   shelvesToggle.addEventListener('change', () => {
     const hideShelves = !shelvesToggle.checked;
     setStorageValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, hideShelves);
-    sendMessageToActiveTab('toggleShelfProductAds', hideShelves);
   });
 
   const recommendationsToggle = getInput('toggleRecommendations');
   recommendationsToggle.addEventListener('change', () => {
     const hideRecommendations = !recommendationsToggle.checked;
     setStorageValue(StorageKey.RECOMMENDATION_AD_VISIBILITY, hideRecommendations);
-    sendMessageToActiveTab('toggleRecommendationAds', hideRecommendations);
   });
 
   const skoopToggle = getInput('toggleSkoop');
   skoopToggle.addEventListener('change', () => {
     const hideSkoop = !skoopToggle.checked;
     setStorageValue(StorageKey.SKOOP_AD_VISIBILITY, hideSkoop);
-    sendMessageToActiveTab('toggleSkoopAds', hideSkoop);
   });
 
   const aiSlopToggle = getInput('toggleAISlop');
   aiSlopToggle.addEventListener('change', () => {
     const hideAISlop = aiSlopToggle.checked;
     setStorageValue(StorageKey.AI_SLOP_VISIBILITY, hideAISlop);
-    sendMessageToActiveTab('toggleAISlop', hideAISlop);
   });
 
   const sponsorshipsToggle = getInput('toggleSponsorships');
   sponsorshipsToggle.addEventListener('change', () => {
     const hideSponsorships = !sponsorshipsToggle.checked;
     setStorageValue(StorageKey.SPONSORSHIP_VISIBILITY, hideSponsorships);
-    sendMessageToActiveTab('toggleSponsorships', hideSponsorships);
   });
 
   const priceCheckerToggle = getInput('togglePriceChecker');
   priceCheckerToggle.addEventListener('change', () => {
     const isPriceCheckerEnabled = priceCheckerToggle.checked;
     setStorageValue(StorageKey.PRICE_CHECKER_ENABLED, isPriceCheckerEnabled);
-    sendMessageToActiveTab('togglePriceChecker', isPriceCheckerEnabled);
     syncPriceRowState(isPriceCheckerEnabled);
   });
 
@@ -223,14 +195,12 @@ function setupEventListeners(): void {
   bestPriceToggle.addEventListener('change', () => {
     const showBestPrice = bestPriceToggle.checked;
     setStorageValue(StorageKey.BEST_PRICE_COMPARISON, showBestPrice);
-    sendMessageToActiveTab('toggleBestPrice', showBestPrice);
   });
 
   const shopflixToggle = getInput('toggleShopflix');
   shopflixToggle.addEventListener('change', () => {
     const showShopflix = shopflixToggle.checked;
     setStorageValue(StorageKey.SHOPFLIX_COMPARISON, showShopflix);
-    sendMessageToActiveTab('toggleShopflix', showShopflix);
   });
 
   const priceInput = getInput('priceDifference');
@@ -241,7 +211,6 @@ function setupEventListeners(): void {
     }
 
     setStorageValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, priceDifference);
-    sendMessageToActiveTab('updatePriceDifference', priceDifference);
 
     const button = getButton('updatePriceBtn');
     const originalText = button.textContent;

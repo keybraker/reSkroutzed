@@ -1,4 +1,4 @@
-import { BrowserClient, StorageKey } from './clients/browser/client';
+import { BrowserClient, StorageKey, StorageValueType } from './clients/browser/client';
 import { Language } from './common/enums/Language.enum';
 import {
   AI_HIDE_CLASS,
@@ -232,111 +232,87 @@ const wideModeDecorator = new WideModeDecorator(state);
   });
 })();
 
-chrome.runtime.onMessage.addListener(
-  (
-    request: { action: string; value?: boolean | number },
-    sender: chrome.runtime.MessageSender,
-    sendResponse: (response: { success: boolean }) => void,
-  ) => {
-    if (request.action === 'toggleDarkMode' && request.value !== undefined) {
-      state.darkMode = request.value as boolean;
-      BrowserClient.setValue(StorageKey.DARK_MODE, state.darkMode);
-      themeSync(state);
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleProductAds' && request.value !== undefined) {
-      state.hideProductAds = request.value as boolean;
-      BrowserClient.setValue(StorageKey.PRODUCT_AD_VISIBILITY, state.hideProductAds);
-      listProductAdHandler.visibilityUpdate();
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleVideoAds' && request.value !== undefined) {
-      state.hideVideoAds = request.value as boolean;
-      BrowserClient.setValue(StorageKey.VIDEO_AD_VISIBILITY, state.hideVideoAds);
-      videoAdHandler.visibilityUpdate();
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleShelfProductAds' && request.value !== undefined) {
-      state.hideShelfProductAds = request.value as boolean;
-      BrowserClient.setValue(StorageKey.SHELF_PRODUCT_AD_VISIBILITY, state.hideShelfProductAds);
-      shelfProductAdHandler.visibilityUpdate();
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleRecommendationAds' && request.value !== undefined) {
-      state.hideRecommendationAds = request.value as boolean;
-      BrowserClient.setValue(StorageKey.RECOMMENDATION_AD_VISIBILITY, state.hideRecommendationAds);
-      recommendationAdHandler.visibilityUpdate();
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleSkoopAds' && request.value !== undefined) {
-      state.hideSkoopAds = request.value as boolean;
-      BrowserClient.setValue(StorageKey.SKOOP_AD_VISIBILITY, state.hideSkoopAds);
-      skoopHandler.visibilityUpdate();
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleSponsorships' && request.value !== undefined) {
-      state.hideSponsorships = request.value as boolean;
-      BrowserClient.setValue(StorageKey.SPONSORSHIP_VISIBILITY, state.hideSponsorships);
-      sponsorshipAdHandler.visibilityUpdate();
-      campaignAdHandler.visibilityUpdate();
-      sendResponse({ success: true });
-    } else if (request.action === 'updatePriceDifference' && request.value !== undefined) {
-      state.minimumPriceDifference = request.value as number;
-      BrowserClient.setValue(StorageKey.MINIMUM_PRICE_DIFFERENCE, state.minimumPriceDifference);
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleBestPrice' && request.value !== undefined) {
-      state.showBestPrice = request.value as boolean;
-      BrowserClient.setValue(StorageKey.BEST_PRICE_COMPARISON, state.showBestPrice);
+const STORAGE_KEY_SET = new Set<string>(Object.values(StorageKey));
 
-      if (state.priceCheckerEnabled) {
-        priceCheckerIndicator.destroy();
-        void priceCheckerIndicator.execute();
-      }
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleShopflix' && request.value !== undefined) {
-      state.showShopflix = request.value as boolean;
-      BrowserClient.setValue(StorageKey.SHOPFLIX_COMPARISON, state.showShopflix);
+function isStorageKey(key: string): key is StorageKey {
+  return STORAGE_KEY_SET.has(key);
+}
 
-      if (state.priceCheckerEnabled) {
-        priceCheckerIndicator.destroy();
-        void priceCheckerIndicator.execute();
-      }
-      sendResponse({ success: true });
-    } else if (request.action === 'togglePriceChecker' && request.value !== undefined) {
-      state.priceCheckerEnabled = request.value as boolean;
-      BrowserClient.setValue(StorageKey.PRICE_CHECKER_ENABLED, state.priceCheckerEnabled);
+function applyUniversalToggleVisibility(): void {
+  const existing = document.querySelector('.universal-toggle-container');
 
-      if (state.priceCheckerEnabled) {
-        void priceCheckerIndicator.execute();
-      } else {
-        priceCheckerIndicator.destroy();
-      }
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleUniversalToggle' && request.value !== undefined) {
-      state.hideUniversalToggle = request.value as boolean;
-      BrowserClient.setValue(StorageKey.UNIVERSAL_TOGGLE_VISIBILITY, state.hideUniversalToggle);
-
-      // Hide/show the toggle widget
-      const existing = document.querySelector('.universal-toggle-container');
-      if (state.hideUniversalToggle) {
-        if (existing && existing.parentElement) {
-          existing.parentElement.removeChild(existing);
-        }
-      } else {
-        if (!existing) {
-          const newToggleDecorator = new UniversalToggleDecorator(state);
-          newToggleDecorator.execute();
-        }
-      }
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleAISlop' && request.value !== undefined) {
-      state.hideAISlop = request.value as boolean;
-      BrowserClient.setValue(StorageKey.AI_SLOP_VISIBILITY, state.hideAISlop);
-      // Apply immediately, then again to catch late inserts
-      applyAISlopVisibility();
-      setTimeout(applyAISlopVisibility, 300);
-      sendResponse({ success: true });
-    } else if (request.action === 'toggleWideMode' && request.value !== undefined) {
-      state.wideMode = request.value as boolean;
-      BrowserClient.setValue(StorageKey.WIDE_MODE, state.wideMode);
-      wideModeDecorator.sync();
-      sendResponse({ success: true });
+  if (state.hideUniversalToggle) {
+    if (existing?.parentElement) {
+      existing.parentElement.removeChild(existing);
     }
+    return;
+  }
 
-    return true;
+  if (!existing) {
+    new UniversalToggleDecorator(state).execute();
+  }
+}
+
+function refreshPriceChecker(): void {
+  priceCheckerIndicator.destroy();
+
+  if (state.priceCheckerEnabled) {
+    void priceCheckerIndicator.execute();
+  }
+}
+
+/**
+ * What each setting needs re-applied after it changes. The value lives in
+ * `state` by then, so handlers only have to re-read it.
+ */
+const STORAGE_CHANGE_HANDLERS: Partial<Record<StorageKey, () => void>> = {
+  [StorageKey.DARK_MODE]: () => themeSync(state),
+  [StorageKey.WIDE_MODE]: () => wideModeDecorator.sync(),
+  [StorageKey.UNIVERSAL_TOGGLE_VISIBILITY]: applyUniversalToggleVisibility,
+  [StorageKey.PRODUCT_AD_VISIBILITY]: () => listProductAdHandler.visibilityUpdate(),
+  [StorageKey.VIDEO_AD_VISIBILITY]: () => videoAdHandler.visibilityUpdate(),
+  [StorageKey.SHELF_PRODUCT_AD_VISIBILITY]: () => shelfProductAdHandler.visibilityUpdate(),
+  [StorageKey.RECOMMENDATION_AD_VISIBILITY]: () => recommendationAdHandler.visibilityUpdate(),
+  [StorageKey.SKOOP_AD_VISIBILITY]: () => skoopHandler.visibilityUpdate(),
+  [StorageKey.SPONSORSHIP_VISIBILITY]: () => {
+    sponsorshipAdHandler.visibilityUpdate();
+    campaignAdHandler.visibilityUpdate();
   },
-);
+  [StorageKey.AI_SLOP_VISIBILITY]: () => {
+    // Apply immediately, then again to catch late inserts.
+    applyAISlopVisibility();
+    setTimeout(applyAISlopVisibility, 300);
+  },
+  [StorageKey.PRICE_CHECKER_ENABLED]: refreshPriceChecker,
+  [StorageKey.BEST_PRICE_COMPARISON]: refreshPriceChecker,
+  [StorageKey.SHOPFLIX_COMPARISON]: refreshPriceChecker,
+};
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== 'local') {
+    return;
+  }
+
+  const changedKeys = Object.keys(changes).filter(isStorageKey);
+
+  if (changedKeys.length === 0) {
+    return;
+  }
+
+  // Keep the synchronous localStorage mirror fresh, so later reads (and the
+  // dark-mode boot script on the next page load) see the new value.
+  changedKeys.forEach((key) => {
+    const newValue = changes[key].newValue;
+    if (newValue !== undefined) {
+      BrowserClient.syncMirror(key, newValue as StorageValueType);
+    }
+  });
+
+  // Reload every setting in one pass so the handlers below read a consistent
+  // state rather than a half-updated one.
+  loadStorage();
+
+  changedKeys.forEach((key) => {
+    STORAGE_CHANGE_HANDLERS[key]?.();
+  });
+});

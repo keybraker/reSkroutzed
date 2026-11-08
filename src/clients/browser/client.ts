@@ -208,11 +208,24 @@ export class BrowserClient {
    * @param value The value to store
    */
   public static setValue<T extends StorageValueType>(key: StorageKey, value: T): void {
-    localStorage.setItem(key, value.toString());
+    this.syncMirror(key, value);
 
     const data: { [key: string]: unknown } = {};
     data[key] = value;
     chrome.storage.local.set(data);
+  }
+
+  /**
+   * Update only the localStorage mirror, without writing chrome.storage.
+   *
+   * Storage change listeners already know the new value (they received it from
+   * chrome.storage), so writing it back would only risk an onChanged loop.
+   *
+   * @param key The key to update
+   * @param value The new value for the mirror
+   */
+  public static syncMirror<T extends StorageValueType>(key: StorageKey, value: T): void {
+    localStorage.setItem(key, value.toString());
   }
 
   /**
