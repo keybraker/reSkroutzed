@@ -16,6 +16,7 @@ export enum StorageKey {
   MINIMUM_PRICE_DIFFERENCE = STORAGE_KEY_PREFIX + '-minimum-difference',
   AI_SLOP_VISIBILITY = STORAGE_KEY_PREFIX + '-ai-slop-visibility',
   WIDE_MODE = STORAGE_KEY_PREFIX + '-wide-mode',
+  CALM_MODE = STORAGE_KEY_PREFIX + '-calm-mode',
   PRICE_CHECKER_ENABLED = STORAGE_KEY_PREFIX + '-price-checker-enabled',
   BEST_PRICE_COMPARISON = STORAGE_KEY_PREFIX + '-bestprice-comparison',
   SHOPFLIX_COMPARISON = STORAGE_KEY_PREFIX + '-shopflix-comparison',
@@ -35,6 +36,8 @@ const STORAGE_DEFAULTS: { [key in StorageKey]?: StorageValueType } = {
   // false means AI content (sofos*) is visible by default
   [StorageKey.AI_SLOP_VISIBILITY]: false,
   [StorageKey.WIDE_MODE]: false,
+  // false means the homepage feed is shown by default
+  [StorageKey.CALM_MODE]: false,
   // true means the price checker runs on product pages by default
   [StorageKey.PRICE_CHECKER_ENABLED]: true,
   // BestPrice is compared by default

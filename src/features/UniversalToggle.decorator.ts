@@ -9,9 +9,11 @@ import { ShelfProductAdHandler } from '../handlers/ShelfProductAd.handler';
 import { SkoopHandler } from '../handlers/Skoop.handler';
 import { SponsorshipAdHandler } from '../handlers/SponsorshipAd.handler';
 import { VideoAdHandler } from '../handlers/VideoAd.handler';
+import { CalmModeDecorator } from './CalmMode.decorator';
 import { FeatureInstance } from './common/FeatureInstance';
 import { createAdToggleButton } from './functions/createAdToggleButton';
 import { createAISlopToggleButton } from './functions/createAISlopToggleButton';
+import { createCalmModeToggleButton } from './functions/createCalmModeToggleButton';
 import { createDarkModeToggleButton } from './functions/createDarkModeToggleButton';
 import { createLogoElement } from './functions/createLogoElement';
 import { createRecommendationAdToggleButton } from './functions/createRecommendationAdToggleButton';
@@ -36,6 +38,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
   private readonly skoopHandler: SkoopHandler;
   private readonly campaignAdHandler: CampaignAdHandler;
   private readonly wideModeDecorator: WideModeDecorator;
+  private readonly calmModeDecorator: CalmModeDecorator;
 
   constructor(state: State) {
     this.state = state;
@@ -48,12 +51,14 @@ export class UniversalToggleDecorator implements FeatureInstance {
     this.skoopHandler = new SkoopHandler(this.state);
     this.campaignAdHandler = new CampaignAdHandler(this.state);
     this.wideModeDecorator = new WideModeDecorator(this.state);
+    this.calmModeDecorator = new CalmModeDecorator(this.state);
   }
 
   private get toggleContext(): ToggleButtonContext {
     return {
       state: this.state,
       wideModeDecorator: this.wideModeDecorator,
+      calmModeDecorator: this.calmModeDecorator,
       videoHandler: this.videoHandler,
       listProductAdHandler: this.listProductAdHandler,
       recommendationAdHandler: this.recommendationAdHandler,
@@ -85,6 +90,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     const darkModeButton = createDarkModeToggleButton(ctx);
     const appearanceSeparator = createToggleSeparator();
     const wideModeButton = createWideModeToggleButton(ctx);
+    const calmModeButton = createCalmModeToggleButton(ctx);
     const adToggleButton = createAdToggleButton(ctx);
     const videoToggleButton = createVideoToggleButton(ctx);
     const sponsorshipToggleButton = createSponsorshipToggleButton(ctx);
@@ -95,6 +101,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
 
     DomClient.appendElementToElement(darkModeButton, buttonsContainer);
     DomClient.appendElementToElement(wideModeButton, buttonsContainer);
+    DomClient.appendElementToElement(calmModeButton, buttonsContainer);
     DomClient.appendElementToElement(appearanceSeparator, buttonsContainer);
     DomClient.appendElementToElement(adToggleButton, buttonsContainer);
     DomClient.appendElementToElement(videoToggleButton, buttonsContainer);
@@ -145,6 +152,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
       StorageKey.SPONSORSHIP_VISIBILITY,
       StorageKey.AI_SLOP_VISIBILITY,
       StorageKey.WIDE_MODE,
+      StorageKey.CALM_MODE,
       StorageKey.MINIMUM_PRICE_DIFFERENCE,
     ]);
 
@@ -157,6 +165,7 @@ export class UniversalToggleDecorator implements FeatureInstance {
     this.state.hideSponsorships = values[StorageKey.SPONSORSHIP_VISIBILITY] as boolean;
     this.state.hideAISlop = values[StorageKey.AI_SLOP_VISIBILITY] as boolean;
     this.state.wideMode = values[StorageKey.WIDE_MODE] as boolean;
+    this.state.calmMode = values[StorageKey.CALM_MODE] as boolean;
     this.state.minimumPriceDifference = values[StorageKey.MINIMUM_PRICE_DIFFERENCE] as number;
 
     this.updateUIFromState();
@@ -184,6 +193,12 @@ export class UniversalToggleDecorator implements FeatureInstance {
     if (wideModeButton) {
       wideModeButton.classList.toggle('active', this.state.wideMode);
       wideModeButton.title = this.state.wideMode ? 'Disable Wide Mode' : 'Enable Wide Mode';
+    }
+
+    const calmModeButton = container.querySelector('.calm-mode-option') as HTMLButtonElement;
+    if (calmModeButton) {
+      calmModeButton.classList.toggle('active', this.state.calmMode);
+      calmModeButton.title = this.state.calmMode ? 'Disable Calm Mode' : 'Enable Calm Mode';
     }
 
     const adToggleButton = container.querySelector('.ad-toggle-option') as HTMLButtonElement;

@@ -11,6 +11,8 @@ export type State = {
   hideAISlop: boolean;
   // ui
   hideUniversalToggle: boolean;
+  /** Removes the infinite-scroll feed from the Skroutz homepage. */
+  calmMode: boolean;
   // counters
   productAdCount: number;
   shelfAdCount: number;

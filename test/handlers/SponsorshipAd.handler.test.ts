@@ -34,6 +34,7 @@ describe('SponsorshipAdHandler', () => {
       hideSkoopAds: false,
       hideAISlop: false,
       wideMode: false,
+      calmMode: false,
       hideUniversalToggle: false,
       productAdCount: 0,
       shelfAdCount: 0,

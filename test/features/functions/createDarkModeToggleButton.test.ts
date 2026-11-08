@@ -28,6 +28,11 @@ describe('createDarkModeToggleButton', () => {
       execute: vi.fn(),
       destroy: vi.fn(),
     },
+    calmModeDecorator: {
+      sync: vi.fn(),
+      execute: vi.fn(),
+      destroy: vi.fn(),
+    },
     // The dark-mode factory only touches `state`, so handlers can be stubs.
     videoHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
     listProductAdHandler: { flag: vi.fn(), visibilityUpdate: vi.fn() },
@@ -59,6 +64,7 @@ describe('createDarkModeToggleButton', () => {
       language: Language.ENGLISH,
       darkMode: false,
       wideMode: false,
+      calmMode: false,
       priceCheckerEnabled: true,
       minimumPriceDifference: 0,
       showBestPrice: true,

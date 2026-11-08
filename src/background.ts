@@ -7,6 +7,7 @@ import {
 } from './common/functions/aiSlop';
 import { onBodyMutations } from './common/functions/bodyMutationObserver';
 import { State } from './common/types/State.type';
+import { CalmModeDecorator } from './features/CalmMode.decorator';
 import { FinalPriceFixerDecorator } from './features/FinalPriceFixer.decorator';
 import { LogoHatDecorator } from './features/LogoHat.decorator';
 import { PriceCheckerDecorator } from './features/PriceChecker.decorator';
@@ -30,6 +31,7 @@ const state: State = {
   hideSkoopAds: false,
   hideAISlop: false,
   hideUniversalToggle: false,
+  calmMode: false,
   language: Language.GREEK,
   productAdCount: 0,
   shelfAdCount: 0,
@@ -85,6 +87,7 @@ function loadStorage(): void {
   );
   state.hideAISlop = BrowserClient.getValue<boolean>(StorageKey.AI_SLOP_VISIBILITY);
   state.wideMode = BrowserClient.getValue<boolean>(StorageKey.WIDE_MODE);
+  state.calmMode = BrowserClient.getValue<boolean>(StorageKey.CALM_MODE);
   state.isMobile = BrowserClient.detectMobile();
 }
 
@@ -104,6 +107,7 @@ const finalPriceFixerDecorator = new FinalPriceFixerDecorator(state);
 const universalToggleDecorator = new UniversalToggleDecorator(state);
 const logoHatDecorator = new LogoHatDecorator();
 const wideModeDecorator = new WideModeDecorator(state);
+const calmModeDecorator = new CalmModeDecorator(state);
 
 /** Guards against starting the price checker twice when hydrate lands early. */
 let priceCheckerStarted = false;
@@ -129,6 +133,7 @@ function startPriceChecker(): void {
     }
     logoHatDecorator.execute();
     wideModeDecorator.sync();
+    calmModeDecorator.sync();
 
     flagContent();
     toggleVisibility();
@@ -278,6 +283,7 @@ const STATE_FIELD_STORAGE_KEYS: Partial<Record<keyof State, StorageKey>> = {
   hideUniversalToggle: StorageKey.UNIVERSAL_TOGGLE_VISIBILITY,
   darkMode: StorageKey.DARK_MODE,
   wideMode: StorageKey.WIDE_MODE,
+  calmMode: StorageKey.CALM_MODE,
   priceCheckerEnabled: StorageKey.PRICE_CHECKER_ENABLED,
   minimumPriceDifference: StorageKey.MINIMUM_PRICE_DIFFERENCE,
   showBestPrice: StorageKey.BEST_PRICE_COMPARISON,
@@ -316,6 +322,7 @@ function reconcileAfterHydrate(): void {
 const STORAGE_CHANGE_HANDLERS: Partial<Record<StorageKey, () => void>> = {
   [StorageKey.DARK_MODE]: () => themeSync(state),
   [StorageKey.WIDE_MODE]: () => wideModeDecorator.sync(),
+  [StorageKey.CALM_MODE]: () => calmModeDecorator.sync(),
   [StorageKey.UNIVERSAL_TOGGLE_VISIBILITY]: applyUniversalToggleVisibility,
   [StorageKey.PRODUCT_AD_VISIBILITY]: () => listProductAdHandler.visibilityUpdate(),
   [StorageKey.VIDEO_AD_VISIBILITY]: () => videoAdHandler.visibilityUpdate(),

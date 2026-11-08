@@ -124,6 +124,7 @@ describe('PriceCheckerDecorator', () => {
     hideSkoopAds: false,
     hideAISlop: false,
     wideMode: false,
+    calmMode: false,
     hideUniversalToggle: false,
     hideSponsorships: false,
     priceCheckerEnabled: true,

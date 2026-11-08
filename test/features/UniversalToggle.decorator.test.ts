@@ -24,6 +24,7 @@ vi.mock('../../src/clients/browser/client', () => ({
     MINIMUM_PRICE_DIFFERENCE: 'minimumPriceDifference',
     AI_SLOP_VISIBILITY: 'hideAISlop',
     WIDE_MODE: 'wideMode',
+    CALM_MODE: 'calmMode',
   },
 }));
 
@@ -31,6 +32,15 @@ vi.mock('../../src/clients/browser/client', () => ({
 vi.mock('../../src/features/WideMode.decorator', () => ({
   WideModeDecorator: vi.fn().mockImplementation(() => ({
     visibilityUpdate: vi.fn(),
+    execute: vi.fn(),
+    destroy: vi.fn(),
+  })),
+}));
+
+// Mock CalmModeDecorator
+vi.mock('../../src/features/CalmMode.decorator', () => ({
+  CalmModeDecorator: vi.fn().mockImplementation(() => ({
+    sync: vi.fn(),
     execute: vi.fn(),
     destroy: vi.fn(),
   })),
@@ -108,6 +118,7 @@ describe('UniversalToggleDecorator', () => {
       language: Language.ENGLISH,
       darkMode: false,
       wideMode: false,
+      calmMode: false,
       hideProductAds: false,
       hideVideoAds: false,
       hideShelfProductAds: false,

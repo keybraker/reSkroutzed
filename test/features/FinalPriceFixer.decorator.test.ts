@@ -19,6 +19,7 @@ describe('FinalPriceFixerDecorator', (): void => {
       hideSkoopAds: false,
       hideAISlop: false,
       wideMode: false,
+      calmMode: false,
       hideUniversalToggle: false,
       hideSponsorships: false,
       productAdCount: 0,

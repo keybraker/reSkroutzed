@@ -53,6 +53,10 @@ function loadSettings(): void {
     getInput('toggleWideMode').checked = value;
   });
 
+  getBool(StorageKey.CALM_MODE, false, (value) => {
+    getInput('toggleCalmMode').checked = value;
+  });
+
   getBool(StorageKey.PRODUCT_AD_VISIBILITY, true, (value) => {
     getInput('toggleAds').checked = !value;
   });
@@ -133,6 +137,12 @@ function setupEventListeners(): void {
   wideModeToggle.addEventListener('change', () => {
     const isWideMode = wideModeToggle.checked;
     setStorageValue(StorageKey.WIDE_MODE, isWideMode);
+  });
+
+  const calmModeToggle = getInput('toggleCalmMode');
+  calmModeToggle.addEventListener('change', () => {
+    const isCalmMode = calmModeToggle.checked;
+    setStorageValue(StorageKey.CALM_MODE, isCalmMode);
   });
 
   const universalToggle = getInput('toggleUniversalToggle');
