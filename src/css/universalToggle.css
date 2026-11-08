@@ -16,13 +16,17 @@
   /* Warm orange palette for the opened menu (light theme) */
   --ut-menu-bg: #fff4e8;
   --ut-menu-border: #f3d9b8;
-  --ut-btn-bg: #ffe9d1;
-  --ut-btn-border: #f0d0a8;
-  --ut-btn-hover: #fbdcb8;
-  --ut-on-bg: rgba(246, 139, 36, 0.18);
-  --ut-on-ring: #e07d1a;
-  --ut-icon: #b06a1a;
-  --ut-icon-strong: #7a4a10;
+  /* Inactive chip: near-white, muted icon — reads as "off" */
+  --ut-btn-bg: #fffcf7;
+  --ut-btn-border: #e9ddca;
+  --ut-btn-hover: #f8efe2;
+  /* Active chip: solid accent fill + white icon — reads as "on" */
+  --ut-on-bg: linear-gradient(180deg, #f9a343 0%, #e87c10 100%);
+  --ut-on-bg-hover: linear-gradient(180deg, #fbaf5c 0%, #f1851c 100%);
+  --ut-on-ring: #cf6d05;
+  --ut-on-icon: #ffffff;
+  --ut-icon: #a3907b;
+  --ut-icon-strong: #6d5c49;
   --ut-badge-bg: #f68b24;
   --ut-badge-text: #ffffff;
   --ut-input-bg: #fff8f0;
@@ -272,7 +276,7 @@
 
 .toggle-option-button:hover {
   background: var(--ut-btn-hover) !important;
-  border-color: var(--ut-icon) !important;
+  border-color: var(--ut-on-ring) !important;
   color: var(--ut-icon-strong) !important;
 }
 
@@ -280,16 +284,31 @@
   transform: translateY(0) scale(0.98) !important;
 }
 
-/* Enabled state: subtle outline ring (no fill) */
+/* Enabled state: solid accent fill + white icon so ON is unmistakable */
 .toggle-option-button.active {
   background: var(--ut-on-bg) !important;
   border-color: var(--ut-on-ring) !important;
-  color: var(--ut-icon-strong) !important;
+  color: var(--ut-on-icon) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 2px 8px rgba(232, 124, 16, 0.45) !important;
+}
+
+.toggle-option-button.active svg {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 }
 
 .toggle-option-button.active:hover {
-  background: rgba(246, 139, 36, 0.3) !important;
+  background: var(--ut-on-bg-hover) !important;
   border-color: var(--ut-on-ring) !important;
+  color: var(--ut-on-icon) !important;
+}
+
+/* Keep the badge readable on top of the solid accent fill */
+.toggle-option-button.active .notification-bubble {
+  background: #ffffff !important;
+  color: var(--ut-on-ring) !important;
+  border-color: #ffffff !important;
 }
 
 /* Mobile: buttons slide up from below */
@@ -367,13 +386,15 @@
 .dark-mode.universal-toggle-container {
   --ut-menu-bg: #fff4e8;
   --ut-menu-border: #f3d9b8;
-  --ut-btn-bg: #ffe9d1;
-  --ut-btn-border: #f0d0a8;
-  --ut-btn-hover: #fbdcb8;
-  --ut-on-bg: rgba(246, 139, 36, 0.18);
-  --ut-on-ring: #e07d1a;
-  --ut-icon: #b06a1a;
-  --ut-icon-strong: #7a4a10;
+  --ut-btn-bg: #fffcf7;
+  --ut-btn-border: #e9ddca;
+  --ut-btn-hover: #f8efe2;
+  --ut-on-bg: linear-gradient(180deg, #f9a343 0%, #e87c10 100%);
+  --ut-on-bg-hover: linear-gradient(180deg, #fbaf5c 0%, #f1851c 100%);
+  --ut-on-ring: #cf6d05;
+  --ut-on-icon: #ffffff;
+  --ut-icon: #a3907b;
+  --ut-icon-strong: #6d5c49;
   --ut-badge-bg: #f68b24;
   --ut-badge-text: #ffffff;
   --ut-input-bg: #fff8f0;
@@ -410,13 +431,19 @@
 
 .dark-mode .toggle-option-button.active {
   background: var(--ut-on-bg) !important;
-  color: var(--ut-icon-strong) !important;
+  color: var(--ut-on-icon) !important;
   border-color: var(--ut-on-ring) !important;
 }
 
 .dark-mode .toggle-option-button.active:hover {
-  background: rgba(246, 139, 36, 0.3) !important;
+  background: var(--ut-on-bg-hover) !important;
   border-color: var(--ut-on-ring) !important;
+}
+
+.dark-mode .toggle-option-button.active .notification-bubble {
+  background: #ffffff !important;
+  color: var(--ut-on-ring) !important;
+  border-color: #ffffff !important;
 }
 
 .dark-mode .notification-bubble {
@@ -433,13 +460,15 @@
   .universal-toggle-container {
     --ut-menu-bg: #fff4e8;
     --ut-menu-border: #f3d9b8;
-    --ut-btn-bg: #ffe9d1;
-    --ut-btn-border: #f0d0a8;
-    --ut-btn-hover: #fbdcb8;
-    --ut-on-bg: rgba(246, 139, 36, 0.18);
-    --ut-on-ring: #e07d1a;
-    --ut-icon: #b06a1a;
-    --ut-icon-strong: #7a4a10;
+    --ut-btn-bg: #fffcf7;
+    --ut-btn-border: #e9ddca;
+    --ut-btn-hover: #f8efe2;
+    --ut-on-bg: linear-gradient(180deg, #f9a343 0%, #e87c10 100%);
+    --ut-on-bg-hover: linear-gradient(180deg, #fbaf5c 0%, #f1851c 100%);
+    --ut-on-ring: #cf6d05;
+    --ut-on-icon: #ffffff;
+    --ut-icon: #a3907b;
+    --ut-icon-strong: #6d5c49;
     --ut-badge-bg: #f68b24;
     --ut-badge-text: #ffffff;
     --ut-input-bg: #fff8f0;
