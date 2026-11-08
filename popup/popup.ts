@@ -107,23 +107,62 @@ function loadSettings(): void {
   });
 }
 
+function activateTab(tab: HTMLButtonElement): void {
+  const tabName = tab.dataset.tab;
+
+  document.querySelectorAll<HTMLButtonElement>('.tab-btn').forEach((otherTab) => {
+    const isActive = otherTab === tab;
+    otherTab.classList.toggle('active', isActive);
+    otherTab.setAttribute('aria-selected', String(isActive));
+    otherTab.tabIndex = isActive ? 0 : -1;
+  });
+
+  document.querySelectorAll<HTMLElement>('.tab-panel').forEach((panel) => {
+    panel.classList.toggle('active', panel.dataset.panel === tabName);
+  });
+}
+
+/**
+ * Roving tabindex for the tab list: arrows move between tabs (wrapping at the
+ * ends), Home/End jump to the first/last tab. Activation follows focus, which
+ * is the recommended pattern for a small, static tab list.
+ */
+function setupTabKeyboardNavigation(): void {
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.tab-btn'));
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('keydown', (event) => {
+      let nextIndex: number | undefined;
+
+      if (event.key === 'ArrowRight') {
+        nextIndex = (index + 1) % tabs.length;
+      } else if (event.key === 'ArrowLeft') {
+        nextIndex = (index - 1 + tabs.length) % tabs.length;
+      } else if (event.key === 'Home') {
+        nextIndex = 0;
+      } else if (event.key === 'End') {
+        nextIndex = tabs.length - 1;
+      }
+
+      if (nextIndex === undefined) {
+        return;
+      }
+
+      event.preventDefault();
+      tabs[nextIndex].focus();
+      activateTab(tabs[nextIndex]);
+    });
+  });
+}
+
 function setupEventListeners(): void {
   document.querySelectorAll<HTMLButtonElement>('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const tabName = btn.dataset.tab;
-
-      document.querySelectorAll<HTMLButtonElement>('.tab-btn').forEach((b) => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-
-      document.querySelectorAll<HTMLElement>('.tab-panel').forEach((panel) => {
-        panel.classList.toggle('active', panel.dataset.panel === tabName);
-      });
+      activateTab(btn);
     });
   });
+
+  setupTabKeyboardNavigation();
 
   const darkModeToggle = getInput('toggleDarkMode');
   darkModeToggle.addEventListener('change', () => {

@@ -41,7 +41,15 @@
     <main class="content">
       <!-- Tab Navigation -->
       <nav class="tab-bar" role="tablist">
-        <button class="tab-btn active" data-tab="filtering" role="tab" aria-selected="true">
+        <button
+          class="tab-btn active"
+          id="tab-filtering"
+          data-tab="filtering"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-filtering"
+          tabindex="0"
+        >
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none">
             <path
               d="M4 6h16M7 12h10M10 18h4"
@@ -52,7 +60,15 @@
           </svg>
           Filtering
         </button>
-        <button class="tab-btn" data-tab="appearance" role="tab" aria-selected="false">
+        <button
+          class="tab-btn"
+          id="tab-appearance"
+          data-tab="appearance"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-appearance"
+          tabindex="-1"
+        >
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
             <path
@@ -64,7 +80,15 @@
           </svg>
           Appearance
         </button>
-        <button class="tab-btn" data-tab="price" role="tab" aria-selected="false">
+        <button
+          class="tab-btn"
+          id="tab-price"
+          data-tab="price"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-price"
+          tabindex="-1"
+        >
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none">
             <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="2" />
             <path
@@ -81,7 +105,13 @@
       <!-- Tab Panels -->
       <div class="tab-panels">
         <!-- Filtering Panel -->
-        <div class="tab-panel active" data-panel="filtering">
+        <div
+          class="tab-panel active"
+          id="panel-filtering"
+          data-panel="filtering"
+          role="tabpanel"
+          aria-labelledby="tab-filtering"
+        >
           <div class="settings-grid">
             <div class="setting-item">
               <div class="setting-info">
@@ -157,7 +187,13 @@
         </div>
 
         <!-- Appearance Panel -->
-        <div class="tab-panel" data-panel="appearance">
+        <div
+          class="tab-panel"
+          id="panel-appearance"
+          data-panel="appearance"
+          role="tabpanel"
+          aria-labelledby="tab-appearance"
+        >
           <div class="settings-grid">
             <div class="setting-item">
               <div class="setting-info">
@@ -203,7 +239,13 @@
         </div>
 
         <!-- Price Checker Panel -->
-        <div class="tab-panel" data-panel="price">
+        <div
+          class="tab-panel"
+          id="panel-price"
+          data-panel="price"
+          role="tabpanel"
+          aria-labelledby="tab-price"
+        >
           <div class="settings-grid settings-grid-static">
             <div class="setting-item">
               <div class="setting-info">
