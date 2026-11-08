@@ -17,13 +17,13 @@ describe('ListProductAdHandler', () => {
   let listProductAdHandler: ListProductAdHandler;
   let mockState: State;
 
-  const mockSelectorResults = (selectorResults: Record<string, Element[]>) => {
+  const mockSelectorResults = (selectorResults: Record<string, Element[]>): void => {
     vi.mocked(DomClient.getElementsByClass).mockImplementation(
       (selector: string, _searchElement?: Element) => selectorResults[selector] ?? [],
     );
   };
 
-  const mockGetElementByClass = (results: Map<string, Element | null>) => {
+  const mockGetElementByClass = (results: Map<string, Element | null>): void => {
     vi.mocked(DomClient.getElementByClass).mockImplementation(
       (className: string, _searchElement?: Element) => results.get(className) ?? null,
     );

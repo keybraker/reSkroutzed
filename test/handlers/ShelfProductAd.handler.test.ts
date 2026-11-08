@@ -16,7 +16,7 @@ describe('ShelfProductAdHandler', () => {
   let shelfProductAdHandler: ShelfProductAdHandler;
   let mockState: State;
 
-  const mockSelectorResults = (selectorResults: Record<string, Element[]>) => {
+  const mockSelectorResults = (selectorResults: Record<string, Element[]>): void => {
     vi.mocked(DomClient.getElementsByClass).mockImplementation(
       (selector: string) => selectorResults[selector] ?? [],
     );
