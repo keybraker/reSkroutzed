@@ -1,9 +1,9 @@
 import { BaseAdHandler } from './common/BaseAdHandler';
 
 export class CampaignAdHandler extends BaseAdHandler {
-  protected readonly flaggedClass = 'flagged-shelf';
-  protected readonly counterKey = 'shelfAdCount' as const;
-  protected readonly visibilityKey = 'hideShelfProductAds' as const;
+  protected readonly flaggedClass = 'flagged-sponsorship';
+  protected readonly counterKey = 'sponsorshipAdCount' as const;
+  protected readonly visibilityKey = 'hideSponsorships' as const;
 
   private readonly shelfAdClass = [
     'sponsored-badge',
