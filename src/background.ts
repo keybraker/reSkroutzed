@@ -104,11 +104,23 @@ const universalToggleDecorator = new UniversalToggleDecorator(state);
 const logoHatDecorator = new LogoHatDecorator();
 const wideModeDecorator = new WideModeDecorator(state);
 
+/** Guards against starting the price checker twice when hydrate lands early. */
+let priceCheckerStarted = false;
+
+function startPriceChecker(): void {
+  if (priceCheckerStarted) {
+    return;
+  }
+
+  priceCheckerStarted = true;
+  void priceCheckerIndicator.execute();
+}
+
 (function () {
   function initializer(): void {
     // The price checker talks to the network, so it runs alongside the rest of
     // the work instead of blocking ad flagging and visibility behind it.
-    void priceCheckerIndicator.execute();
+    startPriceChecker();
 
     finalPriceFixerDecorator.execute();
     if (!state.hideUniversalToggle) {
@@ -226,9 +238,7 @@ const wideModeDecorator = new WideModeDecorator(state);
    * disagrees (e.g. a setting changed from the popup on another tab).
    */
   void BrowserClient.hydrate().then(() => {
-    loadStorage();
-    themeSync(state);
-    toggleVisibility();
+    reconcileAfterHydrate();
   });
 })();
 
@@ -255,10 +265,56 @@ function applyUniversalToggleVisibility(): void {
 
 function refreshPriceChecker(): void {
   priceCheckerIndicator.destroy();
+  priceCheckerStarted = false;
+  startPriceChecker();
+}
 
-  if (state.priceCheckerEnabled) {
-    void priceCheckerIndicator.execute();
-  }
+/**
+ * Which storage key each state field is loaded from.
+ *
+ * Used to work out what changed after a bulk reload (`hydrate()`) and re-apply
+ * only the affected features instead of restarting everything.
+ */
+const STATE_FIELD_STORAGE_KEYS: Partial<Record<keyof State, StorageKey>> = {
+  hideProductAds: StorageKey.PRODUCT_AD_VISIBILITY,
+  hideVideoAds: StorageKey.VIDEO_AD_VISIBILITY,
+  hideSponsorships: StorageKey.SPONSORSHIP_VISIBILITY,
+  hideShelfProductAds: StorageKey.SHELF_PRODUCT_AD_VISIBILITY,
+  hideRecommendationAds: StorageKey.RECOMMENDATION_AD_VISIBILITY,
+  hideSkoopAds: StorageKey.SKOOP_AD_VISIBILITY,
+  hideAISlop: StorageKey.AI_SLOP_VISIBILITY,
+  hideUniversalToggle: StorageKey.UNIVERSAL_TOGGLE_VISIBILITY,
+  darkMode: StorageKey.DARK_MODE,
+  wideMode: StorageKey.WIDE_MODE,
+  priceCheckerEnabled: StorageKey.PRICE_CHECKER_ENABLED,
+  minimumPriceDifference: StorageKey.MINIMUM_PRICE_DIFFERENCE,
+  showBestPrice: StorageKey.BEST_PRICE_COMPARISON,
+  showShopflix: StorageKey.SHOPFLIX_COMPARISON,
+};
+
+/**
+ * Re-load `state` from the freshly hydrated mirror and re-apply every feature
+ * whose setting actually changed.
+ *
+ * The initial paint uses whatever the synchronous mirror holds, so hydrate has
+ * to reconcile the same set of features a live storage change would: dark mode,
+ * ad/AI-slop visibility, wide mode, the universal toggle and the price checker.
+ */
+function reconcileAfterHydrate(): void {
+  const previous = { ...state };
+
+  loadStorage();
+
+  (Object.keys(STATE_FIELD_STORAGE_KEYS) as (keyof State)[]).forEach((field) => {
+    if (previous[field] === state[field]) {
+      return;
+    }
+
+    const key = STATE_FIELD_STORAGE_KEYS[field];
+    if (key) {
+      STORAGE_CHANGE_HANDLERS[key]?.();
+    }
+  });
 }
 
 /**
@@ -286,6 +342,7 @@ const STORAGE_CHANGE_HANDLERS: Partial<Record<StorageKey, () => void>> = {
   [StorageKey.PRICE_CHECKER_ENABLED]: refreshPriceChecker,
   [StorageKey.BEST_PRICE_COMPARISON]: refreshPriceChecker,
   [StorageKey.SHOPFLIX_COMPARISON]: refreshPriceChecker,
+  [StorageKey.MINIMUM_PRICE_DIFFERENCE]: refreshPriceChecker,
 };
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
