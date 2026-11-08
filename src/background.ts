@@ -5,6 +5,7 @@ import {
   ensureAISlopStyleInjected,
   queryAISlopNodes,
 } from './common/functions/aiSlop';
+import { onBodyMutations } from './common/functions/bodyMutationObserver';
 import { State } from './common/types/State.type';
 import { FinalPriceFixerDecorator } from './features/FinalPriceFixer.decorator';
 import { LogoHatDecorator } from './features/LogoHat.decorator';
@@ -179,9 +180,7 @@ function startPriceChecker(): void {
   }
 
   function observeMutations(): void {
-    let debounceTimer: number | undefined;
-
-    const observer = new MutationObserver((mutations) => {
+    onBodyMutations((mutations) => {
       const hasAddedElements = mutations.some((mutation) =>
         Array.from(mutation.addedNodes).some((node) => node.nodeType === Node.ELEMENT_NODE),
       );
@@ -191,17 +190,10 @@ function startPriceChecker(): void {
         return;
       }
 
-      window.clearTimeout(debounceTimer);
-      debounceTimer = window.setTimeout(() => {
-        flagContent();
-        applyAISlopVisibility();
-      }, 250);
+      flagContent();
+      applyAISlopVisibility();
     });
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
     // Initial apply for any existing nodes
     applyAISlopVisibility();
   }

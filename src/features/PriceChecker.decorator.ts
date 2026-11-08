@@ -4,6 +4,7 @@ import { ShopflixClient } from '../clients/shopflix/client';
 import { ProductPriceData, ProductPriceHistory, SkroutzClient } from '../clients/skroutz/client';
 import { PriceHistoryComponent } from '../common/components/PriceHistory.component';
 import { Language } from '../common/enums/Language.enum';
+import { onBodyMutations } from '../common/functions/bodyMutationObserver';
 import { getPriceAverages } from '../common/functions/priceAverages';
 import { PriceComparisonProduct } from '../common/types/PriceComparisonProduct.type';
 import { State } from '../common/types/State.type';
@@ -1338,7 +1339,7 @@ function createPriceIndicationElement(
 
 export class PriceCheckerDecorator implements FeatureInstance {
   /* Configuration */
-  private observer: MutationObserver | null = null;
+  private unsubscribeFromMutations: (() => void) | null = null;
   private isInitializing: boolean = false;
   private lastProductId: string | null = null;
   private currentInitializationId: number = 0;
@@ -1365,10 +1366,8 @@ export class PriceCheckerDecorator implements FeatureInstance {
   public destroy(): void {
     window.removeEventListener('popstate', this.boundNavigationHandler);
 
-    if (this.observer) {
-      this.observer.disconnect();
-      this.observer = null;
-    }
+    this.unsubscribeFromMutations?.();
+    this.unsubscribeFromMutations = null;
 
     // Invalidate in-flight fetches so late responses cannot re-render the UI.
     this.currentInitializationId++;
@@ -1409,24 +1408,14 @@ export class PriceCheckerDecorator implements FeatureInstance {
   }
 
   private setupProductViewObserver(): void {
-    if (this.observer) {
-      this.observer.disconnect();
-      this.observer = null;
-    }
+    this.unsubscribeFromMutations?.();
 
-    this.observer = new MutationObserver((mutations) => {
+    this.unsubscribeFromMutations = onBodyMutations((mutations) => {
       if (this.isInitializing) return;
 
-      for (const mutation of mutations) {
-        if (mutation.type === 'childList') {
-          this.checkForProductViewChange();
-        }
+      if (mutations.some((mutation) => mutation.type === 'childList')) {
+        this.checkForProductViewChange();
       }
-    });
-
-    this.observer.observe(document.body, {
-      childList: true,
-      subtree: true,
     });
   }
 
