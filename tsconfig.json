@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
+    "target": "es2020",
+    "module": "esnext",
     "sourceMap": true,
     "outDir": "dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "moduleResolution": "node10",
+    "moduleResolution": "bundler",
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "removeComments": true,
-    "importsNotUsedAsValues": "remove",
     "noEmitOnError": true,
     "isolatedModules": true
   },
