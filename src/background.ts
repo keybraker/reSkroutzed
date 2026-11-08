@@ -123,10 +123,6 @@ function startPriceChecker(): void {
 
 (function () {
   function initializer(): void {
-    // The price checker talks to the network, so it runs alongside the rest of
-    // the work instead of blocking ad flagging and visibility behind it.
-    startPriceChecker();
-
     finalPriceFixerDecorator.execute();
     if (!state.hideUniversalToggle) {
       universalToggleDecorator.execute();
@@ -135,8 +131,13 @@ function startPriceChecker(): void {
     wideModeDecorator.sync();
     calmModeDecorator.sync();
 
+    // Flag and hide ads first: this is synchronous DOM work, while the price
+    // checker has to look up its host, build a skeleton and touch the network.
+    // Starting the checker first would delay every ad flag on product pages.
     flagContent();
     toggleVisibility();
+
+    startPriceChecker();
 
     if (state.isMobile) {
       applyMobileOptimizations();
@@ -198,9 +199,6 @@ function startPriceChecker(): void {
       flagContent();
       applyAISlopVisibility();
     });
-
-    // Initial apply for any existing nodes
-    applyAISlopVisibility();
   }
 
   function start(): void {
