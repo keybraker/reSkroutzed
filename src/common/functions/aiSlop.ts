@@ -34,8 +34,22 @@ export function ensureAISlopStyleInjected(): void {
 }
 
 /**
- * Collects every AI slop element currently present in the document.
+ * Collects every AI slop element present under `root`.
+ *
+ * Callers reacting to a mutation batch pass the added element nodes as roots, so
+ * the scan stays local to the new markup instead of walking the whole document
+ * — `AI_SLOP_SELECTOR` includes a `[class*=...]` attribute substring match, which
+ * is the most expensive selector in the set. The root element itself is checked
+ * too, because `querySelectorAll` only looks at descendants.
+ *
+ * @param root The subtree to search; defaults to the whole document.
  */
-export function queryAISlopNodes(): NodeListOf<HTMLElement> {
-  return document.querySelectorAll(AI_SLOP_SELECTOR) as NodeListOf<HTMLElement>;
+export function queryAISlopNodes(root: ParentNode = document): HTMLElement[] {
+  const nodes = Array.from(root.querySelectorAll<HTMLElement>(AI_SLOP_SELECTOR));
+
+  if (root instanceof Element && root.matches(AI_SLOP_SELECTOR)) {
+    nodes.unshift(root as HTMLElement);
+  }
+
+  return nodes;
 }

@@ -55,6 +55,37 @@ describe('aiSlop', () => {
       expect(nodes).toHaveLength(4);
       expect(AI_SLOP_SELECTOR).toContain('.reviews-ai-summary');
     });
+
+    it('only scans the given root when one is passed', () => {
+      // Arrange
+      document.body.innerHTML = `
+        <div class="sofos-entrypoint"></div>
+        <section class="added-subtree">
+          <div class="reviews-ai-summary"></div>
+        </section>
+      `;
+      const root = document.querySelector('.added-subtree') as Element;
+
+      // Act
+      const nodes = queryAISlopNodes(root);
+
+      // Assert
+      expect(nodes).toHaveLength(1);
+      expect(nodes[0].classList.contains('reviews-ai-summary')).toBe(true);
+    });
+
+    it('matches the root itself when it is an AI slop element', () => {
+      // Arrange
+      document.body.innerHTML = '<div class="sofos-listing-shelf"></div>';
+      const root = document.querySelector('.sofos-listing-shelf') as Element;
+
+      // Act
+      const nodes = queryAISlopNodes(root);
+
+      // Assert
+      expect(nodes).toHaveLength(1);
+      expect(nodes[0]).toBe(root);
+    });
   });
 
   describe('ensureAISlopStyleInjected', () => {

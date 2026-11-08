@@ -48,9 +48,38 @@ const state: State = {
   isMobile: false,
 };
 
-function applyAISlopVisibility(): void {
+/**
+ * Whether the AI-slop hiding class is currently applied to the page.
+ *
+ * Without this, every mutation batch ran a document-wide AI-slop scan even when
+ * the user had the feature off — the default — and there was nothing to unhide.
+ */
+let aiSlopApplied = false;
+
+/**
+ * Beyond this many roots, one document-wide scan beats one scan per root.
+ */
+const AI_SLOP_MAX_SCOPED_ROOTS = 50;
+
+/**
+ * Applies or reverts the AI-slop hiding class.
+ *
+ * @param roots Subtrees to scan (the nodes a mutation batch added). Omit to scan
+ *              the whole document — required when the setting itself changes.
+ */
+function applyAISlopVisibility(roots?: ParentNode[]): void {
+  if (!state.hideAISlop && !aiSlopApplied) {
+    return;
+  }
+
   ensureAISlopStyleInjected();
-  const nodes = queryAISlopNodes();
+
+  const nodes = !roots
+    ? queryAISlopNodes()
+    : roots.length > AI_SLOP_MAX_SCOPED_ROOTS
+      ? queryAISlopNodes()
+      : roots.flatMap((root) => queryAISlopNodes(root));
+
   nodes.forEach((element) => {
     if (state.hideAISlop) {
       element.classList.add(AI_HIDE_CLASS);
@@ -61,6 +90,8 @@ function applyAISlopVisibility(): void {
       }
     }
   });
+
+  aiSlopApplied = state.hideAISlop;
 }
 
 function loadStorage(): void {
@@ -185,17 +216,42 @@ function startPriceChecker(): void {
     document.head.appendChild(style);
   }
 
+  /** Set when a batch arrived while the tab was hidden and still needs a pass. */
+  let hasDeferredPass = false;
+
   function observeMutations(): void {
     onBodyMutations((mutations) => {
-      const hasAddedElements = mutations.some((mutation) =>
-        Array.from(mutation.addedNodes).some((node) => node.nodeType === Node.ELEMENT_NODE),
-      );
+      const addedRoots: Element[] = [];
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            addedRoots.push(node as Element);
+          }
+        });
+      });
 
       // Ignore text/attribute churn; only re-flag when new elements arrive.
-      if (!hasAddedElements) {
+      if (addedRoots.length === 0) {
         return;
       }
 
+      // Background tabs keep receiving mutations from the page's own timers, but
+      // nothing there is visible. Do one catch-up pass when the tab comes back.
+      if (document.visibilityState === 'hidden') {
+        hasDeferredPass = true;
+        return;
+      }
+
+      flagContent();
+      applyAISlopVisibility(addedRoots);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden' || !hasDeferredPass) {
+        return;
+      }
+
+      hasDeferredPass = false;
       flagContent();
       applyAISlopVisibility();
     });

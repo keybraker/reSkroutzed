@@ -1,15 +1,27 @@
 import { Language } from '../../common/enums/Language.enum';
 
+/** Class the flaggers put on an element to remove it from view. */
+const DISPLAY_NONE_CLASS = 'display-none';
+
 export class DomClient {
   public static getDom(): Document {
     return document;
   }
 
   public static updateElementVisibility(element: Element, visibility: 'show' | 'hide'): void {
-    if (visibility === 'show') {
-      element.classList.remove('display-none');
+    const shouldHide = visibility === 'hide';
+
+    // Marking an element already applies the current visibility, and the next
+    // visibility pass repeats it. Bailing out when nothing would change keeps
+    // the class list untouched, so the browser skips a style invalidation.
+    if (element.classList.contains(DISPLAY_NONE_CLASS) === shouldHide) {
+      return;
+    }
+
+    if (shouldHide) {
+      element.classList.add(DISPLAY_NONE_CLASS);
     } else {
-      element.classList.add('display-none');
+      element.classList.remove(DISPLAY_NONE_CLASS);
     }
   }
 
