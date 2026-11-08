@@ -16,6 +16,7 @@ import {
   createPriceDifferenceBadgeSpacer,
 } from './functions/createPriceDifferenceBadge';
 import { createReSkoutzedReviewElement } from './functions/createReskoutzedReviewElement';
+import { ensurePriceCheckerStyleInjected } from './functions/ensurePriceCheckerStyleInjected';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
@@ -1360,6 +1361,10 @@ export class PriceCheckerDecorator implements FeatureInstance {
     if (!this.state.priceCheckerEnabled) {
       return;
     }
+
+    // The card's rules are not part of the always-injected stylesheet, so pull
+    // them in before anything is rendered.
+    ensurePriceCheckerStyleInjected();
 
     await this.initializeProductView();
     this.setupNavigationHandlers();

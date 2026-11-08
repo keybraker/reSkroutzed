@@ -61,7 +61,12 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["icons/48.png", "icons/store_logo.png", "externalPaymentProviders/*.webp"],
+      "resources": [
+        "icons/48.png",
+        "icons/store_logo.png",
+        "css/priceChecker.css",
+        "externalPaymentProviders/*.webp"
+      ],
       "matches": [
         "https://www.skroutz.gr/*",
         "https://www.skroutz.ro/*",

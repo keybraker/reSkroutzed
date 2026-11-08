@@ -1,0 +1,1599 @@
+/*
+ * Styles for the price checker card: the comparison row, price history panel,
+ * analysis breakdown, store availability note and the review/coffee band.
+ *
+ * Kept out of `style.css` on purpose. That file is injected by the manifest on
+ * every Skroutz page, while these rules only matter once the price checker has
+ * found a buybox or offering card. `PriceCheckerDecorator` loads this file as a
+ * stylesheet the first time it renders, so listing pages never pay for it.
+ */
+
+.display-padding {
+  gap: 16px !important;
+  margin-top: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+.inline-flex-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.price-checker-outline {
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 20px !important;
+  margin: 16px 0 !important;
+  background-color: var(--price-checker-light-bg) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.2s ease-in-out !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.price-checker-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  margin: 16px 0 !important;
+}
+
+.price-checker-stack .price-checker-outline {
+  margin: 0 !important;
+  border-radius: 18px !important;
+}
+
+.price-difference-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  align-self: flex-start !important;
+  margin: 2px 0 3px !important;
+  padding: 1px 7px !important;
+  border-radius: 6px !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 16px !important;
+  letter-spacing: 0.2px !important;
+  white-space: nowrap !important;
+}
+
+.price-difference-badge--cheaper {
+  background: #2e7b2e !important;
+}
+
+.price-difference-badge--pricier {
+  background: #a93331 !important;
+}
+
+.price-difference-badge-spacer {
+  display: block !important;
+  align-self: flex-start !important;
+  height: 18px !important;
+  margin: 2px 0 3px !important;
+}
+
+.price-checker-loading,
+.store-availability-loading,
+.own-promotion-loading {
+  overflow: hidden !important;
+}
+
+.price-checker-skeleton-block {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      rgba(255, 255, 255, 0.15) 100%
+    ),
+    rgba(22, 28, 45, 0.08) !important;
+  background-size: 200% 100% !important;
+  animation: price-checker-skeleton-shimmer 1.2s ease-in-out infinite !important;
+}
+
+.price-checker-skeleton-price {
+  width: 72% !important;
+  max-width: 220px !important;
+  height: 50px !important;
+  border-radius: 14px !important;
+}
+
+.price-checker-skeleton-shipping {
+  width: 124px !important;
+  height: 14px !important;
+  border-radius: 8px !important;
+  margin-top: 4px !important;
+}
+
+.price-checker-skeleton-chip {
+  flex: 0 0 96px !important;
+  width: 96px !important;
+  height: 34px !important;
+  border-radius: 999px !important;
+}
+
+.price-checker-skeleton-cta {
+  width: 164px !important;
+  height: 40px !important;
+  border-radius: 999px !important;
+}
+
+.price-checker-skeleton-logo {
+  width: 48px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  flex: 0 0 auto !important;
+}
+
+.price-checker-skeleton-badge-price {
+  width: 72px !important;
+  height: 24px !important;
+  border-radius: 10px !important;
+}
+
+.price-checker-skeleton-badge-shipping {
+  width: 96px !important;
+  height: 12px !important;
+  border-radius: 8px !important;
+}
+
+.price-checker-skeleton-badge-label {
+  width: 132px !important;
+  height: 12px !important;
+  border-radius: 8px !important;
+}
+
+.price-checker-skeleton-average {
+  width: 68% !important;
+  max-width: 280px !important;
+  height: 13px !important;
+  border-radius: 8px !important;
+}
+
+.price-checker-skeleton-average-short {
+  width: 52% !important;
+}
+
+.price-checker-skeleton-arrow {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 999px !important;
+}
+
+.price-checker-skeleton-status {
+  width: 68% !important;
+  height: 16px !important;
+}
+
+.price-checker-skeleton-summary {
+  width: 100% !important;
+  height: 14px !important;
+}
+
+.price-checker-skeleton-summary-short {
+  width: 72% !important;
+  height: 14px !important;
+}
+
+.price-checker-skeleton-circle {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  flex: 0 0 40px !important;
+}
+
+.price-checker-skeleton-review-copy {
+  width: 100% !important;
+  max-width: 240px !important;
+  height: 16px !important;
+}
+
+.price-history-loading-wrapper,
+.price-history-loading-row {
+  width: 100% !important;
+}
+
+.price-history-loading-row {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.store-availability-loading {
+  gap: 10px !important;
+}
+
+.own-promotion-loading {
+  min-height: 52px !important;
+}
+
+.tags-container {
+  position: absolute !important;
+  top: -20px !important;
+  right: 20px !important;
+  display: flex !important;
+  gap: 10px !important;
+  z-index: 5 !important;
+}
+
+.coffee-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+.coffee-label {
+  white-space: nowrap !important;
+}
+
+.own-promotion-review-link,
+.buy-me-coffee {
+  --resk-ember: conic-gradient(
+    from var(--resk-ring-angle, 198deg) at 50% 50%,
+    transparent 0deg,
+    transparent 195deg,
+    rgba(255, 179, 71, 0.06) 215deg,
+    rgba(255, 179, 71, 0.14) 240deg,
+    rgba(255, 179, 71, 0.3) 262deg,
+    rgba(255, 179, 71, 0.55) 280deg,
+    rgba(255, 179, 71, 0.8) 292deg,
+    #ffb347 300deg,
+    rgba(255, 179, 71, 0.5) 312deg,
+    rgba(255, 179, 71, 0.2) 324deg,
+    rgba(255, 179, 71, 0.07) 334deg,
+    transparent 342deg,
+    transparent 360deg
+  );
+  animation: resk-ember-sweep 3.6s linear infinite !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .own-promotion-review-link,
+  .buy-me-coffee {
+    animation: none !important;
+  }
+}
+
+.buy-me-coffee-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  color: inherit !important;
+  text-decoration: none !important;
+  width: 100% !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  font: inherit !important;
+}
+
+.buy-me-coffee {
+  position: static !important;
+  color: #ffffff !important;
+  background:
+    linear-gradient(135deg, #ff6b35, #f7931e) padding-box,
+    var(--resk-ember) border-box !important;
+  border: 4px solid transparent !important;
+  /* The visible static edge: half the band, sitting over the ember's outer half. */
+  outline: 2px solid rgba(101, 52, 17, 0.18) !important;
+  outline-offset: -2px !important;
+  box-shadow:
+    0 4px 12px rgba(255, 107, 53, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  z-index: 5 !important;
+  transition:
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.22s ease,
+    border-color 0.22s ease !important;
+  cursor: default !important;
+  text-decoration: none !important;
+  backdrop-filter: none !important;
+  position: relative !important;
+  overflow: visible !important;
+  min-height: 38px !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  white-space: nowrap !important;
+}
+
+.buy-me-coffee::before {
+  content: '' !important;
+  /* disable animated sheen for the coffee pill */
+  display: none !important;
+}
+
+.buy-me-coffee:hover::before {
+  /* no animation */
+}
+
+.buy-me-coffee:hover {
+  /* keep static appearance on hover */
+  background:
+    linear-gradient(135deg, #ff6b35, #f7931e) padding-box,
+    var(--resk-ember) border-box !important;
+  outline-color: rgba(101, 52, 17, 0.18) !important;
+  box-shadow:
+    0 4px 12px rgba(255, 107, 53, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  transform: none !important;
+}
+
+.buy-me-coffee:active {
+  transform: none !important;
+  transition: box-shadow 0.12s ease !important;
+}
+
+.buy-me-coffee-modal {
+  display: none !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  z-index: 10000 !important;
+  justify-content: center !important;
+  align-items: center !important;
+  animation: fadeIn 0.2s ease-in !important;
+}
+
+.buy-me-coffee-modal.active {
+  display: flex !important;
+}
+
+.buy-me-coffee-modal-content {
+  position: relative !important;
+  background: var(--color-background-secondary, #1a1a1a) !important;
+  border: 1px solid var(--color-border-primary, #404040) !important;
+  border-radius: 8px !important;
+  padding: 24px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  text-align: center !important;
+  max-width: 400px !important;
+  width: 90% !important;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.buy-me-coffee-modal-content h3 {
+  margin: 0 0 20px 0 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.buy-me-coffee-close {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  background: var(--color-border-primary, #404040) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  color: var(--color-text-secondary, #cccccc) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.buy-me-coffee-close:hover {
+  background: var(--color-card-background, #1f1f1f) !important;
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.light-mode .buy-me-coffee-modal-content {
+  background: #ffffff !important;
+  border-color: #e0e0e0 !important;
+  color: #242424 !important;
+}
+
+.light-mode .buy-me-coffee-modal-content h3 {
+  color: #242424 !important;
+}
+
+.light-mode .buy-me-coffee-close {
+  background: #f0f0f0 !important;
+  color: #333333 !important;
+}
+
+.light-mode .buy-me-coffee-close:hover {
+  background: #e0e0e0 !important;
+  color: #242424 !important;
+}
+
+.transportation-cost {
+  display: flex !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  color: #666666 !important;
+  padding: 2px 6px !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-radius: 4px !important;
+  margin-top: 6px !important;
+}
+
+.transportation-cost-label {
+  font-weight: 500 !important;
+  margin-right: 4px !important;
+}
+
+.transportation-breakdown {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+  margin: 12px 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.price-indicator-price {
+  font-size: 48px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: baseline !important;
+  margin-right: 8px !important;
+  line-height: 1 !important;
+}
+
+.price-indicator-currency {
+  margin-left: 2px !important;
+  font-size: 28px !important;
+  color: inherit !important;
+}
+
+.price-indicator-decimal {
+  font-size: 28px !important;
+  color: inherit !important;
+}
+
+.price-indicator-comma {
+  font-size: 28px !important;
+  margin-right: 1px !important;
+  color: inherit !important;
+}
+
+.price-calculation-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  align-items: left !important;
+  justify-content: space-between !important;
+  margin-bottom: 0px !important;
+}
+
+.calculation-container {
+  text-align: left !important;
+  width: 100% !important;
+  padding: 15px !important;
+  background-color: rgba(0, 0, 0, 0.015) !important;
+  border-radius: 6px !important;
+  border: 1px dashed rgba(0, 0, 0, 0.2) !important;
+  color: var(--text-light) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+}
+
+.calculation-container strong {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.analysis-metric-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.analysis-metric-summary {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: inherit !important;
+  text-align: left !important;
+  line-height: 1.35 !important;
+}
+
+.analysis-metric-details {
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.bestprice-comparison-text,
+.shopflix-comparison-text {
+  display: block !important;
+}
+
+.minimum-price-difference-text {
+  font-size: 12px !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  display: block !important;
+  margin-top: 0 !important;
+  font-style: normal !important;
+  padding-top: 8px !important;
+  border-top: 1px dashed rgba(0, 0, 0, 0.12) !important;
+}
+
+.price-difference {
+  font-weight: 700 !important;
+  font-size: 18px !important;
+}
+
+.price-difference.outcome-positive {
+  color: var(--price-expensive-color) !important;
+}
+
+.price-difference.outcome-negative {
+  color: var(--price-cheaper-color) !important;
+}
+
+.price-breakdown-item {
+  width: 50% !important;
+  padding: 12px !important;
+  background-color: rgba(248, 248, 248, 0.1) !important;
+  border-radius: 4px !important;
+  border: 1px dashed rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.breakdown-label {
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+  color: #333 !important;
+  font-size: 14px !important;
+}
+
+.breakdown-value {
+  color: #666 !important;
+  font-size: 13px !important;
+}
+
+.price-history-wrapper {
+  overflow: hidden !important;
+  padding-bottom: 0 !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  width: 100% !important;
+}
+
+.price-history-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 12px 15px !important;
+  background-color: rgba(248, 248, 248, 0.1) !important;
+  cursor: pointer !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+  color: #000000 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease !important;
+}
+
+.price-history-header:hover {
+  background-color: rgba(248, 248, 248, 0.15) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.price-history-header.expanded {
+  background-color: rgba(248, 248, 248, 1) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.price-history-header .toggle-icon {
+  margin-left: 8px !important;
+  font-size: 12px !important;
+  transition: transform 0.2s ease !important;
+  color: #000000 !important;
+  width: 24px !important;
+  height: 24px !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.price-history-tooltip {
+  position: absolute !important;
+  background: #333 !important;
+  color: #fff !important;
+  padding: 6px 10px !important;
+  border-radius: 4px !important;
+  font-size: 0.75em !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+  z-index: 1000 !important;
+  white-space: nowrap !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.price-history-tooltip.visible {
+  opacity: 1 !important;
+}
+
+.analysis-toggle-button {
+  background: #ffffff !important;
+  color: #444 !important;
+  border-radius: 999px !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease !important;
+  line-height: 1 !important;
+  letter-spacing: 0.4px !important;
+  /* Thin hairline, the same weight as the card's other borders. The 1px is always
+     reserved, so only the colour changes and the button never shifts. */
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.analysis-toggle-button:hover {
+  background: #f2f2f2 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.analysis-toggle-button:active {
+  transform: translateY(1px) !important;
+}
+
+.analysis-toggle-button .analysis-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 18px !important;
+  height: 18px !important;
+  background: #eef3ff !important;
+  color: #3366cc !important;
+  border-radius: 50% !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+}
+
+.analysis-toggle-button.expanded .analysis-icon {
+  background: #3366cc !important;
+  color: #ffffff !important;
+}
+
+.store-availability-outline {
+  border: none !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 0 !important;
+  padding: 16px 4px 0 !important;
+  margin-top: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  position: relative !important;
+}
+
+.own-promotion {
+  margin: 12px -20px -20px !important;
+  padding: 12px 16px !important;
+  border: none !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 0 0 18px 18px !important;
+  background: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.own-promotion .store-availability-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.own-promotion-left {
+  flex: 0 0 48% !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  max-width: 48% !important;
+  overflow: visible !important;
+}
+
+.own-promotion-right {
+  flex: 0 0 48% !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  max-width: 48% !important;
+}
+
+.own-promotion-review-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+  flex: 1 1 auto !important;
+  min-height: 38px !important;
+  padding: 8px 14px !important;
+  border: 4px solid transparent !important;
+  border-radius: 999px !important;
+  /* Has to be opaque: this layer covers the middle of the ember gradient. */
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    var(--resk-ember) border-box !important;
+  /* The visible static edge: half the band, sitting over the ember's outer half. */
+  outline: 2px solid rgba(120, 68, 40, 0.18) !important;
+  outline-offset: -2px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  text-decoration: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition:
+    background 0.2s ease,
+    outline-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.own-promotion-review-link {
+  color: #4c2516 !important;
+  font-size: 13px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  text-align: left !important;
+}
+
+.own-promotion-review-link,
+.buy-me-coffee {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 32px !important;
+  padding: 4px 14px !important;
+  line-height: 1.2 !important;
+}
+
+.own-promotion-review-copy {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+.own-promotion-review-link:hover,
+.own-promotion-review-link:focus-visible {
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    var(--resk-ember) border-box !important;
+  outline-color: rgba(120, 68, 40, 0.26) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+.store-availability-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  color: #172019 !important;
+  font-weight: 500 !important;
+}
+
+.store-availability-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: #6b6b6b !important;
+}
+
+.store-availability-text {
+  min-width: 0 !important;
+}
+
+.store-availability-status.matched .store-availability-icon {
+  color: #2e7b2e !important;
+}
+
+.store-availability-status.not-available .store-availability-icon {
+  color: #a93331 !important;
+}
+
+.store-availability-status.matched {
+  color: #111 !important;
+}
+
+.store-availability-status.not-available {
+  color: #6b6f76 !important;
+}
+
+.store-availability-more-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  font: inherit !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  color: #4a9edd !important;
+  text-decoration: none !important;
+  text-underline-offset: 2px !important;
+  cursor: pointer !important;
+}
+
+.store-availability-link-chevron {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.store-availability-link-chevron svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+.store-availability-more-link:hover {
+  color: #2b7dbf !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+}
+
+.store-availability-more-link:focus-visible {
+  outline: 2px solid rgba(43, 96, 173, 0.35) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+
+.store-availability-row {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 12px !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.store-availability-left {
+  flex: 1 1 0% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.store-availability-right {
+  flex: 3 1 0% !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+}
+
+.price-history-controls {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  margin-left: auto !important;
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+.price-history-canvas {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 6px !important;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0)) !important;
+}
+
+.price-history-tooltip {
+  position: absolute !important;
+  background: #222 !important;
+  color: #fff !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transform: translateY(-4px) !important;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease !important;
+  white-space: nowrap !important;
+  z-index: 10 !important;
+}
+
+.price-history-tooltip.visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.price-history-toggle-button .analysis-icon {
+  background: #ffe9d1 !important;
+  color: #ff9800 !important;
+}
+
+.price-history-toggle-button.expanded .analysis-icon {
+  background: #ff9800 !important;
+  color: #ffffff !important;
+}
+
+.info-with-analysis-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+}
+
+.info-with-analysis-row span:first-child {
+  flex: 1 1 auto !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+
+.price-display-row {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
+  width: 100% !important;
+}
+
+.price-display-column {
+  display: flex !important;
+  flex: 1 1 0 !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  min-width: 0 !important;
+}
+
+.price-display-divider {
+  width: 1px !important;
+  flex: 0 0 1px !important;
+  align-self: stretch !important;
+  margin: 4px 0 !important;
+  background: rgba(107, 107, 107, 0.25) !important;
+}
+
+.price-display-action {
+  display: flex !important;
+  flex: 1 1 0 !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  padding: 10px 28px 8px 4px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 12px !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  position: relative !important;
+  isolation: isolate !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  /* The store column is a <button>, which does not inherit the page font on its
+     own; without this it falls back to the UA font and drifts from the <a>-based
+     BestPrice column. */
+  font-family: inherit !important;
+  font-size: inherit !important;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease !important;
+}
+
+.price-display-store-action {
+  padding-right: 16px !important;
+}
+
+.price-display-bestprice-action,
+.price-display-shopflix-action {
+  padding-left: 16px !important;
+}
+
+.price-display-action-content {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 2px !important;
+  align-self: stretch !important;
+  justify-content: flex-start !important;
+  min-width: 0 !important;
+  min-height: 88px !important;
+}
+
+.price-display-action-content .price-indicator-price {
+  flex: 0 0 auto !important;
+}
+
+.price-display-action-content .shipping-cost-text {
+  flex: 0 0 auto !important;
+  min-height: 18px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.price-display-action-content .shipping-cost-text:not(.price-display-shipping-note) {
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  letter-spacing: normal !important;
+}
+
+.price-display-action-positive .price-indicator-price,
+.price-display-action-positive .shipping-cost-text,
+.price-indicator-price.price-display-action-positive,
+.shipping-cost-text.price-display-action-positive {
+  color: #2e7b2e !important;
+}
+
+.price-display-action-negative .price-indicator-price,
+.price-display-action-negative .shipping-cost-text,
+.price-indicator-price.price-display-action-negative,
+.shipping-cost-text.price-display-action-negative {
+  color: #a93331 !important;
+}
+
+.price-display-subtitle {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  font-weight: 600 !important;
+  color: rgba(51, 51, 51, 0.78) !important;
+  margin-top: auto !important;
+  min-height: 30px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+}
+
+.price-display-subtitle-beta {
+  gap: 6px !important;
+}
+
+.price-display-subtitle-label {
+  min-width: 0 !important;
+}
+
+.price-checker-beta-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+  margin-bottom: 2px !important;
+  padding: 1px 5px !important;
+  border-radius: 999px !important;
+  background: rgba(43, 96, 173, 0.12) !important;
+  color: #2b60ad !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+
+.price-history-panel {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-sizing: border-box !important;
+}
+
+.price-history-averages {
+  display: flex !important;
+  flex: 0 1 auto !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.price-history-average-row {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 8px !important;
+}
+
+.price-history-average-amount {
+  flex: 0 0 auto !important;
+  min-width: 54px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  color: #222222 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.price-history-average-label {
+  min-width: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  color: #6b6b6b !important;
+}
+
+.price-history-panel .price-history-controls {
+  flex: 0 0 auto !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  margin-left: 0 !important;
+  width: auto !important;
+}
+
+.price-history-panel .analysis-toggle-button {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  justify-content: flex-start !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #0b6bcb !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  gap: 7px !important;
+}
+
+.price-history-panel .analysis-toggle-button:hover {
+  background: transparent !important;
+  border: none !important;
+  text-decoration: underline !important;
+}
+
+.price-display-action-notification {
+  position: absolute !important;
+  top: 4px !important;
+  /* Pinned to the corner, aligned with the arrow's right edge. The old 28px
+     inset existed to clear the arrow, but that is vertically centred, so the
+     top-right corner is free - and the extra width goes back to the price. */
+  right: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 24px !important;
+  min-height: 18px !important;
+  padding: 1px 4px !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+}
+
+.price-display-action-arrow {
+  color: rgba(0, 0, 0, 0.45) !important;
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease,
+    opacity 0.18s ease !important;
+}
+
+.price-display-action-arrow svg {
+  width: 14px !important;
+  height: 14px !important;
+  display: block !important;
+}
+
+.price-display-action:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.price-display-action:hover .price-display-action-arrow {
+  transform: translateY(-50%) translateX(2px) !important;
+  color: currentColor !important;
+}
+
+.price-display-action:focus-visible {
+  outline: none !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 0 0 2px rgba(43, 96, 173, 0.22) !important;
+}
+
+.bestprice-badge-loading,
+.shopflix-badge-loading {
+  pointer-events: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.price-display-action-arrow-loading {
+  pointer-events: none !important;
+}
+
+.bestprice-badge-logo {
+  width: 36px !important;
+  height: 22px !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+}
+
+.shopflix-badge-logo {
+  display: block !important;
+  flex: 0 0 auto !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 22px !important;
+  color: #0d1bbd !important;
+  white-space: nowrap !important;
+}
+
+.store-logo {
+  width: 22px !important;
+  height: 22px !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  object-fit: contain !important;
+}
+
+.analysis-container {
+  display: none !important; /* hidden by default */
+  width: 100% !important;
+}
+
+.price-display-shipping-note {
+  flex: 0 0 auto !important;
+  min-height: 18px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  color: rgba(107, 107, 107, 0.9) !important;
+  white-space: nowrap !important;
+}
+
+.bestprice-unavailable,
+.shopflix-unavailable {
+  flex: 1 1 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  padding: 10px 16px 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  color: #6b6b6b !important;
+  background: transparent !important;
+  text-align: right !important;
+}
+
+.analysis-container.visible {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 8px !important;
+  animation: fade-in-analysis 0.2s ease-in;
+}
+
+.calculation-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+.calculation-container .minimum-price-difference-text {
+  align-self: stretch !important;
+}
+
+.analysis-container .transportation-breakdown {
+  display: none !important;
+  flex-wrap: wrap !important;
+}
+
+.analysis-container .price-breakdown-item {
+  width: calc(50% - 8px) !important;
+}
+
+@media (min-width: 641px) {
+  .price-display-row-multi .price-display-action {
+    gap: 8px !important;
+    padding-right: 22px !important;
+  }
+  .price-display-row-multi .price-display-store-action {
+    padding-right: 10px !important;
+  }
+  .price-display-row-multi .price-display-bestprice-action,
+  .price-display-row-multi .price-display-shopflix-action {
+    padding-left: 10px !important;
+  }
+  .price-display-row-multi .price-indicator-price {
+    font-size: 28px !important;
+    margin-right: 4px !important;
+  }
+  .price-display-row-multi .price-indicator-currency,
+  .price-display-row-multi .price-indicator-decimal,
+  .price-display-row-multi .price-indicator-comma {
+    font-size: 17px !important;
+  }
+  .price-display-row-multi .price-display-action-content {
+    gap: 1px !important;
+  }
+  .price-display-row-multi
+    .price-display-action-content
+    .shipping-cost-text:not(.price-display-shipping-note) {
+    font-size: 11px !important;
+  }
+  .price-display-row-multi .price-display-action-content .shipping-cost-text {
+    white-space: normal !important;
+  }
+  .price-display-row-multi .price-display-subtitle {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .price-checker-outline {
+    padding: 16px !important;
+    margin: 12px 0 !important;
+  }
+  .display-padding {
+    gap: 12px !important;
+    margin-top: 16px !important;
+    margin-bottom: 16px !important;
+  }
+  .tags-container {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    justify-content: flex-end !important;
+    flex-wrap: wrap !important;
+    margin-bottom: 6px !important;
+  }
+  .price-indicator-price {
+    font-size: 36px !important;
+  }
+  .price-indicator-currency,
+  .price-indicator-decimal,
+  .price-indicator-comma {
+    font-size: 22px !important;
+  }
+  .price-calculation-container {
+    gap: 6px !important;
+  }
+  .calculation-container {
+    padding: 12px !important;
+    font-size: 14px !important;
+  }
+  .analysis-metric-topline {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+  }
+  .analysis-metric-summary {
+    text-align: left !important;
+    font-size: 15px !important;
+  }
+  .minimum-price-difference-text {
+    margin-top: 2px !important;
+  }
+  .price-display-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .price-display-divider {
+    width: 100% !important;
+    height: 1px !important;
+    margin: 0 !important;
+  }
+  .bestprice-badge,
+  .shopflix-badge,
+  .price-display-action,
+  .price-display-column {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .price-display-store-action,
+  .price-display-bestprice-action,
+  .price-display-shopflix-action {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .price-display-action {
+    padding: 12px 0 !important;
+    gap: 10px !important;
+  }
+  .price-display-action-content {
+    min-height: auto !important;
+  }
+  .price-display-action-content .shipping-cost-text,
+  .price-display-action-content .price-display-shipping-note {
+    white-space: normal !important;
+  }
+  .price-display-subtitle {
+    min-height: 0 !important;
+  }
+  .info-with-analysis-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .price-history-row {
+    align-items: center !important;
+  }
+  .price-history-panel {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+  .price-history-panel .price-history-controls {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    margin-left: 0 !important;
+  }
+  .price-history-controls {
+    width: 100% !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-left: 0 !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+  .analysis-toggle-button {
+    width: auto !important;
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+  .price-history-header {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+  }
+  .price-history-header .toggle-icon {
+    margin-left: auto !important;
+  }
+  .store-availability-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .store-availability-left,
+  .store-availability-right {
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+  .store-availability-right {
+    flex: 1 1 auto !important;
+  }
+  .own-promotion {
+    margin: 12px -16px -16px !important;
+  }
+  .own-promotion .store-availability-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  .own-promotion .store-availability-left,
+  .own-promotion .store-availability-right {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+  }
+  .own-promotion-review-link {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .buy-me-coffee {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+  .analysis-container .price-breakdown-item {
+    width: 100% !important;
+  }
+  .analysis-container .transportation-breakdown {
+    flex-direction: column !important;
+  }
+}
+
+.price-history-container {
+  margin-top: 24px;
+  position: relative !important;
+  width: 100% !important;
+  border: 1px dashed rgba(0, 0, 0, 0.1) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  background-color: rgba(248, 248, 248, 0.1) !important;
+  color: #000000 !important;
+  display: none !important;
+  opacity: 0 !important;
+  transform: translateY(-10px) !important;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease !important;
+}
+
+.price-history-container.visible {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  animation: fade-in-analysis 0.2s ease-in;
+}
