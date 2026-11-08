@@ -274,6 +274,42 @@ describe('PriceCheckerDecorator', () => {
     );
   });
 
+  it('rebuilds the indicator once when every provider settles in the same batch', async () => {
+    // Arrange
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
+
+    const priceHistoryDeferred = createDeferred<ProductPriceHistory>();
+    const bestPriceDeferred = createDeferred<PriceComparisonProduct | undefined>();
+    const shopflixDeferred = createDeferred<PriceComparisonProduct | undefined>();
+
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockReturnValue(priceHistoryDeferred.promise);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockReturnValue(bestPriceDeferred.promise);
+    vi.mocked(ShopflixClient.getCurrentProductData).mockReturnValue(shopflixDeferred.promise);
+
+    const removeSpy = vi.spyOn(Element.prototype, 'remove');
+    decorator = new PriceCheckerDecorator(mockState);
+
+    // Act
+    await decorator.execute();
+    await flushPromises();
+    priceHistoryDeferred.resolve(mockPriceHistory);
+    bestPriceDeferred.resolve(mockBestPriceData);
+    shopflixDeferred.resolve(mockShopflixData);
+    await flushPromises();
+
+    // Assert — one rebuild for the skeleton, one for the three providers together.
+    // `instances` holds the `this` of each call, typed as the method's return type.
+    const rebuilds = (removeSpy.mock.instances as unknown[]).filter(
+      (element): boolean =>
+        element instanceof Element && element.classList.contains('price-checker-stack'),
+    );
+
+    expect(rebuilds).toHaveLength(2);
+    expect(document.querySelector('.bestprice-badge')).not.toBeNull();
+    expect(document.querySelector('.shopflix-badge')).not.toBeNull();
+  });
+
   it('keeps a pending provider skeleton while the other provider hydrates', async () => {
     vi.mocked(ShopflixClient.isSupported).mockReturnValue(true);
 

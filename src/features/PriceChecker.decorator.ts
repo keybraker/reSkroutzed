@@ -1343,6 +1343,8 @@ export class PriceCheckerDecorator implements FeatureInstance {
   private isInitializing: boolean = false;
   private lastProductId: string | null = null;
   private currentInitializationId: number = 0;
+  private pendingRenderId: number | null = null;
+  private cachedPathProductId: { pathname: string; productId: string } | null = null;
   private readonly boundNavigationHandler: () => Promise<void>;
   /* Data */
   private productPriceData: ProductPriceData | undefined = undefined;
@@ -1371,6 +1373,8 @@ export class PriceCheckerDecorator implements FeatureInstance {
 
     // Invalidate in-flight fetches so late responses cannot re-render the UI.
     this.currentInitializationId++;
+    this.pendingRenderId = null;
+    this.cachedPathProductId = null;
     this.isInitializing = false;
     this.lastProductId = null;
     this.productPriceData = undefined;
@@ -1438,16 +1442,28 @@ export class PriceCheckerDecorator implements FeatureInstance {
   }
 
   private getProductId(): string | null {
-    const urlMatch = window.location.pathname.match(/\/p\/(\d+)/);
-    if (urlMatch && urlMatch[1]) {
+    const { pathname } = window.location;
+
+    // The path-derived id cannot change without the pathname changing, so it is
+    // cached rather than re-matched on every mutation batch.
+    if (this.cachedPathProductId?.pathname === pathname) {
+      return this.cachedPathProductId.productId;
+    }
+
+    const urlMatch = pathname.match(/\/p\/(\d+)/);
+    if (urlMatch?.[1]) {
+      this.cachedPathProductId = { pathname, productId: urlMatch[1] };
       return urlMatch[1];
     }
 
-    const sMatch = window.location.pathname.match(/\/s\/(\d+)/);
-    if (sMatch && sMatch[1]) {
+    const sMatch = pathname.match(/\/s\/(\d+)/);
+    if (sMatch?.[1]) {
+      this.cachedPathProductId = { pathname, productId: sMatch[1] };
       return sMatch[1];
     }
 
+    // Not cacheable: the id comes from the DOM, which the mutation being handled
+    // may have just changed.
     const productElement = document.querySelector('[data-product-id]');
     if (productElement) {
       return productElement.getAttribute('data-product-id');
@@ -1507,6 +1523,30 @@ export class PriceCheckerDecorator implements FeatureInstance {
 
       this.replacePriceIndication(host, createPriceCheckerSkeleton(buildSlots()));
 
+      /**
+       * Fold every render request that lands in the same microtask batch into a
+       * single rebuild.
+       *
+       * Each provider settles independently, and every settlement used to run a
+       * full `createPriceIndicationElement()` rebuild — remove the card, rebuild
+       * it, insert it again. Providers that resolve together now share one pass.
+       */
+      const scheduleRender = (): void => {
+        if (this.pendingRenderId === initializationId) {
+          return;
+        }
+
+        this.pendingRenderId = initializationId;
+        queueMicrotask(() => {
+          if (this.pendingRenderId !== initializationId) {
+            return;
+          }
+
+          this.pendingRenderId = null;
+          renderLoadedState();
+        });
+      };
+
       const renderLoadedState = (): void => {
         if (!this.isCurrentInitialization(initializationId) || !this.productPriceData) {
           return;
@@ -1551,7 +1591,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
           }
 
           isPriceHistoryLoading = false;
-          renderLoadedState();
+          scheduleRender();
         });
 
       if (compareBestPrice) {
@@ -1576,7 +1616,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
             }
 
             isBestPriceLoading = false;
-            renderLoadedState();
+            scheduleRender();
           });
       }
 
@@ -1602,7 +1642,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
             }
 
             isShopflixLoading = false;
-            renderLoadedState();
+            scheduleRender();
           });
       }
 
@@ -1618,7 +1658,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
       }
 
       this.adjustSiteData(currentHost);
-      renderLoadedState();
+      scheduleRender();
     } catch (e) {
       console.error('PriceChecker: initializeProductView failed', e);
 
