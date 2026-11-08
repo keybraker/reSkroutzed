@@ -138,6 +138,18 @@ describe('BrowserClient', (): void => {
       // Assert
       expect(result).toBe(84);
     });
+
+    it('should treat an empty string as a stored value rather than a missing one', (): void => {
+      // Setup
+      localStorage.getItem = vi.fn().mockReturnValue('');
+      const parser = (value: string): string => `parsed:${value}`;
+
+      // Act
+      const result = BrowserClient.getValue(StorageKey.DARK_MODE, parser);
+
+      // Assert
+      expect(result).toBe('parsed:');
+    });
   });
 
   describe('setValue', (): void => {
@@ -217,6 +229,26 @@ describe('BrowserClient', (): void => {
       expect(chrome.storage.local.set).toHaveBeenCalledWith(
         expect.objectContaining({ [StorageKey.DARK_MODE]: false }),
       );
+    });
+
+    it('should remove mirror keys that no longer exist in chrome storage', async (): Promise<void> => {
+      // Setup
+      const staleKey = 'RESKROUTZED-retired-setting';
+      chrome.storage.local.get = vi.fn().mockImplementation((_keys, callback): void => {
+        callback({ [StorageKey.DARK_MODE]: true });
+      });
+      localStorage.getItem = vi.fn().mockReturnValue('true');
+      Object.defineProperty(localStorage, 'length', { value: 1, configurable: true });
+      localStorage.key = vi.fn().mockReturnValue(staleKey);
+
+      // Act
+      await BrowserClient.hydrate();
+
+      // Assert
+      expect(localStorage.removeItem).toHaveBeenCalledWith(staleKey);
+
+      // Restore the shared localStorage mock
+      Object.defineProperty(localStorage, 'length', { value: 0, configurable: true });
     });
   });
 

@@ -107,7 +107,9 @@ export class BrowserClient {
     const item = localStorage.getItem(key);
     const defaultValue = STORAGE_DEFAULTS[key] as T;
 
-    if (!item) {
+    // An empty string is a legitimate stored value, so only `null` (the key is
+    // absent from the mirror) falls back to the default.
+    if (item === null) {
       return defaultValue as T;
     }
 
@@ -135,6 +137,27 @@ export class BrowserClient {
     return new Promise((resolve) => {
       chrome.storage.local.get(null, (result) => {
         const missingDefaults: { [key: string]: StorageValueType } = {};
+        const chromeKeys = new Set(Object.keys(result));
+
+        // Drop mirror entries that no longer exist in chrome.storage.local, so
+        // a setting deleted there does not linger in the mirror forever. Keys
+        // still in the enum are re-seeded below with their default.
+        const staleMirrorKeys: string[] = [];
+        for (let index = 0; index < localStorage.length; index += 1) {
+          const mirrorKey = localStorage.key(index);
+
+          if (
+            mirrorKey !== null &&
+            mirrorKey.startsWith(STORAGE_KEY_PREFIX) &&
+            !chromeKeys.has(mirrorKey)
+          ) {
+            staleMirrorKeys.push(mirrorKey);
+          }
+        }
+
+        staleMirrorKeys.forEach((key) => {
+          localStorage.removeItem(key);
+        });
 
         Object.values(StorageKey).forEach((key) => {
           const chromeValue = result[key];
