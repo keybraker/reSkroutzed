@@ -17,6 +17,7 @@ import {
 } from './functions/createPriceDifferenceBadge';
 import { createReSkoutzedReviewElement } from './functions/createReskoutzedReviewElement';
 import { ensurePriceCheckerStyleInjected } from './functions/ensurePriceCheckerStyleInjected';
+import { removeStoreCountPill, syncStoreCountPill } from './functions/storeCountPill';
 
 const roundToZero = (value: number, precision = 1e-10): number => {
   return Math.abs(value) < precision ? 0 : value;
@@ -1489,6 +1490,9 @@ export class PriceCheckerDecorator implements FeatureInstance {
 
       const host = this.getPriceHostElement();
       if (!host) {
+        // The next page may not be a product at all, so the buybox chip has to
+        // go with the card.
+        removeStoreCountPill();
         return;
       }
 
@@ -1663,6 +1667,10 @@ export class PriceCheckerDecorator implements FeatureInstance {
       }
 
       this.adjustSiteData(currentHost);
+      syncStoreCountPill(
+        this.productPriceData.storeAvailability.availableShopCount,
+        this.state.language,
+      );
       scheduleRender();
     } catch (e) {
       console.error('PriceChecker: initializeProductView failed', e);
@@ -1685,6 +1693,7 @@ export class PriceCheckerDecorator implements FeatureInstance {
 
   private cleanup(): void {
     this.removeRenderedPriceChecker();
+    removeStoreCountPill();
     const existingShippingTexts = document.querySelectorAll('.shipping-cost-text');
     const existingBreakdowns = document.querySelectorAll(
       '.skroutz-breakdown-inline, .store-breakdown-inline',

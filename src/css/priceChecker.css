@@ -1210,6 +1210,44 @@
   text-decoration: underline !important;
 }
 
+/* Shop-count chip in the buybox's chip row, after the native price-history chip.
+   It opens Skroutz's store list. The builder inlines this surface and drives the
+   hover/press colour change itself, because the chip has to keep working when
+   this stylesheet is stale, so the rules here are the documented baseline. */
+.resk-store-count-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 5px 12px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  appearance: none !important;
+  background: #f1f1f1 !important;
+  color: #101010 !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: background-color 0.18s ease !important;
+}
+
+.resk-store-count-pill svg {
+  width: 13px !important;
+  height: 13px !important;
+  flex: 0 0 auto !important;
+}
+
+/* Dark mode inverts the page and re-inverts media to keep true colours. The
+   glyph is monochrome `currentColor`, so it has to invert with its label. */
+html.resk-dark .resk-store-count-pill svg {
+  filter: none !important;
+}
+
 .price-display-action-notification {
   position: absolute !important;
   top: 4px !important;

@@ -647,6 +647,33 @@ describe('PriceCheckerDecorator', () => {
     expect(document.querySelector('.price-history-controls')).not.toBeNull();
   });
 
+  it('adds the store-count chip next to the native price-history chip', async () => {
+    // Arrange
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div class="chip-row"><button class="btn-reset icon price-history"></button></div>',
+    );
+    vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);
+    vi.mocked(SkroutzClient.getPriceHistory).mockResolvedValue(mockPriceHistory);
+    vi.mocked(BestPriceClient.getCurrentProductData).mockResolvedValue(mockBestPriceData);
+    vi.mocked(ShopflixClient.isSupported).mockReturnValue(false);
+
+    // Act
+    decorator = new PriceCheckerDecorator(mockState);
+    await decorator.execute();
+    await flushPromises();
+
+    // Assert — the buybox chip carries the shop count from the price data.
+    const pill = document.querySelector<HTMLButtonElement>('.resk-store-count-pill');
+    expect(pill).not.toBeNull();
+    expect(pill?.textContent).toBe('3 stores');
+
+    // The chip belongs to the card, so it leaves with it.
+    decorator.destroy();
+    decorator = undefined;
+    expect(document.querySelector('.resk-store-count-pill')).toBeNull();
+  });
+
   it('shows each option its own difference pill, measured against Skroutz', async () => {
     // Arrange — store 98,00€ and BestPrice 96,00€ vs Buy through Skroutz 104,00€
     vi.mocked(SkroutzClient.getCurrentProductData).mockResolvedValue(mockProductPriceData);

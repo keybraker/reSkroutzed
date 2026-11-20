@@ -36,6 +36,8 @@ The all new universal selector on the bottom left side of the screen is always t
 - Lowest price checker outside of _"Buy through Skroutz"_
   - Comparison sources: BestPrice and Shopflix (Greece only), shown side by side
   - Minimum price difference, option to ignore price differences smaller than threshold
+  - Price history averages and the lowest recorded prices in one panel
+  - A shop-count chip in the buybox chip row; clicking it opens the store list
 - Dark mode
 - Sponsored (Ad) product flagging and removal
   - products in category view
