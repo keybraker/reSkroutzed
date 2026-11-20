@@ -123,10 +123,14 @@ describe('ListProductAdHandler', () => {
       expect(mockState.productAdCount).toBe(3);
     });
 
-    it('should flag parent li of tracking-img elements', () => {
+    it('should flag parent li of sponsored tracking-img elements', () => {
       const liElement = document.createElement('li');
       const trackingImg = document.createElement('img');
       trackingImg.classList.add('tracking-img');
+      trackingImg.setAttribute(
+        'data-tracking-image-options-value',
+        '{"trackingUrl":"https://www.skroutz.gr/merchandising/c/sbm/25609/t/s/26232367/x/timeline_masonry"}',
+      );
       liElement.appendChild(trackingImg);
 
       mockSelectorResults({
@@ -142,6 +146,67 @@ describe('ListProductAdHandler', () => {
 
       expect(DomClient.addClassesToElement).toHaveBeenCalledWith(liElement, 'flagged-product');
       expect(liElement.getAttribute('data-reskroutzed-label')).toBe('advertisement');
+      expect(mockState.productAdCount).toBe(1);
+    });
+
+    it('should not flag organic timeline cards that only carry an impression pixel', () => {
+      const liElement = document.createElement('li');
+      const trackingImg = document.createElement('img');
+      trackingImg.classList.add('tracking-img');
+      trackingImg.setAttribute(
+        'data-tracking-image-options-value',
+        '{"trackingUrl":"https://www.skroutz.gr/merchandising/c/tpk/t/s/67782129/x/timeline_guest"}',
+      );
+      liElement.appendChild(trackingImg);
+
+      mockSelectorResults({
+        '.flagged-product': [],
+        'li:not(.flagged-product)': [liElement],
+        '.item-mark:not(.flagged-product)': [],
+        '.product-mark:not(.flagged-product)': [],
+        '.tracking-img': [trackingImg],
+      });
+      mockGetElementByClass(new Map());
+      vi.mocked(DomClient.getElementsByClass).mockImplementation((selector: string) =>
+        selector === '.tracking-img' ? [trackingImg] : [],
+      );
+
+      listProductAdHandler.flag();
+
+      expect(DomClient.addClassesToElement).not.toHaveBeenCalled();
+      expect(liElement.getAttribute('data-reskroutzed-label')).toBeNull();
+      expect(mockState.productAdCount).toBe(0);
+    });
+
+    it('should flag a list item whose sponsored tracking pixel is nested inside it', () => {
+      const liElement = document.createElement('li');
+      const content = document.createElement('div');
+      const trackingImg = document.createElement('img');
+      trackingImg.classList.add('tracking-img');
+      trackingImg.setAttribute(
+        'src',
+        'https://www.skroutz.gr/merchandising/c/sbm/25609/t/s/1/x/timeline_masonry',
+      );
+      content.appendChild(trackingImg);
+      liElement.appendChild(content);
+
+      mockGetElementByClass(new Map());
+      vi.mocked(DomClient.getElementsByClass).mockImplementation(
+        (selector: string, searchElement?: Element) => {
+          if (selector === 'li:not(.flagged-product)') {
+            return [liElement];
+          }
+          if (selector === '.tracking-img') {
+            return searchElement === liElement ? [trackingImg] : [];
+          }
+          return [];
+        },
+      );
+
+      listProductAdHandler.flag();
+
+      expect(DomClient.addClassesToElement).toHaveBeenCalledWith(liElement, 'flagged-product');
+      expect(DomClient.addClassesToElement).toHaveBeenCalledTimes(1);
       expect(mockState.productAdCount).toBe(1);
     });
   });
