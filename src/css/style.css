@@ -392,7 +392,7 @@ text-black {
    column (content-box let the coffee pill overflow by its own padding) and the
    shared padding + line-height erase the vertical differences between them. */
 
-/* reSkroutzed badge removed; availability card now visually continues the price checker */
+/* reSkroutzed badge removed; the availability note is its own card under the checker */
 
 /* Native status row: state icon, short sentence, then the action at the right. */
 
@@ -408,10 +408,10 @@ text-black {
 
 /* Small "beta" chip marking a provider whose integration is still experimental. */
 
-/* The price-history row is one native inset panel: averages, a hairline, then the
-   actions. The card surface is already #f8f8f8, so the panel is white - the
-   inversion of the native grey panel on the white buybox - and it earns its edge
-   from the fill alone, with no border, exactly like the native one. */
+/* The price-history row is two boxes of its own: the averages card and the
+   actions card. The card surface is already #f8f8f8, so each box is white with a
+   hairline and a soft shadow - enough edge to read as its own unit without
+   competing with the price above it. */
 
 /* Amount first, window after it, following the native row order
    ("2,50 € σε Skroutz Point"). Both amounts share a left edge so the two figures
@@ -420,9 +420,9 @@ text-black {
 /* Wide enough for a four-figure amount so the labels line up, no wider, or the
    gap between the amount and its window reads as wasted space. */
 
-/* Inside the panel the actions are links, not pills: no fill, no border, no
-   padding, and the label takes the link colour. They stack on the right, one per
-   average row, so the two halves of the panel are the same two lines tall. */
+/* Inside the actions card the two buttons are quiet chips - icon in a tinted ring
+   plus a label - stacked in their own rounded box. When the card is too narrow for
+   two boxes side by side, the boxes stack and the chips fill theirs. */
 
 /* Shopflix has no inline SVG mark, so its badge uses the blue wordmark instead */
 

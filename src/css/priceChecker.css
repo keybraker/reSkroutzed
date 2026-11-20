@@ -684,29 +684,33 @@
   justify-content: center !important;
   width: 18px !important;
   height: 18px !important;
-  background: #eef3ff !important;
-  color: #3366cc !important;
+  background: #eaf1fd !important;
+  color: #0b6bcb !important;
   border-radius: 50% !important;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: inset 0 0 0 1px rgba(11, 107, 203, 0.12) !important;
 }
 
 .analysis-toggle-button.expanded .analysis-icon {
-  background: #3366cc !important;
+  background: #0b6bcb !important;
   color: #ffffff !important;
 }
 
+/* The availability note is its own card, like the two price-history boxes above
+   it: white surface, hairline and the same rounding. It used to be a footer
+   joined to the checker by a top rule, so there is no border-top and no negative
+   margins here. */
 .store-availability-outline {
-  border: none !important;
-  border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
-  border-radius: 0 !important;
-  padding: 16px 4px 0 !important;
-  margin-top: 4px !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  border: 1px solid rgba(16, 24, 40, 0.07) !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 2px !important;
   position: relative !important;
+  box-sizing: border-box !important;
 }
 
 .own-promotion {
@@ -968,16 +972,6 @@
   transform: translateY(0) !important;
 }
 
-.price-history-toggle-button .analysis-icon {
-  background: #ffe9d1 !important;
-  color: #ff9800 !important;
-}
-
-.price-history-toggle-button.expanded .analysis-icon {
-  background: #ff9800 !important;
-  color: #ffffff !important;
-}
-
 .info-with-analysis-row {
   display: flex !important;
   align-items: center !important;
@@ -1134,80 +1128,148 @@
   white-space: nowrap !important;
 }
 
+/* The figures and the actions live in two boxes of their own inside the row: each
+   carries the surface, the hairline and the rounding, so the seam between them is
+   a real box edge rather than a floating line. */
 .price-history-panel {
   display: flex !important;
   flex: 1 1 auto !important;
   flex-direction: row !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 16px !important;
+  align-items: stretch !important;
+  gap: 10px !important;
   width: 100% !important;
   min-width: 0 !important;
-  padding: 10px 12px !important;
-  border-radius: 12px !important;
-  background: #ffffff !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
   box-sizing: border-box !important;
 }
 
 .price-history-averages {
   display: flex !important;
-  flex: 0 1 auto !important;
+  flex: 1 1 auto !important;
   flex-direction: column !important;
-  gap: 2px !important;
+  justify-content: center !important;
+  gap: 4px !important;
   min-width: 0 !important;
+  padding: 9px 12px !important;
+  border: 1px solid rgba(16, 24, 40, 0.07) !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04) !important;
+  box-sizing: border-box !important;
 }
 
 .price-history-average-row {
   display: flex !important;
   align-items: baseline !important;
-  gap: 8px !important;
+  gap: 9px !important;
 }
 
 .price-history-average-amount {
   flex: 0 0 auto !important;
-  min-width: 54px !important;
-  font-size: 13px !important;
+  min-width: 58px !important;
+  font-size: 14px !important;
   font-weight: 700 !important;
-  line-height: 1.4 !important;
-  color: #222222 !important;
+  line-height: 1.3 !important;
+  color: #16181d !important;
   font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.01em !important;
 }
 
 .price-history-average-label {
   min-width: 0 !important;
-  font-size: 13px !important;
-  line-height: 1.4 !important;
-  color: #6b6b6b !important;
+  font-size: 12px !important;
+  line-height: 1.3 !important;
+  color: #6f747d !important;
 }
 
 .price-history-panel .price-history-controls {
   flex: 0 0 auto !important;
   flex-direction: column !important;
-  align-items: flex-end !important;
+  align-items: stretch !important;
   justify-content: center !important;
-  gap: 5px !important;
+  gap: 6px !important;
   margin-left: 0 !important;
+  padding: 7px !important;
   width: auto !important;
+  border: 1px solid rgba(16, 24, 40, 0.07) !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04) !important;
+  box-sizing: border-box !important;
 }
 
+/* Both actions are the same quiet chip - icon in a tinted ring plus a label -
+   so the pair reads as one control group inside their box. */
 .price-history-panel .analysis-toggle-button {
   flex: 0 0 auto !important;
   width: auto !important;
-  justify-content: flex-start !important;
-  padding: 0 !important;
-  border: none !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  color: #0b6bcb !important;
+  /* Label hugs the left edge, icon the right: the two chips share one width, so
+     the longer label sets it and the shorter one spreads its content. */
+  justify-content: space-between !important;
+  padding: 5px 6px 5px 10px !important;
+  border: 1px solid rgba(16, 24, 40, 0.09) !important;
+  border-radius: 999px !important;
+  background: #f7f9fc !important;
+  color: #333a45 !important;
   font-size: 12px !important;
   font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1 !important;
   gap: 7px !important;
+  box-shadow: none !important;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease !important;
+}
+
+/* The row-wide `.info-with-analysis-row span:first-child` rule stretches and
+   enlarges label spans; inside a chip the label keeps its size and the icon stays
+   beside it. */
+.price-history-panel .analysis-toggle-button > span {
+  flex: 0 0 auto !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
 }
 
 .price-history-panel .analysis-toggle-button:hover {
-  background: transparent !important;
-  border: none !important;
-  text-decoration: underline !important;
+  background: #f1f6ff !important;
+  border-color: #c9dcf8 !important;
+  color: #0b6bcb !important;
+  text-decoration: none !important;
+  box-shadow: 0 1px 2px rgba(11, 107, 203, 0.12) !important;
+}
+
+.price-history-panel .analysis-toggle-button:focus-visible {
+  outline: 2px solid rgba(11, 107, 203, 0.5) !important;
+  outline-offset: 2px !important;
+}
+
+.price-history-panel .analysis-toggle-button.expanded {
+  background: #eaf2fe !important;
+  border-color: #b9d4f8 !important;
+  color: #0b6bcb !important;
+}
+
+/* The buybox column is often narrower than the viewport, so the panel adapts to
+   its own width rather than to the screen: figures and actions side by side when
+   there is room, figures over actions when there is not. */
+.price-history-wrapper {
+  container-type: inline-size !important;
+  container-name: resk-price-history !important;
+}
+
+@container resk-price-history (max-width: 380px) {
+  .price-history-panel {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
 }
 
 /* Shop-count chip in the buybox's chip row, after the native price-history chip.
@@ -1533,13 +1595,6 @@ html.resk-dark .resk-store-count-pill svg {
     align-items: stretch !important;
     gap: 8px !important;
     padding: 10px !important;
-  }
-  .price-history-panel .price-history-controls {
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    margin-left: 0 !important;
   }
   .price-history-controls {
     width: 100% !important;

@@ -42,8 +42,9 @@ export function PriceHistoryComponent(
 
   const iconSpan = document.createElement('span');
   iconSpan.className = 'analysis-icon';
+  // Rising trend: left to right, bottom to top, with no dip in the middle.
   iconSpan.innerHTML =
-    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="6.5 16.5 10 13 13 16 20 9"/></svg>';
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="6.5 16.5 10.5 13 15 9.5 20 6"/></svg>';
   toggleButton.appendChild(btnText);
   toggleButton.appendChild(iconSpan);
 
