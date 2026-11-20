@@ -14,7 +14,7 @@ const NATIVE_OFFERS_TOGGLE_SELECTOR = '.alternative-option-wrapper.btn-reset';
 const PILL_LABEL_STYLES = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: '4px',
+  gap: '8px',
   margin: '0',
   padding: '5px 12px',
   border: 'none',
@@ -40,8 +40,12 @@ const PILL_PRESSED_BACKGROUND = '#e2e2e2';
 
 // Solid silhouette, like the native chips' icons: an outline glyph next to the
 // filled stars and bars reads as a different, lighter control.
+//
+// The 1px drop is optical, not geometric: flex centring already lines the glyph
+// box up with the label's line box, but the label's ink (x-height Greek text)
+// sits below the middle of that box, so the glyph needs the nudge to look centred.
 const STORE_GLYPH =
-  '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 3h18l1.5 5H1.5L3 3zM4 9.5h16V21H4V9.5zm5 4.5V21h6v-7H9z"/></svg>';
+  '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:block;transform:translateY(1px)"><path fill-rule="evenodd" d="M3 3h18l1.5 5H1.5L3 3zM4 9.5h16V21H4V9.5zm5 4.5V21h6v-7H9z"/></svg>';
 
 export function removeStoreCountPill(): void {
   DomClient.getElementsByClass(`.${STORE_COUNT_PILL_CLASS}`).forEach((pill) => pill.remove());

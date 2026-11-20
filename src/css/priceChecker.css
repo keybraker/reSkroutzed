@@ -1279,7 +1279,7 @@
 .resk-store-count-pill {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 4px !important;
+  gap: 8px !important;
   margin: 0 !important;
   padding: 5px 12px !important;
   border: none !important;
@@ -1302,6 +1302,10 @@
   width: 13px !important;
   height: 13px !important;
   flex: 0 0 auto !important;
+  display: block !important;
+  /* Optical centring: flex centring matches the glyph box to the label's line
+     box, but x-height Greek text sits below that box's middle by about a pixel. */
+  transform: translateY(1px) !important;
 }
 
 /* Dark mode inverts the page and re-inverts media to keep true colours. The
